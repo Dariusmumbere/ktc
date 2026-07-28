@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KTC-IPFMS — Karugutu Town Council</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   KTC-IPFMS — Design tokens
+   Institutional teal + ink navy + ledger gold. Serif display for authority,
+   Inter for interface, Plex Mono for reference numbers & figures.
+   ========================================================================== */
+:root{
+  --navy-950:#0A1F2B;
+  --navy-900:#0D2B3A;
+  --teal-700:#0F5C52;
+  --teal-600:#146B5F;
+  --teal-500:#1C8577;
+  --gold-600:#B9852F;
+  --gold-500:#C99A3E;
+  --gold-100:#F6ECD8;
+  --paper:#F3F6F5;
+  --paper-raised:#FFFFFF;
+  --ink-900:#152226;
+  --ink-700:#3B4C51;
+  --ink-500:#6B7C80;
+  --line:#DEE6E4;
+  --line-strong:#C7D2D0;
+  --success:#1F8A5F;
+  --success-bg:#E6F4ED;
+  --danger:#B8382A;
+  --danger-bg:#FBEAE7;
+  --warning:#B7790E;
+  --warning-bg:#FBF1DE;
+  --info:#2E5E8C;
+  --info-bg:#E9F1FA;
+  --radius:10px;
+  --radius-sm:6px;
+  --shadow-sm:0 1px 2px rgba(10,31,43,.06), 0 1px 1px rgba(10,31,43,.04);
+  --shadow-md:0 6px 20px rgba(10,31,43,.10), 0 2px 6px rgba(10,31,43,.06);
+  --shadow-lg:0 20px 48px rgba(10,31,43,.18);
+  --font-display:'Source Serif 4', Georgia, serif;
+  --font-body:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:'IBM Plex Mono', ui-monospace, monospace;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--paper); color:var(--ink-900);
+  font-family:var(--font-body); font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;}
+a{color:inherit;}
+::selection{background:var(--gold-100); color:var(--navy-950);}
+:focus-visible{outline:2px solid var(--teal-500); outline-offset:2px;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ---------------- Seal / crest (signature element) ---------------- */
+.crest{ width:38px;height:38px;flex-shrink:0; }
+.crest svg{width:100%;height:100%;display:block;}
+
+/* ---------------- Login ---------------- */
+#login-screen{
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(1100px 600px at 15% -10%, rgba(28,133,119,.35), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(201,154,62,.20), transparent 55%),
+    linear-gradient(180deg, var(--navy-950), var(--navy-900) 60%, #0B2530);
+  padding:24px;
+}
+.login-card{
+  width:100%; max-width:420px; background:var(--paper-raised); border-radius:14px;
+  box-shadow:var(--shadow-lg); overflow:hidden; border:1px solid rgba(255,255,255,.08);
+}
+.login-band{
+  background:linear-gradient(120deg, var(--teal-700), var(--teal-600) 55%, var(--teal-500));
+  padding:28px 30px 24px; color:#fff; position:relative;
+}
+.login-band::after{
+  content:""; position:absolute; inset:auto 0 0 0; height:4px;
+  background:linear-gradient(90deg, var(--gold-500), transparent 70%);
+}
+.login-band .brand-row{display:flex; align-items:center; gap:12px;}
+.login-band h1{font-family:var(--font-display); font-size:19px; font-weight:600; margin:0; letter-spacing:.2px;}
+.login-band p{margin:4px 0 0; font-size:12.5px; color:rgba(255,255,255,.82);}
+.login-body{padding:28px 30px 30px;}
+.field{margin-bottom:16px;}
+.field label{display:block; font-size:12px; font-weight:600; color:var(--ink-700); margin-bottom:6px; letter-spacing:.2px; text-transform:uppercase;}
+.field input, .field select, .field textarea{
+  width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:var(--radius-sm);
+  font-size:14px; font-family:inherit; background:#fff; color:var(--ink-900); transition:border-color .15s, box-shadow .15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus{
+  border-color:var(--teal-500); box-shadow:0 0 0 3px rgba(28,133,119,.14);
+}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:10px 18px; border-radius:var(--radius-sm); border:1px solid transparent;
+  font-weight:600; font-size:13.5px; cursor:pointer; transition:transform .08s ease, box-shadow .15s, background .15s;
+  white-space:nowrap;
+}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--teal-700); color:#fff; box-shadow:var(--shadow-sm);}
+.btn-primary:hover{background:var(--teal-600);}
+.btn-gold{background:var(--gold-600); color:#fff;}
+.btn-gold:hover{background:var(--gold-500);}
+.btn-ghost{background:transparent; color:var(--ink-700); border-color:var(--line);}
+.btn-ghost:hover{background:var(--paper); border-color:var(--line-strong);}
+.btn-danger{background:var(--danger); color:#fff;}
+.btn-danger:hover{background:#a03024;}
+.btn-block{width:100%;}
+.btn:disabled{opacity:.55; cursor:not-allowed;}
+.login-error{
+  background:var(--danger-bg); color:var(--danger); border:1px solid rgba(184,56,42,.25);
+  padding:10px 12px; border-radius:var(--radius-sm); font-size:13px; margin-bottom:14px; display:none;
+}
+.login-hint{margin-top:16px; font-size:11.5px; color:var(--ink-500); text-align:center;}
+
+/* ---------------- App shell ---------------- */
+#app-screen{display:none; height:100vh; overflow:hidden;}
+.shell{display:flex; height:100vh;}
+.sidebar{
+  width:230px; flex-shrink:0; background:linear-gradient(185deg, var(--navy-950), var(--navy-900));
+  color:#DCE7E5; display:flex; flex-direction:column; padding:18px 12px;
+}
+.sidebar .brand{display:flex; align-items:center; gap:10px; padding:6px 8px 18px; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:14px;}
+.sidebar .brand-name{font-family:var(--font-display); font-size:14px; font-weight:600; color:#fff; line-height:1.25;}
+.sidebar .brand-name small{display:block; font-family:var(--font-body); font-weight:500; font-size:10px; color:rgba(255,255,255,.55); letter-spacing:.5px; text-transform:uppercase; margin-top:2px;}
+.nav-group{margin-bottom:6px;}
+.nav-label{font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.35); padding:14px 10px 6px; font-weight:700;}
+.nav-item{
+  display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; cursor:pointer;
+  font-size:13px; font-weight:500; color:rgba(220,231,229,.82); margin-bottom:2px; transition:background .12s, color .12s;
+  border:none; background:none; width:100%; text-align:left;
+}
+.nav-item svg{width:17px;height:17px; flex-shrink:0; opacity:.85;}
+.nav-item:hover{background:rgba(255,255,255,.06); color:#fff;}
+.nav-item.active{background:var(--teal-700); color:#fff; box-shadow:inset 3px 0 0 var(--gold-500);}
+.sidebar-footer{margin-top:auto; padding:10px 8px 4px; border-top:1px solid rgba(255,255,255,.08);}
+.user-chip{display:flex; align-items:center; gap:8px; padding:8px; border-radius:8px;}
+.avatar{
+  width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg, var(--gold-500), var(--gold-600));
+  color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12.5px; flex-shrink:0;
+}
+.user-chip .u-name{font-size:12.5px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.user-chip .u-role{font-size:10.5px; color:rgba(255,255,255,.5); text-transform:capitalize;}
+.logout-link{font-size:11.5px; color:rgba(255,255,255,.45); margin-top:6px; display:block; padding:0 8px; cursor:pointer;}
+.logout-link:hover{color:#fff;}
+
+.main{flex:1; display:flex; flex-direction:column; min-width:0; overflow:hidden;}
+.topbar{
+  height:64px; flex-shrink:0; background:var(--paper-raised); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between; padding:0 22px;
+}
+.topbar-title{font-family:var(--font-display); font-size:17px; font-weight:600;}
+.topbar-sub{font-size:11.5px; color:var(--ink-500); margin-top:1px;}
+.topbar-right{display:flex; align-items:center; gap:14px;}
+.icon-btn{
+  position:relative; width:36px;height:36px; border-radius:8px; border:1px solid var(--line); background:#fff;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-700);
+}
+.icon-btn:hover{background:var(--paper); border-color:var(--line-strong);}
+.icon-btn svg{width:17px;height:17px;}
+.badge-dot{
+  position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:9px;
+  background:var(--danger); color:#fff; font-size:9.5px; font-weight:700; display:flex; align-items:center; justify-content:center;
+}
+.content{flex:1; overflow-y:auto; padding:24px 26px 60px;}
+.view{display:none;}
+.view.active{display:block;}
+
+/* ---------------- Notification panel ---------------- */
+.notif-panel{
+  position:absolute; top:58px; right:22px; width:340px; max-height:420px; overflow-y:auto;
+  background:#fff; border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-lg);
+  z-index:80; display:none;
+}
+.notif-panel.show{display:block;}
+.notif-panel-head{display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--line);}
+.notif-panel-head h4{margin:0; font-size:13px;}
+.notif-panel-head span{font-size:11.5px; color:var(--teal-600); cursor:pointer; font-weight:600;}
+.notif-item{padding:11px 14px; border-bottom:1px solid #F0F3F2; font-size:12.5px; display:flex; gap:9px;}
+.notif-item:last-child{border-bottom:none;}
+.notif-item .dot{width:7px;height:7px;border-radius:50%; margin-top:5px; flex-shrink:0; background:var(--teal-500);}
+.notif-item.unread{background:#F7FBFA;}
+.notif-item .msg{color:var(--ink-900);}
+.notif-item .time{color:var(--ink-500); font-size:10.5px; margin-top:2px;}
+.notif-empty{padding:24px 14px; text-align:center; color:var(--ink-500); font-size:12.5px;}
+
+/* ---------------- Section headers, cards ---------------- */
+.section-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:18px; flex-wrap:wrap; gap:12px;}
+.section-head h2{font-family:var(--font-display); font-size:22px; margin:0; font-weight:600;}
+.section-head .sub{color:var(--ink-500); font-size:12.5px; margin-top:2px;}
+.card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-sm);}
+.card-pad{padding:18px 20px;}
+
+/* Dashboard stat cards (home tab — deliberately distinct treatment) */
+.stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px;}
+.stat-card{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius);
+  padding:18px 20px; position:relative; overflow:hidden;
+}
+.stat-card::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--teal-600);
+}
+.stat-card.gold::before{background:var(--gold-600);}
+.stat-card.danger::before{background:var(--danger);}
+.stat-card.navy::before{background:var(--navy-900);}
+.stat-label{font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--ink-500); font-weight:700;}
+.stat-value{font-family:var(--font-mono); font-size:28px; font-weight:600; margin-top:8px; color:var(--navy-950);}
+.stat-foot{font-size:11.5px; color:var(--ink-500); margin-top:6px;}
+
+.dash-grid{display:grid; grid-template-columns:1.4fr 1fr; gap:18px;}
+@media (max-width:1100px){ .dash-grid{grid-template-columns:1fr;} .stat-grid{grid-template-columns:repeat(2,1fr);} }
+
+.util-bar-track{height:10px; border-radius:6px; background:#EAF0EF; overflow:hidden; margin-top:10px;}
+.util-bar-fill{height:100%; background:linear-gradient(90deg, var(--teal-600), var(--teal-500)); border-radius:6px; transition:width .5s ease;}
+
+.timeline{list-style:none; margin:0; padding:0;}
+.timeline li{display:flex; gap:12px; padding:11px 0; border-bottom:1px solid #F0F3F2;}
+.timeline li:last-child{border-bottom:none;}
+.tl-stamp{
+  width:30px; height:30px; border-radius:50%; border:2px solid var(--teal-600); color:var(--teal-600);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px; font-weight:700;
+}
+.tl-body{flex:1; min-width:0;}
+.tl-title{font-size:12.5px; font-weight:600;}
+.tl-meta{font-size:11px; color:var(--ink-500); margin-top:1px;}
+
+/* ---------------- Table styling (echoes the reference work-plan grid) ---------------- */
+.table-wrap{overflow-x:auto; border-radius:var(--radius); border:1px solid var(--line);}
+table{width:100%; border-collapse:collapse; min-width:720px; background:#fff;}
+thead th{
+  background:var(--navy-950); color:#fff; font-size:10.5px; text-transform:uppercase; letter-spacing:.4px;
+  padding:11px 12px; text-align:left; font-weight:700; white-space:nowrap; position:sticky; top:0;
+}
+tbody td{padding:11px 12px; border-bottom:1px solid #EEF2F1; font-size:12.5px; white-space:nowrap;}
+tbody tr:nth-child(even){background:#FAFCFB;}
+tbody tr:hover{background:var(--gold-100);}
+td.wrap, th.wrap{white-space:normal;}
+.num{font-family:var(--font-mono); text-align:right;}
+.mono{font-family:var(--font-mono);}
+
+.toolbar{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
+.search-box{position:relative; flex:1; min-width:220px;}
+.search-box svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); width:15px;height:15px; color:var(--ink-500);}
+.search-box input{width:100%; padding:9px 12px 9px 34px; border:1.5px solid var(--line); border-radius:var(--radius-sm); font-size:13px;}
+select.filter-select{padding:9px 12px; border:1.5px solid var(--line); border-radius:var(--radius-sm); font-size:13px; background:#fff;}
+
+/* ---------------- Badges / pills ---------------- */
+.pill{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700; text-transform:capitalize;}
+.pill-draft{background:#EEF1F1; color:var(--ink-700);}
+.pill-submitted{background:var(--info-bg); color:var(--info);}
+.pill-hod_approved, .pill-treasurer_approved{background:var(--warning-bg); color:var(--warning);}
+.pill-approved, .pill-accounted, .pill-verified{background:var(--success-bg); color:var(--success);}
+.pill-rejected, .pill-flagged{background:var(--danger-bg); color:var(--danger);}
+.pill-returned{background:#F1E9FB; color:#6A3FA0;}
+.pill-pending{background:var(--warning-bg); color:var(--warning);}
+
+/* ---------------- Modal ---------------- */
+.overlay{position:fixed; inset:0; background:rgba(10,31,43,.55); display:none; align-items:center; justify-content:center; z-index:100; padding:20px;}
+.overlay.show{display:flex;}
+.modal{background:#fff; border-radius:14px; width:100%; max-width:560px; max-height:88vh; overflow-y:auto; box-shadow:var(--shadow-lg);}
+.modal-lg{max-width:760px;}
+.modal-head{display:flex; justify-content:space-between; align-items:center; padding:18px 22px; border-bottom:1px solid var(--line);}
+.modal-head h3{margin:0; font-family:var(--font-display); font-size:17px; font-weight:600;}
+.modal-close{background:none; border:none; cursor:pointer; color:var(--ink-500); font-size:20px; line-height:1;}
+.modal-body{padding:20px 22px;}
+.modal-foot{padding:16px 22px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:10px;}
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 14px;}
+.form-grid .span2{grid-column:1/-1;}
+
+/* ---------------- Toasts ---------------- */
+#toast-stack{position:fixed; bottom:20px; right:20px; z-index:200; display:flex; flex-direction:column; gap:10px;}
+.toast{
+  background:var(--navy-950); color:#fff; padding:12px 16px; border-radius:9px; box-shadow:var(--shadow-lg);
+  font-size:13px; min-width:260px; max-width:360px; display:flex; align-items:flex-start; gap:10px;
+  animation:toast-in .25s ease;
+}
+.toast.success{border-left:4px solid var(--success);}
+.toast.error{border-left:4px solid var(--danger);}
+.toast.info{border-left:4px solid var(--teal-500);}
+@keyframes toast-in{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+.empty-state{padding:50px 20px; text-align:center; color:var(--ink-500);}
+.empty-state svg{width:38px;height:38px; color:var(--line-strong); margin-bottom:10px;}
+.loading-row{padding:40px; text-align:center; color:var(--ink-500); font-size:13px;}
+.spinner{
+  width:16px;height:16px; border:2px solid rgba(255,255,255,.35); border-top-color:#fff; border-radius:50%;
+  display:inline-block; animation:spin .7s linear infinite;
+}
+.spinner-dark{border:2px solid var(--line-strong); border-top-color:var(--teal-600);}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.tabs-sub{display:flex; gap:4px; border-bottom:1px solid var(--line); margin-bottom:18px;}
+.tabs-sub button{
+  background:none; border:none; padding:9px 4px; margin-right:22px; font-size:13px; font-weight:600; color:var(--ink-500);
+  cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
+}
+.tabs-sub button.active{color:var(--teal-700); border-color:var(--teal-600);}
+
+.detail-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 22px; margin-bottom:16px;}
+.detail-label{font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-500); font-weight:700;}
+.detail-value{font-size:13.5px; margin-top:2px; font-weight:500;}
+
+.help-text{font-size:11.5px; color:var(--ink-500); margin-top:4px;}
+.divider{height:1px; background:var(--line); margin:16px 0;}
+.kicker{font-size:10.5px; text-transform:uppercase; letter-spacing:.7px; color:var(--gold-600); font-weight:700;}
+</style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-band">
+      <div class="brand-row">
+        <div class="crest">CRESTPLACEHOLDER</div>
+        <div>
+          <h1>Karugutu Town Council</h1>
+          <p>Integrated Public Financial Management System</p>
+        </div>
+      </div>
+    </div>
+    <div class="login-body">
+      <div class="login-error" id="login-error"></div>
+      <form id="login-form">
+        <div class="field">
+          <label>Email address</label>
+          <input type="email" id="login-email" required autocomplete="username" placeholder="you@karugutu.town.go.ug" />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••••" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="login-btn">Sign in to your account</button>
+      </form>
+      <p class="login-hint">Access is restricted to authorised Council personnel. Contact your System Administrator for account issues.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app-screen">
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="crest">CRESTPLACEHOLDERSMALL</div>
+        <div class="brand-name">Karugutu Town Council
+          <small>KTC-IPFMS</small>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <button class="nav-item active" data-view="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+          Dashboard
+        </button>
+        <button class="nav-item" data-view="workplan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 5v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5M9 9h6M9 13h6M9 17h3"/></svg>
+          Work Plan &amp; Budget
+        </button>
+        <button class="nav-item" data-view="requisitions">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6l1 3H8l1-3z"/><path d="M6 6h12v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V6z"/><path d="M9 11h6M9 15h4"/></svg>
+          Requisitions
+        </button>
+        <button class="nav-item" data-view="approvals">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+          Approvals
+        </button>
+        <button class="nav-item" data-view="accountability">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5V6a2 2 0 0 1 2-2h9l5 5v10.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M14 4v5h5"/></svg>
+          Accountability
+        </button>
+        <button class="nav-item" data-view="reports">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5a1 1 0 0 1 1-1h9l6 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 12h6M9 16h4"/></svg>
+          Audit &amp; Reports
+        </button>
+      </div>
+
+      <div class="nav-group" id="admin-nav-group" style="display:none;">
+        <div class="nav-label">Administration</div>
+        <button class="nav-item" data-view="users">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17.5" cy="8.5" r="2.3"/><path d="M15.5 14a5.5 5.5 0 0 1 5 6"/></svg>
+          Users &amp; Roles
+        </button>
+        <button class="nav-item" data-view="departments">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6M3 21h18"/></svg>
+          Departments
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <div class="avatar" id="sb-avatar">A</div>
+          <div style="min-width:0;">
+            <div class="u-name" id="sb-name">—</div>
+            <div class="u-role" id="sb-role">—</div>
+          </div>
+        </div>
+        <span class="logout-link" id="logout-btn">Sign out</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title" id="topbar-title">Dashboard</div>
+          <div class="topbar-sub" id="topbar-sub">Overview of financial activity</div>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn" id="notif-btn" title="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M9.5 20a2.5 2.5 0 0 0 5 0"/></svg>
+            <span class="badge-dot" id="notif-badge" style="display:none;">0</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="notif-panel" id="notif-panel">
+        <div class="notif-panel-head">
+          <h4>Notifications</h4>
+          <span id="mark-all-read">Mark all read</span>
+        </div>
+        <div id="notif-list"></div>
+      </div>
+
+      <div class="content">
+
+        <!-- ===== DASHBOARD ===== -->
+        <div class="view active" id="view-dashboard">
+          <div class="section-head">
+            <div>
+              <h2>Financial Overview</h2>
+              <div class="sub" id="dash-fy-label">Current position across all requisitions</div>
+            </div>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-label">Pending Approvals</div>
+              <div class="stat-value" id="stat-pending">—</div>
+              <div class="stat-foot">Awaiting action in the workflow</div>
+            </div>
+            <div class="stat-card gold">
+              <div class="stat-label">Approved Requisitions</div>
+              <div class="stat-value" id="stat-approved">—</div>
+              <div class="stat-foot">Fully cleared to accountability</div>
+            </div>
+            <div class="stat-card danger">
+              <div class="stat-label">Rejected Requisitions</div>
+              <div class="stat-value" id="stat-rejected">—</div>
+              <div class="stat-foot">Closed without disbursement</div>
+            </div>
+            <div class="stat-card navy">
+              <div class="stat-label">Total Budget (UGX)</div>
+              <div class="stat-value" id="stat-budget" style="font-size:22px;">—</div>
+              <div class="stat-foot">Across all active budget codes</div>
+            </div>
+          </div>
+
+          <div class="dash-grid">
+            <div class="card card-pad">
+              <div class="kicker">Recent Activity</div>
+              <ul class="timeline" id="recent-activity-list" style="margin-top:8px;">
+                <li class="loading-row"><span class="spinner spinner-dark"></span></li>
+              </ul>
+            </div>
+            <div class="card card-pad">
+              <div class="kicker">Budget Utilisation</div>
+              <div style="font-family:var(--font-mono); font-size:24px; font-weight:600; margin-top:8px;" id="util-pct">—</div>
+              <div class="util-bar-track"><div class="util-bar-fill" id="util-bar" style="width:0%;"></div></div>
+              <div class="help-text" id="util-detail">Loading budget position…</div>
+              <div class="divider"></div>
+              <div class="kicker">Quick Actions</div>
+              <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+                <button class="btn btn-primary btn-block" id="qa-new-req">New Requisition</button>
+                <button class="btn btn-ghost btn-block" data-view-link="approvals">Review Approval Queue</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
+        <div class="view" id="view-workplan">
+          <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+              <div>
+                <div class="kicker" style="color:var(--gold-100);">Annual Work Plan</div>
+                <h2 style="font-family:var(--font-display); margin:2px 0 0; font-size:20px;">Budget Estimates, Financial Year <span id="wp-fy-title">2026/27</span></h2>
+              </div>
+              <select class="filter-select" id="wp-select" style="min-width:200px;"></select>
+              <button class="btn btn-gold" id="wp-new-btn" style="display:none;">+ New Budget Code</button>
+            </div>
+            <div style="display:flex; gap:36px; margin-top:18px; flex-wrap:wrap;">
+              <div>
+                <div style="font-size:11px; text-transform:uppercase; letter-spacing:.5px; opacity:.85;">Total Budget</div>
+                <div style="font-family:var(--font-mono); font-size:24px; font-weight:600;" id="wp-total-budget">—</div>
+              </div>
+              <div>
+                <div style="font-size:11px; text-transform:uppercase; letter-spacing:.5px; opacity:.85;">Budget Codes</div>
+                <div style="font-family:var(--font-mono); font-size:24px; font-weight:600;" id="wp-total-codes">—</div>
+              </div>
+              <div>
+                <div style="font-size:11px; text-transform:uppercase; letter-spacing:.5px; opacity:.85;">Departments Covered</div>
+                <div style="font-family:var(--font-mono); font-size:24px; font-weight:600;" id="wp-total-depts">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              <input type="text" id="wp-search" placeholder="Search budget outputs, codes…" />
+            </div>
+            <select class="filter-select" id="wp-dept-filter"><option value="">All Departments</option></select>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Dept.</th><th class="wrap">Budget Output Code</th><th class="wrap">Output Description</th>
+                  <th>Programme</th><th>Unit</th><th>Baseline</th><th>Target</th>
+                  <th>Allocated (UGX)</th><th>Committed</th><th>Balance</th><th>Funding Source</th>
+                </tr>
+              </thead>
+              <tbody id="wp-table-body">
+                <tr><td colspan="11" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===== REQUISITIONS ===== -->
+        <div class="view" id="view-requisitions">
+          <div class="section-head">
+            <div>
+              <h2>Financial Requisitions</h2>
+              <div class="sub">Create, track and submit requisitions against approved budget codes</div>
+            </div>
+            <button class="btn btn-primary" id="new-req-btn">+ New Requisition</button>
+          </div>
+          <div class="toolbar">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              <input type="text" id="req-search" placeholder="Search by reference number or activity…" />
+            </div>
+            <select class="filter-select" id="req-status-filter">
+              <option value="">All Statuses</option>
+              <option value="draft">Draft</option>
+              <option value="submitted">Submitted</option>
+              <option value="hod_approved">HOD Approved</option>
+              <option value="treasurer_approved">Treasurer Approved</option>
+              <option value="approved">Fully Approved</option>
+              <option value="rejected">Rejected</option>
+              <option value="returned">Returned</option>
+              <option value="accounted">Accounted</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Ref No.</th><th>Requester</th><th>Department</th><th class="wrap">Activity</th><th>Amount (UGX)</th><th>Status</th><th>Stage</th><th>Date</th><th></th></tr>
+              </thead>
+              <tbody id="req-table-body"><tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===== APPROVALS ===== -->
+        <div class="view" id="view-approvals">
+          <div class="section-head">
+            <div>
+              <h2>Approval Queue</h2>
+              <div class="sub">Items awaiting your decision at your stage of the workflow</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Ref No.</th><th>Requester</th><th>Department</th><th class="wrap">Activity</th><th>Amount (UGX)</th><th>Available Balance</th><th>Stage</th><th></th></tr>
+              </thead>
+              <tbody id="approval-table-body"><tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===== ACCOUNTABILITY ===== -->
+        <div class="view" id="view-accountability">
+          <div class="section-head">
+            <div>
+              <h2>Accountability</h2>
+              <div class="sub">Verify supporting documentation for fully approved requisitions</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Ref No.</th><th>Department</th><th>Amount (UGX)</th><th>Documents</th><th>Status</th><th></th></tr>
+              </thead>
+              <tbody id="acc-table-body"><tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===== REPORTS / AUDIT ===== -->
+        <div class="view" id="view-reports">
+          <div class="section-head">
+            <div>
+              <h2>Audit &amp; Reports</h2>
+              <div class="sub">System-wide activity log and single-page audit views</div>
+            </div>
+          </div>
+          <div class="tabs-sub">
+            <button class="active" data-subtab="audit-log">System Audit Log</button>
+            <button data-subtab="audit-view">Requisition Audit View</button>
+          </div>
+          <div id="subtab-audit-log">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Timestamp</th><th>User ID</th><th>Action</th><th class="wrap">Details</th></tr></thead>
+                <tbody id="audit-log-body"><tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <div id="subtab-audit-view" style="display:none;">
+            <div class="card card-pad" style="max-width:420px; margin-bottom:18px;">
+              <label style="font-size:12px; font-weight:600; color:var(--ink-700); display:block; margin-bottom:6px;">Enter Requisition Reference or ID</label>
+              <div style="display:flex; gap:8px;">
+                <input type="text" id="audit-view-search" placeholder="e.g. 12" style="flex:1; padding:9px 12px; border:1.5px solid var(--line); border-radius:var(--radius-sm);" />
+                <button class="btn btn-primary" id="audit-view-btn">View</button>
+              </div>
+            </div>
+            <div id="audit-view-result"></div>
+          </div>
+        </div>
+
+        <!-- ===== USERS ===== -->
+        <div class="view" id="view-users">
+          <div class="section-head">
+            <div>
+              <h2>Users &amp; Roles</h2>
+              <div class="sub">Manage Council staff accounts and role-based access</div>
+            </div>
+            <button class="btn btn-primary" id="new-user-btn">+ New User</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th></th></tr></thead>
+              <tbody id="users-table-body"><tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===== DEPARTMENTS ===== -->
+        <div class="view" id="view-departments">
+          <div class="section-head">
+            <div>
+              <h2>Departments</h2>
+              <div class="sub">Organisational units used across work plans and requisitions</div>
+            </div>
+            <button class="btn btn-primary" id="new-dept-btn">+ New Department</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Code</th><th>Name</th></tr></thead>
+              <tbody id="depts-table-body"><tr><td colspan="2" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast-stack"></div>
+
+<!-- ===== MODAL: New / Submit Requisition ===== -->
+<div class="overlay" id="modal-req">
+  <div class="modal">
+    <div class="modal-head"><h3>New Requisition</h3><button class="modal-close" data-close="modal-req">&times;</button></div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Budget Code</label>
+        <select id="req-budget-code"></select>
+        <div class="help-text" id="req-balance-hint"></div>
+      </div>
+      <div class="field">
+        <label>Activity (optional — must belong to work plan)</label>
+        <select id="req-activity"><option value="">— None —</option></select>
+      </div>
+      <div class="field">
+        <label>Activity Details</label>
+        <textarea id="req-details" rows="3" placeholder="Describe the activity and purpose of this requisition…"></textarea>
+      </div>
+      <div class="field">
+        <label>Amount Requested (UGX)</label>
+        <input type="number" id="req-amount" min="1" placeholder="0" />
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="modal-req">Cancel</button>
+      <button class="btn btn-ghost" id="req-save-draft">Save Draft</button>
+      <button class="btn btn-primary" id="req-submit-now">Submit for Approval</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Requisition Detail ===== -->
+<div class="overlay" id="modal-req-detail">
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3 id="rd-title">Requisition</h3><button class="modal-close" data-close="modal-req-detail">&times;</button></div>
+    <div class="modal-body" id="rd-body"></div>
+    <div class="modal-foot" id="rd-foot"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL: New User ===== -->
+<div class="overlay" id="modal-user">
+  <div class="modal">
+    <div class="modal-head"><h3>New User</h3><button class="modal-close" data-close="modal-user">&times;</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field span2"><label>Full Name</label><input type="text" id="u-name"/></div>
+        <div class="field span2"><label>Email</label><input type="email" id="u-email"/></div>
+        <div class="field"><label>Temporary Password</label><input type="text" id="u-password"/></div>
+        <div class="field"><label>Role</label>
+          <select id="u-role">
+            <option value="staff">Staff Member</option>
+            <option value="hod">Head of Department</option>
+            <option value="treasurer">Senior Treasurer</option>
+            <option value="clerk">Town Clerk</option>
+            <option value="auditor">Internal Auditor</option>
+            <option value="admin">System Administrator</option>
+          </select>
+        </div>
+        <div class="field span2"><label>Department</label><select id="u-department"></select></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="modal-user">Cancel</button>
+      <button class="btn btn-primary" id="u-create-btn">Create User</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: New Department ===== -->
+<div class="overlay" id="modal-dept">
+  <div class="modal">
+    <div class="modal-head"><h3>New Department</h3><button class="modal-close" data-close="modal-dept">&times;</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Department Name</label><input type="text" id="d-name"/></div>
+      <div class="field"><label>Department Code</label><input type="text" id="d-code" placeholder="e.g. FIN"/></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="modal-dept">Cancel</button>
+      <button class="btn btn-primary" id="d-create-btn">Create Department</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: New Budget Code ===== -->
+<div class="overlay" id="modal-bc">
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3>New Budget Code</h3><button class="modal-close" data-close="modal-bc">&times;</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label>Work Plan</label><select id="bc-workplan"></select></div>
+        <div class="field"><label>Department</label><select id="bc-department"></select></div>
+        <div class="field"><label>Budget Output Code</label><input type="text" id="bc-code" placeholder="e.g. 10103"/></div>
+        <div class="field"><label>Funding Source</label><input type="text" id="bc-funding" value="Local Revenue"/></div>
+        <div class="field span2"><label>Output Description</label><input type="text" id="bc-desc"/></div>
+        <div class="field"><label>Programme</label><input type="text" id="bc-programme"/></div>
+        <div class="field"><label>Sub-Programme</label><input type="text" id="bc-subprogramme"/></div>
+        <div class="field"><label>Unit of Measure</label><input type="text" id="bc-unit" placeholder="Number / %"/></div>
+        <div class="field"><label>Baseline Value</label><input type="number" id="bc-baseline" value="0"/></div>
+        <div class="field"><label>Planned Target</label><input type="number" id="bc-target" value="0"/></div>
+        <div class="field"><label>Allocated Amount (UGX)</label><input type="number" id="bc-allocated" value="0"/></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="modal-bc">Cancel</button>
+      <button class="btn btn-primary" id="bc-create-btn">Create Budget Code</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Upload document ===== -->
+<div class="overlay" id="modal-upload">
+  <div class="modal">
+    <div class="modal-head"><h3>Upload Accountability Document</h3><button class="modal-close" data-close="modal-upload">&times;</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Document Type</label>
+        <select id="up-type">
+          <option value="receipt">Receipt</option>
+          <option value="attendance">Attendance Sheet</option>
+          <option value="voucher">Payment Voucher</option>
+          <option value="supporting">Supporting Document</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>File (PDF, DOCX, JPG, PNG)</label><input type="file" id="up-file" accept=".pdf,.docx,.jpg,.jpeg,.png"/></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="modal-upload">Cancel</button>
+      <button class="btn btn-primary" id="up-submit-btn">Upload</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   KTC-IPFMS — Frontend application logic (vanilla JS, no build step)
+   ========================================================================== */
+
+// ---- Configuration --------------------------------------------------------
+// Point this at your deployed FastAPI backend (Render URL) or leave as-is
+// for local development against http://127.0.0.1:8000
+const API_BASE = (function(){
+  const saved = localStorage.getItem('ktc_api_base');
+  if (saved) return saved;
+  return window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
+    ? 'http://127.0.0.1:8000'
+    : window.location.origin;
+})();
+
+let STATE = {
+  token: localStorage.getItem('ktc_token') || null,
+  role: localStorage.getItem('ktc_role') || null,
+  name: localStorage.getItem('ktc_name') || null,
+  userId: localStorage.getItem('ktc_user_id') || null,
+  departments: [],
+  workplans: [],
+  budgetCodes: [],
+  currentReqId: null,
+};
+
+// ---- Fetch helper -----------------------------------------------------------
+async function api(path, opts = {}) {
+  const headers = opts.headers || {};
+  if (!(opts.body instanceof FormData)) headers['Content-Type'] = 'application/json';
+  if (STATE.token) headers['Authorization'] = 'Bearer ' + STATE.token;
+  const res = await fetch(API_BASE + path, { ...opts, headers });
+  if (res.status === 401) {
+    logout();
+    throw new Error('Session expired. Please sign in again.');
+  }
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* no body */ }
+  if (!res.ok) {
+    const msg = (data && data.detail) ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Something went wrong';
+    throw new Error(msg);
+  }
+  return data;
+}
+
+// ---- Toasts -----------------------------------------------------------------
+function toast(message, type = 'info') {
+  const stack = document.getElementById('toast-stack');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = message;
+  stack.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 4200);
+}
+
+function money(n) {
+  n = Number(n || 0);
+  return n.toLocaleString('en-UG', { maximumFractionDigits: 0 });
+}
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' · ' +
+         d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+}
+function initials(name) {
+  if (!name) return '?';
+  return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
+}
+function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
+
+// ---- Crest SVG (used in login band + sidebar) --------------------------------
+const CREST_SVG = `
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1C8577"/>
+      <stop offset="100%" stop-color="#0F5C52"/>
+    </linearGradient>
+  </defs>
+  <path d="M32 2 L58 12 V30 C58 46 47 57 32 62 C17 57 6 46 6 30 V12 Z" fill="url(#shieldGrad)" stroke="#C99A3E" stroke-width="2"/>
+  <path d="M32 14 L44 20 V30 C44 39 38 46 32 49 C26 46 20 39 20 30 V20 Z" fill="#0A2530" opacity="0.35"/>
+  <circle cx="32" cy="27" r="6" fill="#F6ECD8"/>
+  <path d="M22 40 Q32 46 42 40" stroke="#F6ECD8" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+</svg>`;
+document.querySelectorAll('.crest').forEach(el => el.innerHTML = CREST_SVG);
+
+// ---- Auth ---------------------------------------------------------------------
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  errEl.style.display = 'none';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Signing in…';
+  try {
+    const data = await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+    STATE.token = data.access_token; STATE.role = data.role; STATE.name = data.full_name; STATE.userId = data.user_id;
+    localStorage.setItem('ktc_token', STATE.token);
+    localStorage.setItem('ktc_role', STATE.role);
+    localStorage.setItem('ktc_name', STATE.name);
+    localStorage.setItem('ktc_user_id', STATE.userId);
+    enterApp();
+  } catch (err) {
+    errEl.textContent = err.message || 'Unable to sign in. Please check your credentials.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.innerHTML = 'Sign in to your account';
+  }
+});
+
+function logout() {
+  STATE = { ...STATE, token: null, role: null, name: null, userId: null };
+  localStorage.removeItem('ktc_token'); localStorage.removeItem('ktc_role');
+  localStorage.removeItem('ktc_name'); localStorage.removeItem('ktc_user_id');
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+document.getElementById('logout-btn').addEventListener('click', logout);
+
+async function enterApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  document.getElementById('sb-name').textContent = STATE.name;
+  document.getElementById('sb-role').textContent = statusLabel(STATE.role);
+  document.getElementById('sb-avatar').textContent = initials(STATE.name);
+  document.getElementById('admin-nav-group').style.display = (STATE.role === 'admin') ? 'block' : 'none';
+  applyRoleVisibility();
+  await loadDepartments();
+  await loadWorkplans();
+  switchView('dashboard');
+  refreshNotifications();
+  setInterval(refreshNotifications, 30000);
+}
+
+function applyRoleVisibility() {
+  const navMap = {
+    approvals: ['hod', 'treasurer', 'clerk', 'admin'],
+    accountability: ['auditor', 'admin'],
+    reports: ['admin', 'auditor', 'clerk', 'treasurer', 'hod', 'staff'],
+  };
+  document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
+    const v = btn.dataset.view;
+    if (navMap[v] && !navMap[v].includes(STATE.role)) btn.style.display = 'none';
+    else btn.style.display = 'flex';
+  });
+  document.getElementById('wp-new-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+  document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
+  document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
+}
+
+// ---- Navigation -----------------------------------------------------------
+const VIEW_TITLES = {
+  dashboard: ['Dashboard', 'Overview of financial activity'],
+  workplan: ['Work Plan & Budget', 'Annual work plans, budget codes and utilisation'],
+  requisitions: ['Requisitions', 'Requisition tracking and submission'],
+  approvals: ['Approvals', 'Three-stage approval workflow'],
+  accountability: ['Accountability', 'Post-approval documentation and verification'],
+  reports: ['Audit & Reports', 'System-wide activity and audit trail'],
+  users: ['Users & Roles', 'Account and access management'],
+  departments: ['Departments', 'Organisational structure'],
+};
+
+function switchView(view) {
+  document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  document.getElementById('topbar-title').textContent = VIEW_TITLES[view][0];
+  document.getElementById('topbar-sub').textContent = VIEW_TITLES[view][1];
+  closeNotifPanel();
+  if (view === 'dashboard') loadDashboard();
+  if (view === 'workplan') loadWorkplanView();
+  if (view === 'requisitions') loadRequisitions();
+  if (view === 'approvals') loadApprovals();
+  if (view === 'accountability') loadAccountability();
+  if (view === 'reports') loadAuditLog();
+  if (view === 'users') loadUsers();
+  if (view === 'departments') loadDepartmentsView();
+}
+document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
+  btn.addEventListener('click', () => switchView(btn.dataset.view));
+});
+document.querySelectorAll('[data-view-link]').forEach(btn => {
+  btn.addEventListener('click', () => switchView(btn.dataset.viewLink));
+});
+
+// ---- Modals -----------------------------------------------------------------
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => closeModal(el.dataset.close)));
+document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', (e) => { if (e.target === ov) ov.classList.remove('show'); }));
+
+// ---- Notifications ------------------------------------------------------------
+document.getElementById('notif-btn').addEventListener('click', async () => {
+  const panel = document.getElementById('notif-panel');
+  panel.classList.toggle('show');
+  if (panel.classList.contains('show')) await renderNotifications();
+});
+function closeNotifPanel() { document.getElementById('notif-panel').classList.remove('show'); }
+document.getElementById('mark-all-read').addEventListener('click', async () => {
+  await api('/api/notifications/read-all', { method: 'PATCH' });
+  refreshNotifications(); renderNotifications();
+});
+
+async function refreshNotifications() {
+  try {
+    const items = await api('/api/notifications?unread_only=true');
+    const badge = document.getElementById('notif-badge');
+    if (items.length > 0) { badge.style.display = 'flex'; badge.textContent = items.length > 9 ? '9+' : items.length; }
+    else badge.style.display = 'none';
+  } catch (e) { /* silent */ }
+}
+async function renderNotifications() {
+  const list = document.getElementById('notif-list');
+  list.innerHTML = '<div class="loading-row"><span class="spinner spinner-dark"></span></div>';
+  try {
+    const items = await api('/api/notifications');
+    if (items.length === 0) { list.innerHTML = '<div class="notif-empty">You have no notifications yet.</div>'; return; }
+    list.innerHTML = items.map(n => `
+      <div class="notif-item ${n.is_read ? '' : 'unread'}">
+        <div class="dot"></div>
+        <div><div class="msg">${escapeHtml(n.message)}</div><div class="time">${fmtDate(n.created_at)}</div></div>
+      </div>`).join('');
+  } catch (e) { list.innerHTML = '<div class="notif-empty">Could not load notifications.</div>'; }
+}
+function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+// ---- Departments / Work Plans (shared reference data) --------------------------
+async function loadDepartments() {
+  STATE.departments = await api('/api/departments');
+  const selects = ['wp-dept-filter', 'u-department', 'bc-department'];
+  selects.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const keepFirst = id === 'wp-dept-filter';
+    el.innerHTML = (keepFirst ? '<option value="">All Departments</option>' : '<option value="">— Select —</option>') +
+      STATE.departments.map(d => `<option value="${d.id}">${escapeHtml(d.name)}</option>`).join('');
+  });
+}
+async function loadWorkplans() {
+  STATE.workplans = await api('/api/workplans');
+  const wpSel = document.getElementById('wp-select');
+  const bcSel = document.getElementById('bc-workplan');
+  const opts = STATE.workplans.map(w => `<option value="${w.id}">${escapeHtml(w.title)} — FY ${escapeHtml(w.financial_year)}</option>`).join('');
+  if (wpSel) wpSel.innerHTML = opts || '<option value="">No work plans yet</option>';
+  if (bcSel) bcSel.innerHTML = opts || '<option value="">No work plans yet</option>';
+}
+
+// ---- Dashboard -----------------------------------------------------------------
+async function loadDashboard() {
+  try {
+    const s = await api('/api/dashboard/stats');
+    document.getElementById('stat-pending').textContent = s.pending_approvals;
+    document.getElementById('stat-approved').textContent = s.approved_requisitions;
+    document.getElementById('stat-rejected').textContent = s.rejected_requisitions;
+    document.getElementById('stat-budget').textContent = money(s.total_budget);
+    document.getElementById('util-pct').textContent = s.utilization_pct + '%';
+    document.getElementById('util-bar').style.width = Math.min(s.utilization_pct, 100) + '%';
+    document.getElementById('util-detail').textContent = `UGX ${money(s.budget_utilized)} committed of UGX ${money(s.total_budget)} allocated`;
+    const list = document.getElementById('recent-activity-list');
+    if (s.recent_activity.length === 0) {
+      list.innerHTML = '<li class="empty-state" style="padding:20px 0;">No activity recorded yet.</li>';
+    } else {
+      list.innerHTML = s.recent_activity.map(r => `
+        <li>
+          <div class="tl-stamp">${statusIcon(r.status)}</div>
+          <div class="tl-body">
+            <div class="tl-title">${r.ref_no} <span class="pill pill-${r.status}" style="margin-left:6px;">${statusLabel(r.status)}</span></div>
+            <div class="tl-meta">${escapeHtml(r.department || '—')} · UGX ${money(r.amount)} · ${fmtDate(r.created_at)}</div>
+          </div>
+        </li>`).join('');
+    }
+  } catch (e) { toast(e.message, 'error'); }
+}
+function statusIcon(status) {
+  if (['approved','accounted'].includes(status)) return '✓';
+  if (status === 'rejected') return '✕';
+  if (status === 'returned') return '↺';
+  return '…';
+}
+document.getElementById('qa-new-req').addEventListener('click', () => openRequisitionModal());
+
+// ---- Work Plan & Budget view -----------------------------------------------------
+async function loadWorkplanView() {
+  await loadWorkplans();
+  await renderBudgetCodes();
+}
+document.getElementById('wp-select').addEventListener('change', renderBudgetCodes);
+document.getElementById('wp-dept-filter').addEventListener('change', renderBudgetCodes);
+document.getElementById('wp-search').addEventListener('input', debounce(renderBudgetCodes, 300));
+
+async function renderBudgetCodes() {
+  const tbody = document.getElementById('wp-table-body');
+  tbody.innerHTML = '<tr><td colspan="11" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  const wpId = document.getElementById('wp-select').value;
+  const deptId = document.getElementById('wp-dept-filter').value;
+  const search = document.getElementById('wp-search').value.trim();
+  const wp = STATE.workplans.find(w => String(w.id) === String(wpId));
+  document.getElementById('wp-fy-title').textContent = wp ? wp.financial_year : '—';
+  try {
+    let path = '/api/budget-codes?';
+    if (wpId) path += `work_plan_id=${wpId}&`;
+    if (deptId) path += `department_id=${deptId}&`;
+    if (search) path += `search=${encodeURIComponent(search)}&`;
+    const codes = await api(path);
+    STATE.budgetCodes = codes;
+    const total = codes.reduce((a, c) => a + c.allocated_amount, 0);
+    const depts = new Set(codes.map(c => c.department_id));
+    document.getElementById('wp-total-budget').textContent = 'UGX ' + money(total);
+    document.getElementById('wp-total-codes').textContent = codes.length;
+    document.getElementById('wp-total-depts').textContent = depts.size;
+    if (codes.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = codes.map(c => `
+      <tr>
+        <td>${escapeHtml(c.department_name || '—')}</td>
+        <td class="mono">${escapeHtml(c.code)}</td>
+        <td class="wrap">${escapeHtml(c.output_description)}</td>
+        <td class="wrap">${escapeHtml(c.programme || '—')}</td>
+        <td>${escapeHtml(c.unit_of_measure || '—')}</td>
+        <td class="num">${money(c.baseline_value)}</td>
+        <td class="num">${money(c.planned_target)}</td>
+        <td class="num mono">${money(c.allocated_amount)}</td>
+        <td class="num mono">${money(c.committed_amount)}</td>
+        <td class="num mono" style="color:${c.available_balance < 0 ? 'var(--danger)' : 'var(--success)'}; font-weight:600;">${money(c.available_balance)}</td>
+        <td>${escapeHtml(c.funding_source)}</td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+
+document.getElementById('wp-new-btn').addEventListener('click', () => openModal('modal-bc'));
+document.getElementById('bc-create-btn').addEventListener('click', async () => {
+  const payload = {
+    work_plan_id: Number(document.getElementById('bc-workplan').value),
+    department_id: Number(document.getElementById('bc-department').value),
+    code: document.getElementById('bc-code').value.trim(),
+    output_description: document.getElementById('bc-desc').value.trim(),
+    programme: document.getElementById('bc-programme').value.trim(),
+    sub_programme: document.getElementById('bc-subprogramme').value.trim(),
+    unit_of_measure: document.getElementById('bc-unit').value.trim(),
+    baseline_value: Number(document.getElementById('bc-baseline').value || 0),
+    planned_target: Number(document.getElementById('bc-target').value || 0),
+    allocated_amount: Number(document.getElementById('bc-allocated').value || 0),
+    funding_source: document.getElementById('bc-funding').value.trim() || 'Local Revenue',
+  };
+  if (!payload.work_plan_id || !payload.department_id || !payload.code || !payload.output_description) {
+    toast('Please complete all required fields', 'error'); return;
+  }
+  try {
+    await api('/api/budget-codes', { method: 'POST', body: JSON.stringify(payload) });
+    toast('Budget code created', 'success');
+    closeModal('modal-bc');
+    renderBudgetCodes();
+  } catch (e) { toast(e.message, 'error'); }
+});
+
+// ---- Requisitions --------------------------------------------------------------
+async function openRequisitionModal() {
+  const bcSel = document.getElementById('req-budget-code');
+  bcSel.innerHTML = '<option>Loading…</option>';
+  const codes = await api('/api/budget-codes');
+  STATE.budgetCodes = codes;
+  bcSel.innerHTML = codes.map(c => `<option value="${c.id}">${escapeHtml(c.code)} — ${escapeHtml(c.output_description)}</option>`).join('') || '<option value="">No budget codes available</option>';
+  updateBalanceHint();
+  await updateActivityOptions();
+  document.getElementById('req-details').value = '';
+  document.getElementById('req-amount').value = '';
+  openModal('modal-req');
+}
+document.getElementById('new-req-btn').addEventListener('click', openRequisitionModal);
+document.getElementById('req-budget-code').addEventListener('change', () => { updateBalanceHint(); updateActivityOptions(); });
+
+function updateBalanceHint() {
+  const id = document.getElementById('req-budget-code').value;
+  const bc = STATE.budgetCodes.find(c => String(c.id) === String(id));
+  const hint = document.getElementById('req-balance-hint');
+  hint.textContent = bc ? `Available balance: UGX ${money(bc.available_balance)}` : '';
+}
+async function updateActivityOptions() {
+  const id = document.getElementById('req-budget-code').value;
+  const actSel = document.getElementById('req-activity');
+  actSel.innerHTML = '<option value="">— None —</option>';
+  if (!id) return;
+  try {
+    const acts = await api(`/api/activities?budget_code_id=${id}`);
+    actSel.innerHTML += acts.map(a => `<option value="${a.id}">${escapeHtml(a.name)} (${a.quarter})</option>`).join('');
+  } catch (e) { /* silent */ }
+}
+
+async function submitNewRequisition(submitNow) {
+  const payload = {
+    budget_code_id: Number(document.getElementById('req-budget-code').value),
+    activity_id: document.getElementById('req-activity').value ? Number(document.getElementById('req-activity').value) : null,
+    activity_details: document.getElementById('req-details').value.trim(),
+    amount_requested: Number(document.getElementById('req-amount').value || 0),
+  };
+  if (!payload.budget_code_id || !payload.activity_details || payload.amount_requested <= 0) {
+    toast('Please complete all fields with a valid amount', 'error'); return;
+  }
+  try {
+    await api(`/api/requisitions?submit=${submitNow}`, { method: 'POST', body: JSON.stringify(payload) });
+    toast(submitNow ? 'Requisition submitted for approval' : 'Requisition saved as draft', 'success');
+    closeModal('modal-req');
+    loadRequisitions();
+  } catch (e) { toast(e.message, 'error'); }
+}
+document.getElementById('req-save-draft').addEventListener('click', () => submitNewRequisition(false));
+document.getElementById('req-submit-now').addEventListener('click', () => submitNewRequisition(true));
+
+document.getElementById('req-search').addEventListener('input', debounce(loadRequisitions, 300));
+document.getElementById('req-status-filter').addEventListener('change', loadRequisitions);
+
+async function loadRequisitions() {
+  const tbody = document.getElementById('req-table-body');
+  tbody.innerHTML = '<tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  const status = document.getElementById('req-status-filter').value;
+  const search = document.getElementById('req-search').value.trim().toLowerCase();
+  try {
+    let path = '/api/requisitions';
+    if (status) path += `?status=${status}`;
+    let items = await api(path);
+    if (search) items = items.filter(r => (r.ref_no + ' ' + (r.activity_details||'')).toLowerCase().includes(search));
+    if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state">No requisitions found.</div></td></tr>'; return; }
+    tbody.innerHTML = items.map(r => `
+      <tr>
+        <td class="mono">${r.ref_no}</td>
+        <td>${escapeHtml(r.requester_name || '—')}</td>
+        <td>${escapeHtml(r.department_name || '—')}</td>
+        <td class="wrap">${escapeHtml(r.activity_details || '—')}</td>
+        <td class="num mono">${money(r.amount_requested)}</td>
+        <td><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></td>
+        <td>${escapeHtml(statusLabel(r.current_stage))}</td>
+        <td>${fmtDate(r.created_at)}</td>
+        <td><button class="btn btn-ghost" style="padding:6px 10px;" onclick="viewRequisition(${r.id})">View</button></td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+
+async function viewRequisition(id) {
+  STATE.currentReqId = id;
+  const body = document.getElementById('rd-body');
+  const foot = document.getElementById('rd-foot');
+  body.innerHTML = '<div class="loading-row"><span class="spinner spinner-dark"></span></div>';
+  foot.innerHTML = '';
+  openModal('modal-req-detail');
+  try {
+    const r = await api(`/api/requisitions/${id}`);
+    document.getElementById('rd-title').textContent = r.ref_no;
+    body.innerHTML = `
+      <div class="detail-grid">
+        <div><div class="detail-label">Requester</div><div class="detail-value">${escapeHtml(r.requester_name||'—')}</div></div>
+        <div><div class="detail-label">Department</div><div class="detail-value">${escapeHtml(r.department_name||'—')}</div></div>
+        <div><div class="detail-label">Budget Code</div><div class="detail-value mono">${escapeHtml(r.budget_code||'—')} — ${escapeHtml(r.budget_output||'')}</div></div>
+        <div><div class="detail-label">Activity</div><div class="detail-value">${escapeHtml(r.activity_name||'—')}</div></div>
+        <div><div class="detail-label">Amount Requested</div><div class="detail-value mono">UGX ${money(r.amount_requested)}</div></div>
+        <div><div class="detail-label">Status</div><div class="detail-value"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div></div>
+        <div class="span2" style="grid-column:1/-1;"><div class="detail-label">Activity Details</div><div class="detail-value">${escapeHtml(r.activity_details||'—')}</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="kicker">Approval History</div>
+      <ul class="timeline" style="margin-top:8px;">
+        ${r.approvals.length ? r.approvals.map(a => `
+          <li><div class="tl-stamp">${a.action === 'approve' ? '✓' : a.action === 'reject' ? '✕' : '↺'}</div>
+          <div class="tl-body"><div class="tl-title">${escapeHtml(statusLabel(a.stage))} — ${escapeHtml(statusLabel(a.action))}d by ${escapeHtml(a.actor||'—')}</div>
+          <div class="tl-meta">${escapeHtml(a.comments || 'No comments')} · ${fmtDate(a.created_at)}</div></div></li>`).join('')
+          : '<li class="tl-meta" style="padding:8px 0;">No approval action recorded yet.</li>'}
+      </ul>
+      <div class="divider"></div>
+      <div class="kicker">Documents</div>
+      <div style="margin-top:8px;">
+        ${r.documents.length ? r.documents.map(d => `<div style="font-size:12.5px; padding:6px 0;"><a href="${API_BASE}${d.url}" target="_blank">${escapeHtml(d.filename)}</a> <span class="pill pill-draft">${d.doc_type}</span></div>`).join('')
+          : '<div class="tl-meta">No documents uploaded.</div>'}
+      </div>
+      ${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div></div>` : ''}
+    `;
+    // Footer actions depend on role/status/stage
+    let footHtml = '';
+    if (r.status === 'draft' && (r.requester_id == STATE.userId || STATE.role === 'admin')) {
+      footHtml += `<button class="btn btn-primary" onclick="submitExisting(${r.id})">Submit for Approval</button>`;
+    }
+    const stageRole = { hod: 'hod', treasurer: 'treasurer', clerk: 'clerk' }[r.current_stage];
+    if (stageRole && (STATE.role === stageRole || STATE.role === 'admin')) {
+      footHtml += `
+        <button class="btn btn-danger" onclick="actOnRequisition(${r.id}, 'reject')">Reject</button>
+        <button class="btn btn-ghost" onclick="actOnRequisition(${r.id}, 'return')">Return for Correction</button>
+        <button class="btn btn-primary" onclick="actOnRequisition(${r.id}, 'approve')">Approve</button>`;
+    }
+    if (r.accountability && (STATE.role === 'auditor' || STATE.role === 'admin')) {
+      footHtml += `<button class="btn btn-ghost" onclick="openUploadModal(${r.id})">Upload Document</button>
+        <button class="btn btn-primary" onclick="verifyAccountability(${r.id})">Mark Verified</button>`;
+    }
+    foot.innerHTML = footHtml;
+  } catch (e) { body.innerHTML = `<div class="empty-state">${escapeHtml(e.message)}</div>`; }
+}
+
+async function submitExisting(id) {
+  try { await api(`/api/requisitions/${id}/submit`, { method: 'POST' }); toast('Requisition submitted', 'success'); closeModal('modal-req-detail'); loadRequisitions(); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+async function actOnRequisition(id, action) {
+  let comments = '';
+  if (action !== 'approve') {
+    comments = prompt(`Please provide comments for this ${action === 'reject' ? 'rejection' : 'return'}:`) || '';
+  }
+  try {
+    await api(`/api/requisitions/${id}/approve-action`, { method: 'POST', body: JSON.stringify({ action, comments }) });
+    toast(`Requisition ${action}d`, action === 'approve' ? 'success' : 'info');
+    closeModal('modal-req-detail');
+    loadApprovals(); loadRequisitions(); loadDashboard();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ---- Approvals ------------------------------------------------------------------
+async function loadApprovals() {
+  const tbody = document.getElementById('approval-table-body');
+  tbody.innerHTML = '<tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  try {
+    const items = await api('/api/approvals/pending');
+    if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state">Nothing awaiting your approval right now.</div></td></tr>'; return; }
+    tbody.innerHTML = items.map(r => {
+      const bc = STATE.budgetCodes.find(c => c.id === r.budget_code_id);
+      return `
+      <tr>
+        <td class="mono">${r.ref_no}</td>
+        <td>${escapeHtml(r.requester_name||'—')}</td>
+        <td>${escapeHtml(r.department_name||'—')}</td>
+        <td class="wrap">${escapeHtml(r.activity_details||'—')}</td>
+        <td class="num mono">${money(r.amount_requested)}</td>
+        <td class="num mono">${bc ? money(bc.available_balance) : '—'}</td>
+        <td>${escapeHtml(statusLabel(r.current_stage))}</td>
+        <td><button class="btn btn-primary" style="padding:6px 10px;" onclick="viewRequisition(${r.id})">Review</button></td>
+      </tr>`;
+    }).join('');
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+
+// ---- Accountability --------------------------------------------------------------
+async function loadAccountability() {
+  const tbody = document.getElementById('acc-table-body');
+  tbody.innerHTML = '<tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  try {
+    const items = await api('/api/accountability/pending');
+    if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state">No accountability records pending review.</div></td></tr>'; return; }
+    tbody.innerHTML = items.map(r => `
+      <tr>
+        <td class="mono">${r.ref_no}</td>
+        <td>${escapeHtml(r.department_name||'—')}</td>
+        <td class="num mono">${money(r.amount_requested)}</td>
+        <td>${r.documents.length} file(s)</td>
+        <td><span class="pill pill-${r.accountability ? r.accountability.status : 'pending'}">${statusLabel(r.accountability ? r.accountability.status : 'pending')}</span></td>
+        <td><button class="btn btn-primary" style="padding:6px 10px;" onclick="viewRequisition(${r.id})">Review</button></td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+
+function openUploadModal(reqId) { STATE.currentReqId = reqId; openModal('modal-upload'); }
+document.getElementById('up-submit-btn').addEventListener('click', async () => {
+  const fileInput = document.getElementById('up-file');
+  if (!fileInput.files.length) { toast('Please choose a file to upload', 'error'); return; }
+  const fd = new FormData();
+  fd.append('file', fileInput.files[0]);
+  try {
+    await api(`/api/requisitions/${STATE.currentReqId}/documents?doc_type=${document.getElementById('up-type').value}`, { method: 'POST', body: fd });
+    toast('Document uploaded', 'success');
+    closeModal('modal-upload');
+    viewRequisition(STATE.currentReqId);
+  } catch (e) { toast(e.message, 'error'); }
+});
+async function verifyAccountability(id) {
+  const remarks = prompt('Add any verification remarks (optional):') || '';
+  try {
+    await api(`/api/requisitions/${id}/accountability`, { method: 'POST', body: JSON.stringify({ status: 'verified', remarks }) });
+    toast('Accountability verified', 'success');
+    closeModal('modal-req-detail');
+    loadAccountability();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ---- Reports / Audit --------------------------------------------------------------
+document.querySelectorAll('.tabs-sub button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tabs-sub button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('subtab-audit-log').style.display = btn.dataset.subtab === 'audit-log' ? 'block' : 'none';
+    document.getElementById('subtab-audit-view').style.display = btn.dataset.subtab === 'audit-view' ? 'block' : 'none';
+  });
+});
+async function loadAuditLog() {
+  const tbody = document.getElementById('audit-log-body');
+  tbody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  try {
+    const logs = await api('/api/reports/audit-logs');
+    if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state">No audit entries yet.</div></td></tr>'; return; }
+    tbody.innerHTML = logs.map(l => `<tr><td>${fmtDate(l.created_at)}</td><td class="mono">${l.user ?? '—'}</td><td>${escapeHtml(l.action)}</td><td class="wrap">${escapeHtml(l.details||'—')}</td></tr>`).join('');
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+document.getElementById('audit-view-btn').addEventListener('click', async () => {
+  const id = document.getElementById('audit-view-search').value.trim();
+  const result = document.getElementById('audit-view-result');
+  if (!id) return;
+  result.innerHTML = '<div class="loading-row"><span class="spinner spinner-dark"></span></div>';
+  try {
+    const r = await api(`/api/reports/audit-view/${id}`);
+    result.innerHTML = `
+      <div class="card card-pad">
+        <div class="kicker">Consolidated Audit View — ${r.ref_no}</div>
+        <div class="detail-grid" style="margin-top:12px;">
+          <div><div class="detail-label">Requester</div><div class="detail-value">${escapeHtml(r.requester_name||'—')}</div></div>
+          <div><div class="detail-label">Department</div><div class="detail-value">${escapeHtml(r.department_name||'—')}</div></div>
+          <div><div class="detail-label">Budget Code</div><div class="detail-value mono">${escapeHtml(r.budget_code||'—')}</div></div>
+          <div><div class="detail-label">Amount</div><div class="detail-value mono">UGX ${money(r.amount_requested)}</div></div>
+          <div><div class="detail-label">Status</div><div class="detail-value"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div></div>
+          <div><div class="detail-label">Stage</div><div class="detail-value">${escapeHtml(statusLabel(r.current_stage))}</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="kicker">Approval History</div>
+        <ul class="timeline" style="margin-top:8px;">
+          ${r.approvals.map(a => `<li><div class="tl-stamp">${a.action==='approve'?'✓':a.action==='reject'?'✕':'↺'}</div><div class="tl-body"><div class="tl-title">${escapeHtml(statusLabel(a.stage))} — ${escapeHtml(statusLabel(a.action))}d</div><div class="tl-meta">${escapeHtml(a.actor||'—')} · ${escapeHtml(a.comments||'No comments')} · ${fmtDate(a.created_at)}</div></div></li>`).join('') || '<li class="tl-meta">No approval history.</li>'}
+        </ul>
+        <div class="divider"></div>
+        <div class="kicker">Uploaded Documents</div>
+        <div style="margin-top:8px;">${r.documents.map(d => `<div style="font-size:12.5px; padding:4px 0;"><a href="${API_BASE}${d.url}" target="_blank">${escapeHtml(d.filename)}</a></div>`).join('') || '<div class="tl-meta">None uploaded.</div>'}</div>
+        ${r.accountability ? `<div class="divider"></div><div class="kicker">Auditor Remarks</div><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'—')}</div>` : ''}
+      </div>`;
+  } catch (e) { result.innerHTML = `<div class="empty-state">${escapeHtml(e.message)}</div>`; }
+});
+
+// ---- Users ------------------------------------------------------------------------
+document.getElementById('new-user-btn').addEventListener('click', () => openModal('modal-user'));
+document.getElementById('u-create-btn').addEventListener('click', async () => {
+  const payload = {
+    full_name: document.getElementById('u-name').value.trim(),
+    email: document.getElementById('u-email').value.trim(),
+    password: document.getElementById('u-password').value,
+    role: document.getElementById('u-role').value,
+    department_id: document.getElementById('u-department').value ? Number(document.getElementById('u-department').value) : null,
+  };
+  if (!payload.full_name || !payload.email || !payload.password) { toast('Please complete all fields', 'error'); return; }
+  try {
+    await api('/api/users', { method: 'POST', body: JSON.stringify(payload) });
+    toast('User created', 'success');
+    closeModal('modal-user');
+    loadUsers();
+  } catch (e) { toast(e.message, 'error'); }
+});
+async function loadUsers() {
+  const tbody = document.getElementById('users-table-body');
+  tbody.innerHTML = '<tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  try {
+    const users = await api('/api/users');
+    if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state">No users found.</div></td></tr>'; return; }
+    tbody.innerHTML = users.map(u => {
+      const dept = STATE.departments.find(d => d.id === u.department_id);
+      return `<tr>
+        <td>${escapeHtml(u.full_name)}</td><td>${escapeHtml(u.email)}</td><td>${statusLabel(u.role)}</td>
+        <td>${escapeHtml(dept ? dept.name : '—')}</td>
+        <td><span class="pill pill-${u.is_active ? 'approved' : 'rejected'}">${u.is_active ? 'Active' : 'Disabled'}</span></td>
+        <td><button class="btn btn-ghost" style="padding:6px 10px;" onclick="toggleUser(${u.id})">${u.is_active ? 'Disable' : 'Enable'}</button></td>
+      </tr>`;
+    }).join('');
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+async function toggleUser(id) {
+  try { await api(`/api/users/${id}/toggle-active`, { method: 'PATCH' }); loadUsers(); toast('User status updated', 'success'); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+// ---- Departments view ---------------------------------------------------------------
+document.getElementById('new-dept-btn').addEventListener('click', () => openModal('modal-dept'));
+document.getElementById('d-create-btn').addEventListener('click', async () => {
+  const payload = { name: document.getElementById('d-name').value.trim(), code: document.getElementById('d-code').value.trim() };
+  if (!payload.name || !payload.code) { toast('Please complete both fields', 'error'); return; }
+  try {
+    await api('/api/departments', { method: 'POST', body: JSON.stringify(payload) });
+    toast('Department created', 'success');
+    closeModal('modal-dept');
+    await loadDepartments();
+    loadDepartmentsView();
+  } catch (e) { toast(e.message, 'error'); }
+});
+async function loadDepartmentsView() {
+  const tbody = document.getElementById('depts-table-body');
+  tbody.innerHTML = '<tr><td colspan="2" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  try {
+    const deps = await api('/api/departments');
+    tbody.innerHTML = deps.map(d => `<tr><td class="mono">${escapeHtml(d.code)}</td><td>${escapeHtml(d.name)}</td></tr>`).join('') ||
+      '<tr><td colspan="2"><div class="empty-state">No departments yet.</div></td></tr>';
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="2"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+
+// ---- Utilities -----------------------------------------------------------------------
+function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); }; }
+
+// ---- Boot -----------------------------------------------------------------------------
+if (STATE.token) { enterApp().catch(() => logout()); }
+</script>
+</body>
+</html>
