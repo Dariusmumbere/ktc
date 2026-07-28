@@ -376,6 +376,36 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 .help-text{font-size:11.5px; color:var(--ink-500); margin-top:4px;}
 .divider{height:1px; background:var(--line); margin:16px 0;}
 .kicker{font-size:10.5px; text-transform:uppercase; letter-spacing:.7px; color:var(--gold-600); font-weight:700;}
+
+/* ---------------- Section groups inside forms ---------------- */
+.field-section{margin-top:4px;}
+.field-section .kicker{display:block; margin-bottom:2px;}
+
+/* ---------------- Hamburger / responsive sidebar ---------------- */
+.hamburger-btn{display:none;}
+.sidebar-backdrop{display:none;}
+@media (max-width: 900px){
+  .hamburger-btn{display:flex;}
+  .sidebar{
+    position:fixed; top:0; left:0; bottom:0; z-index:150; width:250px;
+    transform:translateX(-100%); transition:transform .25s var(--ease);
+  }
+  .sidebar.open{transform:translateX(0); box-shadow:var(--shadow-lg);}
+  .sidebar-backdrop{
+    display:none; position:fixed; inset:0; background:rgba(10,20,26,.55); z-index:140;
+  }
+  .sidebar-backdrop.show{display:block; animation:fadeIn .2s var(--ease);}
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .form-grid{grid-template-columns:1fr;}
+  .detail-grid{grid-template-columns:1fr;}
+  .content{padding:18px 16px 50px;}
+}
+@media (max-width:560px){
+  .stat-grid{grid-template-columns:1fr;}
+  .topbar{padding:0 14px;}
+  .content{padding:14px 12px 50px;}
+  .toolbar{flex-direction:column; align-items:stretch;}
+}
 </style>
 </head>
 <body>
@@ -412,6 +442,7 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 
 <!-- ===================== APP ===================== -->
 <div id="app-screen">
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
   <div class="shell">
     <aside class="sidebar">
       <div class="brand">
@@ -474,9 +505,14 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 
     <main class="main">
       <div class="topbar">
-        <div>
-          <div class="topbar-title" id="topbar-title">Dashboard</div>
-          <div class="topbar-sub" id="topbar-sub">Overview of financial activity</div>
+        <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+          <button class="icon-btn hamburger-btn" id="hamburger-btn" title="Menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <div style="min-width:0;">
+            <div class="topbar-title" id="topbar-title">Dashboard</div>
+            <div class="topbar-sub" id="topbar-sub">Overview of financial activity</div>
+          </div>
         </div>
         <div class="topbar-right">
           <button class="icon-btn" id="notif-btn" title="Notifications">
@@ -558,6 +594,7 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
                 <h2 style="font-family:var(--font-display); margin:2px 0 0; font-size:20px;">Budget Estimates, Financial Year <span id="wp-fy-title">2026/27</span></h2>
               </div>
               <select class="filter-select" id="wp-select" style="min-width:200px;"></select>
+              <button class="btn btn-ghost" id="wp-new-workplan-btn" style="display:none; background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.35); color:#fff;">+ New Work Plan</button>
               <button class="btn btn-gold" id="wp-new-btn" style="display:none;">+ New Budget Code</button>
             </div>
             <div style="display:flex; gap:36px; margin-top:18px; flex-wrap:wrap;">
@@ -831,26 +868,57 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 
 <!-- ===== MODAL: New Budget Code ===== -->
 <div class="overlay" id="modal-bc">
-  <div class="modal modal-lg">
+  <div class="modal">
     <div class="modal-head"><h3>New Budget Code</h3><button class="modal-close" data-close="modal-bc">&times;</button></div>
     <div class="modal-body">
-      <div class="form-grid">
-        <div class="field"><label>Work Plan</label><select id="bc-workplan"></select></div>
-        <div class="field"><label>Department</label><select id="bc-department"></select></div>
-        <div class="field"><label>Budget Output Code</label><input type="text" id="bc-code" placeholder="e.g. 10103"/></div>
-        <div class="field"><label>Funding Source</label><input type="text" id="bc-funding" value="Local Revenue"/></div>
-        <div class="field span2"><label>Output Description</label><input type="text" id="bc-desc"/></div>
-        <div class="field"><label>Programme</label><input type="text" id="bc-programme"/></div>
-        <div class="field"><label>Sub-Programme</label><input type="text" id="bc-subprogramme"/></div>
-        <div class="field"><label>Unit of Measure</label><input type="text" id="bc-unit" placeholder="Number / %"/></div>
-        <div class="field"><label>Baseline Value</label><input type="number" id="bc-baseline" value="0"/></div>
-        <div class="field"><label>Planned Target</label><input type="number" id="bc-target" value="0"/></div>
-        <div class="field"><label>Allocated Amount (UGX)</label><input type="number" id="bc-allocated" value="0"/></div>
+      <div class="field-section">
+        <span class="kicker">Placement</span>
+        <div class="form-grid" style="margin-top:8px;">
+          <div class="field"><label>Work Plan</label><select id="bc-workplan"></select></div>
+          <div class="field"><label>Department</label><select id="bc-department"></select></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="field-section">
+        <span class="kicker">Output Details</span>
+        <div class="form-grid" style="margin-top:8px;">
+          <div class="field"><label>Budget Output Code</label><input type="text" id="bc-code" placeholder="e.g. 10103"/></div>
+          <div class="field"><label>Unit of Measure</label><input type="text" id="bc-unit" placeholder="Number / %"/></div>
+          <div class="field span2"><label>Output Description</label><input type="text" id="bc-desc"/></div>
+          <div class="field"><label>Programme</label><input type="text" id="bc-programme"/></div>
+          <div class="field"><label>Sub-Programme</label><input type="text" id="bc-subprogramme"/></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="field-section">
+        <span class="kicker">Targets &amp; Funding</span>
+        <div class="form-grid" style="margin-top:8px;">
+          <div class="field"><label>Baseline Value</label><input type="number" id="bc-baseline" value="0"/></div>
+          <div class="field"><label>Planned Target</label><input type="number" id="bc-target" value="0"/></div>
+          <div class="field"><label>Allocated Amount (UGX)</label><input type="number" id="bc-allocated" value="0"/></div>
+          <div class="field"><label>Funding Source</label><input type="text" id="bc-funding" value="Local Revenue"/></div>
+        </div>
       </div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" data-close="modal-bc">Cancel</button>
       <button class="btn btn-primary" id="bc-create-btn">Create Budget Code</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: New Work Plan ===== -->
+<div class="overlay" id="modal-wp">
+  <div class="modal">
+    <div class="modal-head"><h3>New Work Plan</h3><button class="modal-close" data-close="modal-wp">&times;</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Financial Year</label><input type="text" id="wpn-fy" placeholder="e.g. 2026/27"/></div>
+      <div class="field"><label>Title</label><input type="text" id="wpn-title" placeholder="e.g. Annual Work Plan and Budget"/></div>
+      <div class="help-text">Once created, this work plan becomes available for budget codes to be attached to.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="modal-wp">Cancel</button>
+      <button class="btn btn-primary" id="wpn-create-btn">Create Work Plan</button>
     </div>
   </div>
 </div>
@@ -1026,6 +1094,7 @@ function applyRoleVisibility() {
     else btn.style.display = 'flex';
   });
   document.getElementById('wp-new-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+  document.getElementById('wp-new-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
   document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 }
@@ -1059,11 +1128,27 @@ function switchView(view) {
   if (view === 'departments') loadDepartmentsView();
 }
 document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
-  btn.addEventListener('click', () => switchView(btn.dataset.view));
+  btn.addEventListener('click', () => { switchView(btn.dataset.view); closeSidebar(); });
 });
 document.querySelectorAll('[data-view-link]').forEach(btn => {
-  btn.addEventListener('click', () => switchView(btn.dataset.viewLink));
+  btn.addEventListener('click', () => { switchView(btn.dataset.viewLink); closeSidebar(); });
 });
+
+// ---- Mobile sidebar (hamburger) --------------------------------------------
+function openSidebar() {
+  document.querySelector('.sidebar').classList.add('open');
+  document.getElementById('sidebar-backdrop').classList.add('show');
+}
+function closeSidebar() {
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sidebar-backdrop').classList.remove('show');
+}
+function toggleSidebar() {
+  const sb = document.querySelector('.sidebar');
+  if (sb.classList.contains('open')) closeSidebar(); else openSidebar();
+}
+document.getElementById('hamburger-btn').addEventListener('click', toggleSidebar);
+document.getElementById('sidebar-backdrop').addEventListener('click', closeSidebar);
 
 // ---- Modals -----------------------------------------------------------------
 function openModal(id) { document.getElementById(id).classList.add('show'); }
@@ -1211,7 +1296,16 @@ async function renderBudgetCodes() {
   } catch (e) { tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
 
-document.getElementById('wp-new-btn').addEventListener('click', () => openModal('modal-bc'));
+document.getElementById('wp-new-btn').addEventListener('click', () => {
+  // Prefill with whatever work plan / department the user is currently viewing,
+  // so creating a budget code doesn't require re-selecting them.
+  const wpVal = document.getElementById('wp-select').value;
+  const deptVal = document.getElementById('wp-dept-filter').value;
+  document.getElementById('bc-workplan').innerHTML = document.getElementById('wp-select').innerHTML;
+  if (wpVal) document.getElementById('bc-workplan').value = wpVal;
+  if (deptVal) document.getElementById('bc-department').value = deptVal;
+  openModal('modal-bc');
+});
 document.getElementById('bc-create-btn').addEventListener('click', async () => {
   const payload = {
     work_plan_id: Number(document.getElementById('bc-workplan').value),
@@ -1233,6 +1327,25 @@ document.getElementById('bc-create-btn').addEventListener('click', async () => {
     await api('/api/budget-codes', { method: 'POST', body: JSON.stringify(payload) });
     toast('Budget code created', 'success');
     closeModal('modal-bc');
+    renderBudgetCodes();
+  } catch (e) { toast(e.message, 'error'); }
+});
+
+document.getElementById('wp-new-workplan-btn').addEventListener('click', () => {
+  document.getElementById('wpn-fy').value = '';
+  document.getElementById('wpn-title').value = '';
+  openModal('modal-wp');
+});
+document.getElementById('wpn-create-btn').addEventListener('click', async () => {
+  const financial_year = document.getElementById('wpn-fy').value.trim();
+  const title = document.getElementById('wpn-title').value.trim();
+  if (!financial_year || !title) { toast('Please complete both fields', 'error'); return; }
+  try {
+    const wp = await api('/api/workplans', { method: 'POST', body: JSON.stringify({ financial_year, title }) });
+    toast('Work plan created', 'success');
+    closeModal('modal-wp');
+    await loadWorkplans();
+    document.getElementById('wp-select').value = wp.id;
     renderBudgetCodes();
   } catch (e) { toast(e.message, 'error'); }
 });
@@ -1314,7 +1427,10 @@ async function loadRequisitions() {
         <td><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></td>
         <td>${escapeHtml(statusLabel(r.current_stage))}</td>
         <td>${fmtDate(r.created_at)}</td>
-        <td><button class="btn btn-ghost" style="padding:6px 10px;" onclick="viewRequisition(${r.id})">View</button></td>
+        <td style="white-space:nowrap;">
+          <button class="btn btn-ghost" style="padding:6px 10px;" onclick="viewRequisition(${r.id})">View</button>
+          ${(r.accountability && r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? `<button class="btn btn-gold" style="padding:6px 10px; margin-left:6px;" onclick="openUploadModal(${r.id})">Upload</button>` : ''}
+        </td>
       </tr>`).join('');
   } catch (e) { tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
@@ -1354,7 +1470,7 @@ async function viewRequisition(id) {
         ${r.documents.length ? r.documents.map(d => `<div style="font-size:12.5px; padding:6px 0;"><a href="${API_BASE}${d.url}" target="_blank">${escapeHtml(d.filename)}</a> <span class="pill pill-draft">${d.doc_type}</span></div>`).join('')
           : '<div class="tl-meta">No documents uploaded.</div>'}
       </div>
-      ${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div></div>` : ''}
+      ${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div>${(r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? '<div class="help-text" style="margin-top:6px;">Upload the Payment Voucher, Official Receipts, Signed Attendance Sheets and any other supporting documents for this requisition.</div>' : ''}</div>` : ''}
     `;
     // Footer actions depend on role/status/stage
     let footHtml = '';
@@ -1368,8 +1484,14 @@ async function viewRequisition(id) {
         <button class="btn btn-ghost" onclick="actOnRequisition(${r.id}, 'return')">Return for Correction</button>
         <button class="btn btn-primary" onclick="actOnRequisition(${r.id}, 'approve')">Approve</button>`;
     }
+    // The requester (or an admin) uploads accountability documents — the auditor reviews them.
+    const canUpload = r.accountability && r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin');
+    if (canUpload) {
+      footHtml += `<button class="btn btn-gold" onclick="openUploadModal(${r.id})">Upload Accountability Document</button>`;
+    }
     if (r.accountability && (STATE.role === 'auditor' || STATE.role === 'admin')) {
-      footHtml += `<button class="btn btn-ghost" onclick="openUploadModal(${r.id})">Upload Document</button>
+      footHtml += `
+        <button class="btn btn-danger" onclick="flagAccountability(${r.id})">Flag Issue</button>
         <button class="btn btn-primary" onclick="verifyAccountability(${r.id})">Mark Verified</button>`;
     }
     foot.innerHTML = footHtml;
@@ -1456,7 +1578,17 @@ async function verifyAccountability(id) {
     await api(`/api/requisitions/${id}/accountability`, { method: 'POST', body: JSON.stringify({ status: 'verified', remarks }) });
     toast('Accountability verified', 'success');
     closeModal('modal-req-detail');
-    loadAccountability();
+    loadAccountability(); loadDashboard(); loadRequisitions();
+  } catch (e) { toast(e.message, 'error'); }
+}
+async function flagAccountability(id) {
+  const remarks = prompt('Describe the issue with the submitted documents:') || '';
+  if (!remarks.trim()) { toast('Please provide remarks so the requester knows what to fix', 'error'); return; }
+  try {
+    await api(`/api/requisitions/${id}/accountability`, { method: 'POST', body: JSON.stringify({ status: 'flagged', remarks }) });
+    toast('Requisition flagged for correction', 'info');
+    closeModal('modal-req-detail');
+    loadAccountability(); loadRequisitions();
   } catch (e) { toast(e.message, 'error'); }
 }
 
