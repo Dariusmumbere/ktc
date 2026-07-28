@@ -825,7 +825,7 @@ const API_BASE = (function(){
   const saved = localStorage.getItem('ktc_api_base');
   if (saved) return saved;
   return window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
-    ? 'http://127.0.0.1:8000'
+    ? 'https://ktc-backend-5yz9.onrender.com'
     : window.location.origin;
 })();
 
