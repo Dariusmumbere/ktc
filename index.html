@@ -73,8 +73,8 @@ a{color:inherit;}
 @keyframes scaleIn{from{opacity:0; transform:scale(.97) translateY(6px);} to{opacity:1; transform:scale(1) translateY(0);}}
 
 /* ---------------- Seal / crest (signature element) ---------------- */
-.crest{ width:38px;height:38px;flex-shrink:0; filter:drop-shadow(0 3px 6px rgba(10,31,43,.35)); }
-.crest svg{width:100%;height:100%;display:block;}
+.crest{ width:38px;height:38px;flex-shrink:0; filter:drop-shadow(0 3px 6px rgba(10,31,43,.35)); border-radius:7px; overflow:hidden; background:rgba(255,255,255,.06); }
+.crest img{width:100%;height:100%;display:block; object-fit:cover;}
 
 /* ---------------- Login ---------------- */
 #login-screen{
@@ -414,7 +414,7 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
   <div class="login-card">
     <div class="login-band">
       <div class="brand-row">
-        <div class="crest">CRESTPLACEHOLDER</div>
+        <div class="crest"><img src="logoo.jpeg" alt="Karugutu Town Council Crest" /></div>
         <div>
           <h1>Karugutu Town Council</h1>
           <p>Integrated Public Financial Management System</p>
@@ -445,7 +445,7 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
   <div class="shell">
     <aside class="sidebar">
       <div class="brand">
-        <div class="crest">CRESTPLACEHOLDERSMALL</div>
+        <div class="crest"><img src="logoo.jpeg" alt="Karugutu Town Council Crest" /></div>
         <div class="brand-name">Karugutu Town Council
           <small>KTC-IPFMS</small>
         </div>
@@ -624,13 +624,15 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
             <table>
               <thead>
                 <tr>
-                  <th>Dept.</th><th class="wrap">Budget Output Code</th><th class="wrap">Output Description</th>
-                  <th>Programme</th><th>Unit</th><th>Baseline</th><th>Target</th>
-                  <th>Allocated (UGX)</th><th>Committed</th><th>Balance</th><th>Funding Source</th>
+                  <th>Department</th><th class="wrap">Programme</th><th class="wrap">Sub Programme</th>
+                  <th class="wrap">Budget Output</th><th class="wrap">Indicator</th>
+                  <th>Baseline</th><th>Target</th>
+                  <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+                  <th>Revenue Source</th>
                 </tr>
               </thead>
               <tbody id="wp-table-body">
-                <tr><td colspan="11" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+                <tr><td colspan="12" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
               </tbody>
             </table>
           </div>
@@ -883,20 +885,25 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
         <div class="form-grid" style="margin-top:8px;">
           <div class="field"><label>Budget Output Code</label><input type="text" id="bc-code" placeholder="e.g. 10103"/></div>
           <div class="field"><label>Unit of Measure</label><input type="text" id="bc-unit" placeholder="Number / %"/></div>
-          <div class="field span2"><label>Output Description</label><input type="text" id="bc-desc"/></div>
+          <div class="field span2"><label>Budget Output</label><input type="text" id="bc-desc"/></div>
           <div class="field"><label>Programme</label><input type="text" id="bc-programme"/></div>
           <div class="field"><label>Sub-Programme</label><input type="text" id="bc-subprogramme"/></div>
+          <div class="field span2"><label>Indicator</label><input type="text" id="bc-indicator" placeholder="Performance indicator for this output"/></div>
         </div>
       </div>
       <div class="divider"></div>
       <div class="field-section">
-        <span class="kicker">Targets &amp; Funding</span>
+        <span class="kicker">Targets, Quarterly Plan &amp; Funding</span>
         <div class="form-grid" style="margin-top:8px;">
-          <div class="field"><label>Baseline Value</label><input type="number" id="bc-baseline" value="0"/></div>
-          <div class="field"><label>Planned Target</label><input type="number" id="bc-target" value="0"/></div>
-          <div class="field"><label>Allocated Amount (UGX)</label><input type="number" id="bc-allocated" value="0"/></div>
-          <div class="field"><label>Funding Source</label><input type="text" id="bc-funding" value="Local Revenue"/></div>
+          <div class="field"><label>Baseline</label><input type="number" id="bc-baseline" value="0"/></div>
+          <div class="field"><label>Target</label><input type="number" id="bc-target" value="0"/></div>
+          <div class="field"><label>Q1 (UGX)</label><input type="number" id="bc-q1" value="0"/></div>
+          <div class="field"><label>Q2 (UGX)</label><input type="number" id="bc-q2" value="0"/></div>
+          <div class="field"><label>Q3 (UGX)</label><input type="number" id="bc-q3" value="0"/></div>
+          <div class="field"><label>Q4 (UGX)</label><input type="number" id="bc-q4" value="0"/></div>
+          <div class="field span2"><label>Revenue Source</label><input type="text" id="bc-funding" value="Local Revenue"/></div>
         </div>
+        <div class="help-text">Total allocated amount is the sum of Q1–Q4 and is calculated automatically.</div>
       </div>
     </div>
     <div class="modal-foot">
@@ -1024,22 +1031,6 @@ function initials(name) {
   return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
 }
 function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
-
-// ---- Crest SVG (used in login band + sidebar) --------------------------------
-const CREST_SVG = `
-<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1C8577"/>
-      <stop offset="100%" stop-color="#0F5C52"/>
-    </linearGradient>
-  </defs>
-  <path d="M32 2 L58 12 V30 C58 46 47 57 32 62 C17 57 6 46 6 30 V12 Z" fill="url(#shieldGrad)" stroke="#C99A3E" stroke-width="2"/>
-  <path d="M32 14 L44 20 V30 C44 39 38 46 32 49 C26 46 20 39 20 30 V20 Z" fill="#0A2530" opacity="0.35"/>
-  <circle cx="32" cy="27" r="6" fill="#F6ECD8"/>
-  <path d="M22 40 Q32 46 42 40" stroke="#F6ECD8" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-</svg>`;
-document.querySelectorAll('.crest').forEach(el => el.innerHTML = CREST_SVG);
 
 // ---- Auth ---------------------------------------------------------------------
 document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -1265,7 +1256,7 @@ document.getElementById('wp-search').addEventListener('input', debounce(renderBu
 
 async function renderBudgetCodes() {
   const tbody = document.getElementById('wp-table-body');
-  tbody.innerHTML = '<tr><td colspan="11" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="12" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
   const wpId = document.getElementById('wp-select').value;
   const deptId = document.getElementById('wp-dept-filter').value;
   const search = document.getElementById('wp-search').value.trim();
@@ -1284,24 +1275,25 @@ async function renderBudgetCodes() {
     document.getElementById('wp-total-codes').textContent = codes.length;
     document.getElementById('wp-total-depts').textContent = depts.size;
     if (codes.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
       return;
     }
     tbody.innerHTML = codes.map(c => `
       <tr>
         <td>${escapeHtml(c.department_name || '—')}</td>
-        <td class="mono">${escapeHtml(c.code)}</td>
-        <td class="wrap">${escapeHtml(c.output_description)}</td>
         <td class="wrap">${escapeHtml(c.programme || '—')}</td>
-        <td>${escapeHtml(c.unit_of_measure || '—')}</td>
+        <td class="wrap">${escapeHtml(c.sub_programme || '—')}</td>
+        <td class="wrap"><span class="mono">${escapeHtml(c.code)}</span><br/>${escapeHtml(c.output_description)}</td>
+        <td class="wrap">${escapeHtml(c.indicator || '—')}</td>
         <td class="num">${money(c.baseline_value)}</td>
         <td class="num">${money(c.planned_target)}</td>
-        <td class="num mono">${money(c.allocated_amount)}</td>
-        <td class="num mono">${money(c.committed_amount)}</td>
-        <td class="num mono" style="color:${c.available_balance < 0 ? 'var(--danger)' : 'var(--success)'}; font-weight:600;">${money(c.available_balance)}</td>
+        <td class="num mono">${money(c.q1_amount)}</td>
+        <td class="num mono">${money(c.q2_amount)}</td>
+        <td class="num mono">${money(c.q3_amount)}</td>
+        <td class="num mono">${money(c.q4_amount)}</td>
         <td>${escapeHtml(c.funding_source)}</td>
       </tr>`).join('');
-  } catch (e) { tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
 
 document.getElementById('wp-new-btn').addEventListener('click', () => {
@@ -1320,10 +1312,14 @@ document.getElementById('bc-create-btn').addEventListener('click', async () => {
     output_description: document.getElementById('bc-desc').value.trim(),
     programme: document.getElementById('bc-programme').value.trim(),
     sub_programme: document.getElementById('bc-subprogramme').value.trim(),
+    indicator: document.getElementById('bc-indicator').value.trim(),
     unit_of_measure: document.getElementById('bc-unit').value.trim(),
     baseline_value: Number(document.getElementById('bc-baseline').value || 0),
     planned_target: Number(document.getElementById('bc-target').value || 0),
-    allocated_amount: Number(document.getElementById('bc-allocated').value || 0),
+    q1_amount: Number(document.getElementById('bc-q1').value || 0),
+    q2_amount: Number(document.getElementById('bc-q2').value || 0),
+    q3_amount: Number(document.getElementById('bc-q3').value || 0),
+    q4_amount: Number(document.getElementById('bc-q4').value || 0),
     funding_source: document.getElementById('bc-funding').value.trim() || 'Local Revenue',
   };
   if (!payload.work_plan_id || !payload.department_id || !payload.code || !payload.output_description) {
