@@ -922,6 +922,15 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
   </div>
 </div>
 
+<!-- ===== MODAL: Single-page Document Viewer (Auditor review) ===== -->
+<div class="overlay" id="modal-doc-view">
+  <div class="modal modal-lg" style="max-width:940px;">
+    <div class="modal-head"><h3 id="dv-title">Accountability Documents</h3><button class="modal-close" data-close="modal-doc-view">&times;</button></div>
+    <div class="modal-body" id="dv-body" style="max-height:70vh;"></div>
+    <div class="modal-foot" id="dv-foot"></div>
+  </div>
+</div>
+
 <!-- ===== MODAL: Upload document ===== -->
 <div class="overlay" id="modal-upload">
   <div class="modal">
@@ -1487,9 +1496,11 @@ async function viewRequisition(id) {
       footHtml += `<button class="btn btn-gold" onclick="openUploadModal(${r.id})">Upload Accountability Document</button>`;
     }
     if (r.accountability && (STATE.role === 'auditor' || STATE.role === 'admin')) {
-      footHtml += `
-        <button class="btn btn-danger" onclick="flagAccountability(${r.id})">Flag Issue</button>
-        <button class="btn btn-primary" onclick="verifyAccountability(${r.id})">Mark Verified</button>`;
+      // Auditors must go through the single-page document viewer to act —
+      // it enforces (and visibly reflects) the rule that a requisition
+      // cannot be verified until its accountability documents, including
+      // the Payment Voucher, have actually been uploaded.
+      footHtml += `<button class="btn btn-primary" onclick="closeModal('modal-req-detail'); openDocumentViewer(${r.id});">Review Documents &amp; Verify</button>`;
     }
     foot.innerHTML = footHtml;
   } catch (e) { body.innerHTML = `<div class="empty-state">${escapeHtml(e.message)}</div>`; }
@@ -1551,9 +1562,94 @@ async function loadAccountability() {
         <td class="num mono">${money(r.amount_requested)}</td>
         <td>${r.documents.length} file(s)</td>
         <td><span class="pill pill-${r.accountability ? r.accountability.status : 'pending'}">${statusLabel(r.accountability ? r.accountability.status : 'pending')}</span></td>
-        <td><button class="btn btn-primary" style="padding:6px 10px;" onclick="viewRequisition(${r.id})">Review</button></td>
+        <td><button class="btn btn-primary" style="padding:6px 10px;" onclick="openDocumentViewer(${r.id})">Review</button></td>
       </tr>`).join('');
   } catch (e) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+
+// ---- Single-page document viewer (Auditor review) --------------------------------
+// Shows every uploaded accountability document for a requisition stacked on
+// one page (inline PDF/image previews) so the auditor can review everything
+// together, rather than opening each document in a separate tab. Verify /
+// Flag actions live here and are gated client-side on the same rule the
+// server enforces: a Payment Voucher, plus at least one document overall,
+// must be present before "Mark Verified" is enabled.
+async function openDocumentViewer(reqId) {
+  STATE.currentReqId = reqId;
+  const body = document.getElementById('dv-body');
+  const foot = document.getElementById('dv-foot');
+  body.innerHTML = '<div class="loading-row"><span class="spinner spinner-dark"></span></div>';
+  foot.innerHTML = '';
+  openModal('modal-doc-view');
+  try {
+    const r = await api(`/api/requisitions/${reqId}`);
+    document.getElementById('dv-title').textContent = `${r.ref_no} — Accountability Documents`;
+
+    const hasVoucher = r.documents.some(d => d.doc_type === 'voucher');
+    const hasAnyDoc = r.documents.length > 0;
+    const alreadyVerified = r.accountability && r.accountability.status === 'verified';
+
+    let html = `
+      <div class="detail-grid" style="margin-bottom:12px;">
+        <div><div class="detail-label">Requester</div><div class="detail-value">${escapeHtml(r.requester_name||'—')}</div></div>
+        <div><div class="detail-label">Department</div><div class="detail-value">${escapeHtml(r.department_name||'—')}</div></div>
+        <div><div class="detail-label">Amount</div><div class="detail-value mono">UGX ${money(r.amount_requested)}</div></div>
+        <div><div class="detail-label">Accountability Status</div><div class="detail-value"><span class="pill pill-${r.accountability ? r.accountability.status : 'pending'}">${statusLabel(r.accountability ? r.accountability.status : 'pending')}</span></div></div>
+      </div>
+      <div class="divider"></div>
+    `;
+
+    if (!alreadyVerified) {
+      if (!hasAnyDoc) {
+        html += `<div class="login-error" style="display:block; margin-bottom:14px;">No accountability documents have been uploaded yet. This requisition will remain on the Accountability wall until documents — including the Payment Voucher — are uploaded.</div>`;
+      } else if (!hasVoucher) {
+        html += `<div class="login-error" style="display:block; margin-bottom:14px;">A Payment Voucher has not been uploaded for this requisition yet. Verification cannot proceed until it is attached.</div>`;
+      }
+    }
+
+    if (r.documents.length === 0) {
+      html += `<div class="empty-state">No documents have been uploaded for this requisition yet.</div>`;
+    } else {
+      html += r.documents.map(d => {
+        const url = `${API_BASE}${d.url}`;
+        const lower = (d.filename || '').toLowerCase();
+        let preview;
+        if (lower.endsWith('.pdf')) {
+          preview = `<iframe src="${url}" style="width:100%; height:480px; border:1px solid var(--line); border-radius:8px; background:#fff;"></iframe>`;
+        } else if (/\.(jpg|jpeg|png)$/.test(lower)) {
+          preview = `<img src="${url}" style="max-width:100%; border-radius:8px; border:1px solid var(--line); display:block;" />`;
+        } else {
+          preview = `<div class="empty-state" style="padding:20px;">Preview not available for this file type. <a href="${url}" target="_blank">Open / download ${escapeHtml(d.filename)}</a></div>`;
+        }
+        return `
+          <div class="card card-pad" style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px; flex-wrap:wrap;">
+              <div>
+                <div style="font-weight:600; font-size:13px;">${escapeHtml(d.filename)}</div>
+                <span class="pill pill-draft">${escapeHtml(statusLabel(d.doc_type))}</span>
+              </div>
+              <a class="btn btn-ghost" href="${url}" target="_blank" style="padding:6px 10px;">Open in new tab</a>
+            </div>
+            ${preview}
+          </div>`;
+      }).join('');
+    }
+    body.innerHTML = html;
+
+    let footHtml = '';
+    if (r.accountability && (STATE.role === 'auditor' || STATE.role === 'admin')) {
+      const canVerify = hasVoucher && hasAnyDoc && !alreadyVerified;
+      const disabledAttrs = canVerify ? '' : 'disabled';
+      const disabledTitle = canVerify ? '' : 'title="A Payment Voucher and at least one accountability document must be uploaded before this requisition can be verified."';
+      if (!alreadyVerified) {
+        footHtml += `<button class="btn btn-danger" onclick="flagAccountability(${r.id}); closeModal('modal-doc-view');">Flag Issue</button>`;
+        footHtml += `<button class="btn btn-primary" ${disabledAttrs} ${disabledTitle} onclick="verifyAccountability(${r.id}); closeModal('modal-doc-view');">Mark Verified</button>`;
+      }
+    }
+    foot.innerHTML = footHtml;
+  } catch (e) {
+    body.innerHTML = `<div class="empty-state">${escapeHtml(e.message)}</div>`;
+  }
 }
 
 function openUploadModal(reqId) { STATE.currentReqId = reqId; openModal('modal-upload'); }
