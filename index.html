@@ -87,7 +87,6 @@ a{color:inherit;}
   padding:24px;
 }
 #login-screen::before{
-  /* fine ledger-line texture — nods to the institutional/accounting subject matter */
   content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
   background-image:
     repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 34px),
@@ -1297,8 +1296,6 @@ async function renderBudgetCodes() {
 }
 
 document.getElementById('wp-new-btn').addEventListener('click', () => {
-  // Prefill with whatever work plan / department the user is currently viewing,
-  // so creating a budget code doesn't require re-selecting them.
   const wpVal = document.getElementById('wp-select').value;
   const deptVal = document.getElementById('wp-dept-filter').value;
   document.getElementById('bc-workplan').innerHTML = document.getElementById('wp-select').innerHTML;
