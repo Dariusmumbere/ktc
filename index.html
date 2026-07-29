@@ -425,6 +425,18 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
       <div class="login-error" id="login-error"></div>
       <form id="login-form">
         <div class="field">
+          <label>Signing in as</label>
+          <select id="login-role" required>
+            <option value="">— Select your role —</option>
+            <option value="staff">Staff Member</option>
+            <option value="hod">Head of Department</option>
+            <option value="treasurer">Senior Treasurer</option>
+            <option value="clerk">Town Clerk</option>
+            <option value="auditor">Internal Auditor</option>
+            <option value="admin">System Administrator</option>
+          </select>
+        </div>
+        <div class="field">
           <label>Email address</label>
           <input type="email" id="login-email" required autocomplete="username" placeholder="you@karugutu.town.go.ug" />
         </div>
@@ -594,7 +606,9 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
               </div>
               <select class="filter-select" id="wp-select" style="min-width:200px;"></select>
               <button class="btn btn-ghost" id="wp-new-workplan-btn" style="display:none; background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.35); color:#fff;">+ New Work Plan</button>
-              <button class="btn btn-gold" id="wp-new-btn" style="display:none;">+ New Budget Code</button>
+              <button class="btn btn-ghost" id="wp-import-btn" style="display:none; background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.35); color:#fff;">⇪ Import from Excel</button>
+              <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
+              <button class="btn btn-gold" id="wp-new-btn" style="display:none;">+ New Budget Estimates Data Entry Form</button>
             </div>
             <div style="display:flex; gap:36px; margin-top:18px; flex-wrap:wrap;">
               <div>
@@ -624,15 +638,15 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
             <table>
               <thead>
                 <tr>
-                  <th>Department</th><th class="wrap">Programme</th><th class="wrap">Sub Programme</th>
-                  <th class="wrap">Budget Output</th><th class="wrap">Indicator</th>
-                  <th>Baseline</th><th>Target</th>
-                  <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-                  <th>Revenue Source</th>
+                  <th>Department</th><th class="wrap">Service Area</th><th class="wrap">Programme</th><th class="wrap">Sub Programme</th>
+                  <th class="wrap">Budget Output</th><th class="wrap">PIAP Output Desc.</th><th class="wrap">PIAP Indicator</th>
+                  <th>Baseline</th><th>Target</th><th>Actual Output</th>
+                  <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Total Budget</th>
+                  <th>Revenue Source</th><th class="wrap">Responsible Party</th>
                 </tr>
               </thead>
               <tbody id="wp-table-body">
-                <tr><td colspan="12" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+                <tr><td colspan="16" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
               </tbody>
             </table>
           </div>
@@ -753,8 +767,8 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th></th></tr></thead>
-              <tbody id="users-table-body"><tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+              <thead><tr><th>Name</th><th>Email</th><th>Position</th><th>Telephone</th><th>Role</th><th>Department</th><th>Status</th><th></th></tr></thead>
+              <tbody id="users-table-body"><tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
             </table>
           </div>
         </div>
@@ -832,6 +846,8 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
         <div class="field span2"><label>Full Name</label><input type="text" id="u-name"/></div>
         <div class="field span2"><label>Email</label><input type="email" id="u-email"/></div>
         <div class="field"><label>Temporary Password</label><input type="text" id="u-password"/></div>
+        <div class="field"><label>Position</label><input type="text" id="u-position" placeholder="e.g. Senior Accountant"/></div>
+        <div class="field"><label>Telephone</label><input type="text" id="u-telephone" placeholder="e.g. 0700 000 000"/></div>
         <div class="field"><label>Role</label>
           <select id="u-role">
             <option value="staff">Staff Member</option>
@@ -867,16 +883,17 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
   </div>
 </div>
 
-<!-- ===== MODAL: New Budget Code ===== -->
+<!-- ===== MODAL: New Budget Estimates Data Entry Form ===== -->
 <div class="overlay" id="modal-bc">
-  <div class="modal">
-    <div class="modal-head"><h3>New Budget Code</h3><button class="modal-close" data-close="modal-bc">&times;</button></div>
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3>New Budget Estimates Data Entry Form</h3><button class="modal-close" data-close="modal-bc">&times;</button></div>
     <div class="modal-body">
       <div class="field-section">
         <span class="kicker">Placement</span>
         <div class="form-grid" style="margin-top:8px;">
           <div class="field"><label>Work Plan</label><select id="bc-workplan"></select></div>
           <div class="field"><label>Department</label><select id="bc-department"></select></div>
+          <div class="field span2"><label>Service Area</label><input type="text" id="bc-service-area" placeholder="e.g. Health, Education, Roads"/></div>
         </div>
       </div>
       <div class="divider"></div>
@@ -885,30 +902,34 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
         <div class="form-grid" style="margin-top:8px;">
           <div class="field"><label>Budget Output Code</label><input type="text" id="bc-code" placeholder="e.g. 10103"/></div>
           <div class="field"><label>Unit of Measure</label><input type="text" id="bc-unit" placeholder="Number / %"/></div>
-          <div class="field span2"><label>Budget Output</label><input type="text" id="bc-desc"/></div>
+          <div class="field span2"><label>Budget Output Description</label><input type="text" id="bc-desc"/></div>
           <div class="field"><label>Programme</label><input type="text" id="bc-programme"/></div>
           <div class="field"><label>Sub-Programme</label><input type="text" id="bc-subprogramme"/></div>
-          <div class="field span2"><label>Indicator</label><input type="text" id="bc-indicator" placeholder="Performance indicator for this output"/></div>
+          <div class="field span2"><label>PIAP Output Description</label><input type="text" id="bc-piap-desc" placeholder="Programme Implementation Action Plan output description"/></div>
+          <div class="field span2"><label>PIAP Output Indicator</label><input type="text" id="bc-piap-indicator" placeholder="Programme Implementation Action Plan indicator"/></div>
         </div>
       </div>
       <div class="divider"></div>
       <div class="field-section">
         <span class="kicker">Targets, Quarterly Plan &amp; Funding</span>
         <div class="form-grid" style="margin-top:8px;">
-          <div class="field"><label>Baseline</label><input type="number" id="bc-baseline" value="0"/></div>
-          <div class="field"><label>Target</label><input type="number" id="bc-target" value="0"/></div>
+          <div class="field"><label>Baseline Value</label><input type="number" id="bc-baseline" value="0"/></div>
+          <div class="field"><label>Planned Target</label><input type="number" id="bc-target" value="0"/></div>
+          <div class="field span2"><label>Actual Output</label><input type="text" id="bc-actual" placeholder="Actual output achieved so far"/></div>
           <div class="field"><label>Q1 (UGX)</label><input type="number" id="bc-q1" value="0"/></div>
           <div class="field"><label>Q2 (UGX)</label><input type="number" id="bc-q2" value="0"/></div>
           <div class="field"><label>Q3 (UGX)</label><input type="number" id="bc-q3" value="0"/></div>
           <div class="field"><label>Q4 (UGX)</label><input type="number" id="bc-q4" value="0"/></div>
-          <div class="field span2"><label>Revenue Source</label><input type="text" id="bc-funding" value="Local Revenue"/></div>
+          <div class="field"><label>Total Budget (UGX)</label><input type="text" id="bc-total" value="0" readonly style="background:var(--paper); font-family:var(--font-mono);"/></div>
+          <div class="field"><label>Funding Source</label><input type="text" id="bc-funding" value="Local Revenue"/></div>
+          <div class="field span2"><label>Responsible Party</label><input type="text" id="bc-responsible" placeholder="e.g. Head of Department, Officer name"/></div>
         </div>
-        <div class="help-text">Total allocated amount is the sum of Q1–Q4 and is calculated automatically.</div>
+        <div class="help-text">Total Budget is the sum of Q1–Q4 and is calculated automatically.</div>
       </div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" data-close="modal-bc">Cancel</button>
-      <button class="btn btn-primary" id="bc-create-btn">Create Budget Code</button>
+      <button class="btn btn-primary" id="bc-create-btn">Create Budget Estimate</button>
     </div>
   </div>
 </div>
@@ -1035,14 +1056,20 @@ function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
 // ---- Auth ---------------------------------------------------------------------
 document.getElementById('login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
+  const role = document.getElementById('login-role').value;
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
   const errEl = document.getElementById('login-error');
   const btn = document.getElementById('login-btn');
   errEl.style.display = 'none';
+  if (!role) {
+    errEl.textContent = 'Please select the role you are signing in as.';
+    errEl.style.display = 'block';
+    return;
+  }
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Signing in…';
   try {
-    const data = await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+    const data = await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password, role }) });
     STATE.token = data.access_token; STATE.role = data.role; STATE.name = data.full_name; STATE.userId = data.user_id;
     localStorage.setItem('ktc_token', STATE.token);
     localStorage.setItem('ktc_role', STATE.role);
@@ -1094,6 +1121,7 @@ function applyRoleVisibility() {
   });
   document.getElementById('wp-new-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('wp-new-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+  document.getElementById('wp-import-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
   document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 }
@@ -1256,7 +1284,7 @@ document.getElementById('wp-search').addEventListener('input', debounce(renderBu
 
 async function renderBudgetCodes() {
   const tbody = document.getElementById('wp-table-body');
-  tbody.innerHTML = '<tr><td colspan="12" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="16" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
   const wpId = document.getElementById('wp-select').value;
   const deptId = document.getElementById('wp-dept-filter').value;
   const search = document.getElementById('wp-search').value.trim();
@@ -1275,25 +1303,30 @@ async function renderBudgetCodes() {
     document.getElementById('wp-total-codes').textContent = codes.length;
     document.getElementById('wp-total-depts').textContent = depts.size;
     if (codes.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="16"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
       return;
     }
     tbody.innerHTML = codes.map(c => `
       <tr>
         <td>${escapeHtml(c.department_name || '—')}</td>
+        <td class="wrap">${escapeHtml(c.service_area || '—')}</td>
         <td class="wrap">${escapeHtml(c.programme || '—')}</td>
         <td class="wrap">${escapeHtml(c.sub_programme || '—')}</td>
         <td class="wrap"><span class="mono">${escapeHtml(c.code)}</span><br/>${escapeHtml(c.output_description)}</td>
-        <td class="wrap">${escapeHtml(c.indicator || '—')}</td>
+        <td class="wrap">${escapeHtml(c.piap_output_description || '—')}</td>
+        <td class="wrap">${escapeHtml(c.piap_output_indicator || '—')}</td>
         <td class="num">${money(c.baseline_value)}</td>
         <td class="num">${money(c.planned_target)}</td>
+        <td class="wrap">${escapeHtml(c.actual_output || '—')}</td>
         <td class="num mono">${money(c.q1_amount)}</td>
         <td class="num mono">${money(c.q2_amount)}</td>
         <td class="num mono">${money(c.q3_amount)}</td>
         <td class="num mono">${money(c.q4_amount)}</td>
+        <td class="num mono">${money(c.allocated_amount)}</td>
         <td>${escapeHtml(c.funding_source)}</td>
+        <td class="wrap">${escapeHtml(c.responsible_party || '—')}</td>
       </tr>`).join('');
-  } catch (e) { tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="16"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
 
 document.getElementById('wp-new-btn').addEventListener('click', () => {
@@ -1302,32 +1335,48 @@ document.getElementById('wp-new-btn').addEventListener('click', () => {
   document.getElementById('bc-workplan').innerHTML = document.getElementById('wp-select').innerHTML;
   if (wpVal) document.getElementById('bc-workplan').value = wpVal;
   if (deptVal) document.getElementById('bc-department').value = deptVal;
+  ['bc-service-area','bc-code','bc-unit','bc-desc','bc-programme','bc-subprogramme','bc-piap-desc','bc-piap-indicator','bc-actual','bc-responsible'].forEach(id => document.getElementById(id).value = '');
+  ['bc-baseline','bc-target','bc-q1','bc-q2','bc-q3','bc-q4'].forEach(id => document.getElementById(id).value = 0);
+  document.getElementById('bc-total').value = '0';
+  document.getElementById('bc-funding').value = 'Local Revenue';
   openModal('modal-bc');
 });
+function recalcBcTotal() {
+  const q1 = Number(document.getElementById('bc-q1').value || 0);
+  const q2 = Number(document.getElementById('bc-q2').value || 0);
+  const q3 = Number(document.getElementById('bc-q3').value || 0);
+  const q4 = Number(document.getElementById('bc-q4').value || 0);
+  document.getElementById('bc-total').value = money(q1 + q2 + q3 + q4);
+}
+['bc-q1','bc-q2','bc-q3','bc-q4'].forEach(id => document.getElementById(id).addEventListener('input', recalcBcTotal));
 document.getElementById('bc-create-btn').addEventListener('click', async () => {
   const payload = {
     work_plan_id: Number(document.getElementById('bc-workplan').value),
     department_id: Number(document.getElementById('bc-department').value),
+    service_area: document.getElementById('bc-service-area').value.trim(),
     code: document.getElementById('bc-code').value.trim(),
     output_description: document.getElementById('bc-desc').value.trim(),
     programme: document.getElementById('bc-programme').value.trim(),
     sub_programme: document.getElementById('bc-subprogramme').value.trim(),
-    indicator: document.getElementById('bc-indicator').value.trim(),
+    piap_output_description: document.getElementById('bc-piap-desc').value.trim(),
+    piap_output_indicator: document.getElementById('bc-piap-indicator').value.trim(),
     unit_of_measure: document.getElementById('bc-unit').value.trim(),
     baseline_value: Number(document.getElementById('bc-baseline').value || 0),
     planned_target: Number(document.getElementById('bc-target').value || 0),
+    actual_output: document.getElementById('bc-actual').value.trim(),
     q1_amount: Number(document.getElementById('bc-q1').value || 0),
     q2_amount: Number(document.getElementById('bc-q2').value || 0),
     q3_amount: Number(document.getElementById('bc-q3').value || 0),
     q4_amount: Number(document.getElementById('bc-q4').value || 0),
     funding_source: document.getElementById('bc-funding').value.trim() || 'Local Revenue',
+    responsible_party: document.getElementById('bc-responsible').value.trim(),
   };
   if (!payload.work_plan_id || !payload.department_id || !payload.code || !payload.output_description) {
     toast('Please complete all required fields', 'error'); return;
   }
   try {
     await api('/api/budget-codes', { method: 'POST', body: JSON.stringify(payload) });
-    toast('Budget code created', 'success');
+    toast('Budget estimate created', 'success');
     closeModal('modal-bc');
     renderBudgetCodes();
   } catch (e) { toast(e.message, 'error'); }
@@ -1350,6 +1399,27 @@ document.getElementById('wpn-create-btn').addEventListener('click', async () => 
     document.getElementById('wp-select').value = wp.id;
     renderBudgetCodes();
   } catch (e) { toast(e.message, 'error'); }
+});
+
+// ---- Import Budget Estimates from Excel ------------------------------------
+document.getElementById('wp-import-btn').addEventListener('click', () => {
+  const wpVal = document.getElementById('wp-select').value;
+  if (!wpVal) { toast('Please select a work plan to import into first', 'error'); return; }
+  document.getElementById('wp-import-file').click();
+});
+document.getElementById('wp-import-file').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const wpVal = document.getElementById('wp-select').value;
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    toast('Importing budget estimates from Excel…', 'info');
+    const result = await api(`/api/budget-codes/import?work_plan_id=${wpVal}`, { method: 'POST', body: fd });
+    toast(`Imported ${result.created} budget estimate row(s)${result.skipped ? `, skipped ${result.skipped}` : ''}`, 'success');
+    renderBudgetCodes();
+  } catch (err) { toast(err.message, 'error'); }
+  finally { e.target.value = ''; }
 });
 
 // ---- Requisitions --------------------------------------------------------------
@@ -1737,6 +1807,8 @@ document.getElementById('u-create-btn').addEventListener('click', async () => {
     full_name: document.getElementById('u-name').value.trim(),
     email: document.getElementById('u-email').value.trim(),
     password: document.getElementById('u-password').value,
+    position: document.getElementById('u-position').value.trim(),
+    telephone: document.getElementById('u-telephone').value.trim(),
     role: document.getElementById('u-role').value,
     department_id: document.getElementById('u-department').value ? Number(document.getElementById('u-department').value) : null,
   };
@@ -1750,20 +1822,22 @@ document.getElementById('u-create-btn').addEventListener('click', async () => {
 });
 async function loadUsers() {
   const tbody = document.getElementById('users-table-body');
-  tbody.innerHTML = '<tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
   try {
     const users = await api('/api/users');
-    if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state">No users found.</div></td></tr>'; return; }
+    if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state">No users found.</div></td></tr>'; return; }
     tbody.innerHTML = users.map(u => {
       const dept = STATE.departments.find(d => d.id === u.department_id);
       return `<tr>
-        <td>${escapeHtml(u.full_name)}</td><td>${escapeHtml(u.email)}</td><td>${statusLabel(u.role)}</td>
+        <td>${escapeHtml(u.full_name)}</td><td>${escapeHtml(u.email)}</td>
+        <td>${escapeHtml(u.position || '—')}</td><td>${escapeHtml(u.telephone || '—')}</td>
+        <td>${statusLabel(u.role)}</td>
         <td>${escapeHtml(dept ? dept.name : '—')}</td>
         <td><span class="pill pill-${u.is_active ? 'approved' : 'rejected'}">${u.is_active ? 'Active' : 'Disabled'}</span></td>
         <td><button class="btn btn-ghost" style="padding:6px 10px;" onclick="toggleUser(${u.id})">${u.is_active ? 'Disable' : 'Enable'}</button></td>
       </tr>`;
     }).join('');
-  } catch (e) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
 async function toggleUser(id) {
   try { await api(`/api/users/${id}/toggle-active`, { method: 'PATCH' }); loadUsers(); toast('User status updated', 'success'); }
