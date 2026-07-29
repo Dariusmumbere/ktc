@@ -638,15 +638,29 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
             <table>
               <thead>
                 <tr>
-                  <th>Department</th><th class="wrap">Service Area</th><th class="wrap">Programme</th><th class="wrap">Sub Programme</th>
-                  <th class="wrap">Budget Output</th><th class="wrap">PIAP Output Desc.</th><th class="wrap">PIAP Indicator</th>
-                  <th>Baseline</th><th>Target</th><th>Actual Output</th>
-                  <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Total Budget</th>
-                  <th>Revenue Source</th><th class="wrap">Responsible Party</th>
+                  <th>Department</th>
+                  <th class="wrap">Service Area</th>
+                  <th class="wrap">Programme</th>
+                  <th class="wrap">Sub Programme</th>
+                  <th>Budget Output Code</th>
+                  <th class="wrap">Budget Output Description</th>
+                  <th class="wrap">PIAP Output Description</th>
+                  <th class="wrap">PIAP Output Indicator</th>
+                  <th>Unit of Measure</th>
+                  <th>Baseline Value</th>
+                  <th>Planned Target</th>
+                  <th class="wrap">Actual Output</th>
+                  <th>Q1 (UGX)</th>
+                  <th>Q2 (UGX)</th>
+                  <th>Q3 (UGX)</th>
+                  <th>Q4 (UGX)</th>
+                  <th>Total Budget (UGX)</th>
+                  <th>Funding Source</th>
+                  <th class="wrap">Responsible Party</th>
                 </tr>
               </thead>
               <tbody id="wp-table-body">
-                <tr><td colspan="16" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+                <tr><td colspan="19" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
               </tbody>
             </table>
           </div>
@@ -1284,7 +1298,7 @@ document.getElementById('wp-search').addEventListener('input', debounce(renderBu
 
 async function renderBudgetCodes() {
   const tbody = document.getElementById('wp-table-body');
-  tbody.innerHTML = '<tr><td colspan="16" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="19" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
   const wpId = document.getElementById('wp-select').value;
   const deptId = document.getElementById('wp-dept-filter').value;
   const search = document.getElementById('wp-search').value.trim();
@@ -1303,7 +1317,7 @@ async function renderBudgetCodes() {
     document.getElementById('wp-total-codes').textContent = codes.length;
     document.getElementById('wp-total-depts').textContent = depts.size;
     if (codes.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="16"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="19"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
       return;
     }
     tbody.innerHTML = codes.map(c => `
@@ -1312,9 +1326,11 @@ async function renderBudgetCodes() {
         <td class="wrap">${escapeHtml(c.service_area || '—')}</td>
         <td class="wrap">${escapeHtml(c.programme || '—')}</td>
         <td class="wrap">${escapeHtml(c.sub_programme || '—')}</td>
-        <td class="wrap"><span class="mono">${escapeHtml(c.code)}</span><br/>${escapeHtml(c.output_description)}</td>
+        <td class="mono">${escapeHtml(c.code)}</td>
+        <td class="wrap">${escapeHtml(c.output_description)}</td>
         <td class="wrap">${escapeHtml(c.piap_output_description || '—')}</td>
         <td class="wrap">${escapeHtml(c.piap_output_indicator || '—')}</td>
+        <td>${escapeHtml(c.unit_of_measure || '—')}</td>
         <td class="num">${money(c.baseline_value)}</td>
         <td class="num">${money(c.planned_target)}</td>
         <td class="wrap">${escapeHtml(c.actual_output || '—')}</td>
@@ -1326,7 +1342,7 @@ async function renderBudgetCodes() {
         <td>${escapeHtml(c.funding_source)}</td>
         <td class="wrap">${escapeHtml(c.responsible_party || '—')}</td>
       </tr>`).join('');
-  } catch (e) { tbody.innerHTML = `<tr><td colspan="16"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="19"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
 
 document.getElementById('wp-new-btn').addEventListener('click', () => {
