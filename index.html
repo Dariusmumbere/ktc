@@ -670,11 +670,47 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
                 <h2 style="font-family:var(--font-display); margin:2px 0 0; font-size:20px;">Budget Estimates, Financial Year <span id="wp-fy-title">2026/27</span></h2>
               </div>
               <select class="filter-select" id="wp-select" style="min-width:200px;"></select>
-              <button class="btn btn-ghost" id="wp-new-workplan-btn" style="display:none; background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.35); color:#fff;">+ New Work Plan</button>
-              <button class="btn btn-ghost" id="wp-import-btn" style="display:none; background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.35); color:#fff;">⇪ Import from Excel</button>
+              <button class="btn" id="wp-new-workplan-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ New Work Plan</button>
+              <button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import from Excel</button>
               <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
               <button class="btn btn-gold" id="wp-new-btn" style="display:none;">+ New Budget Estimates Data Entry Form</button>
             </div>
+
+            <div class="card" style="margin-top:18px; background:rgba(255,255,255,.97); border:none; overflow:hidden;">
+              <div style="padding:14px 18px 4px;">
+                <div class="kicker" style="color:var(--teal-700);">Department Budget Summary</div>
+                <div class="help-text" style="margin-top:2px;">Quarterly allocation totals per department for the selected work plan</div>
+              </div>
+              <div class="table-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Dept. Code</th>
+                      <th>Department</th>
+                      <th>Q1 (UGX)</th>
+                      <th>Q2 (UGX)</th>
+                      <th>Q3 (UGX)</th>
+                      <th>Q4 (UGX)</th>
+                      <th>Total Budget (UGX)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="wp-dept-summary-body">
+                    <tr><td colspan="7" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+                  </tbody>
+                  <tfoot>
+                    <tr style="font-weight:700; background:#FAFCFB;">
+                      <td colspan="2">Sub Total</td>
+                      <td class="num mono" id="wp-summary-q1">—</td>
+                      <td class="num mono" id="wp-summary-q2">—</td>
+                      <td class="num mono" id="wp-summary-q3">—</td>
+                      <td class="num mono" id="wp-summary-q4">—</td>
+                      <td class="num mono" id="wp-summary-total">—</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
             <div style="display:flex; gap:36px; margin-top:18px; flex-wrap:wrap;">
               <div>
                 <div style="font-size:11px; text-transform:uppercase; letter-spacing:.5px; opacity:.85;">Total Budget</div>
@@ -732,24 +768,10 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
           </div>
 
           <div class="card card-pad" style="margin-top:18px;">
-            <div class="kicker">Department Sub Totals</div>
-            <div class="help-text" style="margin-top:2px;">Totals reflect the department filter and search currently applied above</div>
-            <div class="table-wrap" style="margin-top:12px;">
-              <table>
-                <thead>
-                  <tr><th>Department</th><th>Budget Codes</th><th>Total Budget (UGX)</th></tr>
-                </thead>
-                <tbody id="wp-dept-subtotals-body">
-                  <tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
-                </tbody>
-                <tfoot>
-                  <tr style="font-weight:700; background:#FAFCFB;">
-                    <td>Grand Total</td>
-                    <td class="num mono" id="wp-subtotal-count">—</td>
-                    <td class="num mono" id="wp-subtotal-total">—</td>
-                  </tr>
-                </tfoot>
-              </table>
+            <div class="kicker">Department Budget vs. Actual Output</div>
+            <div class="help-text" style="margin-top:2px;">Total allocated budget compared against the share of budget outputs with a recorded Actual Output, per department (reflects the department filter and search currently applied above)</div>
+            <div id="wp-output-chart" style="margin-top:16px;">
+              <div class="loading-row"><span class="spinner spinner-dark"></span></div>
             </div>
           </div>
         </div>
@@ -1600,35 +1622,95 @@ document.getElementById('wp-select').addEventListener('change', renderBudgetCode
 document.getElementById('wp-dept-filter').addEventListener('change', renderBudgetCodes);
 document.getElementById('wp-search').addEventListener('input', debounce(renderBudgetCodes, 300));
 
-// Renders the "Department Sub Totals" summary beneath the work-plan table,
-// reflecting whatever department/search filters are currently applied.
-function renderDeptSubtotals(codes) {
-  const tbody = document.getElementById('wp-dept-subtotals-body');
-  const countCell = document.getElementById('wp-subtotal-count');
-  const totalCell = document.getElementById('wp-subtotal-total');
+// Renders the "Department Budget Summary" table in the work-plan header,
+// showing quarterly totals per department for the codes currently loaded
+// (i.e. reflecting the work plan selected above).
+function renderDeptSummaryTable(codes) {
+  const tbody = document.getElementById('wp-dept-summary-body');
+  const totalsIds = { q1: 'wp-summary-q1', q2: 'wp-summary-q2', q3: 'wp-summary-q3', q4: 'wp-summary-q4', total: 'wp-summary-total' };
   if (!codes || codes.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="3"><div class="empty-state" style="padding:16px;">No budget codes to summarise.</div></td></tr>';
-    countCell.textContent = '0';
-    totalCell.textContent = 'UGX 0';
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state" style="padding:16px;">No budget codes to summarise.</div></td></tr>';
+    Object.values(totalsIds).forEach(id => document.getElementById(id).textContent = 'UGX 0');
     return;
   }
   const map = {};
   codes.forEach(c => {
     const name = c.department_name || 'Unassigned';
-    if (!map[name]) map[name] = { total: 0, count: 0 };
+    if (!map[name]) map[name] = { deptId: c.department_id, q1: 0, q2: 0, q3: 0, q4: 0, total: 0 };
+    map[name].q1 += Number(c.q1_amount) || 0;
+    map[name].q2 += Number(c.q2_amount) || 0;
+    map[name].q3 += Number(c.q3_amount) || 0;
+    map[name].q4 += Number(c.q4_amount) || 0;
     map[name].total += Number(c.allocated_amount) || 0;
-    map[name].count += 1;
   });
   const rows = Object.entries(map).sort((a, b) => b[1].total - a[1].total);
-  tbody.innerHTML = rows.map(([name, v]) => `
+  tbody.innerHTML = rows.map(([name, v]) => {
+    const dept = STATE.departments.find(d => d.id === v.deptId);
+    return `
     <tr>
+      <td class="mono">${escapeHtml(dept ? dept.code : '—')}</td>
       <td>${escapeHtml(name)}</td>
-      <td class="num">${v.count}</td>
+      <td class="num mono">${money(v.q1)}</td>
+      <td class="num mono">${money(v.q2)}</td>
+      <td class="num mono">${money(v.q3)}</td>
+      <td class="num mono">${money(v.q4)}</td>
       <td class="num mono">${money(v.total)}</td>
-    </tr>`).join('');
-  const grandTotal = rows.reduce((sum, [, v]) => sum + v.total, 0);
-  countCell.textContent = String(codes.length);
-  totalCell.textContent = 'UGX ' + money(grandTotal);
+    </tr>`;
+  }).join('');
+  const grand = rows.reduce((acc, [, v]) => {
+    acc.q1 += v.q1; acc.q2 += v.q2; acc.q3 += v.q3; acc.q4 += v.q4; acc.total += v.total;
+    return acc;
+  }, { q1: 0, q2: 0, q3: 0, q4: 0, total: 0 });
+  document.getElementById(totalsIds.q1).textContent = money(grand.q1);
+  document.getElementById(totalsIds.q2).textContent = money(grand.q2);
+  document.getElementById(totalsIds.q3).textContent = money(grand.q3);
+  document.getElementById(totalsIds.q4).textContent = money(grand.q4);
+  document.getElementById(totalsIds.total).textContent = money(grand.total);
+}
+
+// Renders a chart comparing total allocated budget against the share of
+// budget outputs that have a recorded Actual Output, per department — a
+// proxy for delivery-against-allocation since Actual Output is captured as
+// a narrative field rather than a currency amount. Reflects whatever
+// department filter / search is currently applied above the main table.
+function renderDeptOutputChart(codes) {
+  const el = document.getElementById('wp-output-chart');
+  if (!el) return;
+  if (!codes || codes.length === 0) {
+    el.innerHTML = '<div class="empty-state" style="padding:20px;">No budget data yet.</div>';
+    return;
+  }
+  const map = {};
+  codes.forEach(c => {
+    const name = c.department_name || 'Unassigned';
+    if (!map[name]) map[name] = { budget: 0, total: 0, reported: 0 };
+    map[name].budget += Number(c.allocated_amount) || 0;
+    map[name].total += 1;
+    if (c.actual_output && String(c.actual_output).trim() !== '') map[name].reported += 1;
+  });
+  const rows = Object.entries(map).sort((a, b) => b[1].budget - a[1].budget);
+  const maxBudget = Math.max(...rows.map(([, v]) => v.budget), 1);
+  el.innerHTML = rows.map(([name, v]) => {
+    const budgetPct = Math.max((v.budget / maxBudget) * 100, 1.5);
+    const outputPct = v.total ? Math.round((v.reported / v.total) * 100) : 0;
+    return `
+    <div style="margin-bottom:18px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; margin-bottom:5px; gap:10px;">
+        <span style="font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(name)}</span>
+        <span class="mono" style="color:var(--ink-500); flex-shrink:0;">Budget: UGX ${money(v.budget)}</span>
+      </div>
+      <div class="util-bar-track">
+        <div class="util-bar-fill" style="width:${budgetPct}%;"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:11px; margin:7px 0 4px; gap:10px;">
+        <span style="color:var(--ink-500);">Budget outputs with actual output recorded</span>
+        <span class="mono" style="color:var(--gold-600); flex-shrink:0;">${v.reported} / ${v.total} (${outputPct}%)</span>
+      </div>
+      <div class="util-bar-track" style="height:7px;">
+        <div class="util-bar-fill" style="width:${Math.max(outputPct,1.5)}%; background:linear-gradient(90deg, var(--gold-600), var(--gold-500)); box-shadow:none;"></div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 async function renderBudgetCodes() {
@@ -1651,9 +1733,10 @@ async function renderBudgetCodes() {
     document.getElementById('wp-total-budget').textContent = 'UGX ' + money(total);
     document.getElementById('wp-total-codes').textContent = codes.length;
     document.getElementById('wp-total-depts').textContent = depts.size;
+    renderDeptSummaryTable(codes);
     if (codes.length === 0) {
       tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
-      renderDeptSubtotals([]);
+      renderDeptOutputChart([]);
       return;
     }
     tbody.innerHTML = codes.map(c => `
@@ -1679,10 +1762,11 @@ async function renderBudgetCodes() {
         <td class="wrap">${escapeHtml(c.responsible_party || '—')}</td>
         <td>${STATE.role === 'admin' ? `<button class="btn btn-ghost" style="padding:6px 10px;" onclick="openEditBudgetCode(${c.id})">Edit</button>` : ''}</td>
       </tr>`).join('');
-    renderDeptSubtotals(codes);
+    renderDeptOutputChart(codes);
   } catch (e) {
     tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
-    renderDeptSubtotals([]);
+    renderDeptSummaryTable([]);
+    renderDeptOutputChart([]);
   }
 }
 
