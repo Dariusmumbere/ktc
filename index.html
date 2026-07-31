@@ -651,6 +651,14 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
               </div>
             </div>
           </div>
+
+          <div class="card card-pad" style="margin-top:18px;">
+            <div class="kicker">Budget by Department</div>
+            <div class="help-text" style="margin-top:2px;">Total allocated budget (UGX) across all work plans, by department</div>
+            <div id="dept-chart" style="margin-top:16px;">
+              <div class="loading-row"><span class="spinner spinner-dark"></span></div>
+            </div>
+          </div>
         </div>
 
         <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
@@ -721,6 +729,28 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
                 <tr><td colspan="20" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
               </tbody>
             </table>
+          </div>
+
+          <div class="card card-pad" style="margin-top:18px;">
+            <div class="kicker">Department Sub Totals</div>
+            <div class="help-text" style="margin-top:2px;">Totals reflect the department filter and search currently applied above</div>
+            <div class="table-wrap" style="margin-top:12px;">
+              <table>
+                <thead>
+                  <tr><th>Department</th><th>Budget Codes</th><th>Total Budget (UGX)</th></tr>
+                </thead>
+                <tbody id="wp-dept-subtotals-body">
+                  <tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+                </tbody>
+                <tfoot>
+                  <tr style="font-weight:700; background:#FAFCFB;">
+                    <td>Grand Total</td>
+                    <td class="num mono" id="wp-subtotal-count">—</td>
+                    <td class="num mono" id="wp-subtotal-total">—</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -882,6 +912,11 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
       <div class="field">
         <label>Activity (optional — must belong to work plan)</label>
         <select id="req-activity"><option value="">— None —</option></select>
+      </div>
+      <div class="field">
+        <label>Payment Voucher Number</label>
+        <input type="text" id="req-pv-number" placeholder="e.g. 00123" />
+        <div class="help-text">Used to generate this requisition's reference number (format: KTC-RQ-YY-MM-DD-Payment Voucher Number).</div>
       </div>
       <div class="field">
         <label>Subject</label>
@@ -1519,6 +1554,7 @@ async function loadDashboard() {
           </div>
         </li>`).join('');
     }
+    renderDeptChart(s.budget_by_department || []);
   } catch (e) { toast(e.message, 'error'); }
 }
 function statusIcon(status) {
@@ -1529,6 +1565,32 @@ function statusIcon(status) {
 }
 document.getElementById('qa-new-req').addEventListener('click', () => openRequisitionModal());
 
+// Simple dependency-free horizontal bar chart for "Budget by Department".
+function renderDeptChart(data) {
+  const el = document.getElementById('dept-chart');
+  if (!el) return;
+  if (!data || data.length === 0) {
+    el.innerHTML = '<div class="empty-state" style="padding:20px;">No budget data yet.</div>';
+    return;
+  }
+  const sorted = [...data].sort((a, b) => (b.amount || 0) - (a.amount || 0));
+  const max = Math.max(...sorted.map(d => Number(d.amount) || 0), 1);
+  const palette = ['var(--teal-600)', 'var(--gold-600)', 'var(--navy-900)', 'var(--teal-500)', 'var(--danger)', 'var(--info)'];
+  el.innerHTML = sorted.map((d, i) => {
+    const pct = Math.max((Number(d.amount) || 0) / max * 100, 1.5);
+    return `
+    <div style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; margin-bottom:5px; gap:10px;">
+        <span style="font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(d.department)}</span>
+        <span class="mono" style="color:var(--ink-500); flex-shrink:0;">UGX ${money(d.amount)}</span>
+      </div>
+      <div class="util-bar-track">
+        <div class="util-bar-fill" style="width:${pct}%; background:${palette[i % palette.length]}; box-shadow:none;"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 // ---- Work Plan & Budget view -----------------------------------------------------
 async function loadWorkplanView() {
   await loadWorkplans();
@@ -1537,6 +1599,37 @@ async function loadWorkplanView() {
 document.getElementById('wp-select').addEventListener('change', renderBudgetCodes);
 document.getElementById('wp-dept-filter').addEventListener('change', renderBudgetCodes);
 document.getElementById('wp-search').addEventListener('input', debounce(renderBudgetCodes, 300));
+
+// Renders the "Department Sub Totals" summary beneath the work-plan table,
+// reflecting whatever department/search filters are currently applied.
+function renderDeptSubtotals(codes) {
+  const tbody = document.getElementById('wp-dept-subtotals-body');
+  const countCell = document.getElementById('wp-subtotal-count');
+  const totalCell = document.getElementById('wp-subtotal-total');
+  if (!codes || codes.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3"><div class="empty-state" style="padding:16px;">No budget codes to summarise.</div></td></tr>';
+    countCell.textContent = '0';
+    totalCell.textContent = 'UGX 0';
+    return;
+  }
+  const map = {};
+  codes.forEach(c => {
+    const name = c.department_name || 'Unassigned';
+    if (!map[name]) map[name] = { total: 0, count: 0 };
+    map[name].total += Number(c.allocated_amount) || 0;
+    map[name].count += 1;
+  });
+  const rows = Object.entries(map).sort((a, b) => b[1].total - a[1].total);
+  tbody.innerHTML = rows.map(([name, v]) => `
+    <tr>
+      <td>${escapeHtml(name)}</td>
+      <td class="num">${v.count}</td>
+      <td class="num mono">${money(v.total)}</td>
+    </tr>`).join('');
+  const grandTotal = rows.reduce((sum, [, v]) => sum + v.total, 0);
+  countCell.textContent = String(codes.length);
+  totalCell.textContent = 'UGX ' + money(grandTotal);
+}
 
 async function renderBudgetCodes() {
   const tbody = document.getElementById('wp-table-body');
@@ -1560,6 +1653,7 @@ async function renderBudgetCodes() {
     document.getElementById('wp-total-depts').textContent = depts.size;
     if (codes.length === 0) {
       tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
+      renderDeptSubtotals([]);
       return;
     }
     tbody.innerHTML = codes.map(c => `
@@ -1585,7 +1679,11 @@ async function renderBudgetCodes() {
         <td class="wrap">${escapeHtml(c.responsible_party || '—')}</td>
         <td>${STATE.role === 'admin' ? `<button class="btn btn-ghost" style="padding:6px 10px;" onclick="openEditBudgetCode(${c.id})">Edit</button>` : ''}</td>
       </tr>`).join('');
-  } catch (e) { tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+    renderDeptSubtotals(codes);
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
+    renderDeptSubtotals([]);
+  }
 }
 
 // Shared reset/prefill for the New/Edit Budget Estimate modal.
@@ -1814,6 +1912,7 @@ async function openRequisitionModal() {
   updateBalanceHint();
   await updateActivityOptions();
   document.getElementById('req-subject').value = '';
+  document.getElementById('req-pv-number').value = '';
   resetReqLineItems();
   renderReqLineItems();
   openModal('modal-req');
@@ -1840,6 +1939,7 @@ async function updateActivityOptions() {
 
 async function submitNewRequisition(submitNow) {
   const subject = document.getElementById('req-subject').value.trim();
+  const pvNumber = document.getElementById('req-pv-number').value.trim();
   const lineItems = STATE.reqLineItems
     .filter(li => li.description && li.description.trim() !== '')
     .map(li => ({
@@ -1855,10 +1955,11 @@ async function submitNewRequisition(submitNow) {
     budget_code_id: Number(document.getElementById('req-budget-code').value),
     activity_id: document.getElementById('req-activity').value ? Number(document.getElementById('req-activity').value) : null,
     subject,
+    payment_voucher_number: pvNumber,
     line_items: lineItems,
   };
-  if (!payload.budget_code_id || !subject || total <= 0) {
-    toast('Please complete the subject and add at least one priced line item', 'error'); return;
+  if (!payload.budget_code_id || !subject || !pvNumber || total <= 0) {
+    toast('Please complete the subject, payment voucher number and add at least one priced line item', 'error'); return;
   }
   try {
     await api(`/api/requisitions?submit=${submitNow}`, { method: 'POST', body: JSON.stringify(payload) });
@@ -1912,7 +2013,6 @@ async function viewRequisition(id) {
   try {
     const r = await api(`/api/requisitions/${id}`);
     document.getElementById('rd-title').textContent = r.ref_no;
-    let lastNo = null;
     const lineItemsRows = (r.line_items || []).map((li, i, arr) => {
       const showNo = i === 0 || arr[i-1].item_no !== li.item_no;
       return `<tr>
@@ -1930,6 +2030,7 @@ async function viewRequisition(id) {
         <div><div class="detail-label">Department</div><div class="detail-value">${escapeHtml(r.department_name||'—')}</div></div>
         <div><div class="detail-label">Budget Code</div><div class="detail-value mono">${escapeHtml(r.budget_code||'—')} — ${escapeHtml(r.budget_output||'')}</div></div>
         <div><div class="detail-label">Activity</div><div class="detail-value">${escapeHtml(r.activity_name||'—')}</div></div>
+        <div><div class="detail-label">Payment Voucher No.</div><div class="detail-value mono">${escapeHtml(r.payment_voucher_number||'—')}</div></div>
         <div><div class="detail-label">Amount Requested</div><div class="detail-value mono">UGX ${money(r.amount_requested)}</div></div>
         <div><div class="detail-label">Status</div><div class="detail-value"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div></div>
         <div class="span2" style="grid-column:1/-1;"><div class="detail-label">Subject</div><div class="detail-value">${escapeHtml(r.subject || r.activity_details || '—')}</div></div>
@@ -1941,21 +2042,6 @@ async function viewRequisition(id) {
           <thead><tr><th>No.</th><th class="wrap">Description</th><th>Units</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead>
           <tbody>${lineItemsRows || '<tr><td colspan="6"><div class="empty-state" style="padding:14px;">No line items recorded.</div></td></tr>'}</tbody>
         </table>
-      </div>
-      <div class="divider"></div>
-      <div class="kicker">Approval History</div>
-      <ul class="timeline" style="margin-top:8px;">
-        ${r.approvals.length ? r.approvals.map(a => `
-          <li><div class="tl-stamp">${a.action === 'approve' ? '✓' : a.action === 'reject' ? '✕' : '↺'}</div>
-          <div class="tl-body"><div class="tl-title">${escapeHtml(statusLabel(a.stage))} — ${escapeHtml(statusLabel(a.action))}d by ${escapeHtml(a.actor||'—')}</div>
-          <div class="tl-meta">${escapeHtml(a.comments || 'No comments')} · ${fmtDate(a.created_at)}</div></div></li>`).join('')
-          : '<li class="tl-meta" style="padding:8px 0;">No approval action recorded yet.</li>'}
-      </ul>
-      <div class="divider"></div>
-      <div class="kicker">Documents</div>
-      <div style="margin-top:8px;">
-        ${r.documents.length ? r.documents.map(d => `<div style="font-size:12.5px; padding:6px 0;"><a href="${API_BASE}${d.url}" target="_blank">${escapeHtml(d.filename)}</a> <span class="pill pill-draft">${d.doc_type}</span></div>`).join('')
-          : '<div class="tl-meta">No documents uploaded.</div>'}
       </div>
       ${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div>${(r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? '<div class="help-text" style="margin-top:6px;">Upload the Payment Voucher, Official Receipts, Signed Attendance Sheets and any other supporting documents for this requisition.</div>' : ''}</div>` : ''}
     `;
@@ -2086,6 +2172,7 @@ function renderPrintFormHtml(r) {
         <div><strong>Date of Submission:</strong><span>${fmtDate(r.created_at)}</span></div>
         <div><strong>Names:</strong><span>${escapeHtml(r.requester_name || '—')}</span></div>
         <div><strong>Signature:</strong><span>${sigImg(requesterSigUrl)}</span></div>
+        <div><strong>PV No.:</strong><span>${escapeHtml(r.payment_voucher_number || '—')}</span></div>
       </div>
       <div class="req-form-subject"><strong>Subject:</strong><span>${escapeHtml(subject)}</span></div>
       <table class="req-form-table">
