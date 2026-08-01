@@ -306,14 +306,26 @@ thead th{
   color:var(--wp-head-text);
   box-shadow:0 1px 0 rgba(15,92,82,.25);
 }
-/* Department Budget Summary table sits on a white card inside the teal
-   header, where the app-wide near-white row striping (#FAFCFB on #FFFFFF)
-   is invisible — give it its own clearly visible banding. */
-#wp-dept-summary-body tr:nth-child(odd){background:#E6F3F0;}
+/* Department Budget Summary table (nested white card, inside the teal
+   header band) needs its own explicit, high-contrast treatment — the
+   light-green work-plan header and the app-wide near-white row striping
+   are both too low-contrast in that context to read clearly. Header uses
+   solid navy + white text (like the main app tables); rows alternate a
+   clearly visible mint/white band with bold, dark, explicitly-colored text
+   so figures stand out regardless of the surrounding white card. */
+#wp-dept-summary-table thead th{
+  background:var(--navy-950) !important;
+  color:#FFFFFF !important;
+  box-shadow:0 1px 0 rgba(201,154,62,.35) !important;
+}
+#wp-dept-summary-body tr:nth-child(odd){background:#D6EEE6;}
 #wp-dept-summary-body tr:nth-child(even){background:#FFFFFF;}
 #wp-dept-summary-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-dept-summary-body tr:hover{background:var(--gold-100);}
-#wp-dept-summary-body td{font-weight:500;}
+#wp-dept-summary-body td{color:var(--ink-900); font-weight:600;}
+#wp-dept-summary-body td.mono, #wp-dept-summary-body td.num{color:var(--navy-950); font-weight:700;}
+#view-workplan .table-wrap tfoot tr{background:#EAF0EF !important;}
+#view-workplan .table-wrap tfoot td{color:var(--navy-950); font-weight:700;}
 tbody td{padding:11.5px 12px; border-bottom:1px solid #EEF2F1; font-size:12.5px; white-space:nowrap;}
 tbody tr{transition:background .12s var(--ease);}
 tbody tr:nth-child(even){background:#FAFCFB;}
@@ -692,7 +704,7 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
                 <div class="help-text" style="margin-top:2px;">Quarterly allocation totals per department for the selected work plan</div>
               </div>
               <div class="table-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
-                <table>
+                <table id="wp-dept-summary-table">
                   <thead>
                     <tr>
                       <th>Dept. Code</th>
@@ -708,7 +720,7 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
                     <tr><td colspan="7" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
                   </tbody>
                   <tfoot>
-                    <tr style="font-weight:700; background:#FAFCFB;">
+                    <tr style="font-weight:700; background:#EAF0EF;">
                       <td colspan="2">Sub Total</td>
                       <td class="num mono" id="wp-summary-q1">—</td>
                       <td class="num mono" id="wp-summary-q2">—</td>
