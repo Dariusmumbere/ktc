@@ -335,34 +335,35 @@ td.wrap, th.wrap{white-space:normal;}
 .num{font-family:var(--font-mono); text-align:right;}
 .mono{font-family:var(--font-mono);}
 
-/* ---- Work Plan & Budget: condensed columns, wrapped two-line headers,
-   and a fixed-height scroll frame (vertical + horizontal) on both the
-   Department Budget Summary and the main Work Plan grid, so only a
-   sensible number of rows show at a glance instead of the whole table
-   spilling down the page. ---- */
-#wp-summary-table-wrap{
-  max-height:210px;
-  overflow-y:auto;
-  overflow-x:auto;
-}
-#wp-summary-table-wrap table{min-width:640px;}
-#wp-dept-summary-table thead th{position:sticky; top:0; z-index:2;}
+/* ---------------- Work Plan & Budget: compact, height-constrained,
+   dual-scrollable tables (Department Budget Summary + main grid) ----------
+   Both tables get their own fixed-height scroll box so the horizontal
+   scrollbar always sits at the bottom of a *bounded* box near the top of
+   the page — not buried below a very long table — and both the sticky
+   header and the totals row/footer stay visible while scrolling. */
+#wp-dept-summary-wrap{max-height:216px; overflow-x:auto; overflow-y:auto;}
+#wp-main-table-wrap{max-height:480px; overflow-x:auto; overflow-y:auto;}
+#wp-dept-summary-wrap thead th, #wp-main-table-wrap thead th{position:sticky; top:0; z-index:3;}
+#wp-dept-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3;}
 
-#wp-main-table-wrap{
-  max-height:540px;
-  overflow-y:auto;
-  overflow-x:auto;
-}
-.wp-main-table{min-width:1520px;}
-.wp-main-table thead th{
-  white-space:normal; line-height:1.2; font-size:9.5px; padding:8px 6px; vertical-align:bottom;
-}
-.wp-main-table tbody td{
-  font-size:11px; font-weight:700; padding:8px 6px; white-space:normal;
-}
-.wp-main-table tbody td.mono, .wp-main-table tbody td.num{font-weight:700;}
-.wp-main-table th.col-dept, .wp-main-table td.col-dept{max-width:100px; width:100px; word-break:break-word;}
-.wp-main-table th.col-funding, .wp-main-table td.col-funding{max-width:66px; width:66px; word-break:break-word;}
+#wp-dept-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
+#wp-dept-summary-body td{padding:7px 9px; font-size:11.5px;}
+
+#wp-main-table{min-width:1560px;}
+#wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
+#wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:700; line-height:1.3;}
+#wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px;}
+/* Funding Source (18th column): give it noticeably less room than before */
+#wp-main-table th:nth-child(18), #wp-main-table td:nth-child(18){white-space:normal; max-width:78px; width:78px;}
+/* Department (1st column): wrap the name across two lines to use the
+   narrower column width efficiently rather than forcing extra scroll */
+#wp-main-table th:nth-child(1), #wp-main-table td:nth-child(1){white-space:normal; max-width:104px; width:104px;}
+/* Q1–Q4 and Total Budget columns: keep numbers compact */
+#wp-main-table th:nth-child(13), #wp-main-table td:nth-child(13),
+#wp-main-table th:nth-child(14), #wp-main-table td:nth-child(14),
+#wp-main-table th:nth-child(15), #wp-main-table td:nth-child(15),
+#wp-main-table th:nth-child(16), #wp-main-table td:nth-child(16),
+#wp-main-table th:nth-child(17), #wp-main-table td:nth-child(17){max-width:92px; width:92px;}
 
 .toolbar{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
 .search-box{position:relative; flex:1; min-width:220px;}
@@ -730,19 +731,19 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
             <div class="card" style="margin-top:18px; background:rgba(255,255,255,.97); border:none; overflow:hidden;">
               <div style="padding:14px 18px 4px;">
                 <div class="kicker" style="color:var(--teal-700);">Department Budget Summary</div>
-                <div class="help-text" style="margin-top:2px;">Quarterly allocation totals per department for the selected work plan</div>
+                <div class="help-text" style="margin-top:2px;">Quarterly allocation totals per department for the selected work plan (showing at most 4 rows at a glance — scroll for more)</div>
               </div>
-              <div class="table-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
+              <div class="table-wrap" id="wp-dept-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
                 <table id="wp-dept-summary-table">
                   <thead>
                     <tr>
-                      <th>Dept. Code</th>
+                      <th>Dept.<br>Code</th>
                       <th>Department</th>
-                      <th>Q1 (UGX)</th>
-                      <th>Q2 (UGX)</th>
-                      <th>Q3 (UGX)</th>
-                      <th>Q4 (UGX)</th>
-                      <th>Total Budget (UGX)</th>
+                      <th>Q1<br>(UGX)</th>
+                      <th>Q2<br>(UGX)</th>
+                      <th>Q3<br>(UGX)</th>
+                      <th>Q4<br>(UGX)</th>
+                      <th>Total Budget<br>(UGX)</th>
                     </tr>
                   </thead>
                   <tbody id="wp-dept-summary-body">
@@ -786,29 +787,29 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
             <select class="filter-select" id="wp-dept-filter"><option value="">All Departments</option></select>
           </div>
 
-          <div class="table-wrap">
-            <table>
+          <div class="table-wrap" id="wp-main-table-wrap">
+            <table id="wp-main-table">
               <thead>
                 <tr>
-                  <th>Department</th>
-                  <th class="wrap">Service Area</th>
+                  <th class="wrap">Department</th>
+                  <th class="wrap">Service<br>Area</th>
                   <th class="wrap">Programme</th>
-                  <th class="wrap">Sub Programme</th>
-                  <th>Budget Code</th>
-                  <th class="wrap">Budget Output Description</th>
-                  <th class="wrap">PIAP Output Description</th>
-                  <th class="wrap">PIAP Output Indicator</th>
-                  <th>Unit of Measure</th>
-                  <th>Baseline Value</th>
-                  <th>Planned Target</th>
-                  <th class="wrap">Actual Output</th>
-                  <th>Q1 (UGX)</th>
-                  <th>Q2 (UGX)</th>
-                  <th>Q3 (UGX)</th>
-                  <th>Q4 (UGX)</th>
-                  <th>Total Budget (UGX)</th>
-                  <th>Funding Source</th>
-                  <th class="wrap">Responsible Party</th>
+                  <th class="wrap">Sub<br>Programme</th>
+                  <th class="wrap">Budget<br>Code</th>
+                  <th class="wrap">Budget Output<br>Description</th>
+                  <th class="wrap">PIAP Output<br>Description</th>
+                  <th class="wrap">PIAP Output<br>Indicator</th>
+                  <th class="wrap">Unit of<br>Measure</th>
+                  <th class="wrap">Baseline<br>Value</th>
+                  <th class="wrap">Planned<br>Target</th>
+                  <th class="wrap">Actual<br>Output</th>
+                  <th class="wrap">Q1<br>(UGX)</th>
+                  <th class="wrap">Q2<br>(UGX)</th>
+                  <th class="wrap">Q3<br>(UGX)</th>
+                  <th class="wrap">Q4<br>(UGX)</th>
+                  <th class="wrap">Total Budget<br>(UGX)</th>
+                  <th class="wrap">Funding<br>Source</th>
+                  <th class="wrap">Responsible<br>Party</th>
                   <th></th>
                 </tr>
               </thead>
@@ -1883,7 +1884,7 @@ async function renderBudgetCodes() {
     }
     tbody.innerHTML = codes.map(c => `
       <tr>
-        <td>${escapeHtml(c.department_name || '—')}</td>
+        <td class="wrap">${escapeHtml(c.department_name || '—')}</td>
         <td class="wrap">${escapeHtml(c.service_area || '—')}</td>
         <td class="wrap">${escapeHtml(c.programme || '—')}</td>
         <td class="wrap">${escapeHtml(c.sub_programme || '—')}</td>
@@ -1900,7 +1901,7 @@ async function renderBudgetCodes() {
         <td class="num mono">${money(c.q3_amount)}</td>
         <td class="num mono">${money(c.q4_amount)}</td>
         <td class="num mono">${money(c.allocated_amount)}</td>
-        <td>${escapeHtml(c.funding_source)}</td>
+        <td class="wrap">${escapeHtml(c.funding_source)}</td>
         <td class="wrap">${escapeHtml(c.responsible_party || '—')}</td>
         <td style="white-space:nowrap;">${STATE.role === 'admin' ? `<button class="btn btn-ghost" style="padding:6px 10px;" onclick="openEditBudgetCode(${c.id})">Edit</button> <button class="btn btn-danger" style="padding:6px 10px; margin-left:4px;" onclick="deleteBudgetCode(${c.id})">Delete</button>` : ''}</td>
       </tr>`).join('');
