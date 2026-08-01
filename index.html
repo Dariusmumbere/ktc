@@ -335,6 +335,35 @@ td.wrap, th.wrap{white-space:normal;}
 .num{font-family:var(--font-mono); text-align:right;}
 .mono{font-family:var(--font-mono);}
 
+/* ---- Work Plan & Budget: condensed columns, wrapped two-line headers,
+   and a fixed-height scroll frame (vertical + horizontal) on both the
+   Department Budget Summary and the main Work Plan grid, so only a
+   sensible number of rows show at a glance instead of the whole table
+   spilling down the page. ---- */
+#wp-summary-table-wrap{
+  max-height:210px;
+  overflow-y:auto;
+  overflow-x:auto;
+}
+#wp-summary-table-wrap table{min-width:640px;}
+#wp-dept-summary-table thead th{position:sticky; top:0; z-index:2;}
+
+#wp-main-table-wrap{
+  max-height:540px;
+  overflow-y:auto;
+  overflow-x:auto;
+}
+.wp-main-table{min-width:1520px;}
+.wp-main-table thead th{
+  white-space:normal; line-height:1.2; font-size:9.5px; padding:8px 6px; vertical-align:bottom;
+}
+.wp-main-table tbody td{
+  font-size:11px; font-weight:700; padding:8px 6px; white-space:normal;
+}
+.wp-main-table tbody td.mono, .wp-main-table tbody td.num{font-weight:700;}
+.wp-main-table th.col-dept, .wp-main-table td.col-dept{max-width:100px; width:100px; word-break:break-word;}
+.wp-main-table th.col-funding, .wp-main-table td.col-funding{max-width:66px; width:66px; word-break:break-word;}
+
 .toolbar{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
 .search-box{position:relative; flex:1; min-width:220px;}
 .search-box svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); width:15px;height:15px; color:var(--ink-500); pointer-events:none;}
