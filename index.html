@@ -36,8 +36,8 @@
   --warning-bg:#FBF1DE;
   --info:#2E5E8C;
   --info-bg:#E9F1FA;
-  --wp-head-bg:#DFF3E6;
-  --wp-head-text:#0F5C52;
+  --wp-head-bg:#F0B90B;
+  --wp-head-text:#3A2900;
   --radius:10px;
   --radius-sm:6px;
   --radius-lg:16px;
@@ -196,13 +196,13 @@ a{color:inherit;}
 
 .main{flex:1; display:flex; flex-direction:column; min-width:0; overflow:hidden;}
 .topbar{
-  height:64px; flex-shrink:0; background:rgba(255,255,255,.86); backdrop-filter:blur(10px) saturate(1.4); -webkit-backdrop-filter:blur(10px) saturate(1.4);
+  min-height:64px; flex-shrink:0; background:rgba(255,255,255,.86); backdrop-filter:blur(10px) saturate(1.4); -webkit-backdrop-filter:blur(10px) saturate(1.4);
   border-bottom:1px solid var(--line); box-shadow:0 1px 0 rgba(10,31,43,.02);
-  display:flex; align-items:center; justify-content:space-between; padding:0 22px; position:relative; z-index:10;
+  display:flex; align-items:center; justify-content:space-between; padding:0 22px; position:relative; z-index:10; flex-wrap:wrap; gap:10px;
 }
 .topbar-title{font-family:var(--font-display); font-size:17.5px; font-weight:600; letter-spacing:.1px;}
 .topbar-sub{font-size:11.5px; color:var(--ink-500); margin-top:1px;}
-.topbar-right{display:flex; align-items:center; gap:14px;}
+.topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
 .icon-btn{
   position:relative; width:36px;height:36px; border-radius:9px; border:1px solid var(--line); background:#fff;
   display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-700);
@@ -299,31 +299,35 @@ thead th{
   padding:12px; text-align:left; font-weight:700; white-space:nowrap; position:sticky; top:0;
   box-shadow:0 1px 0 rgba(201,154,62,.35);
 }
-/* Work Plan & Budget grid gets a distinct light-green header treatment
+/* Work Plan & Budget grid gets a distinct deep-yellow header treatment
    (per Council request) instead of the navy header used elsewhere. */
 #view-workplan .table-wrap thead th{
   background:var(--wp-head-bg);
   color:var(--wp-head-text);
-  box-shadow:0 1px 0 rgba(15,92,82,.25);
+  box-shadow:0 1px 0 rgba(58,41,0,.35);
 }
 /* Department Budget Summary table (nested white card, inside the teal
    header band) needs its own explicit, high-contrast treatment — the
-   light-green work-plan header and the app-wide near-white row striping
+   deep-yellow work-plan header and the app-wide near-white row striping
    are both too low-contrast in that context to read clearly. Header uses
    solid navy + white text (like the main app tables); rows alternate a
    clearly visible mint/white band with bold, dark, explicitly-colored text
-   so figures stand out regardless of the surrounding white card. */
+   so figures stand out regardless of the surrounding white card.
+   Column titles are centered; row content is left aligned, per Council
+   request, overriding the generic .num right-alignment for this table. */
 #wp-dept-summary-table thead th{
   background:var(--teal-700) !important;
   color:#FFFFFF !important;
   box-shadow:0 1px 0 rgba(201,154,62,.35) !important;
+  text-align:center;
 }
 #wp-dept-summary-body tr:nth-child(odd){background:#D6EEE6;}
 #wp-dept-summary-body tr:nth-child(even){background:#FFFFFF;}
 #wp-dept-summary-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-dept-summary-body tr:hover{background:var(--gold-100);}
-#wp-dept-summary-body td{color:var(--ink-900); font-weight:600;}
-#wp-dept-summary-body td.mono, #wp-dept-summary-body td.num{color:var(--navy-950); font-weight:700;}
+#wp-dept-summary-body td{color:var(--ink-900); font-weight:600; text-align:left;}
+#wp-dept-summary-body td.mono, #wp-dept-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-dept-summary-wrap tfoot td{text-align:left;}
 #view-workplan .table-wrap tfoot tr{background:#EAF0EF !important;}
 #view-workplan .table-wrap tfoot td{color:var(--navy-950); font-weight:700;}
 tbody td{padding:11.5px 12px; border-bottom:1px solid #EEF2F1; font-size:12.5px; white-space:nowrap;}
@@ -341,7 +345,7 @@ td.wrap, th.wrap{white-space:normal;}
    scrollbar always sits at the bottom of a *bounded* box near the top of
    the page — not buried below a very long table — and both the sticky
    header and the totals row/footer stay visible while scrolling. */
-#wp-dept-summary-wrap{max-height:216px; overflow-x:auto; overflow-y:auto;}
+#wp-dept-summary-wrap{max-height:260px; overflow-x:auto; overflow-y:auto;}
 #wp-main-table-wrap{max-height:480px; overflow-x:auto; overflow-y:auto;}
 #wp-dept-summary-wrap thead th, #wp-main-table-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-dept-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3;}
@@ -351,7 +355,7 @@ td.wrap, th.wrap{white-space:normal;}
 
 #wp-main-table{min-width:1560px;}
 #wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
-#wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:700; line-height:1.3;}
+#wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:400; line-height:1.3;}
 #wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px;}
 /* Funding Source (18th column): give it noticeably less room than before */
 #wp-main-table th:nth-child(18), #wp-main-table td:nth-child(18){white-space:normal; max-width:78px; width:78px;}
@@ -633,6 +637,13 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
           </div>
         </div>
         <div class="topbar-right">
+          <div id="topbar-workplan-controls" style="display:none; align-items:center; gap:10px;">
+            <div style="text-align:right;">
+              <div class="kicker" style="font-size:9.5px;">Annual Work Plan</div>
+              <div style="font-family:var(--font-display); font-weight:600; font-size:13px; white-space:nowrap;">FY <span id="wp-fy-title">—</span></div>
+            </div>
+            <select class="filter-select" id="wp-select" style="min-width:190px;"></select>
+          </div>
           <button class="icon-btn" id="notif-btn" title="Notifications">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M9.5 20a2.5 2.5 0 0 0 5 0"/></svg>
             <span class="badge-dot" id="notif-badge" style="display:none;">0</span>
@@ -714,24 +725,11 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
         <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
         <div class="view" id="view-workplan">
           <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
-              <div>
-                <div class="kicker" style="color:var(--gold-100);">Annual Work Plan</div>
-                <h2 style="font-family:var(--font-display); margin:2px 0 0; font-size:20px;">Budget Estimates, Financial Year <span id="wp-fy-title">2026/27</span></h2>
-              </div>
-              <select class="filter-select" id="wp-select" style="min-width:200px;"></select>
-              <button class="btn" id="wp-new-workplan-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ New Work Plan</button>
-              <button class="btn" id="wp-edit-workplan-btn" style="display:none; background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.4); color:#fff;">✎ Edit Work Plan</button>
-              <button class="btn btn-danger" id="wp-delete-workplan-btn" style="display:none;">🗑 Delete Work Plan</button>
-              <button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import from Excel</button>
-              <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
-              <button class="btn btn-gold" id="wp-new-btn" style="display:none;">+ New Budget Estimates Data Entry Form</button>
-            </div>
 
-            <div class="card" style="margin-top:18px; background:rgba(255,255,255,.97); border:none; overflow:hidden;">
+            <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
               <div style="padding:14px 18px 4px;">
                 <div class="kicker" style="color:var(--teal-700);">Department Budget Summary</div>
-                <div class="help-text" style="margin-top:2px;">Quarterly allocation totals per department for the selected work plan (showing at most 4 rows at a glance — scroll for more)</div>
+                <div class="help-text" style="margin-top:2px;">Quarterly allocation totals per department for the selected work plan, including the Uncommitted Departmental Balance remaining once fully-approved requisitions (through to the Auditor's accountability wall) are deducted (showing at most 4 rows at a glance — scroll for more)</div>
               </div>
               <div class="table-wrap" id="wp-dept-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
                 <table id="wp-dept-summary-table">
@@ -744,10 +742,11 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
                       <th>Q3<br>(UGX)</th>
                       <th>Q4<br>(UGX)</th>
                       <th>Total Budget<br>(UGX)</th>
+                      <th>Uncommitted Departmental<br>Balance (UGX)</th>
                     </tr>
                   </thead>
                   <tbody id="wp-dept-summary-body">
-                    <tr><td colspan="7" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+                    <tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
                   </tbody>
                   <tfoot>
                     <tr style="font-weight:700; background:#EAF0EF;">
@@ -757,25 +756,19 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
                       <td class="num mono" id="wp-summary-q3">—</td>
                       <td class="num mono" id="wp-summary-q4">—</td>
                       <td class="num mono" id="wp-summary-total">—</td>
+                      <td class="num mono" id="wp-summary-uncommitted">—</td>
                     </tr>
                   </tfoot>
                 </table>
               </div>
             </div>
 
-            <div style="display:flex; gap:36px; margin-top:18px; flex-wrap:wrap;">
-              <div>
-                <div style="font-size:11px; text-transform:uppercase; letter-spacing:.5px; opacity:.85;">Total Budget</div>
-                <div style="font-family:var(--font-mono); font-size:24px; font-weight:600;" id="wp-total-budget">—</div>
-              </div>
-              <div>
-                <div style="font-size:11px; text-transform:uppercase; letter-spacing:.5px; opacity:.85;">Budget Codes</div>
-                <div style="font-family:var(--font-mono); font-size:24px; font-weight:600;" id="wp-total-codes">—</div>
-              </div>
-              <div>
-                <div style="font-size:11px; text-transform:uppercase; letter-spacing:.5px; opacity:.85;">Departments Covered</div>
-                <div style="font-family:var(--font-mono); font-size:24px; font-weight:600;" id="wp-total-depts">—</div>
-              </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;">
+              <button class="btn" id="wp-new-workplan-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Annual Work Plan &amp; Budget Estimates</button>
+              <button class="btn btn-gold" id="wp-new-btn" style="display:none;">+ Add Activity and Budget Estimates</button>
+              <button class="btn" id="wp-edit-workplan-btn" style="display:none; background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.4); color:#fff;">✎ Edit Activity and Budget Estimates</button>
+              <button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity and Budget Estimates From Excel</button>
+              <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
             </div>
           </div>
 
@@ -820,8 +813,8 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
           </div>
 
           <div class="card card-pad" style="margin-top:18px;">
-            <div class="kicker">📊 Department Budget vs. Actual Output</div>
-            <div class="help-text" style="margin-top:2px;">Total allocated budget compared against the share of budget outputs with a recorded Actual Output, per department (reflects the department filter and search currently applied above)</div>
+            <div class="kicker">📊 Baseline vs. Planned Target vs. Actual Output — by Department</div>
+            <div class="help-text" style="margin-top:2px;">Maps previous performance (Baseline Value) against the Planned Target and the Actual Output Delivered for each department, to pinpoint achievement and variance margins clearly (reflects the department filter and search currently applied above).</div>
             <div id="wp-output-chart" style="margin-top:16px; overflow-x:auto;">
               <div class="loading-row"><span class="spinner spinner-dark"></span></div>
             </div>
@@ -1313,6 +1306,18 @@ function money(n) {
   if (!Number.isFinite(n)) n = 0;
   return n.toLocaleString('en-UG', { maximumFractionDigits: 0 });
 }
+// Best-effort parser for values that may be plain numbers or free text
+// (e.g. the "Actual Output" narrative field). Returns null when no numeric
+// value could be extracted, so callers can distinguish "zero" from
+// "not reported / not numeric".
+function parseNumericLoose(v) {
+  if (v === null || v === undefined) return null;
+  if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+  let s = String(v).replace(/[,\s\u00A0]/g, '').replace(/UGX|Ugx|ugx|%/g, '').trim();
+  if (s === '') return null;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
 function fmtDate(iso) {
   if (!iso) return '—';
   const d = new Date(iso);
@@ -1429,7 +1434,6 @@ function applyRoleVisibility() {
   document.getElementById('wp-new-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('wp-new-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('wp-edit-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
-  document.getElementById('wp-delete-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('wp-import-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
   document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
@@ -1453,6 +1457,7 @@ function switchView(view) {
   document.getElementById('view-' + view).classList.add('active');
   document.getElementById('topbar-title').textContent = VIEW_TITLES[view][0];
   document.getElementById('topbar-sub').textContent = VIEW_TITLES[view][1];
+  document.getElementById('topbar-workplan-controls').style.display = (view === 'workplan') ? 'flex' : 'none';
   closeNotifPanel();
   if (view === 'dashboard') loadDashboard();
   if (view === 'workplan') loadWorkplanView();
@@ -1690,24 +1695,32 @@ document.getElementById('wp-search').addEventListener('input', debounce(renderBu
 
 // Renders the "Department Budget Summary" table in the work-plan header,
 // showing quarterly totals per department for the codes currently loaded
-// (i.e. reflecting the work plan selected above).
+// (i.e. reflecting the work plan selected above), plus the Uncommitted
+// Departmental Balance: the portion of each department's total budget
+// still free once fully-approved requisitions (i.e. everything that has
+// passed all the way through to the Auditor's accountability wall — any
+// status besides draft/rejected/returned) have been deducted. Each
+// budget code's own `available_balance`, as returned by the backend,
+// already reflects exactly that deduction, so the departmental figure is
+// simply the sum of `available_balance` across the department's codes.
 function renderDeptSummaryTable(codes) {
   const tbody = document.getElementById('wp-dept-summary-body');
-  const totalsIds = { q1: 'wp-summary-q1', q2: 'wp-summary-q2', q3: 'wp-summary-q3', q4: 'wp-summary-q4', total: 'wp-summary-total' };
+  const totalsIds = { q1: 'wp-summary-q1', q2: 'wp-summary-q2', q3: 'wp-summary-q3', q4: 'wp-summary-q4', total: 'wp-summary-total', uncommitted: 'wp-summary-uncommitted' };
   if (!codes || codes.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state" style="padding:16px;">No budget codes to summarise.</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state" style="padding:16px;">No budget codes to summarise.</div></td></tr>';
     Object.values(totalsIds).forEach(id => document.getElementById(id).textContent = 'UGX 0');
     return;
   }
   const map = {};
   codes.forEach(c => {
     const name = c.department_name || 'Unassigned';
-    if (!map[name]) map[name] = { deptId: c.department_id, q1: 0, q2: 0, q3: 0, q4: 0, total: 0 };
+    if (!map[name]) map[name] = { deptId: c.department_id, q1: 0, q2: 0, q3: 0, q4: 0, total: 0, uncommitted: 0 };
     map[name].q1 += Number(c.q1_amount) || 0;
     map[name].q2 += Number(c.q2_amount) || 0;
     map[name].q3 += Number(c.q3_amount) || 0;
     map[name].q4 += Number(c.q4_amount) || 0;
     map[name].total += Number(c.allocated_amount) || 0;
+    map[name].uncommitted += Number(c.available_balance) || 0;
   });
   const rows = Object.entries(map).sort((a, b) => b[1].total - a[1].total);
   tbody.innerHTML = rows.map(([name, v]) => {
@@ -1721,27 +1734,33 @@ function renderDeptSummaryTable(codes) {
       <td class="num mono">${money(v.q3)}</td>
       <td class="num mono">${money(v.q4)}</td>
       <td class="num mono">${money(v.total)}</td>
+      <td class="num mono">${money(v.uncommitted)}</td>
     </tr>`;
   }).join('');
   const grand = rows.reduce((acc, [, v]) => {
-    acc.q1 += v.q1; acc.q2 += v.q2; acc.q3 += v.q3; acc.q4 += v.q4; acc.total += v.total;
+    acc.q1 += v.q1; acc.q2 += v.q2; acc.q3 += v.q3; acc.q4 += v.q4; acc.total += v.total; acc.uncommitted += v.uncommitted;
     return acc;
-  }, { q1: 0, q2: 0, q3: 0, q4: 0, total: 0 });
+  }, { q1: 0, q2: 0, q3: 0, q4: 0, total: 0, uncommitted: 0 });
   document.getElementById(totalsIds.q1).textContent = money(grand.q1);
   document.getElementById(totalsIds.q2).textContent = money(grand.q2);
   document.getElementById(totalsIds.q3).textContent = money(grand.q3);
   document.getElementById(totalsIds.q4).textContent = money(grand.q4);
   document.getElementById(totalsIds.total).textContent = money(grand.total);
+  document.getElementById(totalsIds.uncommitted).textContent = money(grand.uncommitted);
 }
 
-// Renders a grouped SVG bar chart comparing total allocated budget against
-// the share of budget outputs that have a recorded Actual Output, per
-// department — a proxy for delivery-against-allocation since Actual Output
-// is captured as a narrative field rather than a currency amount. Reflects
-// whatever department filter / search is currently applied above the main
-// table. Colours are hard-coded hex (matching the design tokens) rather
-// than var(...) references, since SVG presentation attributes don't
-// reliably resolve CSS custom properties across browsers.
+// Renders a grouped SVG bar chart comparing Baseline Value (previous
+// performance level), Planned Target and Actual Output Delivered per
+// department, so achievement and variance margins are visible at a
+// glance. Baseline Value and Planned Target are always numeric; Actual
+// Output is a narrative field in the source work plan, so it is parsed
+// leniently (parseNumericLoose) — rows where it can't be read as a number
+// are simply left out of that department's Actual total (and flagged in
+// the tooltip), rather than distorting the chart with false zeros.
+// Reflects whatever department filter / search is currently applied
+// above the main table. Colours are hard-coded hex (matching the design
+// tokens) rather than var(...) references, since SVG presentation
+// attributes don't reliably resolve CSS custom properties across browsers.
 function renderDeptOutputChart(codes) {
   const el = document.getElementById('wp-output-chart');
   if (!el) return;
@@ -1752,56 +1771,73 @@ function renderDeptOutputChart(codes) {
   const map = {};
   codes.forEach(c => {
     const name = c.department_name || 'Unassigned';
-    if (!map[name]) map[name] = { budget: 0, total: 0, reported: 0 };
-    map[name].budget += Number(c.allocated_amount) || 0;
-    map[name].total += 1;
-    if (c.actual_output && String(c.actual_output).trim() !== '') map[name].reported += 1;
+    if (!map[name]) map[name] = { baseline: 0, target: 0, actual: 0, actualRows: 0, totalRows: 0 };
+    map[name].baseline += Number(c.baseline_value) || 0;
+    map[name].target += Number(c.planned_target) || 0;
+    const av = parseNumericLoose(c.actual_output);
+    if (av !== null) { map[name].actual += av; map[name].actualRows += 1; }
+    map[name].totalRows += 1;
   });
   const rows = Object.entries(map).map(([name, v]) => ({
     name,
-    budget: v.budget,
-    total: v.total,
-    reported: v.reported,
-    outputPct: v.total ? Math.round((v.reported / v.total) * 100) : 0,
-  })).sort((a, b) => b.budget - a.budget);
+    baseline: v.baseline,
+    target: v.target,
+    actual: v.actual,
+    actualRows: v.actualRows,
+    totalRows: v.totalRows,
+    variance: v.actual - v.target,
+    achievementPct: v.target > 0 ? Math.round((v.actual / v.target) * 100) : (v.actual > 0 ? 100 : 0),
+  })).sort((a, b) => b.target - a.target);
 
-  const COLOR_BUDGET = '#146B5F';   // teal-600
-  const COLOR_OUTPUT = '#B9852F';   // gold-600
-  const COLOR_TEXT = '#3B4C51';     // ink-700
-  const COLOR_AXIS = '#C7D2D0';     // line-strong
+  const COLOR_BASELINE = '#6B7C80';  // ink-500 — where departments started
+  const COLOR_TARGET = '#146B5F';    // teal-600 — where they aimed
+  const COLOR_ACTUAL = '#B9852F';    // gold-600 — where they landed
+  const COLOR_TEXT = '#3B4C51';      // ink-700
+  const COLOR_AXIS = '#C7D2D0';      // line-strong
 
-  const maxBudget = Math.max(...rows.map(r => r.budget), 1);
-  const groupW = 130;
-  const barW = 26;
-  const chartW = Math.max(560, rows.length * groupW);
-  const chartH = 300;
-  const baseline = chartH - 74;
+  const maxVal = Math.max(...rows.map(r => Math.max(r.baseline, r.target, r.actual)), 1);
+  const groupW = 170;
+  const barW = 24;
+  const gap = 4;
+  const chartW = Math.max(600, rows.length * groupW);
+  const chartH = 320;
+  const baseline = chartH - 84;
   const plotH = baseline - 24;
 
   let bars = '';
   rows.forEach((r, i) => {
     const cx = i * groupW + groupW / 2;
-    const bH = Math.max((r.budget / maxBudget) * plotH, 2);
-    const oH = Math.max((r.outputPct / 100) * plotH, 2);
-    const bx = cx - barW - 3;
-    const ox = cx + 3;
+    const bH = Math.max((r.baseline / maxVal) * plotH, 1);
+    const tH = Math.max((r.target / maxVal) * plotH, 1);
+    const aH = Math.max((r.actual / maxVal) * plotH, 1);
+    const bx = cx - (barW * 1.5) - gap;
+    const tx = cx - (barW / 2);
+    const ax = cx + (barW / 2) + gap;
     const by = baseline - bH;
-    const oy = baseline - oH;
-    const shortName = r.name.length > 16 ? r.name.slice(0, 15) + '…' : r.name;
+    const ty = baseline - tH;
+    const ay = baseline - aH;
+    const shortName = r.name.length > 15 ? r.name.slice(0, 14) + '…' : r.name;
+    const varianceLabel = r.variance >= 0 ? `+${money(r.variance)}` : `−${money(Math.abs(r.variance))}`;
+    const varianceColor = r.variance >= 0 ? '#1F8A5F' : '#B8382A';
+    const reportedNote = r.actualRows < r.totalRows ? ` (${r.actualRows}/${r.totalRows} outputs reported numerically)` : '';
     bars += `
-      <rect x="${bx}" y="${by}" width="${barW}" height="${bH}" rx="4" fill="${COLOR_BUDGET}"></rect>
-      <text x="${bx + barW / 2}" y="${by - 6}" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, ui-monospace, monospace" fill="${COLOR_TEXT}">${money(r.budget)}</text>
-      <rect x="${ox}" y="${oy}" width="${barW}" height="${oH}" rx="4" fill="${COLOR_OUTPUT}"></rect>
-      <text x="${ox + barW / 2}" y="${oy - 6}" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, ui-monospace, monospace" fill="${COLOR_TEXT}">${r.outputPct}%</text>
+      <rect x="${bx}" y="${by}" width="${barW}" height="${bH}" rx="4" fill="${COLOR_BASELINE}"></rect>
+      <text x="${bx + barW / 2}" y="${by - 5}" text-anchor="middle" font-size="8.5" font-family="IBM Plex Mono, ui-monospace, monospace" fill="${COLOR_TEXT}">${money(r.baseline)}</text>
+      <rect x="${tx}" y="${ty}" width="${barW}" height="${tH}" rx="4" fill="${COLOR_TARGET}"></rect>
+      <text x="${tx + barW / 2}" y="${ty - 5}" text-anchor="middle" font-size="8.5" font-family="IBM Plex Mono, ui-monospace, monospace" fill="${COLOR_TEXT}">${money(r.target)}</text>
+      <rect x="${ax}" y="${ay}" width="${barW}" height="${aH}" rx="4" fill="${COLOR_ACTUAL}"></rect>
+      <text x="${ax + barW / 2}" y="${ay - 5}" text-anchor="middle" font-size="8.5" font-family="IBM Plex Mono, ui-monospace, monospace" fill="${COLOR_TEXT}">${money(r.actual)}</text>
       <text x="${cx}" y="${baseline + 20}" text-anchor="middle" font-size="10.5" font-weight="600" fill="${COLOR_TEXT}">${escapeHtml(shortName)}</text>
-      <title>${escapeHtml(r.name)}: UGX ${money(r.budget)} budget, ${r.reported}/${r.total} outputs reported (${r.outputPct}%)</title>
+      <text x="${cx}" y="${baseline + 34}" text-anchor="middle" font-size="9.5" font-weight="700" fill="${varianceColor}">${varianceLabel} vs target</text>
+      <title>${escapeHtml(r.name)}: Baseline ${money(r.baseline)}, Target ${money(r.target)}, Actual ${money(r.actual)}${reportedNote} — ${r.achievementPct}% of target achieved</title>
     `;
   });
 
   el.innerHTML = `
-    <div style="display:flex; gap:18px; align-items:center; margin-bottom:10px; font-size:11.5px; color:var(--ink-700);">
-      <span style="display:inline-flex; align-items:center; gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:var(--teal-600); display:inline-block;"></span>Total Budget (UGX)</span>
-      <span style="display:inline-flex; align-items:center; gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:var(--gold-600); display:inline-block;"></span>Actual Output Reported (%)</span>
+    <div style="display:flex; gap:18px; align-items:center; margin-bottom:10px; font-size:11.5px; color:var(--ink-700); flex-wrap:wrap;">
+      <span style="display:inline-flex; align-items:center; gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:${COLOR_BASELINE}; display:inline-block;"></span>Baseline Value</span>
+      <span style="display:inline-flex; align-items:center; gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:${COLOR_TARGET}; display:inline-block;"></span>Planned Target</span>
+      <span style="display:inline-flex; align-items:center; gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:${COLOR_ACTUAL}; display:inline-block;"></span>Actual Output Delivered</span>
     </div>
     <svg viewBox="0 0 ${chartW} ${chartH}" width="100%" height="${chartH}" style="min-width:${chartW}px; display:block;">
       <line x1="0" y1="${baseline}" x2="${chartW}" y2="${baseline}" stroke="${COLOR_AXIS}" stroke-width="1"></line>
@@ -1870,11 +1906,6 @@ async function renderBudgetCodes() {
     if (search) path += `search=${encodeURIComponent(search)}&`;
     const codes = await api(path);
     STATE.budgetCodes = codes;
-    const total = codes.reduce((a, c) => a + c.allocated_amount, 0);
-    const depts = new Set(codes.map(c => c.department_id));
-    document.getElementById('wp-total-budget').textContent = 'UGX ' + money(total);
-    document.getElementById('wp-total-codes').textContent = codes.length;
-    document.getElementById('wp-total-depts').textContent = depts.size;
     renderDeptSummaryTable(codes);
     if (codes.length === 0) {
       tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
@@ -2049,18 +2080,6 @@ document.getElementById('wp-edit-workplan-btn').addEventListener('click', () => 
   document.getElementById('wpn-fy').value = wp.financial_year;
   document.getElementById('wpn-title').value = wp.title;
   openModal('modal-wp');
-});
-document.getElementById('wp-delete-workplan-btn').addEventListener('click', async () => {
-  const wpVal = document.getElementById('wp-select').value;
-  const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
-  if (!wp) { toast('Please select a work plan to delete first', 'error'); return; }
-  if (!confirm(`Delete work plan "${wp.title}" (FY ${wp.financial_year})? This only succeeds if no budget codes are attached to it.`)) return;
-  try {
-    await api(`/api/workplans/${wp.id}`, { method: 'DELETE' });
-    toast('Work plan deleted', 'success');
-    await loadWorkplans();
-    renderBudgetCodes();
-  } catch (e) { toast(e.message, 'error'); }
 });
 document.getElementById('wpn-create-btn').addEventListener('click', async () => {
   const financial_year = document.getElementById('wpn-fy').value.trim();
