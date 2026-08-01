@@ -1316,7 +1316,7 @@ function money(n) {
 function fmtDate(iso) {
   if (!iso) return '—';
   const d = new Date(iso);
-  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' · ' +
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' • ' +
          d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 function initials(name) {
@@ -1438,7 +1438,7 @@ function applyRoleVisibility() {
 // ---- Navigation -----------------------------------------------------------
 const VIEW_TITLES = {
   dashboard: ['Dashboard', 'Overview of financial activity'],
-  workplan: ['Work Plan & Budget', 'Annual work plans, budget codes and utilisation'],
+  workplan: ['Programme-Based Budgeting System', 'Annual work plans, budget estimates, Execution and Absorption '],
   requisitions: ['Requisitions', 'Requisition tracking and submission'],
   approvals: ['Approvals', 'Three-stage approval workflow'],
   accountability: ['Accountability', 'Post-approval documentation and verification'],
@@ -1638,7 +1638,7 @@ async function loadDashboard() {
           <div class="tl-stamp">${statusIcon(r.status)}</div>
           <div class="tl-body">
             <div class="tl-title">${r.ref_no} <span class="pill pill-${r.status}" style="margin-left:6px;">${statusLabel(r.status)}</span></div>
-            <div class="tl-meta">${escapeHtml(r.department || '—')} · UGX ${money(r.amount)} · ${fmtDate(r.created_at)}</div>
+            <div class="tl-meta">${escapeHtml(r.department || '—')} • UGX ${money(r.amount)} • ${fmtDate(r.created_at)}</div>
           </div>
         </li>`).join('');
     }
@@ -2722,7 +2722,7 @@ document.getElementById('audit-view-btn').addEventListener('click', async () => 
         <div class="divider"></div>
         <div class="kicker">Approval History</div>
         <ul class="timeline" style="margin-top:8px;">
-          ${r.approvals.map(a => `<li><div class="tl-stamp">${a.action==='approve'?'✓':a.action==='reject'?'✕':'↺'}</div><div class="tl-body"><div class="tl-title">${escapeHtml(statusLabel(a.stage))} — ${escapeHtml(statusLabel(a.action))}d</div><div class="tl-meta">${escapeHtml(a.actor||'—')} · ${escapeHtml(a.comments||'No comments')} · ${fmtDate(a.created_at)}</div></div></li>`).join('') || '<li class="tl-meta">No approval history.</li>'}
+          ${r.approvals.map(a => `<li><div class="tl-stamp">${a.action==='approve'?'✓':a.action==='reject'?'✕':'↺'}</div><div class="tl-body"><div class="tl-title">${escapeHtml(statusLabel(a.stage))} — ${escapeHtml(statusLabel(a.action))}d</div><div class="tl-meta">${escapeHtml(a.actor||'—')} • ${escapeHtml(a.comments||'No comments')} • ${fmtDate(a.created_at)}</div></div></li>`).join('') || '<li class="tl-meta">No approval history.</li>'}
         </ul>
         <div class="divider"></div>
         <div class="kicker">Uploaded Documents</div>
