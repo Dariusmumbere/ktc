@@ -306,6 +306,14 @@ thead th{
   color:var(--wp-head-text);
   box-shadow:0 1px 0 rgba(15,92,82,.25);
 }
+/* Department Budget Summary table sits on a white card inside the teal
+   header, where the app-wide near-white row striping (#FAFCFB on #FFFFFF)
+   is invisible — give it its own clearly visible banding. */
+#wp-dept-summary-body tr:nth-child(odd){background:#E6F3F0;}
+#wp-dept-summary-body tr:nth-child(even){background:#FFFFFF;}
+#wp-dept-summary-body tr{border-bottom:1px solid var(--line-strong);}
+#wp-dept-summary-body tr:hover{background:var(--gold-100);}
+#wp-dept-summary-body td{font-weight:500;}
 tbody td{padding:11.5px 12px; border-bottom:1px solid #EEF2F1; font-size:12.5px; white-space:nowrap;}
 tbody tr{transition:background .12s var(--ease);}
 tbody tr:nth-child(even){background:#FAFCFB;}
@@ -671,6 +679,8 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
               </div>
               <select class="filter-select" id="wp-select" style="min-width:200px;"></select>
               <button class="btn" id="wp-new-workplan-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ New Work Plan</button>
+              <button class="btn" id="wp-edit-workplan-btn" style="display:none; background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.4); color:#fff;">✎ Edit Work Plan</button>
+              <button class="btn btn-danger" id="wp-delete-workplan-btn" style="display:none;">🗑 Delete Work Plan</button>
               <button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import from Excel</button>
               <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
               <button class="btn btn-gold" id="wp-new-btn" style="display:none;">+ New Budget Estimates Data Entry Form</button>
@@ -768,9 +778,17 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
           </div>
 
           <div class="card card-pad" style="margin-top:18px;">
-            <div class="kicker">Department Budget vs. Actual Output</div>
+            <div class="kicker">📊 Department Budget vs. Actual Output</div>
             <div class="help-text" style="margin-top:2px;">Total allocated budget compared against the share of budget outputs with a recorded Actual Output, per department (reflects the department filter and search currently applied above)</div>
-            <div id="wp-output-chart" style="margin-top:16px;">
+            <div id="wp-output-chart" style="margin-top:16px; overflow-x:auto;">
+              <div class="loading-row"><span class="spinner spinner-dark"></span></div>
+            </div>
+          </div>
+
+          <div class="card card-pad" style="margin-top:18px;">
+            <div class="kicker">🥧 Budget Share by Department</div>
+            <div class="help-text" style="margin-top:2px;">Proportion of total allocated budget contributed by each department (reflects the department filter and search currently applied above)</div>
+            <div id="wp-pie-chart" style="margin-top:16px; display:flex; gap:28px; flex-wrap:wrap; align-items:center;">
               <div class="loading-row"><span class="spinner spinner-dark"></span></div>
             </div>
           </div>
@@ -891,8 +909,8 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Name</th><th>Email</th><th>Position</th><th>Telephone</th><th>Role</th><th>Department</th><th>Status</th><th></th></tr></thead>
-              <tbody id="users-table-body"><tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+              <thead><tr><th>Name</th><th>Email</th><th>Position</th><th>Telephone</th><th>Role</th><th>Department</th><th>Status</th><th></th><th></th></tr></thead>
+              <tbody id="users-table-body"><tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
             </table>
           </div>
         </div>
@@ -908,8 +926,8 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Code</th><th>Name</th></tr></thead>
-              <tbody id="depts-table-body"><tr><td colspan="2" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+              <thead><tr><th>Code</th><th>Name</th><th></th></tr></thead>
+              <tbody id="depts-table-body"><tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
             </table>
           </div>
         </div>
@@ -924,7 +942,7 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
 <!-- ===== MODAL: New / Submit Requisition ===== -->
 <div class="overlay" id="modal-req">
   <div class="modal modal-lg">
-    <div class="modal-head"><h3>New Requisition</h3><button class="modal-close" data-close="modal-req">&times;</button></div>
+    <div class="modal-head"><h3 id="req-modal-title">New Requisition</h3><button class="modal-close" data-close="modal-req">&times;</button></div>
     <div class="modal-body">
       <div class="field">
         <label>Budget Code</label>
@@ -1031,12 +1049,12 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
 <!-- ===== MODAL: New User ===== -->
 <div class="overlay" id="modal-user">
   <div class="modal">
-    <div class="modal-head"><h3>New User</h3><button class="modal-close" data-close="modal-user">&times;</button></div>
+    <div class="modal-head"><h3 id="u-modal-title">New User</h3><button class="modal-close" data-close="modal-user">&times;</button></div>
     <div class="modal-body">
       <div class="form-grid">
         <div class="field span2"><label>Full Name</label><input type="text" id="u-name"/></div>
         <div class="field span2"><label>Email</label><input type="email" id="u-email"/></div>
-        <div class="field"><label>Temporary Password</label><input type="text" id="u-password"/></div>
+        <div class="field"><label id="u-password-label">Temporary Password</label><input type="text" id="u-password"/></div>
         <div class="field"><label>Position</label><input type="text" id="u-position" placeholder="e.g. Senior Accountant"/></div>
         <div class="field"><label>Telephone</label><input type="text" id="u-telephone" placeholder="e.g. 0700 000 000"/></div>
         <div class="field"><label>Role</label>
@@ -1062,7 +1080,7 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
 <!-- ===== MODAL: New Department ===== -->
 <div class="overlay" id="modal-dept">
   <div class="modal">
-    <div class="modal-head"><h3>New Department</h3><button class="modal-close" data-close="modal-dept">&times;</button></div>
+    <div class="modal-head"><h3 id="d-modal-title">New Department</h3><button class="modal-close" data-close="modal-dept">&times;</button></div>
     <div class="modal-body">
       <div class="field"><label>Department Name</label><input type="text" id="d-name"/></div>
       <div class="field"><label>Department Code</label><input type="text" id="d-code" placeholder="e.g. FIN"/></div>
@@ -1125,10 +1143,10 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
   </div>
 </div>
 
-<!-- ===== MODAL: New Work Plan ===== -->
+<!-- ===== MODAL: New / Edit Work Plan ===== -->
 <div class="overlay" id="modal-wp">
   <div class="modal">
-    <div class="modal-head"><h3>New Work Plan</h3><button class="modal-close" data-close="modal-wp">&times;</button></div>
+    <div class="modal-head"><h3 id="wpn-modal-title">New Work Plan</h3><button class="modal-close" data-close="modal-wp">&times;</button></div>
     <div class="modal-body">
       <div class="field"><label>Financial Year</label><input type="text" id="wpn-fy" placeholder="e.g. 2026/27"/></div>
       <div class="field"><label>Title</label><input type="text" id="wpn-title" placeholder="e.g. Annual Work Plan and Budget"/></div>
@@ -1198,6 +1216,10 @@ let STATE = {
   budgetCodes: [],
   currentReqId: null,
   editingBudgetCodeId: null,
+  editingWorkPlanId: null,
+  editingDepartmentId: null,
+  editingUserId: null,
+  editingRequisitionId: null,
   reqLineItems: [],
   signatureUrl: null,
 };
@@ -1364,6 +1386,8 @@ function applyRoleVisibility() {
   });
   document.getElementById('wp-new-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('wp-new-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+  document.getElementById('wp-edit-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+  document.getElementById('wp-delete-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('wp-import-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
   document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
@@ -1668,11 +1692,14 @@ function renderDeptSummaryTable(codes) {
   document.getElementById(totalsIds.total).textContent = money(grand.total);
 }
 
-// Renders a chart comparing total allocated budget against the share of
-// budget outputs that have a recorded Actual Output, per department — a
-// proxy for delivery-against-allocation since Actual Output is captured as
-// a narrative field rather than a currency amount. Reflects whatever
-// department filter / search is currently applied above the main table.
+// Renders a grouped SVG bar chart comparing total allocated budget against
+// the share of budget outputs that have a recorded Actual Output, per
+// department — a proxy for delivery-against-allocation since Actual Output
+// is captured as a narrative field rather than a currency amount. Reflects
+// whatever department filter / search is currently applied above the main
+// table. Colours are hard-coded hex (matching the design tokens) rather
+// than var(...) references, since SVG presentation attributes don't
+// reliably resolve CSS custom properties across browsers.
 function renderDeptOutputChart(codes) {
   const el = document.getElementById('wp-output-chart');
   if (!el) return;
@@ -1688,29 +1715,102 @@ function renderDeptOutputChart(codes) {
     map[name].total += 1;
     if (c.actual_output && String(c.actual_output).trim() !== '') map[name].reported += 1;
   });
-  const rows = Object.entries(map).sort((a, b) => b[1].budget - a[1].budget);
-  const maxBudget = Math.max(...rows.map(([, v]) => v.budget), 1);
-  el.innerHTML = rows.map(([name, v]) => {
-    const budgetPct = Math.max((v.budget / maxBudget) * 100, 1.5);
-    const outputPct = v.total ? Math.round((v.reported / v.total) * 100) : 0;
+  const rows = Object.entries(map).map(([name, v]) => ({
+    name,
+    budget: v.budget,
+    total: v.total,
+    reported: v.reported,
+    outputPct: v.total ? Math.round((v.reported / v.total) * 100) : 0,
+  })).sort((a, b) => b.budget - a.budget);
+
+  const COLOR_BUDGET = '#146B5F';   // teal-600
+  const COLOR_OUTPUT = '#B9852F';   // gold-600
+  const COLOR_TEXT = '#3B4C51';     // ink-700
+  const COLOR_AXIS = '#C7D2D0';     // line-strong
+
+  const maxBudget = Math.max(...rows.map(r => r.budget), 1);
+  const groupW = 130;
+  const barW = 26;
+  const chartW = Math.max(560, rows.length * groupW);
+  const chartH = 300;
+  const baseline = chartH - 74;
+  const plotH = baseline - 24;
+
+  let bars = '';
+  rows.forEach((r, i) => {
+    const cx = i * groupW + groupW / 2;
+    const bH = Math.max((r.budget / maxBudget) * plotH, 2);
+    const oH = Math.max((r.outputPct / 100) * plotH, 2);
+    const bx = cx - barW - 3;
+    const ox = cx + 3;
+    const by = baseline - bH;
+    const oy = baseline - oH;
+    const shortName = r.name.length > 16 ? r.name.slice(0, 15) + '…' : r.name;
+    bars += `
+      <rect x="${bx}" y="${by}" width="${barW}" height="${bH}" rx="4" fill="${COLOR_BUDGET}"></rect>
+      <text x="${bx + barW / 2}" y="${by - 6}" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, ui-monospace, monospace" fill="${COLOR_TEXT}">${money(r.budget)}</text>
+      <rect x="${ox}" y="${oy}" width="${barW}" height="${oH}" rx="4" fill="${COLOR_OUTPUT}"></rect>
+      <text x="${ox + barW / 2}" y="${oy - 6}" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, ui-monospace, monospace" fill="${COLOR_TEXT}">${r.outputPct}%</text>
+      <text x="${cx}" y="${baseline + 20}" text-anchor="middle" font-size="10.5" font-weight="600" fill="${COLOR_TEXT}">${escapeHtml(shortName)}</text>
+      <title>${escapeHtml(r.name)}: UGX ${money(r.budget)} budget, ${r.reported}/${r.total} outputs reported (${r.outputPct}%)</title>
+    `;
+  });
+
+  el.innerHTML = `
+    <div style="display:flex; gap:18px; align-items:center; margin-bottom:10px; font-size:11.5px; color:var(--ink-700);">
+      <span style="display:inline-flex; align-items:center; gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:var(--teal-600); display:inline-block;"></span>Total Budget (UGX)</span>
+      <span style="display:inline-flex; align-items:center; gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:var(--gold-600); display:inline-block;"></span>Actual Output Reported (%)</span>
+    </div>
+    <svg viewBox="0 0 ${chartW} ${chartH}" width="100%" height="${chartH}" style="min-width:${chartW}px; display:block;">
+      <line x1="0" y1="${baseline}" x2="${chartW}" y2="${baseline}" stroke="${COLOR_AXIS}" stroke-width="1"></line>
+      ${bars}
+    </svg>
+  `;
+}
+
+// Renders a pie chart (CSS conic-gradient — no charting library needed)
+// showing each department's share of total allocated budget, with a
+// colour-matched legend listing exact percentages. Reflects whatever
+// department filter / search is currently applied above the main table.
+function renderDeptPieChart(codes) {
+  const el = document.getElementById('wp-pie-chart');
+  if (!el) return;
+  if (!codes || codes.length === 0) {
+    el.innerHTML = '<div class="empty-state" style="padding:20px;">No budget data yet.</div>';
+    return;
+  }
+  const map = {};
+  codes.forEach(c => {
+    const name = c.department_name || 'Unassigned';
+    map[name] = (map[name] || 0) + (Number(c.allocated_amount) || 0);
+  });
+  const rows = Object.entries(map).sort((a, b) => b[1] - a[1]);
+  const total = rows.reduce((s, [, v]) => s + v, 0) || 1;
+  const palette = ['#146B5F', '#B9852F', '#0A1F2B', '#1C8577', '#B8382A', '#2E5E8C', '#6A3FA0', '#C99A3E', '#1F8A5F', '#6B7C80'];
+
+  let acc = 0;
+  const stops = rows.map(([, v], i) => {
+    const pct = (v / total) * 100;
+    const start = acc;
+    acc += pct;
+    return `${palette[i % palette.length]} ${start.toFixed(2)}% ${acc.toFixed(2)}%`;
+  }).join(', ');
+
+  const legend = rows.map(([name, v], i) => {
+    const pct = ((v / total) * 100).toFixed(1);
     return `
-    <div style="margin-bottom:18px;">
-      <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; margin-bottom:5px; gap:10px;">
-        <span style="font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(name)}</span>
-        <span class="mono" style="color:var(--ink-500); flex-shrink:0;">Budget: UGX ${money(v.budget)}</span>
-      </div>
-      <div class="util-bar-track">
-        <div class="util-bar-fill" style="width:${budgetPct}%;"></div>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:11px; margin:7px 0 4px; gap:10px;">
-        <span style="color:var(--ink-500);">Budget outputs with actual output recorded</span>
-        <span class="mono" style="color:var(--gold-600); flex-shrink:0;">${v.reported} / ${v.total} (${outputPct}%)</span>
-      </div>
-      <div class="util-bar-track" style="height:7px;">
-        <div class="util-bar-fill" style="width:${Math.max(outputPct,1.5)}%; background:linear-gradient(90deg, var(--gold-600), var(--gold-500)); box-shadow:none;"></div>
-      </div>
-    </div>`;
+      <div style="display:flex; align-items:center; gap:9px; font-size:12.5px; margin-bottom:8px;">
+        <span style="width:12px;height:12px;border-radius:3px; background:${palette[i % palette.length]}; flex-shrink:0;"></span>
+        <span style="font-weight:600; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(name)}</span>
+        <span class="mono" style="color:var(--ink-500); flex-shrink:0;">UGX ${money(v)}</span>
+        <span class="mono" style="color:var(--gold-600); font-weight:700; flex-shrink:0; min-width:44px; text-align:right;">${pct}%</span>
+      </div>`;
   }).join('');
+
+  el.innerHTML = `
+    <div style="width:200px; height:200px; border-radius:50%; background:conic-gradient(${stops}); flex-shrink:0; box-shadow:var(--shadow-sm); border:1px solid var(--line);"></div>
+    <div style="flex:1; min-width:240px;">${legend}</div>
+  `;
 }
 
 async function renderBudgetCodes() {
@@ -1737,6 +1837,7 @@ async function renderBudgetCodes() {
     if (codes.length === 0) {
       tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
       renderDeptOutputChart([]);
+      renderDeptPieChart([]);
       return;
     }
     tbody.innerHTML = codes.map(c => `
@@ -1760,14 +1861,30 @@ async function renderBudgetCodes() {
         <td class="num mono">${money(c.allocated_amount)}</td>
         <td>${escapeHtml(c.funding_source)}</td>
         <td class="wrap">${escapeHtml(c.responsible_party || '—')}</td>
-        <td>${STATE.role === 'admin' ? `<button class="btn btn-ghost" style="padding:6px 10px;" onclick="openEditBudgetCode(${c.id})">Edit</button>` : ''}</td>
+        <td style="white-space:nowrap;">${STATE.role === 'admin' ? `<button class="btn btn-ghost" style="padding:6px 10px;" onclick="openEditBudgetCode(${c.id})">Edit</button> <button class="btn btn-danger" style="padding:6px 10px; margin-left:4px;" onclick="deleteBudgetCode(${c.id})">Delete</button>` : ''}</td>
       </tr>`).join('');
     renderDeptOutputChart(codes);
+    renderDeptPieChart(codes);
   } catch (e) {
     tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
     renderDeptSummaryTable([]);
     renderDeptOutputChart([]);
+    renderDeptPieChart([]);
   }
+}
+
+// Admin-only: permanently delete a budget code. Blocked server-side (with
+// a clear error surfaced via toast) if any requisition has ever been
+// raised against it, so historical requisition records never end up
+// pointing at a deleted budget code.
+async function deleteBudgetCode(id) {
+  const c = STATE.budgetCodes.find(x => x.id === id);
+  if (!confirm(`Delete budget code ${c ? c.code : id}? This cannot be undone.`)) return;
+  try {
+    await api(`/api/budget-codes/${id}`, { method: 'DELETE' });
+    toast('Budget estimate deleted', 'success');
+    renderBudgetCodes();
+  } catch (e) { toast(e.message, 'error'); }
 }
 
 // Shared reset/prefill for the New/Edit Budget Estimate modal.
@@ -1873,21 +1990,56 @@ document.getElementById('bc-create-btn').addEventListener('click', async () => {
 });
 
 document.getElementById('wp-new-workplan-btn').addEventListener('click', () => {
+  STATE.editingWorkPlanId = null;
+  document.getElementById('wpn-modal-title').textContent = 'New Work Plan';
+  document.getElementById('wpn-create-btn').textContent = 'Create Work Plan';
   document.getElementById('wpn-fy').value = '';
   document.getElementById('wpn-title').value = '';
   openModal('modal-wp');
+});
+document.getElementById('wp-edit-workplan-btn').addEventListener('click', () => {
+  const wpVal = document.getElementById('wp-select').value;
+  const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+  if (!wp) { toast('Please select a work plan to edit first', 'error'); return; }
+  STATE.editingWorkPlanId = wp.id;
+  document.getElementById('wpn-modal-title').textContent = `Edit Work Plan — ${wp.title}`;
+  document.getElementById('wpn-create-btn').textContent = 'Save Changes';
+  document.getElementById('wpn-fy').value = wp.financial_year;
+  document.getElementById('wpn-title').value = wp.title;
+  openModal('modal-wp');
+});
+document.getElementById('wp-delete-workplan-btn').addEventListener('click', async () => {
+  const wpVal = document.getElementById('wp-select').value;
+  const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+  if (!wp) { toast('Please select a work plan to delete first', 'error'); return; }
+  if (!confirm(`Delete work plan "${wp.title}" (FY ${wp.financial_year})? This only succeeds if no budget codes are attached to it.`)) return;
+  try {
+    await api(`/api/workplans/${wp.id}`, { method: 'DELETE' });
+    toast('Work plan deleted', 'success');
+    await loadWorkplans();
+    renderBudgetCodes();
+  } catch (e) { toast(e.message, 'error'); }
 });
 document.getElementById('wpn-create-btn').addEventListener('click', async () => {
   const financial_year = document.getElementById('wpn-fy').value.trim();
   const title = document.getElementById('wpn-title').value.trim();
   if (!financial_year || !title) { toast('Please complete both fields', 'error'); return; }
   try {
-    const wp = await api('/api/workplans', { method: 'POST', body: JSON.stringify({ financial_year, title }) });
-    toast('Work plan created', 'success');
-    closeModal('modal-wp');
-    await loadWorkplans();
-    document.getElementById('wp-select').value = wp.id;
-    renderBudgetCodes();
+    if (STATE.editingWorkPlanId) {
+      await api(`/api/workplans/${STATE.editingWorkPlanId}`, { method: 'PATCH', body: JSON.stringify({ financial_year, title }) });
+      toast('Work plan updated', 'success');
+      closeModal('modal-wp');
+      await loadWorkplans();
+      document.getElementById('wp-select').value = STATE.editingWorkPlanId;
+      renderBudgetCodes();
+    } else {
+      const wp = await api('/api/workplans', { method: 'POST', body: JSON.stringify({ financial_year, title }) });
+      toast('Work plan created', 'success');
+      closeModal('modal-wp');
+      await loadWorkplans();
+      document.getElementById('wp-select').value = wp.id;
+      renderBudgetCodes();
+    }
   } catch (e) { toast(e.message, 'error'); }
 });
 
@@ -1987,21 +2139,41 @@ function renderReqLineItems() {
   }
 }
 
-async function openRequisitionModal() {
+async function openRequisitionModal(editReq) {
+  STATE.editingRequisitionId = editReq ? editReq.id : null;
+  document.getElementById('req-modal-title').textContent = editReq ? `Edit Requisition — ${editReq.ref_no}` : 'New Requisition';
+  document.getElementById('req-save-draft').textContent = editReq ? 'Save Changes' : 'Save Draft';
+  document.getElementById('req-submit-now').textContent = editReq ? 'Save & Submit for Approval' : 'Submit for Approval';
+
   const bcSel = document.getElementById('req-budget-code');
   bcSel.innerHTML = '<option>Loading…</option>';
   const codes = await api('/api/budget-codes');
   STATE.budgetCodes = codes;
   bcSel.innerHTML = codes.map(c => `<option value="${c.id}">${escapeHtml(c.code)} — ${escapeHtml(c.output_description)}</option>`).join('') || '<option value="">No budget codes available</option>';
-  updateBalanceHint();
-  await updateActivityOptions();
-  document.getElementById('req-subject').value = '';
-  document.getElementById('req-pv-number').value = '';
-  resetReqLineItems();
+
+  if (editReq) {
+    bcSel.value = editReq.budget_code_id;
+    updateBalanceHint();
+    await updateActivityOptions();
+    document.getElementById('req-activity').value = editReq.activity_id || '';
+    document.getElementById('req-subject').value = editReq.subject || '';
+    document.getElementById('req-pv-number').value = editReq.payment_voucher_number || '';
+    if (editReq.line_items && editReq.line_items.length) {
+      STATE.reqLineItems = editReq.line_items.map(li => ({ ...li, isHeader: li.qty == null && li.rate == null && !li.amount }));
+    } else {
+      resetReqLineItems();
+    }
+  } else {
+    updateBalanceHint();
+    await updateActivityOptions();
+    document.getElementById('req-subject').value = '';
+    document.getElementById('req-pv-number').value = '';
+    resetReqLineItems();
+  }
   renderReqLineItems();
   openModal('modal-req');
 }
-document.getElementById('new-req-btn').addEventListener('click', openRequisitionModal);
+document.getElementById('new-req-btn').addEventListener('click', () => openRequisitionModal());
 document.getElementById('req-budget-code').addEventListener('change', () => { updateBalanceHint(); updateActivityOptions(); });
 
 function updateBalanceHint() {
@@ -2046,8 +2218,17 @@ async function submitNewRequisition(submitNow) {
     toast('Please complete the subject, payment voucher number and add at least one priced line item', 'error'); return;
   }
   try {
-    await api(`/api/requisitions?submit=${submitNow}`, { method: 'POST', body: JSON.stringify(payload) });
-    toast(submitNow ? 'Requisition submitted for approval' : 'Requisition saved as draft', 'success');
+    if (STATE.editingRequisitionId) {
+      const id = STATE.editingRequisitionId;
+      await api(`/api/requisitions/${id}`, { method: 'PATCH', body: JSON.stringify(payload) });
+      if (submitNow) {
+        await api(`/api/requisitions/${id}/submit`, { method: 'POST' });
+      }
+      toast(submitNow ? 'Requisition updated and submitted for approval' : 'Requisition changes saved', 'success');
+    } else {
+      await api(`/api/requisitions?submit=${submitNow}`, { method: 'POST', body: JSON.stringify(payload) });
+      toast(submitNow ? 'Requisition submitted for approval' : 'Requisition saved as draft', 'success');
+    }
     closeModal('modal-req');
     loadRequisitions();
   } catch (e) { toast(e.message, 'error'); }
@@ -2069,7 +2250,11 @@ async function loadRequisitions() {
     let items = await api(path);
     if (search) items = items.filter(r => (r.ref_no + ' ' + (r.subject||r.activity_details||'')).toLowerCase().includes(search));
     if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state">No requisitions found.</div></td></tr>'; return; }
-    tbody.innerHTML = items.map(r => `
+    STATE_REQUISITIONS_CACHE = items;
+    tbody.innerHTML = items.map(r => {
+      const isOwnerOrAdmin = (r.requester_id == STATE.userId || STATE.role === 'admin');
+      const isEditable = isOwnerOrAdmin && (r.status === 'draft' || r.status === 'returned');
+      return `
       <tr>
         <td class="mono">${r.ref_no}</td>
         <td>${escapeHtml(r.requester_name || '—')}</td>
@@ -2081,10 +2266,29 @@ async function loadRequisitions() {
         <td>${fmtDate(r.created_at)}</td>
         <td style="white-space:nowrap;">
           <button class="btn btn-ghost" style="padding:6px 10px;" onclick="viewRequisition(${r.id})">View</button>
-          ${(r.accountability && r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? `<button class="btn btn-gold" style="padding:6px 10px; margin-left:6px;" onclick="openUploadModal(${r.id})">Upload</button>` : ''}
+          ${(r.accountability && r.accountability.status !== 'verified' && isOwnerOrAdmin) ? `<button class="btn btn-gold" style="padding:6px 10px; margin-left:6px;" onclick="openUploadModal(${r.id})">Upload</button>` : ''}
+          ${isEditable ? `<button class="btn btn-ghost" style="padding:6px 10px; margin-left:6px;" onclick="editRequisition(${r.id})">Edit</button>` : ''}
+          ${isEditable ? `<button class="btn btn-danger" style="padding:6px 10px; margin-left:6px;" onclick="deleteRequisition(${r.id})">Delete</button>` : ''}
         </td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
   } catch (e) { tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+let STATE_REQUISITIONS_CACHE = [];
+async function editRequisition(id) {
+  try {
+    const r = await api(`/api/requisitions/${id}`);
+    openRequisitionModal(r);
+  } catch (e) { toast(e.message, 'error'); }
+}
+async function deleteRequisition(id) {
+  const r = STATE_REQUISITIONS_CACHE.find(x => x.id === id);
+  if (!confirm(`Delete requisition ${r ? r.ref_no : id}? This cannot be undone.`)) return;
+  try {
+    await api(`/api/requisitions/${id}`, { method: 'DELETE' });
+    toast('Requisition deleted', 'success');
+    loadRequisitions();
+  } catch (e) { toast(e.message, 'error'); }
 }
 
 async function viewRequisition(id) {
@@ -2487,31 +2691,79 @@ document.getElementById('audit-view-btn').addEventListener('click', async () => 
 });
 
 // ---- Users ------------------------------------------------------------------------
-document.getElementById('new-user-btn').addEventListener('click', () => openModal('modal-user'));
-document.getElementById('u-create-btn').addEventListener('click', async () => {
-  const payload = {
-    full_name: document.getElementById('u-name').value.trim(),
-    email: document.getElementById('u-email').value.trim(),
-    password: document.getElementById('u-password').value,
-    position: document.getElementById('u-position').value.trim(),
-    telephone: document.getElementById('u-telephone').value.trim(),
-    role: document.getElementById('u-role').value,
-    department_id: document.getElementById('u-department').value ? Number(document.getElementById('u-department').value) : null,
-  };
-  if (!payload.full_name || !payload.email || !payload.password) { toast('Please complete all fields', 'error'); return; }
+let STATE_USERS_CACHE = [];
+
+document.getElementById('new-user-btn').addEventListener('click', () => {
+  STATE.editingUserId = null;
+  document.getElementById('u-modal-title').textContent = 'New User';
+  document.getElementById('u-create-btn').textContent = 'Create User';
+  document.getElementById('u-password-label').textContent = 'Temporary Password';
+  document.getElementById('u-name').value = '';
+  document.getElementById('u-email').value = '';
+  document.getElementById('u-password').value = '';
+  document.getElementById('u-position').value = '';
+  document.getElementById('u-telephone').value = '';
+  document.getElementById('u-role').value = 'staff';
+  document.getElementById('u-department').value = '';
+  openModal('modal-user');
+});
+function openEditUser(id) {
+  const u = STATE_USERS_CACHE.find(x => x.id === id);
+  if (!u) { toast('Could not find that user — try refreshing.', 'error'); return; }
+  STATE.editingUserId = id;
+  document.getElementById('u-modal-title').textContent = `Edit User — ${u.full_name}`;
+  document.getElementById('u-create-btn').textContent = 'Save Changes';
+  document.getElementById('u-password-label').textContent = 'New Password (leave blank to keep current)';
+  document.getElementById('u-name').value = u.full_name || '';
+  document.getElementById('u-email').value = u.email || '';
+  document.getElementById('u-password').value = '';
+  document.getElementById('u-position').value = u.position || '';
+  document.getElementById('u-telephone').value = u.telephone || '';
+  document.getElementById('u-role').value = u.role;
+  document.getElementById('u-department').value = u.department_id || '';
+  openModal('modal-user');
+}
+async function deleteUser(id) {
+  const u = STATE_USERS_CACHE.find(x => x.id === id);
+  if (!confirm(`Delete user "${u ? u.full_name : id}"? This only succeeds if they have no requisitions on record — otherwise, disable the account instead.`)) return;
   try {
-    await api('/api/users', { method: 'POST', body: JSON.stringify(payload) });
-    toast('User created', 'success');
+    await api(`/api/users/${id}`, { method: 'DELETE' });
+    toast('User deleted', 'success');
+    loadUsers();
+  } catch (e) { toast(e.message, 'error'); }
+}
+document.getElementById('u-create-btn').addEventListener('click', async () => {
+  const full_name = document.getElementById('u-name').value.trim();
+  const email = document.getElementById('u-email').value.trim();
+  const password = document.getElementById('u-password').value;
+  const position = document.getElementById('u-position').value.trim();
+  const telephone = document.getElementById('u-telephone').value.trim();
+  const role = document.getElementById('u-role').value;
+  const department_id = document.getElementById('u-department').value ? Number(document.getElementById('u-department').value) : null;
+
+  try {
+    if (STATE.editingUserId) {
+      if (!full_name || !email) { toast('Please complete the name and email fields', 'error'); return; }
+      const payload = { full_name, email, position, telephone, role, department_id };
+      if (password) payload.password = password;
+      await api(`/api/users/${STATE.editingUserId}`, { method: 'PATCH', body: JSON.stringify(payload) });
+      toast('User updated', 'success');
+    } else {
+      if (!full_name || !email || !password) { toast('Please complete all fields', 'error'); return; }
+      await api('/api/users', { method: 'POST', body: JSON.stringify({ full_name, email, password, position, telephone, role, department_id }) });
+      toast('User created', 'success');
+    }
     closeModal('modal-user');
     loadUsers();
   } catch (e) { toast(e.message, 'error'); }
 });
 async function loadUsers() {
   const tbody = document.getElementById('users-table-body');
-  tbody.innerHTML = '<tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
   try {
     const users = await api('/api/users');
-    if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state">No users found.</div></td></tr>'; return; }
+    STATE_USERS_CACHE = users;
+    if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state">No users found.</div></td></tr>'; return; }
     tbody.innerHTML = users.map(u => {
       const dept = STATE.departments.find(d => d.id === u.department_id);
       return `<tr>
@@ -2521,9 +2773,13 @@ async function loadUsers() {
         <td>${escapeHtml(dept ? dept.name : '—')}</td>
         <td><span class="pill pill-${u.is_active ? 'approved' : 'rejected'}">${u.is_active ? 'Active' : 'Disabled'}</span></td>
         <td><button class="btn btn-ghost" style="padding:6px 10px;" onclick="toggleUser(${u.id})">${u.is_active ? 'Disable' : 'Enable'}</button></td>
+        <td style="white-space:nowrap;">
+          <button class="btn btn-ghost" style="padding:6px 10px;" onclick="openEditUser(${u.id})">Edit</button>
+          <button class="btn btn-danger" style="padding:6px 10px; margin-left:4px;" onclick="deleteUser(${u.id})">Delete</button>
+        </td>
       </tr>`;
     }).join('');
-  } catch (e) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
 async function toggleUser(id) {
   try { await api(`/api/users/${id}/toggle-active`, { method: 'PATCH' }); loadUsers(); toast('User status updated', 'success'); }
@@ -2531,13 +2787,45 @@ async function toggleUser(id) {
 }
 
 // ---- Departments view ---------------------------------------------------------------
-document.getElementById('new-dept-btn').addEventListener('click', () => openModal('modal-dept'));
+document.getElementById('new-dept-btn').addEventListener('click', () => {
+  STATE.editingDepartmentId = null;
+  document.getElementById('d-modal-title').textContent = 'New Department';
+  document.getElementById('d-create-btn').textContent = 'Create Department';
+  document.getElementById('d-name').value = '';
+  document.getElementById('d-code').value = '';
+  openModal('modal-dept');
+});
+function openEditDepartment(id) {
+  const dept = STATE.departments.find(d => d.id === id);
+  if (!dept) { toast('Could not find that department — try refreshing.', 'error'); return; }
+  STATE.editingDepartmentId = id;
+  document.getElementById('d-modal-title').textContent = `Edit Department — ${dept.name}`;
+  document.getElementById('d-create-btn').textContent = 'Save Changes';
+  document.getElementById('d-name').value = dept.name;
+  document.getElementById('d-code').value = dept.code;
+  openModal('modal-dept');
+}
+async function deleteDepartment(id) {
+  const dept = STATE.departments.find(d => d.id === id);
+  if (!confirm(`Delete department "${dept ? dept.name : id}"? This only succeeds if no users or budget codes are assigned to it.`)) return;
+  try {
+    await api(`/api/departments/${id}`, { method: 'DELETE' });
+    toast('Department deleted', 'success');
+    await loadDepartments();
+    loadDepartmentsView();
+  } catch (e) { toast(e.message, 'error'); }
+}
 document.getElementById('d-create-btn').addEventListener('click', async () => {
   const payload = { name: document.getElementById('d-name').value.trim(), code: document.getElementById('d-code').value.trim() };
   if (!payload.name || !payload.code) { toast('Please complete both fields', 'error'); return; }
   try {
-    await api('/api/departments', { method: 'POST', body: JSON.stringify(payload) });
-    toast('Department created', 'success');
+    if (STATE.editingDepartmentId) {
+      await api(`/api/departments/${STATE.editingDepartmentId}`, { method: 'PATCH', body: JSON.stringify(payload) });
+      toast('Department updated', 'success');
+    } else {
+      await api('/api/departments', { method: 'POST', body: JSON.stringify(payload) });
+      toast('Department created', 'success');
+    }
     closeModal('modal-dept');
     await loadDepartments();
     loadDepartmentsView();
@@ -2545,12 +2833,20 @@ document.getElementById('d-create-btn').addEventListener('click', async () => {
 });
 async function loadDepartmentsView() {
   const tbody = document.getElementById('depts-table-body');
-  tbody.innerHTML = '<tr><td colspan="2" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
   try {
     const deps = await api('/api/departments');
-    tbody.innerHTML = deps.map(d => `<tr><td class="mono">${escapeHtml(d.code)}</td><td>${escapeHtml(d.name)}</td></tr>`).join('') ||
-      '<tr><td colspan="2"><div class="empty-state">No departments yet.</div></td></tr>';
-  } catch (e) { tbody.innerHTML = `<tr><td colspan="2"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+    STATE.departments = deps;
+    tbody.innerHTML = deps.map(d => `<tr>
+        <td class="mono">${escapeHtml(d.code)}</td>
+        <td>${escapeHtml(d.name)}</td>
+        <td style="white-space:nowrap;">
+          <button class="btn btn-ghost" style="padding:6px 10px;" onclick="openEditDepartment(${d.id})">Edit</button>
+          <button class="btn btn-danger" style="padding:6px 10px; margin-left:4px;" onclick="deleteDepartment(${d.id})">Delete</button>
+        </td>
+      </tr>`).join('') ||
+      '<tr><td colspan="3"><div class="empty-state">No departments yet.</div></td></tr>';
+  } catch (e) { tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
 
 // ---- Utilities -----------------------------------------------------------------------
