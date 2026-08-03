@@ -314,8 +314,8 @@ text-align:center;
 #wp-dept-summary-body tr:nth-child(even){background:#FFFFFF;}
 #wp-dept-summary-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-dept-summary-body tr:hover{background:var(--gold-100);}
-#wp-dept-summary-body td{color:var(--ink-900); font-weight:600; text-align:center;}
-#wp-dept-summary-body td.mono, #wp-dept-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:center;}
+#wp-dept-summary-body td{color:var(--ink-900); font-weight:600; text-align:left;}
+#wp-dept-summary-body td.mono, #wp-dept-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
 #wp-dept-summary-wrap tfoot td{text-align:left;}
 #view-workplan .table-wrap tfoot tr{background:#EAF0EF !important;}
 #view-workplan .table-wrap tfoot td{color:var(--navy-950); font-weight:700;}
@@ -335,7 +335,9 @@ Same high-contrast treatment as the Department Budget Summary table
 (solid teal header, alternating mint/white rows), displayed above it.
 THIS TABLE STAYS EXACTLY AS IT IS — its Approved Budget Amount column is
 obtained automatically from the Revenue Entry Table below it (each row's
-Category Total = sum of that source's sub rows). */
+Category Total = sum of that source's sub rows). Row content (body rows)
+is left-aligned per Council request — only the column headers stay
+centered. */
 #wp-revenue-summary-table thead th{
 background:var(--teal-700) !important;
 color:#FFFFFF !important;
@@ -346,21 +348,25 @@ text-align:center;
 #wp-revenue-summary-body tr:nth-child(even){background:#FFFFFF;}
 #wp-revenue-summary-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-revenue-summary-body tr:hover{background:var(--gold-100);}
-#wp-revenue-summary-body td{color:var(--ink-900); font-weight:600; text-align:center;}
-#wp-revenue-summary-body td.mono, #wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:center;}
+#wp-revenue-summary-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
+#wp-revenue-summary-body td.mono, #wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
 #wp-revenue-summary-wrap tfoot td{text-align:left;}
 #wp-revenue-summary-wrap{max-height:260px; overflow-x:auto; overflow-y:auto;}
 #wp-revenue-summary-wrap thead th{position:sticky; top:0; z-index:3;}
-#wp-revenue-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:center !important;}
+#wp-revenue-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
 #wp-revenue-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-revenue-summary-body td{padding:7px 9px; font-size:11.5px;}
+/* Functional Definition column in the summary table: allow each point to
+sit on its own line (line breaks are inserted when the data is rendered)
+rather than running on as one continuous line of text. */
+#wp-revenue-summary-body td.rev-func-def{white-space:normal; line-height:1.5;}
 /* ---------------- Revenue Entry (detail) table --------------------------
 Appears immediately AFTER the Summary of Sources of Revenue and BEFORE the
 workplan grid. Mirrors the Council's "Revenue Entry Table": PBS Fund Code
 and Revenue Source appear once per category; the Functional Definition
 title row heads the category; each sub row (revenue item) carries an
 Approved Estimate; the Category Total is Auto (sum of sub rows) and feeds
-the summary table above. */
+the summary table above. Row content is left-aligned per Council request. */
 #wp-revenue-detail-wrap{max-height:420px; overflow-x:auto; overflow-y:auto;}
 #wp-revenue-detail-wrap thead th{
 position:sticky; top:0; z-index:3;
@@ -368,7 +374,8 @@ background:var(--teal-700) !important; color:#FFFFFF !important;
 box-shadow:0 1px 0 rgba(201,154,62,.35) !important; text-align:center;
 padding:8px 9px; font-size:9.5px; line-height:1.25;
 }
-#wp-revenue-detail-body td{padding:7px 9px; font-size:11.5px; color:var(--ink-900);}
+#wp-revenue-detail-body td{padding:7px 9px; font-size:11.5px; color:var(--ink-900); text-align:left; vertical-align:top;}
+#wp-revenue-detail-body td.num, #wp-revenue-detail-body td.mono{text-align:left;}
 #wp-revenue-detail-body tr.rev-cat-head td{background:var(--gold-100); font-weight:700; color:var(--navy-950); border-bottom:1px solid var(--line-strong);}
 #wp-revenue-detail-body tr.rev-cat-head:hover td{background:var(--gold-100);}
 #wp-revenue-detail-body tr.rev-item-row td{background:#FFFFFF;}
@@ -379,6 +386,9 @@ padding:8px 9px; font-size:9.5px; line-height:1.25;
 #wp-revenue-detail-body tr.rev-add-row td{background:#FFF9EC; padding:8px 9px;}
 #wp-revenue-detail-body tr.rev-add-row input{width:100%; border:1px solid var(--line); border-radius:6px; padding:6px 8px; font-size:12px; background:#fff;}
 #wp-revenue-detail-body tr.rev-add-row input:focus{border-color:var(--teal-500); outline:none; box-shadow:var(--shadow-ring);}
+/* Functional Definition column in the Revenue Entry (detail) table: each
+point begins on its own line rather than running together as one line. */
+#wp-revenue-detail-body td.rev-func-def{white-space:normal; line-height:1.5;}
 .rev-auto-chip{display:inline-flex; align-items:center; gap:4px; background:var(--success-bg); color:var(--success); border-radius:10px; padding:1.5px 8px; font-size:9.5px; font-weight:700; margin-left:6px; vertical-align:middle;}
 .rev-auto-chip::before{content:""; width:6px; height:6px; border-radius:2px; background:var(--success);}
 /* ---------------- Work Plan & Budget: compact, height-constrained,
@@ -541,7 +551,7 @@ display:none; position:fixed; inset:0; background:rgba(10,20,26,.55); z-index:14
 .req-form-signatures{grid-template-columns:1fr;}
 }
 #wp-dept-summary-wrap tfoot td {
-text-align: center !important;
+text-align: left !important;
 }
 </style>
 </head>
@@ -764,7 +774,7 @@ Departments
 <tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 <tfoot>
-<tr style="font-weight:700; background:#EAF0EF; text-align:center;">
+<tr style="font-weight:700; background:#EAF0EF; text-align:left;">
 <td colspan="3">Total Revenue</td>
 <td class="num mono" id="wp-revenue-summary-total">—</td>
 </tr>
@@ -821,7 +831,7 @@ summary table above. ===== -->
 <tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 <tfoot>
-<tr style="font-weight:700; background:#EAF0EF; text-align:center;">
+<tr style="font-weight:700; background:#EAF0EF; text-align:left;">
 <td colspan="2">Sub Total</td>
 <td class="num mono" id="wp-summary-q1">—</td>
 <td class="num mono" id="wp-summary-q2">—</td>
@@ -1256,7 +1266,7 @@ Grand Total: UGX <span id="req-grand-total">0</span>
 <div class="field"><label>PBS Fund Code</label><input type="text" id="rev-fund-code" placeholder="e.g. 001" /></div>
 <div class="field"><label>Revenue Source</label><input type="text" id="rev-source-name" placeholder="e.g. Central Government Transfers (GoU)" /></div>
 </div>
-<div class="field"><label>Functional Definition Title</label><input type="text" id="rev-functional-def" placeholder="e.g. Regular structural wage, non-wage recurrent and capital grants" /></div>
+<div class="field"><label>Functional Definition Title</label><textarea id="rev-functional-def" rows="3" placeholder="e.g. Regular structural wage, non-wage recurrent and capital grants&#10;Each new line becomes its own point on the printed table"></textarea></div>
 <div class="field-section">
 <span class="kicker">Sub Rows — Revenue Items</span>
 <div class="table-wrap" style="margin-top:8px;">
@@ -1393,6 +1403,28 @@ if (!name) return '?';
 return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
 }
 function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
+function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+// ---- Multi-point text formatting (e.g. Functional Definition cells) --------
+// Renders a block of text as one line per "point" instead of one continuous
+// run-on line. If the source text already contains real line breaks, each
+// line becomes its own point. Otherwise, if it looks like it packs several
+// numbered/lettered/bulleted points onto a single line (e.g. "1. ... 2. ..."
+// or "(a) ... (b) ..." or "• ... • ..."), it is split at those markers so
+// each point still starts on a new line.
+function formatMultilinePoints(text) {
+if (text === null || text === undefined || String(text).trim() === '') return '—';
+let normalized = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+let points = normalized.split('\n').map(s => s.trim()).filter(Boolean);
+if (points.length <= 1) {
+const candidate = normalized.trim();
+const parts = candidate
+.split(/(?=\d+\s*[.)]\s+)|(?=\([a-zA-Z0-9]+\)\s+)|(?=[•▪‣·]\s+)/g)
+.map(s => s.trim())
+.filter(Boolean);
+points = parts.length > 1 ? parts : [candidate];
+}
+return points.map(p => escapeHtml(p)).join('<br>');
+}
 // ---- Number-to-words (for the "Amount in words" line on the printed form) --
 function numberToWords(n) {
 n = Math.floor(Math.abs(Number(n) || 0));
@@ -1649,7 +1681,6 @@ list.innerHTML = items.map(n => `
 </div>`).join('');
 } catch (e) { list.innerHTML = '<div class="notif-empty">Could not load notifications.</div>'; }
 }
-function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 // ---- Departments / Work Plans (shared reference data) --------------------------
 async function loadDepartments() {
 STATE.departments = await api('/api/departments');
@@ -1764,7 +1795,7 @@ tbody.innerHTML = sources.map(r => `
 <tr>
 <td class="mono">${escapeHtml(r.pbs_fund_code || '—')}</td>
 <td>${escapeHtml(r.source_of_financing_name || '—')}</td>
-<td>${escapeHtml(r.functional_definition || '—')}</td>
+<td class="rev-func-def">${formatMultilinePoints(r.functional_definition)}</td>
 <td class="num mono">${money(r.approved_budget_amount)}</td>
 </tr>`).join('');
 const total = sources.reduce((sum, r) => sum + (Number(r.approved_budget_amount) || 0), 0);
@@ -1794,7 +1825,7 @@ html += `
 <tr class="rev-cat-head">
 <td class="mono">${escapeHtml(r.pbs_fund_code || '—')}</td>
 <td class="wrap">${escapeHtml(r.source_of_financing_name || '—')}</td>
-<td class="wrap">${escapeHtml(r.functional_definition || '—')}</td>
+<td class="wrap rev-func-def">${formatMultilinePoints(r.functional_definition)}</td>
 <td></td>
 <td class="num mono">${money(total)}</td>
 <td style="white-space:nowrap; text-align:right;">${admin ? `
