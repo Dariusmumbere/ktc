@@ -334,7 +334,7 @@ td.wrap, th.wrap{white-space:normal;}
 Same high-contrast treatment as the Department Budget Summary table
 (solid teal header, alternating mint/white rows), displayed above it.
 THIS TABLE STAYS EXACTLY AS IT IS — its Approved Budget Amount column is
-obtained automatically from the Revenue Entry Table below it (each row's
+obtained automatically from the Revenue Source by Category for the FY 2026/27 below it (each row's
 Category Total = sum of that source's sub rows). Row content (body rows)
 is left-aligned per Council request — only the column headers stay
 centered. */
@@ -360,13 +360,6 @@ text-align:center;
 sit on its own line (line breaks are inserted when the data is rendered)
 rather than running on as one continuous line of text. */
 #wp-revenue-summary-body td.rev-func-def{white-space:normal; line-height:1.5;}
-/* ---------------- Revenue Entry (detail) table --------------------------
-Appears immediately AFTER the Summary of Sources of Revenue and BEFORE the
-workplan grid. Mirrors the Council's "Revenue Entry Table": PBS Fund Code
-and Revenue Source appear once per category; the Functional Definition
-title row heads the category; each sub row (revenue item) carries an
-Approved Estimate; the Category Total is Auto (sum of sub rows) and feeds
-the summary table above. Row content is left-aligned per Council request. */
 #wp-revenue-detail-wrap{max-height:420px; overflow-x:auto; overflow-y:auto;}
 #wp-revenue-detail-wrap thead th{
 position:sticky; top:0; z-index:3;
@@ -788,14 +781,13 @@ Departments
 </table>
 </div>
 </div>
-<!-- ===== REVENUE ENTRY TABLE (detail with sub rows) — appears AFTER the
+<!-- ===== REVENUE SOURCE BY CATEGORY FOR THE FY 2026/27 (detail with sub rows) — appears AFTER the
 Summary of Sources of Revenue and BEFORE the workplan, per Council
 request. Category Totals here are Auto (sum of sub rows) and feed the
 summary table above. ===== -->
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
-<div class="kicker" style="color:var(--teal-700);">Revenue Entry Table</div>
-<div class="help-text" style="margin-top:2px;">Every revenue source with its sub rows (revenue items), as in the Council's revenue entry sheet. The Category Total — and therefore the Approved Budget Amount in the Summary of Sources of Revenue above — is obtained automatically as the sum of the sub-row Approved Estimates.</div>
+<div class="kicker" style="color:var(--teal-700);">Revenue Source by Category for the FY 2026/27</div>
 </div>
 <div class="table-wrap" id="wp-revenue-detail-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-revenue-detail-table">
@@ -1424,7 +1416,7 @@ let points = normalized.split('\n').map(s => s.trim()).filter(Boolean);
 if (points.length <= 1) {
 const candidate = normalized.trim();
 const parts = candidate
-.split(/(?=\d+\s*[.)]\s+)|(?=\([a-zA-Z0-9]+\)\s+)|(?=[•▪‣·]\s+)/g)
+.split(/(?=\d+\s*[.)]\s+)|(?=\([a-zA-Z0-9]+\)\s+)|(?=[•▪‣•]\s+)/g)
 .map(s => s.trim())
 .filter(Boolean);
 points = parts.length > 1 ? parts : [candidate];
@@ -1777,7 +1769,7 @@ document.getElementById('wp-select').addEventListener('change', () => { renderBu
 document.getElementById('wp-dept-filter').addEventListener('change', renderBudgetCodes);
 document.getElementById('wp-search').addEventListener('input', debounce(renderBudgetCodes, 300));
 // Renders the "Revenue Sources Summary" table (unchanged, per Council request)
-// AND the new "Revenue Entry Table" detail (categories with sub rows) that
+// AND the new "Revenue Source by Category for the FY 2026/27" detail (categories with sub rows) that
 // appears right after the summary. The summary's Approved Budget Amount for
 // each source is obtained automatically on the backend as the Category Total
 // (sum of that source's sub-row Approved Estimates).
@@ -1812,7 +1804,7 @@ totalEl.textContent = '—';
 renderRevenueDetailTable([]);
 }
 }
-// Renders the "Revenue Entry Table": one category head row per revenue source
+// Renders the "Revenue Source by Category for the FY 2026/27": one category head row per revenue source
 // (PBS Fund Code + Revenue Source + Functional Definition title), its sub rows
 // (revenue items with Approved Estimates), an inline "+ Sub Row" adder and an
 // Auto Category Total row (sum of sub rows) — mirroring the Council's sheet.
@@ -2277,7 +2269,7 @@ document.getElementById('rev-amount').value = 0;
 renderRevItems();
 }
 // Sub-row builder inside the Revenue Source form (mirrors the sub rows in the
-// Revenue Entry Table / reference image).
+// Revenue Source by Category for the FY 2026/27 / reference image).
 function renderRevItems() {
 const tbody = document.getElementById('rev-items-body');
 if (!STATE.revItems.length) {
@@ -2847,7 +2839,7 @@ let html = `
 <div><div class="detail-label">Requester</div><div class="detail-value">${escapeHtml(r.requester_name||'—')}</div></div>
 <div><div class="detail-label">Department</div><div class="detail-value">${escapeHtml(r.department_name||'—')}</div></div>
 <div><div class="detail-label">Amount</div><div class="detail-value mono">UGX ${money(r.amount_requested)}</div></div>
-<div><div class="detail-label">Accountability Status</div><div class="detail-value"><span class="pill pill-${r.accountability ? r.accountability.status : 'pending'}">${statusLabel(r.accountability ? r.accountability.status : 'pending')}</span></div></div>
+<div><div class="detail-label">Accountability Status</div><div class="detail-value"><span class="pill pill-${r.accountability ? r.accountability.status : 'pending'}">${statusLabel(r.accountability ? r.accountability.status : 'pending')}</span></div></div> 
 </div>
 <div class="divider"></div>
 `;
