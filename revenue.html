@@ -1,0 +1,79 @@
+Run this code: html<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Revenue Source Data Entry Portal</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; padding: 20px; }
+        .form-container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 8px; }
+        h2 { background-color: #1F497D; color: #ffffff; padding: 15px; margin: -25px -25px 25px -25px; text-align: center; border-radius: 8px 8px 0 0; font-size: 1.4rem; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th { background-color: #1F497D; color: #ffffff; padding: 12px; border: 1px solid #d9d9d9; font-size: 0.9rem; text-align: center; }
+        td { padding: 10px; border: 1px solid #d9d9d9; font-size: 0.9rem; vertical-align: middle; }
+        .bg-subheader { background-color: #DCE6F1; font-weight: bold; }
+        .bg-readonly { background-color: #F2F2F2; font-weight: bold; }
+        .input-cell { background-color: #FFF2CC; text-align: right; width: 180px; }
+        input[type="number"] { width: 100%; border: none; background: transparent; text-align: right; font-size: 0.95rem; font-family: inherit; padding: 4px; box-sizing: border-box; }
+        input[type="number"]:focus { outline: 2px solid #1F497D; background-color: #ffffff; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .btn-submit { background-color: #1F497D; color: #fff; padding: 12px 30px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; float: right; }
+        .btn-submit:hover { background-color: #16355a; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Description of Revenue Source by Category for the FY 2026/27</h2>
+    <form id="revenueForm" onsubmit="event.preventDefault(); alert('Validated data structure ready for database injection!');">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 80px;">PBS Code</th>
+                    <th style="width: 200px;">Source of Financing Name</th>
+                    <th>Functional Definition in PBS (Category & Item Details)</th>
+                    <th style="width: 200px;">Subtotal Approved Budget Estimates (UGX)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 001 Central Government -->
+                <tr class="bg-subheader">
+                    <td class="text-center">001</td>
+                    <td>Central Government Transfers (GoU)</td>
+                    <td>Regular structural wage, non-wage recurrent, and capital grants.</td>
+                    <td class="text-right bg-readonly">—</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>Unconditional grant - non-wage</td>
+                    <td class="input-cell"><input type="number" min="0" step="1" placeholder="Enter integer..." required></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>DDEG</td>
+                    <td class="input-cell"><input type="number" min="0" step="1" placeholder="Enter integer..." required></td>
+                </tr>
+
+                <!-- 1141 Locally Raised Revenues -->
+                <tr class="bg-subheader">
+                    <td class="text-center">1141</td>
+                    <td>Locally Raised Revenues</td>
+                    <td>Local Taxes</td>
+                    <td class="text-right bg-readonly">—</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>114101 Local Service Tax collected from individuals in gainful employment.</td>
+                    <td class="input-cell"><input type="number" min="0" step="1" placeholder="Enter integer..." required></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="submit" class="btn-submit">Verify & Submit Estimates</button>
+    </form>
+</div>
+
+</body>
+</html>
