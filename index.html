@@ -200,7 +200,7 @@ a{color:inherit;}
   border-bottom:1px solid var(--line); box-shadow:0 1px 0 rgba(10,31,43,.02);
   display:flex; align-items:center; justify-content:space-between; padding:0 22px; position:relative; z-index:10; flex-wrap:wrap; gap:10px;
 }
-.topbar-title{font-family:var(--font-display); font-size:17.5px; font-weight:600; letter-spacing:.1px;}
+.topbar-title{font-family:var(--font-display); font-size:22px; font-weight:600; letter-spacing:.1px;}
 .topbar-sub{font-size:11.5px; color:var(--ink-500); margin-top:1px;}
 .topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
 .icon-btn{
@@ -341,6 +341,28 @@ tbody tr:last-child td {
 td.wrap, th.wrap{white-space:normal;}
 .num{font-family:var(--font-mono); text-align:center;}
 .mono{font-family:var(--font-mono);}
+
+/* ---------------- Revenue Sources Summary table --------------------------
+   Same high-contrast treatment as the Department Budget Summary table
+   (solid teal header, alternating mint/white rows), displayed above it. */
+#wp-revenue-summary-table thead th{
+  background:var(--teal-700) !important;
+  color:#FFFFFF !important;
+  box-shadow:0 1px 0 rgba(201,154,62,.35) !important;
+  text-align:center;
+}
+#wp-revenue-summary-body tr:nth-child(odd){background:#D6EEE6;}
+#wp-revenue-summary-body tr:nth-child(even){background:#FFFFFF;}
+#wp-revenue-summary-body tr{border-bottom:1px solid var(--line-strong);}
+#wp-revenue-summary-body tr:hover{background:var(--gold-100);}
+#wp-revenue-summary-body td{color:var(--ink-900); font-weight:600; text-align:center;}
+#wp-revenue-summary-body td.mono, #wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:center;}
+#wp-revenue-summary-wrap tfoot td{text-align:left;}
+#wp-revenue-summary-wrap{max-height:260px; overflow-x:auto; overflow-y:auto;}
+#wp-revenue-summary-wrap thead th{position:sticky; top:0; z-index:3;}
+#wp-revenue-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:center !important;}
+#wp-revenue-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
+#wp-revenue-summary-body td{padding:7px 9px; font-size:11.5px;}
 
 /* ---------------- Work Plan & Budget: compact, height-constrained,
    dual-scrollable tables (Department Budget Summary + main grid) ----------
@@ -643,12 +665,18 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
           </div>
         </div>
         <div class="topbar-right">
-          <div id="topbar-workplan-controls" style="display:none; align-items:center; gap:10px;">
+          <div id="topbar-workplan-controls" style="display:none; align-items:center; gap:8px;">
             <div style="text-align:right;">
               <div class="kicker" style="font-size:9.5px;">Annual Work Plan</div>
               <div style="font-family:var(--font-display); font-weight:600; font-size:13px; white-space:nowrap;">FY <span id="wp-fy-title">—</span></div>
             </div>
             <select class="filter-select" id="wp-select" style="min-width:190px;"></select>
+            <button class="icon-btn" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <button class="icon-btn" id="wp-edit-workplan-btn" title="Edit Annual Work Plan &amp; Budget Estimates" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </button>
           </div>
           <button class="icon-btn" id="notif-btn" title="Notifications">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M9.5 20a2.5 2.5 0 0 0 5 0"/></svg>
@@ -734,6 +762,33 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
 
             <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
               <div style="padding:14px 18px 4px;">
+                <div class="kicker" style="color:var(--teal-700);">Revenue Sources Summary</div>
+              </div>
+              <div class="table-wrap" id="wp-revenue-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
+                <table id="wp-revenue-summary-table">
+                  <thead>
+                    <tr>
+                      <th>PBS Fund<br>Code</th>
+                      <th>Source of Financing<br>Name</th>
+                      <th>Functional Definition<br>in PBS</th>
+                      <th>Approved Budget<br>Amount (UGX)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="wp-revenue-summary-body">
+                    <tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+                  </tbody>
+                  <tfoot>
+                    <tr style="font-weight:700; background:#EAF0EF; text-align:center;">
+                      <td colspan="3">Total Revenue</td>
+                      <td class="num mono" id="wp-revenue-summary-total">—</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
+            <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
+              <div style="padding:14px 18px 4px;">
                 <div class="kicker" style="color:var(--teal-700);">Department Budget Summary</div>
                               </div>
               <div class="table-wrap" id="wp-dept-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
@@ -769,9 +824,10 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
             </div>
 
             <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;">
-              <button class="btn" id="wp-new-workplan-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);"> Add Annual Work Plan &amp; Budget Estimates</button>
+              <button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
+              <button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
+              <input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
               <button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity & Budget Estimates</button>
-              <button class="btn" id="wp-edit-workplan-btn" style="display:none; background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.4); color:#fff;">✎ Edit Annual workplan & Budget Estimates</button>
               <button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
               <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
             </div>
@@ -784,6 +840,8 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
             </div>
             <select class="filter-select" id="wp-dept-filter"><option value="">All Departments</option></select>
           </div>
+
+          <div class="kicker" id="wp-main-table-heading" style="margin-bottom:10px; font-size:13px; color:var(--navy-950);">Annual Workplan for the FY <span id="wp-main-fy-label">—</span></div>
 
           <div class="table-wrap" id="wp-main-table-wrap">
             <table id="wp-main-table">
@@ -1199,6 +1257,24 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
   </div>
 </div>
 
+<!-- ===== MODAL: New Revenue Source ===== -->
+<div class="overlay" id="modal-rev">
+  <div class="modal">
+    <div class="modal-head"><h3 id="rev-modal-title">New Revenue Source</h3><button class="modal-close" data-close="modal-rev">&times;</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Work Plan</label><select id="rev-workplan"></select></div>
+      <div class="field"><label>PBS Fund Code</label><input type="text" id="rev-fund-code" placeholder="e.g. 01"/></div>
+      <div class="field"><label>Source of Financing Name</label><input type="text" id="rev-source-name" placeholder="e.g. Local Revenue"/></div>
+      <div class="field"><label>Functional Definition in PBS</label><input type="text" id="rev-functional-def" placeholder="e.g. Locally Raised Revenues"/></div>
+      <div class="field"><label>Approved Budget Amount (UGX)</label><input type="number" id="rev-amount" value="0"/></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="modal-rev">Cancel</button>
+      <button class="btn btn-primary" id="rev-create-btn">Create Revenue Source</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MODAL: Single-page Document Viewer (Auditor review) ===== -->
 <div class="overlay" id="modal-doc-view">
   <div class="modal modal-lg" style="max-width:940px;">
@@ -1254,12 +1330,14 @@ let STATE = {
   departments: [],
   workplans: [],
   budgetCodes: [],
+  revenueSources: [],
   currentReqId: null,
   editingBudgetCodeId: null,
   editingWorkPlanId: null,
   editingDepartmentId: null,
   editingUserId: null,
   editingRequisitionId: null,
+  editingRevenueSourceId: null,
   reqLineItems: [],
   signatureUrl: null,
 };
@@ -1440,6 +1518,8 @@ function applyRoleVisibility() {
   document.getElementById('wp-new-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('wp-edit-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('wp-import-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+  document.getElementById('wp-new-revenue-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+  document.getElementById('wp-import-revenue-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
   document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
   document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 }
@@ -1623,9 +1703,11 @@ async function loadWorkplans() {
   STATE.workplans = await api('/api/workplans');
   const wpSel = document.getElementById('wp-select');
   const bcSel = document.getElementById('bc-workplan');
+  const revSel = document.getElementById('rev-workplan');
   const opts = STATE.workplans.map(w => `<option value="${w.id}">${escapeHtml(w.title)} — FY ${escapeHtml(w.financial_year)}</option>`).join('');
   if (wpSel) wpSel.innerHTML = opts || '<option value="">No work plans yet</option>';
   if (bcSel) bcSel.innerHTML = opts || '<option value="">No work plans yet</option>';
+  if (revSel) revSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 }
 
 // ---- Dashboard -----------------------------------------------------------------
@@ -1693,10 +1775,45 @@ function renderDeptChart(data) {
 async function loadWorkplanView() {
   await loadWorkplans();
   await renderBudgetCodes();
+  await renderRevenueSources();
 }
-document.getElementById('wp-select').addEventListener('change', renderBudgetCodes);
+document.getElementById('wp-select').addEventListener('change', () => { renderBudgetCodes(); renderRevenueSources(); });
 document.getElementById('wp-dept-filter').addEventListener('change', renderBudgetCodes);
 document.getElementById('wp-search').addEventListener('input', debounce(renderBudgetCodes, 300));
+
+// Renders the "Revenue Sources Summary" table in the work-plan header,
+// above the Department Budget Summary table, listing each revenue source
+// recorded against the currently selected work plan and its approved
+// budget amount, with a Total Revenue row at the foot.
+async function renderRevenueSources() {
+  const tbody = document.getElementById('wp-revenue-summary-body');
+  const totalEl = document.getElementById('wp-revenue-summary-total');
+  tbody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  const wpId = document.getElementById('wp-select').value;
+  try {
+    let path = '/api/revenue-sources';
+    if (wpId) path += `?work_plan_id=${wpId}`;
+    const sources = await api(path);
+    STATE.revenueSources = sources;
+    if (sources.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state" style="padding:16px;">No revenue sources recorded for this work plan yet.</div></td></tr>';
+      totalEl.textContent = 'UGX 0';
+      return;
+    }
+    tbody.innerHTML = sources.map(r => `
+      <tr>
+        <td class="mono">${escapeHtml(r.pbs_fund_code || '—')}</td>
+        <td>${escapeHtml(r.source_of_financing_name || '—')}</td>
+        <td>${escapeHtml(r.functional_definition || '—')}</td>
+        <td class="num mono">${money(r.approved_budget_amount)}</td>
+      </tr>`).join('');
+    const total = sources.reduce((sum, r) => sum + (Number(r.approved_budget_amount) || 0), 0);
+    totalEl.textContent = 'UGX ' + money(total);
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
+    totalEl.textContent = '—';
+  }
+}
 
 // Renders the "Department Budget Summary" table in the work-plan header,
 // showing quarterly totals per department for the codes currently loaded
@@ -1904,6 +2021,7 @@ async function renderBudgetCodes() {
   const search = document.getElementById('wp-search').value.trim();
   const wp = STATE.workplans.find(w => String(w.id) === String(wpId));
   document.getElementById('wp-fy-title').textContent = wp ? wp.financial_year : '—';
+  document.getElementById('wp-main-fy-label').textContent = wp ? wp.financial_year : '—';
   try {
     let path = '/api/budget-codes?';
     if (wpId) path += `work_plan_id=${wpId}&`;
@@ -2098,6 +2216,7 @@ document.getElementById('wpn-create-btn').addEventListener('click', async () => 
       await loadWorkplans();
       document.getElementById('wp-select').value = STATE.editingWorkPlanId;
       renderBudgetCodes();
+      renderRevenueSources();
     } else {
       const wp = await api('/api/workplans', { method: 'POST', body: JSON.stringify({ financial_year, title }) });
       toast('Work plan created', 'success');
@@ -2105,8 +2224,97 @@ document.getElementById('wpn-create-btn').addEventListener('click', async () => 
       await loadWorkplans();
       document.getElementById('wp-select').value = wp.id;
       renderBudgetCodes();
+      renderRevenueSources();
     }
   } catch (e) { toast(e.message, 'error'); }
+});
+
+// ---- Revenue Sources ---------------------------------------------------------
+function resetRevenueSourceForm() {
+  STATE.editingRevenueSourceId = null;
+  document.getElementById('rev-modal-title').textContent = 'New Revenue Source';
+  document.getElementById('rev-create-btn').textContent = 'Create Revenue Source';
+  document.getElementById('rev-fund-code').value = '';
+  document.getElementById('rev-source-name').value = '';
+  document.getElementById('rev-functional-def').value = '';
+  document.getElementById('rev-amount').value = 0;
+}
+document.getElementById('wp-new-revenue-btn').addEventListener('click', () => {
+  const wpVal = document.getElementById('wp-select').value;
+  document.getElementById('rev-workplan').innerHTML = document.getElementById('wp-select').innerHTML;
+  resetRevenueSourceForm();
+  if (wpVal) document.getElementById('rev-workplan').value = wpVal;
+  openModal('modal-rev');
+});
+function openEditRevenueSource(id) {
+  const r = STATE.revenueSources.find(x => x.id === id);
+  if (!r) { toast('Could not find that revenue source — try refreshing.', 'error'); return; }
+  document.getElementById('rev-workplan').innerHTML = document.getElementById('wp-select').innerHTML;
+  STATE.editingRevenueSourceId = id;
+  document.getElementById('rev-modal-title').textContent = `Edit Revenue Source — ${r.source_of_financing_name || ''}`;
+  document.getElementById('rev-create-btn').textContent = 'Save Changes';
+  document.getElementById('rev-workplan').value = r.work_plan_id;
+  document.getElementById('rev-fund-code').value = r.pbs_fund_code || '';
+  document.getElementById('rev-source-name').value = r.source_of_financing_name || '';
+  document.getElementById('rev-functional-def').value = r.functional_definition || '';
+  document.getElementById('rev-amount').value = r.approved_budget_amount || 0;
+  openModal('modal-rev');
+}
+async function deleteRevenueSource(id) {
+  const r = STATE.revenueSources.find(x => x.id === id);
+  if (!confirm(`Delete revenue source "${r ? r.source_of_financing_name : id}"? This cannot be undone.`)) return;
+  try {
+    await api(`/api/revenue-sources/${id}`, { method: 'DELETE' });
+    toast('Revenue source deleted', 'success');
+    renderRevenueSources();
+  } catch (e) { toast(e.message, 'error'); }
+}
+document.getElementById('rev-create-btn').addEventListener('click', async () => {
+  const payload = {
+    work_plan_id: Number(document.getElementById('rev-workplan').value),
+    pbs_fund_code: document.getElementById('rev-fund-code').value.trim(),
+    source_of_financing_name: document.getElementById('rev-source-name').value.trim(),
+    functional_definition: document.getElementById('rev-functional-def').value.trim(),
+    approved_budget_amount: Number(document.getElementById('rev-amount').value || 0),
+  };
+  if (!payload.work_plan_id || !payload.source_of_financing_name) {
+    toast('Please complete the work plan and source name fields', 'error'); return;
+  }
+  try {
+    if (STATE.editingRevenueSourceId) {
+      await api(`/api/revenue-sources/${STATE.editingRevenueSourceId}`, { method: 'PATCH', body: JSON.stringify(payload) });
+      toast('Revenue source updated', 'success');
+    } else {
+      await api('/api/revenue-sources', { method: 'POST', body: JSON.stringify(payload) });
+      toast('Revenue source created', 'success');
+    }
+    closeModal('modal-rev');
+    renderRevenueSources();
+  } catch (e) { toast(e.message, 'error'); }
+});
+
+// ---- Import Revenue Sources from Excel ---------------------------------------
+document.getElementById('wp-import-revenue-btn').addEventListener('click', () => {
+  const wpVal = document.getElementById('wp-select').value;
+  if (!wpVal) { toast('Please select a work plan to import into first', 'error'); return; }
+  document.getElementById('wp-import-revenue-file').click();
+});
+document.getElementById('wp-import-revenue-file').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const wpVal = document.getElementById('wp-select').value;
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    toast('Importing revenue sources from Excel…', 'info');
+    const result = await api(`/api/revenue-sources/import?work_plan_id=${wpVal}`, { method: 'POST', body: fd });
+    toast(`Imported ${result.created} revenue source row(s)${result.skipped ? `, skipped ${result.skipped}` : ''}`, 'success');
+    if (result.errors && result.errors.length) {
+      toast(`${result.errors.length} row warning(s) — first: ${result.errors[0]}`, 'error');
+    }
+    renderRevenueSources();
+  } catch (err) { toast(err.message, 'error'); }
+  finally { e.target.value = ''; }
 });
 
 // ---- Import Budget Estimates from Excel ------------------------------------
