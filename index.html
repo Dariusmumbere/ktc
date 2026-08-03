@@ -344,25 +344,50 @@ td.wrap, th.wrap{white-space:normal;}
 
 /* ---------------- Revenue Sources Summary table --------------------------
    Same high-contrast treatment as the Department Budget Summary table
-   (solid teal header, alternating mint/white rows), displayed above it. */
+   (solid teal header, alternating mint/white rows), displayed above it.
+   The table mirrors the Council's own "Description of Revenue Source by
+   Category" workbook sheet: each revenue source CATEGORY (PBS Fund Code +
+   Source of Financing Name) can have one or more Functional Definition
+   sub-rows, each with its own Subtotal amount — the Fund Code, Source
+   Name and Category Total cells are vertically merged (rowspan) across
+   all of a category's sub-rows, exactly as in the reference spreadsheet. */
 #wp-revenue-summary-table thead th{
   background:var(--teal-700) !important;
   color:#FFFFFF !important;
   box-shadow:0 1px 0 rgba(201,154,62,.35) !important;
   text-align:center;
 }
-#wp-revenue-summary-body tr:nth-child(odd){background:#D6EEE6;}
-#wp-revenue-summary-body tr:nth-child(even){background:#FFFFFF;}
 #wp-revenue-summary-body tr{border-bottom:1px solid var(--line-strong);}
-#wp-revenue-summary-body tr:hover{background:var(--gold-100);}
-#wp-revenue-summary-body td{color:var(--ink-900); font-weight:600; text-align:center;}
+#wp-revenue-summary-body tr.rs-cat-first{border-top:2px solid var(--teal-600);}
+#wp-revenue-summary-body tr.rs-cat-odd td.rs-shared{background:#D6EEE6;}
+#wp-revenue-summary-body tr.rs-cat-even td.rs-shared{background:#FFFFFF;}
+#wp-revenue-summary-body tr.rs-cat-odd td.rs-item{background:#EAF6F1;}
+#wp-revenue-summary-body tr.rs-cat-even td.rs-item{background:#FBFDFC;}
+#wp-revenue-summary-body tr:hover td{background:var(--gold-100) !important;}
+#wp-revenue-summary-body td{color:var(--ink-900); font-weight:600; text-align:center; vertical-align:middle;}
+#wp-revenue-summary-body td.rs-def{text-align:left; font-weight:500;}
 #wp-revenue-summary-body td.mono, #wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:center;}
+#wp-revenue-summary-body td.rs-total{font-weight:800; color:var(--teal-700);}
 #wp-revenue-summary-wrap tfoot td{text-align:left;}
-#wp-revenue-summary-wrap{max-height:260px; overflow-x:auto; overflow-y:auto;}
+#wp-revenue-summary-wrap{max-height:340px; overflow-x:auto; overflow-y:auto;}
 #wp-revenue-summary-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-revenue-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:center !important;}
 #wp-revenue-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-revenue-summary-body td{padding:7px 9px; font-size:11.5px;}
+#wp-revenue-summary-body .rs-row-actions{display:flex; gap:5px; justify-content:center; flex-wrap:wrap;}
+#wp-revenue-summary-body .rs-row-actions .btn{padding:4px 8px; font-size:10.5px;}
+
+/* ---------------- Revenue Source modal: category / sub-row builder -------
+   Mirrors the Requisition line-item builder (section + line pattern):
+   each "category" block holds Fund Code + Source Name plus a repeatable
+   list of Functional Definition sub-rows, each with its own subtotal. */
+.rev-cat-block{border:1.5px solid var(--line); border-radius:var(--radius); padding:14px 16px; margin-bottom:14px; background:var(--paper);}
+.rev-cat-block .rev-cat-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+.rev-cat-block .rev-cat-head .kicker{color:var(--teal-700);}
+.rev-subrow-table{width:100%; border-collapse:collapse; margin-top:6px;}
+.rev-subrow-table td{padding:5px 4px; border:none;}
+.rev-subrow-table input{width:100%; border:1px solid var(--line); border-radius:6px; padding:6px 8px; font-size:12.5px; background:#fff;}
+.rev-cat-total{text-align:right; margin-top:8px; font-family:var(--font-mono); font-weight:700; color:var(--navy-950); font-size:13px;}
 
 /* ---------------- Work Plan & Budget: compact, height-constrained,
    dual-scrollable tables (Department Budget Summary + main grid) ----------
@@ -763,6 +788,7 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
             <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
               <div style="padding:14px 18px 4px;">
                 <div class="kicker" style="color:var(--teal-700);">Revenue Sources Summary</div>
+                <div class="help-text" style="margin-top:2px;">Description of Revenue Source by Category — each category's Functional Definition sub-rows carry their own subtotal, rolling up to a Category Total</div>
               </div>
               <div class="table-wrap" id="wp-revenue-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
                 <table id="wp-revenue-summary-table">
@@ -771,16 +797,19 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
                       <th>PBS Fund<br>Code</th>
                       <th>Source of Financing<br>Name</th>
                       <th>Functional Definition<br>in PBS</th>
-                      <th>Approved Budget<br>Amount (UGX)</th>
+                      <th>Subtotal Approved Budget<br>Estimate (UGX)</th>
+                      <th>Total Approved Budget<br>by Category (UGX)</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody id="wp-revenue-summary-body">
-                    <tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+                    <tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
                   </tbody>
                   <tfoot>
                     <tr style="font-weight:700; background:#EAF0EF; text-align:center;">
-                      <td colspan="3">Total Revenue</td>
+                      <td colspan="4">Total Revenue</td>
                       <td class="num mono" id="wp-revenue-summary-total">—</td>
+                      <td></td>
                     </tr>
                   </tfoot>
                 </table>
@@ -1257,20 +1286,19 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333;
   </div>
 </div>
 
-<!-- ===== MODAL: New Revenue Source ===== -->
+<!-- ===== MODAL: New / Edit Revenue Source(s) ===== -->
 <div class="overlay" id="modal-rev">
-  <div class="modal">
-    <div class="modal-head"><h3 id="rev-modal-title">New Revenue Source</h3><button class="modal-close" data-close="modal-rev">&times;</button></div>
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3 id="rev-modal-title">Add Revenue Sources</h3><button class="modal-close" data-close="modal-rev">&times;</button></div>
     <div class="modal-body">
       <div class="field"><label>Work Plan</label><select id="rev-workplan"></select></div>
-      <div class="field"><label>PBS Fund Code</label><input type="text" id="rev-fund-code" placeholder="e.g. 01"/></div>
-      <div class="field"><label>Source of Financing Name</label><input type="text" id="rev-source-name" placeholder="e.g. Local Revenue"/></div>
-      <div class="field"><label>Functional Definition in PBS</label><input type="text" id="rev-functional-def" placeholder="e.g. Locally Raised Revenues"/></div>
-      <div class="field"><label>Approved Budget Amount (UGX)</label><input type="number" id="rev-amount" value="0"/></div>
+      <div class="help-text" style="margin-bottom:10px;">Each category below becomes one row-group in the Revenue Sources Summary table — add one or more Functional Definition sub-rows per category, each with its own subtotal. Use "+ Add Another Revenue Source Category" to record several categories in one go, just like the Council's own revenue-source workbook.</div>
+      <div id="rev-categories-container"></div>
+      <button type="button" class="btn btn-ghost" id="rev-add-category-btn">+ Add Another Revenue Source Category</button>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" data-close="modal-rev">Cancel</button>
-      <button class="btn btn-primary" id="rev-create-btn">Create Revenue Source</button>
+      <button class="btn btn-primary" id="rev-create-btn">Save Revenue Source(s)</button>
     </div>
   </div>
 </div>
@@ -1338,6 +1366,7 @@ let STATE = {
   editingUserId: null,
   editingRequisitionId: null,
   editingRevenueSourceId: null,
+  revCategories: [],
   reqLineItems: [],
   signatureUrl: null,
 };
@@ -1782,13 +1811,17 @@ document.getElementById('wp-dept-filter').addEventListener('change', renderBudge
 document.getElementById('wp-search').addEventListener('input', debounce(renderBudgetCodes, 300));
 
 // Renders the "Revenue Sources Summary" table in the work-plan header,
-// above the Department Budget Summary table, listing each revenue source
-// recorded against the currently selected work plan and its approved
-// budget amount, with a Total Revenue row at the foot.
+// above the Department Budget Summary table. Mirrors the Council's own
+// "Description of Revenue Source by Category" workbook: each revenue
+// source (category) can have one or more Functional Definition sub-rows,
+// each carrying its own subtotal; the PBS Fund Code, Source of Financing
+// Name and Category Total cells are rendered once per category and
+// visually span all of that category's sub-rows (rowspan), exactly like
+// the reference spreadsheet's merged cells.
 async function renderRevenueSources() {
   const tbody = document.getElementById('wp-revenue-summary-body');
   const totalEl = document.getElementById('wp-revenue-summary-total');
-  tbody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
   const wpId = document.getElementById('wp-select').value;
   try {
     let path = '/api/revenue-sources';
@@ -1796,21 +1829,42 @@ async function renderRevenueSources() {
     const sources = await api(path);
     STATE.revenueSources = sources;
     if (sources.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state" style="padding:16px;">No revenue sources recorded for this work plan yet.</div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state" style="padding:16px;">No revenue sources recorded for this work plan yet.</div></td></tr>';
       totalEl.textContent = 'UGX 0';
       return;
     }
-    tbody.innerHTML = sources.map(r => `
-      <tr>
-        <td class="mono">${escapeHtml(r.pbs_fund_code || '—')}</td>
-        <td>${escapeHtml(r.source_of_financing_name || '—')}</td>
-        <td>${escapeHtml(r.functional_definition || '—')}</td>
-        <td class="num mono">${money(r.approved_budget_amount)}</td>
-      </tr>`).join('');
-    const total = sources.reduce((sum, r) => sum + (Number(r.approved_budget_amount) || 0), 0);
-    totalEl.textContent = 'UGX ' + money(total);
+    let html = '';
+    let grandTotal = 0;
+    sources.forEach((r, catIdx) => {
+      const items = (r.items && r.items.length > 0) ? r.items : [{ functional_definition: '—', subtotal_amount: 0 }];
+      const catTotal = Number(r.total_amount) || 0;
+      grandTotal += catTotal;
+      const catClass = catIdx % 2 === 0 ? 'rs-cat-odd' : 'rs-cat-even';
+      const rowCount = items.length;
+      items.forEach((item, itemIdx) => {
+        html += `<tr class="${catClass} ${itemIdx === 0 ? 'rs-cat-first' : ''}">`;
+        if (itemIdx === 0) {
+          html += `<td class="mono rs-shared" rowspan="${rowCount}">${escapeHtml(r.pbs_fund_code || '—')}</td>`;
+          html += `<td class="rs-shared" rowspan="${rowCount}">${escapeHtml(r.source_of_financing_name || '—')}</td>`;
+        }
+        html += `<td class="rs-def rs-item">${escapeHtml(item.functional_definition || '—')}</td>`;
+        html += `<td class="num mono rs-item">${money(item.subtotal_amount)}</td>`;
+        if (itemIdx === 0) {
+          html += `<td class="num mono rs-total rs-shared" rowspan="${rowCount}">${money(catTotal)}</td>`;
+          html += `<td class="rs-shared" rowspan="${rowCount}">
+            <div class="rs-row-actions">
+              <button class="btn btn-ghost" onclick="openEditRevenueSource(${r.id})">Edit</button>
+              <button class="btn btn-danger" onclick="deleteRevenueSource(${r.id})">Delete</button>
+            </div>
+          </td>`;
+        }
+        html += `</tr>`;
+      });
+    });
+    tbody.innerHTML = html;
+    totalEl.textContent = 'UGX ' + money(grandTotal);
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
     totalEl.textContent = '—';
   }
 }
@@ -2230,63 +2284,192 @@ document.getElementById('wpn-create-btn').addEventListener('click', async () => 
 });
 
 // ---- Revenue Sources ---------------------------------------------------------
+//
+// The "Add Revenue Sources" modal supports recording several revenue
+// source CATEGORIES in one session (STATE.revCategories is an array of
+// category blocks), and each category can hold one or more Functional
+// Definition SUB-ROWS (mirroring the requisition line-item builder's
+// section/line pattern) — each sub-row has its own subtotal, and the
+// category's total is simply the sum of its sub-rows' subtotals.
+
+function blankRevCategory() {
+  return {
+    id: null, // set when editing an existing revenue source
+    pbs_fund_code: '',
+    source_of_financing_name: '',
+    items: [{ functional_definition: '', subtotal_amount: 0 }],
+  };
+}
+
+function revCategoryTotal(cat) {
+  return (cat.items || []).reduce((sum, it) => sum + (Number(it.subtotal_amount) || 0), 0);
+}
+
 function resetRevenueSourceForm() {
   STATE.editingRevenueSourceId = null;
-  document.getElementById('rev-modal-title').textContent = 'New Revenue Source';
-  document.getElementById('rev-create-btn').textContent = 'Create Revenue Source';
-  document.getElementById('rev-fund-code').value = '';
-  document.getElementById('rev-source-name').value = '';
-  document.getElementById('rev-functional-def').value = '';
-  document.getElementById('rev-amount').value = 0;
+  STATE.revCategories = [blankRevCategory()];
+  document.getElementById('rev-modal-title').textContent = 'Add Revenue Sources';
+  document.getElementById('rev-create-btn').textContent = 'Save Revenue Source(s)';
+  document.getElementById('rev-add-category-btn').style.display = 'inline-flex';
 }
+
 document.getElementById('wp-new-revenue-btn').addEventListener('click', () => {
   const wpVal = document.getElementById('wp-select').value;
   document.getElementById('rev-workplan').innerHTML = document.getElementById('wp-select').innerHTML;
   resetRevenueSourceForm();
   if (wpVal) document.getElementById('rev-workplan').value = wpVal;
+  renderRevCategories();
   openModal('modal-rev');
 });
+
+document.getElementById('rev-add-category-btn').addEventListener('click', () => {
+  STATE.revCategories.push(blankRevCategory());
+  renderRevCategories();
+});
+
+function updateRevCategoryField(catIdx, field, value) {
+  STATE.revCategories[catIdx][field] = value;
+}
+function updateRevItemField(catIdx, itemIdx, field, value) {
+  const item = STATE.revCategories[catIdx].items[itemIdx];
+  item[field] = field === 'subtotal_amount' ? Number(value || 0) : value;
+  renderRevCategories();
+}
+function addRevSubRow(catIdx) {
+  STATE.revCategories[catIdx].items.push({ functional_definition: '', subtotal_amount: 0 });
+  renderRevCategories();
+}
+function removeRevSubRow(catIdx, itemIdx) {
+  STATE.revCategories[catIdx].items.splice(itemIdx, 1);
+  if (STATE.revCategories[catIdx].items.length === 0) {
+    STATE.revCategories[catIdx].items.push({ functional_definition: '', subtotal_amount: 0 });
+  }
+  renderRevCategories();
+}
+function removeRevCategory(catIdx) {
+  STATE.revCategories.splice(catIdx, 1);
+  if (STATE.revCategories.length === 0) STATE.revCategories.push(blankRevCategory());
+  renderRevCategories();
+}
+
+function renderRevCategories() {
+  const container = document.getElementById('rev-categories-container');
+  const activeEl = document.activeElement;
+  const activePath = activeEl && activeEl.dataset ? { c: activeEl.dataset.catIdx, i: activeEl.dataset.itemIdx, f: activeEl.dataset.field } : null;
+
+  container.innerHTML = STATE.revCategories.map((cat, catIdx) => `
+    <div class="rev-cat-block">
+      <div class="rev-cat-head">
+        <span class="kicker">Revenue Source Category ${catIdx + 1}</span>
+        ${STATE.revCategories.length > 1 ? `<button type="button" class="btn btn-ghost" style="padding:4px 9px;" onclick="removeRevCategory(${catIdx})">✕ Remove Category</button>` : ''}
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>PBS Fund Code</label><input type="text" data-cat-idx="${catIdx}" data-field="pbs_fund_code" value="${escapeHtml(cat.pbs_fund_code)}" placeholder="e.g. 001" oninput="updateRevCategoryField(${catIdx},'pbs_fund_code',this.value)"/></div>
+        <div class="field"><label>Source of Financing Name</label><input type="text" data-cat-idx="${catIdx}" data-field="source_of_financing_name" value="${escapeHtml(cat.source_of_financing_name)}" placeholder="e.g. Locally Raised Revenues" oninput="updateRevCategoryField(${catIdx},'source_of_financing_name',this.value)"/></div>
+      </div>
+      <span class="kicker" style="font-size:9.5px;">Functional Definition Sub-Rows</span>
+      <table class="rev-subrow-table">
+        <tbody>
+          ${cat.items.map((item, itemIdx) => `
+            <tr>
+              <td style="width:60%;"><input type="text" data-cat-idx="${catIdx}" data-item-idx="${itemIdx}" data-field="functional_definition" value="${escapeHtml(item.functional_definition)}" placeholder="e.g. Local Service Tax collected from individuals in gainful employment" oninput="updateRevItemFieldQuiet(${catIdx},${itemIdx},'functional_definition',this.value)"/></td>
+              <td style="width:30%;"><input type="number" data-cat-idx="${catIdx}" data-item-idx="${itemIdx}" data-field="subtotal_amount" value="${item.subtotal_amount}" placeholder="0" oninput="updateRevItemField(${catIdx},${itemIdx},'subtotal_amount',this.value)"/></td>
+              <td style="width:10%; text-align:center;"><button type="button" class="btn btn-ghost" style="padding:5px 9px;" onclick="removeRevSubRow(${catIdx},${itemIdx})">✕</button></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-ghost" style="margin-top:6px; padding:5px 10px; font-size:11.5px;" onclick="addRevSubRow(${catIdx})">+ Add Sub Row</button>
+      <div class="rev-cat-total">Category Total: UGX ${money(revCategoryTotal(cat))}</div>
+    </div>
+  `).join('');
+
+  if (activePath && activePath.f) {
+    let sel;
+    if (activePath.i !== undefined && activePath.i !== null && activePath.i !== '') {
+      sel = `[data-cat-idx="${activePath.c}"][data-item-idx="${activePath.i}"][data-field="${activePath.f}"]`;
+    } else {
+      sel = `[data-cat-idx="${activePath.c}"][data-field="${activePath.f}"]`;
+    }
+    const el = container.querySelector(sel);
+    if (el) { el.focus(); const v = el.value; el.value = ''; el.value = v; }
+  }
+}
+// Text-field updates (e.g. Functional Definition) don't need to re-render
+// on every keystroke the way the numeric subtotal does (which drives the
+// live Category Total) — this quiet variant just updates state without a
+// full re-render, so typing in the description field doesn't lose focus.
+function updateRevItemFieldQuiet(catIdx, itemIdx, field, value) {
+  STATE.revCategories[catIdx].items[itemIdx][field] = value;
+}
+
 function openEditRevenueSource(id) {
   const r = STATE.revenueSources.find(x => x.id === id);
   if (!r) { toast('Could not find that revenue source — try refreshing.', 'error'); return; }
   document.getElementById('rev-workplan').innerHTML = document.getElementById('wp-select').innerHTML;
   STATE.editingRevenueSourceId = id;
+  STATE.revCategories = [{
+    id: r.id,
+    pbs_fund_code: r.pbs_fund_code || '',
+    source_of_financing_name: r.source_of_financing_name || '',
+    items: (r.items && r.items.length > 0) ? r.items.map(it => ({ functional_definition: it.functional_definition || '', subtotal_amount: Number(it.subtotal_amount) || 0 })) : [{ functional_definition: '', subtotal_amount: 0 }],
+  }];
   document.getElementById('rev-modal-title').textContent = `Edit Revenue Source — ${r.source_of_financing_name || ''}`;
   document.getElementById('rev-create-btn').textContent = 'Save Changes';
+  document.getElementById('rev-add-category-btn').style.display = 'none'; // editing is single-category only
   document.getElementById('rev-workplan').value = r.work_plan_id;
-  document.getElementById('rev-fund-code').value = r.pbs_fund_code || '';
-  document.getElementById('rev-source-name').value = r.source_of_financing_name || '';
-  document.getElementById('rev-functional-def').value = r.functional_definition || '';
-  document.getElementById('rev-amount').value = r.approved_budget_amount || 0;
+  renderRevCategories();
   openModal('modal-rev');
 }
 async function deleteRevenueSource(id) {
   const r = STATE.revenueSources.find(x => x.id === id);
-  if (!confirm(`Delete revenue source "${r ? r.source_of_financing_name : id}"? This cannot be undone.`)) return;
+  if (!confirm(`Delete revenue source category "${r ? r.source_of_financing_name : id}"? This removes all of its sub-rows and cannot be undone.`)) return;
   try {
     await api(`/api/revenue-sources/${id}`, { method: 'DELETE' });
     toast('Revenue source deleted', 'success');
     renderRevenueSources();
   } catch (e) { toast(e.message, 'error'); }
 }
+
 document.getElementById('rev-create-btn').addEventListener('click', async () => {
-  const payload = {
-    work_plan_id: Number(document.getElementById('rev-workplan').value),
-    pbs_fund_code: document.getElementById('rev-fund-code').value.trim(),
-    source_of_financing_name: document.getElementById('rev-source-name').value.trim(),
-    functional_definition: document.getElementById('rev-functional-def').value.trim(),
-    approved_budget_amount: Number(document.getElementById('rev-amount').value || 0),
-  };
-  if (!payload.work_plan_id || !payload.source_of_financing_name) {
-    toast('Please complete the work plan and source name fields', 'error'); return;
-  }
+  const workPlanId = Number(document.getElementById('rev-workplan').value);
+  if (!workPlanId) { toast('Please select a work plan', 'error'); return; }
+
+  // Build a clean payload per category, dropping fully-empty sub-rows.
+  const categories = STATE.revCategories.map(cat => ({
+    ...cat,
+    items: cat.items.filter(it => (it.functional_definition && it.functional_definition.trim() !== '') || Number(it.subtotal_amount) > 0),
+  }));
+
+  const invalid = categories.find(c => !c.source_of_financing_name || !c.source_of_financing_name.trim());
+  if (invalid) { toast('Please provide a Source of Financing Name for every category', 'error'); return; }
+  categories.forEach(c => { if (c.items.length === 0) c.items.push({ functional_definition: '', subtotal_amount: 0 }); });
+
   try {
     if (STATE.editingRevenueSourceId) {
-      await api(`/api/revenue-sources/${STATE.editingRevenueSourceId}`, { method: 'PATCH', body: JSON.stringify(payload) });
+      const cat = categories[0];
+      await api(`/api/revenue-sources/${STATE.editingRevenueSourceId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          pbs_fund_code: cat.pbs_fund_code,
+          source_of_financing_name: cat.source_of_financing_name,
+          items: cat.items.map(it => ({ functional_definition: it.functional_definition, subtotal_amount: Number(it.subtotal_amount) || 0 })),
+        }),
+      });
       toast('Revenue source updated', 'success');
     } else {
-      await api('/api/revenue-sources', { method: 'POST', body: JSON.stringify(payload) });
-      toast('Revenue source created', 'success');
+      for (const cat of categories) {
+        await api('/api/revenue-sources', {
+          method: 'POST',
+          body: JSON.stringify({
+            work_plan_id: workPlanId,
+            pbs_fund_code: cat.pbs_fund_code,
+            source_of_financing_name: cat.source_of_financing_name,
+            items: cat.items.map(it => ({ functional_definition: it.functional_definition, subtotal_amount: Number(it.subtotal_amount) || 0 })),
+          }),
+        });
+      }
+      toast(`${categories.length} revenue source categor${categories.length === 1 ? 'y' : 'ies'} saved`, 'success');
     }
     closeModal('modal-rev');
     renderRevenueSources();
@@ -2308,7 +2491,7 @@ document.getElementById('wp-import-revenue-file').addEventListener('change', asy
   try {
     toast('Importing revenue sources from Excel…', 'info');
     const result = await api(`/api/revenue-sources/import?work_plan_id=${wpVal}`, { method: 'POST', body: fd });
-    toast(`Imported ${result.created} revenue source row(s)${result.skipped ? `, skipped ${result.skipped}` : ''}`, 'success');
+    toast(`Imported ${result.created} revenue source categor${result.created === 1 ? 'y' : 'ies'}${result.skipped ? `, skipped ${result.skipped}` : ''}`, 'success');
     if (result.errors && result.errors.length) {
       toast(`${result.errors.length} row warning(s) — first: ${result.errors[0]}`, 'error');
     }
