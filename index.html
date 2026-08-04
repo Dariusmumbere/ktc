@@ -820,9 +820,11 @@ Departments
 <button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
 <button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
 <input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
+<button class="btn btn-danger" id="wp-clear-revenue-btn" style="display:none;">🗑 Clear All Revenue Sources</button>
 <button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity & Budget Estimates</button>
 <button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
 <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
+<button class="btn btn-danger" id="wp-clear-btn" style="display:none;">🗑 Clear All Budget Estimates</button>
 </div>
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
@@ -1565,6 +1567,8 @@ document.getElementById('wp-edit-workplan-btn').style.display = (STATE.role === 
 document.getElementById('wp-import-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-new-revenue-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-import-revenue-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-clear-revenue-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
 document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 }
@@ -2176,6 +2180,30 @@ toast('Budget estimate deleted', 'success');
 renderBudgetCodes();
 } catch (e) { toast(e.message, 'error'); }
 }
+async function clearAllBudgetCodes() {
+const wpVal = document.getElementById('wp-select').value;
+if (!wpVal) { toast('Please select a work plan first', 'error'); return; }
+const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+if (!confirm(`Clear ALL Annual Workplan budget estimates for FY ${wp ? wp.financial_year : ''}? This cannot be undone. Rows already tied to a requisition will be kept.`)) return;
+try {
+const result = await api(`/api/budget-codes/clear-all?work_plan_id=${wpVal}`, { method: 'DELETE' });
+toast(`Cleared ${result.deleted} budget estimate(s)${result.skipped ? `, kept ${result.skipped} with existing requisitions` : ''}`, 'success');
+renderBudgetCodes();
+} catch (e) { toast(e.message, 'error'); }
+}
+document.getElementById('wp-clear-btn').addEventListener('click', clearAllBudgetCodes);
+async function clearAllRevenueSources() {
+const wpVal = document.getElementById('wp-select').value;
+if (!wpVal) { toast('Please select a work plan first', 'error'); return; }
+const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+if (!confirm(`Clear ALL Revenue Sources (and their sub rows) for FY ${wp ? wp.financial_year : ''}? This cannot be undone.`)) return;
+try {
+const result = await api(`/api/revenue-sources/clear-all?work_plan_id=${wpVal}`, { method: 'DELETE' });
+toast(`Cleared ${result.deleted} revenue source(s)`, 'success');
+renderRevenueSources();
+} catch (e) { toast(e.message, 'error'); }
+}
+document.getElementById('wp-clear-revenue-btn').addEventListener('click', clearAllRevenueSources);
 function resetBudgetCodeForm() {
 STATE.editingBudgetCodeId = null;
 document.getElementById('bc-modal-title').textContent = 'New Budget Estimates Data Entry Form';
