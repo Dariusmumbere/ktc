@@ -1346,6 +1346,49 @@ editingRevenueSourceId: null,
 reqLineItems: [],
 signatureUrl: null,
 };
+
+const REVENUE_SUMMARY_CATEGORIES = [
+  {
+    key: 'gou',
+    pbs_fund_code: '001',
+    source_of_financing_name: 'Central Government Transfers (GoU)',
+    functional_definition: 'Regular structural wage, non-wage recurrent, and capital grants.',
+    match: (r) => {
+      const code = String(r.pbs_fund_code || '').trim();
+      const name = String(r.source_of_financing_name || '').toLowerCase();
+      return code === '001' || name.includes('central government') || name.includes('gou') || name.includes('transfers');
+    }
+  },
+  {
+    key: 'lr',
+    pbs_fund_code: '002',
+    source_of_financing_name: 'Locally Raised Revenues (LR)',
+    functional_definition: 'Internally collected fees, levies, licenses, and operational fines.',
+    match: (r) => {
+      const code = String(r.pbs_fund_code || '').trim();
+      const name = String(r.source_of_financing_name || '').toLowerCase();
+      return code === '002' || name.includes('locally raised') || name.includes('local revenue') || /\blr\b/.test(name);
+    }
+  },
+  {
+    key: 'mdp',
+    pbs_fund_code: '400',
+    source_of_financing_name: 'Multi-lateral Development Partners',
+    functional_definition: 'International institutional donor funding (e.g., World Bank, UNICEF).',
+    match: (r) => {
+      const code = String(r.pbs_fund_code || '').trim();
+      const name = String(r.source_of_financing_name || '').toLowerCase();
+      return code === '400' || name.includes('multi-lateral') || name.includes('multilateral') || name.includes('development partner') || name.includes('donor');
+    }
+  },
+];
+
+function categorizeRevenueSource(r) {
+  for (const cat of REVENUE_SUMMARY_CATEGORIES) {
+    if (cat.match(r)) return cat.key;
+  }
+  return null; // entries that don't match any of the three fixed categories are excluded from the summary totals
+}
 // ---- Fetch helper -----------------------------------------------------------
 async function api(path, opts = {}) {
 const headers = opts.headers || {};
@@ -1775,35 +1818,49 @@ document.getElementById('wp-search').addEventListener('input', debounce(renderBu
 // each source is obtained automatically on the backend as the Category Total
 // (sum of that source's sub-row Approved Estimates).
 async function renderRevenueSources() {
-const tbody = document.getElementById('wp-revenue-summary-body');
-const totalEl = document.getElementById('wp-revenue-summary-total');
-tbody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
-const wpId = document.getElementById('wp-select').value;
-try {
-let path = '/api/revenue-sources';
-if (wpId) path += `?work_plan_id=${wpId}`;
-const sources = await api(path);
-STATE.revenueSources = sources;
-renderRevenueDetailTable(sources);
-if (sources.length === 0) {
-tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state" style="padding:16px;">No revenue sources recorded for this work plan yet.</div></td></tr>';
-totalEl.textContent = 'UGX 0';
-return;
-}
-tbody.innerHTML = sources.map(r => `
-<tr>
-<td class="mono">${escapeHtml(r.pbs_fund_code || '—')}</td>
-<td>${escapeHtml(r.source_of_financing_name || '—')}</td>
-<td class="rev-func-def">${formatMultilinePoints(r.functional_definition)}</td>
-<td class="num mono">${money(r.approved_budget_amount)}</td>
-</tr>`).join('');
-const total = sources.reduce((sum, r) => sum + (Number(r.approved_budget_amount) || 0), 0);
-totalEl.textContent = 'UGX ' + money(total);
-} catch (e) {
-tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
-totalEl.textContent = '—';
-renderRevenueDetailTable([]);
-}
+  const tbody = document.getElementById('wp-revenue-summary-body');
+  const totalEl = document.getElementById('wp-revenue-summary-total');
+  tbody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  const wpId = document.getElementById('wp-select').value;
+  try {
+    let path = '/api/revenue-sources';
+    if (wpId) path += `?work_plan_id=${wpId}`;
+    const sources = await api(path);
+    STATE.revenueSources = sources;
+    renderRevenueDetailTable(sources);
+
+    // Sum each matching source's Category Total (auto-derived from its sub
+    // rows) into one of the three fixed Council revenue categories.
+    const categoryTotals = { gou: 0, lr: 0, mdp: 0 };
+    sources.forEach(r => {
+      const key = categorizeRevenueSource(r);
+      if (key) categoryTotals[key] += Number(r.approved_budget_amount) || 0;
+    });
+
+    tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
+      <tr>
+        <td class="mono">${escapeHtml(cat.pbs_fund_code)}</td>
+        <td>${escapeHtml(cat.source_of_financing_name)}</td>
+        <td class="rev-func-def">${formatMultilinePoints(cat.functional_definition)}</td>
+        <td class="num mono">${money(categoryTotals[cat.key])}</td>
+      </tr>`).join('');
+
+    const total = categoryTotals.gou + categoryTotals.lr + categoryTotals.mdp;
+    totalEl.textContent = 'UGX ' + money(total);
+  } catch (e) {
+    // Even on error, keep the three fixed rows visible with zeroed amounts
+    // rather than an empty-state message, since their content is constant.
+    tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
+      <tr>
+        <td class="mono">${escapeHtml(cat.pbs_fund_code)}</td>
+        <td>${escapeHtml(cat.source_of_financing_name)}</td>
+        <td class="rev-func-def">${formatMultilinePoints(cat.functional_definition)}</td>
+        <td class="num mono">0</td>
+      </tr>`).join('');
+    totalEl.textContent = 'UGX 0';
+    toast(e.message, 'error');
+    renderRevenueDetailTable([]);
+  }
 }
 // Renders the "Revenue Source by Category for the FY 2026/27": one category head row per revenue source
 // (PBS Fund Code + Revenue Source + Functional Definition title), its sub rows
