@@ -127,6 +127,18 @@ font-size:14px; font-family:inherit; background:#fff; color:var(--ink-900); tran
 .field input:focus, .field select:focus, .field textarea:focus{
 border-color:var(--teal-500); box-shadow:var(--shadow-ring);
 }
+.password-field-wrap{position:relative;}
+.password-field-wrap input{padding-right:42px;}
+.password-toggle-btn{
+position:absolute; right:4px; top:50%; transform:translateY(-50%);
+width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+background:transparent; border:none; border-radius:6px; padding:0; margin:0;
+color:var(--ink-500); cursor:pointer; transition:color .15s var(--ease), background .15s var(--ease);
+}
+.password-toggle-btn svg{width:18px; height:18px;}
+.password-toggle-btn:hover{color:var(--teal-600); background:var(--paper);}
+.password-toggle-btn:focus-visible{outline:2px solid var(--teal-500); outline-offset:1px;}
+.rev-custom-field{display:none; margin-top:8px;}
 .btn{
 display:inline-flex; align-items:center; justify-content:center; gap:8px;
 padding:10px 18px; border-radius:var(--radius-sm); border:1px solid transparent;
@@ -598,7 +610,12 @@ vertical-align:middle; flex-shrink:0;
 </div>
 <div class="field">
 <label>Password</label>
+<div class="password-field-wrap">
 <input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••••" />
+<button type="button" class="password-toggle-btn" id="login-password-toggle" aria-label="Show password" title="Show password">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+</button>
+</div>
 </div>
 <button type="submit" class="btn btn-primary btn-block" id="login-btn">Sign in to your account</button>
 </form>
@@ -1283,10 +1300,22 @@ Grand Total: UGX <span id="req-grand-total">0</span>
 <div class="modal-body">
 <div class="field"><label>Work Plan</label><select id="rev-workplan"></select></div>
 <div class="form-grid">
-<div class="field"><label>PBS Fund Code</label><input type="text" id="rev-fund-code" placeholder="e.g. 001" /></div>
-<div class="field"><label>Revenue Source</label><input type="text" id="rev-source-name" placeholder="e.g. Central Government Transfers (GoU)" /></div>
+<div class="field">
+<label>PBS Fund Code</label>
+<select id="rev-fund-code"></select>
+<input type="text" id="rev-fund-code-custom" class="rev-custom-field" placeholder="e.g. 001" />
 </div>
-<div class="field"><label>Functional Definition Title</label><textarea id="rev-functional-def" rows="3" placeholder="e.g. Regular structural wage, non-wage recurrent and capital grants&#10;Each new line becomes its own point on the printed table"></textarea></div>
+<div class="field">
+<label>Revenue Source</label>
+<select id="rev-source-name"></select>
+<input type="text" id="rev-source-name-custom" class="rev-custom-field" placeholder="e.g. Central Government Transfers (GoU)" />
+</div>
+</div>
+<div class="field">
+<label>Functional Definition Title</label>
+<select id="rev-functional-def"></select>
+<textarea id="rev-functional-def-custom" class="rev-custom-field" rows="3" placeholder="e.g. Regular structural wage, non-wage recurrent and capital grants&#10;Each new line becomes its own point on the printed table"></textarea>
+</div>
 <div class="field-section">
 <span class="kicker">Sub Rows — Revenue Items</span>
 <div class="table-wrap" style="margin-top:8px;">
@@ -1410,6 +1439,49 @@ function categorizeRevenueSource(r) {
   }
   return null; // entries that don't match any of the three fixed categories are excluded from the summary totals
 }
+// ---- Revenue Source modal: PBS Fund Code / Revenue Source / Functional Definition
+// are drawn from the fixed REVENUE_SUMMARY_CATEGORIES constants as dropdowns (plus
+// an "Other" option for anything outside the three standard categories).
+const REV_CUSTOM_VALUE = '__custom__';
+const REV_FIELD_MAP = {
+  'rev-fund-code': { customId: 'rev-fund-code-custom', catField: 'pbs_fund_code' },
+  'rev-source-name': { customId: 'rev-source-name-custom', catField: 'source_of_financing_name' },
+  'rev-functional-def': { customId: 'rev-functional-def-custom', catField: 'functional_definition' },
+};
+function populateRevDropdowns() {
+  for (const [selectId, cfg] of Object.entries(REV_FIELD_MAP)) {
+    const optsHtml = REVENUE_SUMMARY_CATEGORIES.map(c =>
+      `<option value="${c.key}">${escapeHtml(c.pbs_fund_code)} — ${escapeHtml(c[cfg.catField])}</option>`
+    ).join('');
+    document.getElementById(selectId).innerHTML =
+      `<option value="">— Select —</option>${optsHtml}<option value="${REV_CUSTOM_VALUE}">Other (type manually)</option>`;
+  }
+}
+function setRevCustomVisible(selectId, visible) {
+  const el = document.getElementById(REV_FIELD_MAP[selectId].customId);
+  el.style.display = visible ? '' : 'none';
+  if (!visible) el.value = '';
+}
+function onRevCategorySelect(changedId) {
+  const val = document.getElementById(changedId).value;
+  if (val === REV_CUSTOM_VALUE) { setRevCustomVisible(changedId, true); return; }
+  setRevCustomVisible(changedId, false);
+  if (!val) return;
+  // The three fields describe one fixed category — keep them in sync.
+  for (const otherId of Object.keys(REV_FIELD_MAP)) {
+    if (otherId === changedId) continue;
+    document.getElementById(otherId).value = val;
+    setRevCustomVisible(otherId, false);
+  }
+}
+function getRevFieldValue(selectId) {
+  const cfg = REV_FIELD_MAP[selectId];
+  const val = document.getElementById(selectId).value;
+  if (val === REV_CUSTOM_VALUE) return document.getElementById(cfg.customId).value.trim();
+  if (!val) return '';
+  const cat = REVENUE_SUMMARY_CATEGORIES.find(c => c.key === val);
+  return cat ? cat[cfg.catField] : '';
+}
 // ---- Fetch helper -----------------------------------------------------------
 async function api(path, opts = {}) {
 const headers = opts.headers || {};
@@ -1520,6 +1592,17 @@ if (rounded === 0) return 'Zero shillings only';
 return `${numberToWords(rounded)} Shillings Only`;
 }
 // ---- Auth ---------------------------------------------------------------------
+document.getElementById('login-password-toggle').addEventListener('click', () => {
+const input = document.getElementById('login-password');
+const btn = document.getElementById('login-password-toggle');
+const showing = input.type === 'text';
+input.type = showing ? 'password' : 'text';
+btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+btn.title = showing ? 'Show password' : 'Hide password';
+btn.innerHTML = showing
+? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>'
+: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a19.4 19.4 0 0 1 4.22-5.06M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 7 11 7a19.5 19.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+});
 document.getElementById('login-form').addEventListener('submit', async (e) => {
 e.preventDefault();
 const role = document.getElementById('login-role').value;
@@ -2367,9 +2450,11 @@ STATE.editingRevenueSourceId = null;
 STATE.revItems = [];
 document.getElementById('rev-modal-title').textContent = 'New Revenue Source';
 document.getElementById('rev-create-btn').textContent = 'Create Revenue Source';
-document.getElementById('rev-fund-code').value = '';
-document.getElementById('rev-source-name').value = '';
-document.getElementById('rev-functional-def').value = '';
+populateRevDropdowns();
+for (const selectId of Object.keys(REV_FIELD_MAP)) {
+document.getElementById(selectId).value = '';
+setRevCustomVisible(selectId, false);
+}
 document.getElementById('rev-amount').value = 0;
 renderRevItems();
 }
@@ -2401,6 +2486,9 @@ document.getElementById('rev-add-item-btn').addEventListener('click', () => {
 STATE.revItems.push({ description: '', amount: 0 });
 renderRevItems();
 });
+for (const selectId of Object.keys(REV_FIELD_MAP)) {
+document.getElementById(selectId).addEventListener('change', () => onRevCategorySelect(selectId));
+}
 document.getElementById('wp-new-revenue-btn').addEventListener('click', () => {
 const wpVal = document.getElementById('wp-select').value;
 document.getElementById('rev-workplan').innerHTML = document.getElementById('wp-select').innerHTML;
@@ -2416,9 +2504,24 @@ STATE.editingRevenueSourceId = id;
 document.getElementById('rev-modal-title').textContent = `Edit Revenue Source — ${r.source_of_financing_name || ''}`;
 document.getElementById('rev-create-btn').textContent = 'Save Changes';
 document.getElementById('rev-workplan').value = r.work_plan_id;
-document.getElementById('rev-fund-code').value = r.pbs_fund_code || '';
-document.getElementById('rev-source-name').value = r.source_of_financing_name || '';
-document.getElementById('rev-functional-def').value = r.functional_definition || '';
+populateRevDropdowns();
+const matchedKey = categorizeRevenueSource(r);
+if (matchedKey) {
+for (const selectId of Object.keys(REV_FIELD_MAP)) {
+document.getElementById(selectId).value = matchedKey;
+setRevCustomVisible(selectId, false);
+}
+} else {
+document.getElementById('rev-fund-code').value = REV_CUSTOM_VALUE;
+document.getElementById('rev-source-name').value = REV_CUSTOM_VALUE;
+document.getElementById('rev-functional-def').value = REV_CUSTOM_VALUE;
+setRevCustomVisible('rev-fund-code', true);
+setRevCustomVisible('rev-source-name', true);
+setRevCustomVisible('rev-functional-def', true);
+document.getElementById('rev-fund-code-custom').value = r.pbs_fund_code || '';
+document.getElementById('rev-source-name-custom').value = r.source_of_financing_name || '';
+document.getElementById('rev-functional-def-custom').value = r.functional_definition || '';
+}
 document.getElementById('rev-amount').value = r.approved_budget_amount || 0;
 STATE.revItems = (r.items || []).map(it => ({ description: it.description, amount: it.amount }));
 renderRevItems();
