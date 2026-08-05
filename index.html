@@ -706,6 +706,10 @@ Departments
 <button class="icon-btn" id="wp-edit-workplan-btn" title="Edit Annual Work Plan &amp; Budget Estimates" style="display:none;">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
 </button>
+<!-- Downloads the full Annual Work Plan & Budget PDF (all sections + revenue/workplan tables) -->
+<button class="icon-btn" id="wp-download-pdf-btn" title="Download Annual Work Plan &amp; Budget as PDF">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+</button>
 </div>
 <button class="icon-btn" id="notif-btn" title="Notifications">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M9.5 20a2.5 2.5 0 0 0 5 0"/></svg>
@@ -1916,6 +1920,26 @@ await renderBudgetCodes();
 await renderRevenueSources();
 }
 document.getElementById('wp-select').addEventListener('change', () => { renderBudgetCodes(); renderRevenueSources(); });
+document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
+// Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
+async function downloadWorkPlanPdf() {
+const wpId = document.getElementById('wp-select').value;
+if (!wpId) { toast('Select a work plan first', 'error'); return; }
+const btn = document.getElementById('wp-download-pdf-btn');
+btn.disabled = true;
+try {
+const res = await fetch(`${API_BASE}/api/work-plans/${wpId}/report-pdf`, { headers: { Authorization: 'Bearer ' + STATE.token } });
+if (!res.ok) throw new Error('Could not generate the PDF');
+const blob = await res.blob();
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = `Annual_Work_Plan_FY_${document.getElementById('wp-fy-title').textContent.replace('/', '-')}.pdf`;
+document.body.appendChild(a); a.click(); a.remove();
+URL.revokeObjectURL(url);
+} catch (e) { toast(e.message, 'error'); }
+finally { btn.disabled = false; }
+}
 document.getElementById('wp-dept-filter').addEventListener('change', renderBudgetCodes);
 document.getElementById('wp-search').addEventListener('input', debounce(renderBudgetCodes, 300));
 // Renders the "Revenue Sources Summary" table (unchanged, per Council request)
