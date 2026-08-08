@@ -494,17 +494,10 @@ display:flex; align-items:center; justify-content:center; background:var(--paper
 .req-form-paper{
 background:#fff; padding:10px 6px 6px; font-family:var(--font-body); color:#181818;
 }
-.rf-district-title{text-align:center; font-family:var(--font-display); font-size:17px; font-weight:800; letter-spacing:.3px; margin-bottom:8px;}
-.rf-banner{
-display:flex; align-items:center; gap:0; border:1.5px solid #d8b24a; border-radius:8px; overflow:hidden;
-background:#fff; margin-bottom:10px; min-height:78px;
-}
-.rf-banner .rf-crest{flex:0 0 auto; width:78px; height:78px; display:flex; align-items:center; justify-content:center; padding:6px;}
-.rf-banner .rf-crest img{max-width:100%; max-height:100%; object-fit:contain;}
-.rf-banner .rf-wordmark{flex:1 1 auto; text-align:center; padding:8px 6px;}
-.rf-banner .rf-wordmark .rf-org{font-family:var(--font-display); font-size:26px; font-weight:800; letter-spacing:.3px; color:#1c6b3a; line-height:1.05;}
-.rf-banner .rf-wordmark .rf-motto{font-size:12px; font-style:italic; font-weight:700; color:#c07a1e; margin-top:2px;}
-.rf-banner .rf-seal{flex:0 0 auto; width:70px; height:70px; margin:0 8px; border-radius:50%; border:2px solid #1c6b3a; background:radial-gradient(circle at 50% 40%,#eaf3ec,#cfe3d5); display:flex; align-items:center; justify-content:center; text-align:center; font-size:6.5px; font-weight:700; color:#1c4d2c; line-height:1.15; padding:4px;}
+/* Requisition form header — a single pre-composed banner image (header.jpg)
+   replaces the old text+crest+seal composite so the on-screen form matches
+   the Council's printed letterhead exactly. */
+.rf-header-img{display:block; width:100%; height:auto; margin-bottom:10px; border-radius:4px;}
 .req-form-header{text-align:center; margin-bottom:2px;}
 .req-form-header .rf-title{font-family:var(--font-display); font-size:19px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; margin-top:6px;}
 .rf-refno{text-align:right; font-size:12.5px; margin:2px 0 10px; font-weight:600;}
@@ -856,7 +849,6 @@ Departments
 <table id="wp-dept-summary-table">
 <thead>
 <tr>
-<th>Dept.<br>Code</th>
 <th>Department</th>
 <th>Q1<br>(UGX)</th>
 <th>Q2<br>(UGX)</th>
@@ -867,11 +859,11 @@ Departments
 </tr>
 </thead>
 <tbody id="wp-dept-summary-body">
-<tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+<tr><td colspan="7" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 <tfoot>
 <tr style="font-weight:700; background:#EAF0EF; text-align:left;">
-<td colspan="2">Sub Total</td>
+<td colspan="1">Sub Total</td>
 <td class="num mono" id="wp-summary-q1">—</td>
 <td class="num mono" id="wp-summary-q2">—</td>
 <td class="num mono" id="wp-summary-q3">—</td>
@@ -1148,15 +1140,7 @@ Departments
 </div>
 <!-- Paper-form replica: fill this in exactly as you would the printed Funds Requisition Form -->
 <div class="req-form-paper" id="req-form-entry" style="border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px 16px 18px;">
-<div class="rf-district-title">NTOROKO DISTRICT LOCAL GOVERNMENT</div>
-<div class="rf-banner">
-<div class="rf-crest"><img src="logoo.jpeg" alt="Karugutu Town Council Crest"/></div>
-<div class="rf-wordmark">
-<div class="rf-org">Karugutu Town Council</div>
-<div class="rf-motto">"Serving The Community With Integrity"</div>
-</div>
-<div class="rf-seal">NTOROKO DISTRICT LOCAL GOVT</div>
-</div>
+<img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
 <div class="req-form-header"><div class="rf-title">Funds Requisition Form</div></div>
 <div class="rf-refno">No. <span class="mono" id="req-form-refno-preview">(assigned on save)</span></div>
 <table class="req-form-meta-table entry">
@@ -2151,31 +2135,41 @@ document.getElementById('wp-revenue-clear-btn').addEventListener('click', async 
 const wpId = document.getElementById('wp-select').value;
 if (!wpId) { toast('Please select a work plan first', 'error'); return; }
 if (!confirm('Clear ALL revenue sources (and their sub rows) for this work plan? This cannot be undone.')) return;
+// Empty the tables on screen immediately so the clear feels instant, rather
+// than waiting on the network round trip before anything visibly changes.
+document.getElementById('wp-revenue-detail-body').innerHTML = '<tr><td colspan="6"><div class="empty-state" style="padding:16px;">Clearing…</div></td></tr>';
+document.getElementById('wp-revenue-summary-body').innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
 try {
 const result = await api(`/api/revenue-sources/clear?work_plan_id=${wpId}`, { method: 'DELETE' });
 toast(`Cleared ${result.deleted} revenue source(s)`, 'success');
+} catch (e) { toast(e.message, 'error'); } finally {
 renderRevenueSources();
-} catch (e) { toast(e.message, 'error'); }
+}
 });
 // ---- Clear all: Annual Work Plan / Budget Estimates ---------------------------
 document.getElementById('wp-clear-btn').addEventListener('click', async () => {
 const wpId = document.getElementById('wp-select').value;
 if (!wpId) { toast('Please select a work plan first', 'error'); return; }
 if (!confirm('Clear ALL activity & budget estimate rows for this work plan? This cannot be undone.')) return;
+// Empty the main table and the dependent Department Budget Summary table
+// on screen immediately, before the request even resolves.
+document.getElementById('wp-table-body').innerHTML = '<tr><td colspan="20"><div class="empty-state" style="padding:16px;">Clearing…</div></td></tr>';
+renderDeptSummaryTable([]);
 try {
 const result = await api(`/api/budget-codes/clear?work_plan_id=${wpId}`, { method: 'DELETE' });
 let msg = `Cleared ${result.deleted} budget estimate row(s)`;
 if (result.skipped) msg += `, ${result.skipped} skipped (have requisitions on record)`;
 toast(msg, 'success');
+} catch (e) { toast(e.message, 'error'); } finally {
 renderBudgetCodes();
-} catch (e) { toast(e.message, 'error'); }
+}
 });
 // Renders the "Department Budget Summary" table in the work-plan header.
 function renderDeptSummaryTable(codes) {
 const tbody = document.getElementById('wp-dept-summary-body');
 const totalsIds = { q1: 'wp-summary-q1', q2: 'wp-summary-q2', q3: 'wp-summary-q3', q4: 'wp-summary-q4', total: 'wp-summary-total', uncommitted: 'wp-summary-uncommitted' };
 if (!codes || codes.length === 0) {
-tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state" style="padding:16px;">No budget codes to summarise.</div></td></tr>';
+tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state" style="padding:16px;">No budget codes to summarise.</div></td></tr>';
 Object.values(totalsIds).forEach(id => document.getElementById(id).textContent = 'UGX 0');
 return;
 }
@@ -2192,10 +2186,8 @@ map[name].uncommitted += Number(c.available_balance) || 0;
 });
 const rows = Object.entries(map).sort((a, b) => b[1].total - a[1].total);
 tbody.innerHTML = rows.map(([name, v]) => {
-const dept = STATE.departments.find(d => d.id === v.deptId);
 return `
 <tr>
-<td class="mono">${escapeHtml(dept ? dept.code : '—')}</td>
 <td>${escapeHtml(name)}</td>
 <td class="num mono">${money(v.q1)}</td>
 <td class="num mono">${money(v.q2)}</td>
@@ -2777,6 +2769,12 @@ document.getElementById('req-form-names').value = editReq ? (editReq.requester_n
 document.getElementById('req-form-date').value = editReq ? fmtDate(editReq.created_at) : fmtDate(new Date().toISOString());
 document.getElementById('req-form-signature').value = (editReq ? editReq.requester_signature_url : STATE.signatureUrl) ? 'On file' : 'Not yet uploaded — add one in My Settings';
 document.getElementById('req-form-refno-preview').textContent = editReq ? editReq.ref_no : '(assigned on save)';
+// Reset the line items and paint the paper form right away so it appears
+// on screen the instant the button is clicked — the "Charge To" budget
+// code dropdown and any edit-specific values fill in a moment later.
+if (!editReq) { resetReqLineItems(); document.getElementById('req-subject').value = ''; document.getElementById('req-pv-number').value = ''; }
+renderReqLineItems();
+openModal('modal-req');
 const bcSel = document.getElementById('req-budget-code');
 bcSel.innerHTML = '<option>Loading…</option>';
 const codes = await api('/api/budget-codes');
@@ -2794,15 +2792,11 @@ STATE.reqLineItems = editReq.line_items.map(li => ({ ...li, isHeader: li.qty == 
 } else {
 resetReqLineItems();
 }
+renderReqLineItems();
 } else {
 updateBalanceHint();
 await updateActivityOptions();
-document.getElementById('req-subject').value = '';
-document.getElementById('req-pv-number').value = '';
-resetReqLineItems();
 }
-renderReqLineItems();
-openModal('modal-req');
 }
 document.getElementById('new-req-btn').addEventListener('click', () => openRequisitionModal());
 document.getElementById('req-budget-code').addEventListener('change', () => { updateBalanceHint(); updateActivityOptions(); });
@@ -3058,15 +3052,7 @@ const sigImg = (url) => url ? `<img src="${API_BASE}${url}" alt="Signature" />` 
 const dots = (text) => `<span class="rf-dots">${escapeHtml(text || '').padEnd(1,'\u00A0') || '&nbsp;'}</span>`;
 return `
 <div class="req-form-paper">
-<div class="rf-district-title">NTOROKO DISTRICT LOCAL GOVERNMENT</div>
-<div class="rf-banner">
-<div class="rf-crest"><img src="logoo.jpeg" alt="Karugutu Town Council Crest"/></div>
-<div class="rf-wordmark">
-<div class="rf-org">Karugutu Town Council</div>
-<div class="rf-motto">"Serving The Community With Integrity"</div>
-</div>
-<div class="rf-seal">NTOROKO DISTRICT LOCAL GOVT</div>
-</div>
+<img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
 <div class="req-form-header"><div class="rf-title">Funds Requisition Form</div></div>
 <div class="rf-refno">No. <span class="mono">${escapeHtml(r.ref_no)}</span></div>
 <table class="req-form-meta-table">
