@@ -1312,6 +1312,8 @@ Departments
 <div class="form-grid" style="margin-top:8px;">
 <div class="field"><label>Baseline Value</label><input type="number" id="bc-baseline" value="0"/></div>
 <div class="field"><label>Planned Target</label><input type="number" id="bc-target" value="0"/></div>
+<div class="field span2"><label>Baseline Note <span style="font-weight:400;color:var(--ink-500);">(optional — narrative baseline, e.g. "25% of Council area mapped for vectors")</span></label><input type="text" id="bc-baseline-note" placeholder="Free-text baseline detail, if any"/></div>
+<div class="field span2"><label>Target Note <span style="font-weight:400;color:var(--ink-500);">(optional — narrative target, e.g. "Conduct 4 quarterly vector surveillance exercises")</span></label><input type="text" id="bc-target-note" placeholder="Free-text target detail, if any"/></div>
 <div class="field span2"><label>Actual Output</label><input type="text" id="bc-actual" placeholder="Actual output achieved so far"/></div>
 <div class="field"><label>Q1 (UGX)</label><input type="number" id="bc-q1" value="0"/></div>
 <div class="field"><label>Q2 (UGX)</label><input type="number" id="bc-q2" value="0"/></div>
@@ -2215,6 +2217,10 @@ if (!codes || codes.length === 0) {
 el.innerHTML = '<div class="empty-state" style="padding:20px;">No budget data yet.</div>';
 return;
 }
+// Note: baseline_value/planned_target are a best-effort numeric figure —
+// for rows where the source workbook recorded a narrative or multi-part
+// value (see baseline_note/target_note, shown in the table and on hover),
+// this is only the first number found in that text, not a precise total.
 const map = {};
 codes.forEach(c => {
 const name = c.department_name || 'Unassigned';
@@ -2359,8 +2365,8 @@ tbody.innerHTML = codes.map(c => `
 <td class="wrap">${escapeHtml(c.piap_output_description || '—')}</td>
 <td class="wrap">${escapeHtml(c.piap_output_indicator || '—')}</td>
 <td>${escapeHtml(c.unit_of_measure || '—')}</td>
-<td class="num">${money(c.baseline_value)}</td>
-<td class="num">${money(c.planned_target)}</td>
+<td class="${c.baseline_note ? 'wrap' : 'num'}" ${c.baseline_note ? `title="Recorded as: ${escapeHtml(c.baseline_note)}"` : ''}>${c.baseline_note ? escapeHtml(c.baseline_note) : money(c.baseline_value)}</td>
+<td class="${c.target_note ? 'wrap' : 'num'}" ${c.target_note ? `title="Recorded as: ${escapeHtml(c.target_note)}"` : ''}>${c.target_note ? escapeHtml(c.target_note) : money(c.planned_target)}</td>
 <td class="wrap">${escapeHtml(c.actual_output || '—')}</td>
 <td class="num mono">${money(c.q1_amount)}</td>
 <td class="num mono">${money(c.q2_amount)}</td>
@@ -2393,7 +2399,7 @@ function resetBudgetCodeForm() {
 STATE.editingBudgetCodeId = null;
 document.getElementById('bc-modal-title').textContent = 'New Budget Estimates Data Entry Form';
 document.getElementById('bc-create-btn').textContent = 'Create Budget Estimate';
-['bc-service-area','bc-code','bc-unit','bc-desc','bc-programme','bc-subprogramme','bc-piap-desc','bc-piap-indicator','bc-actual','bc-responsible'].forEach(id => document.getElementById(id).value = '');
+['bc-service-area','bc-code','bc-unit','bc-desc','bc-programme','bc-subprogramme','bc-piap-desc','bc-piap-indicator','bc-actual','bc-responsible','bc-baseline-note','bc-target-note'].forEach(id => document.getElementById(id).value = '');
 ['bc-baseline','bc-target','bc-q1','bc-q2','bc-q3','bc-q4'].forEach(id => document.getElementById(id).value = 0);
 document.getElementById('bc-total').value = '0';
 document.getElementById('bc-funding').value = 'Local Revenue';
@@ -2426,7 +2432,9 @@ document.getElementById('bc-piap-desc').value = c.piap_output_description || '';
 document.getElementById('bc-piap-indicator').value = c.piap_output_indicator || '';
 document.getElementById('bc-actual').value = c.actual_output || '';
 document.getElementById('bc-baseline').value = c.baseline_value || 0;
+document.getElementById('bc-baseline-note').value = c.baseline_note || '';
 document.getElementById('bc-target').value = c.planned_target || 0;
+document.getElementById('bc-target-note').value = c.target_note || '';
 document.getElementById('bc-q1').value = c.q1_amount || 0;
 document.getElementById('bc-q2').value = c.q2_amount || 0;
 document.getElementById('bc-q3').value = c.q3_amount || 0;
@@ -2457,7 +2465,9 @@ piap_output_description: document.getElementById('bc-piap-desc').value.trim(),
 piap_output_indicator: document.getElementById('bc-piap-indicator').value.trim(),
 unit_of_measure: document.getElementById('bc-unit').value.trim(),
 baseline_value: Number(document.getElementById('bc-baseline').value || 0),
+baseline_note: document.getElementById('bc-baseline-note').value.trim() || null,
 planned_target: Number(document.getElementById('bc-target').value || 0),
+target_note: document.getElementById('bc-target-note').value.trim() || null,
 actual_output: document.getElementById('bc-actual').value.trim(),
 q1_amount: Number(document.getElementById('bc-q1').value || 0),
 q2_amount: Number(document.getElementById('bc-q2').value || 0),
@@ -2682,7 +2692,9 @@ toast('Importing budget estimates from Excel…', 'info');
 const result = await api(`/api/budget-codes/import?work_plan_id=${wpVal}`, { method: 'POST', body: fd });
 toast(`Imported ${result.created} budget estimate row(s)${result.skipped ? `, skipped ${result.skipped}` : ''}`, 'success');
 if (result.errors && result.errors.length) {
-toast(`${result.errors.length} row warning(s) — first: ${result.errors[0]}`, 'error');
+const total = result.total_warnings || result.errors.length;
+const shownNote = total > result.errors.length ? ` (showing first ${result.errors.length} of ${total})` : '';
+toast(`${total} row warning(s)${shownNote} — first: ${result.errors[0]}`, 'error');
 }
 renderBudgetCodes();
 } catch (err) { toast(err.message, 'error'); }
