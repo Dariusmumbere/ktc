@@ -492,36 +492,50 @@ display:flex; align-items:center; justify-content:center; background:var(--paper
 .sig-preview-box img{max-width:100%; max-height:100%; object-fit:contain;}
 /* ---------------- Printable Requisition Form (mirrors the Council's paper form) ---------------- */
 .req-form-paper{
-background:#fff; padding:6px 4px 4px; font-family:var(--font-body); color:#181818;
+background:#fff; padding:10px 6px 6px; font-family:var(--font-body); color:#181818;
 }
-.req-form-header{text-align:center; margin-bottom:6px;}
-.req-form-header .rf-org{font-family:var(--font-display); font-size:21px; font-weight:700; letter-spacing:.4px;}
-.req-form-header .rf-sub{font-size:12.5px; font-weight:700; letter-spacing:.8px; margin-top:2px; text-transform:uppercase;}
-.rf-refno{text-align:right; font-size:11.5px; margin-bottom:8px;}
-.req-form-meta{display:grid; grid-template-columns:1fr 1fr; gap:8px 22px; font-size:12.5px; margin:6px 0 10px; padding-bottom:10px; border-bottom:1.5px solid #333;}
-.req-form-meta div{display:flex; gap:6px; align-items:flex-end;}
-.req-form-meta strong{white-space:nowrap;}
-.req-form-meta span{border-bottom:1px solid #999; flex:1; min-height:16px; padding-bottom:1px; display:flex; align-items:flex-end; justify-content:center;}
-.req-form-meta span img{max-height:22px; max-width:100%; object-fit:contain;}
-.req-form-subject{font-size:12.5px; margin-bottom:12px; display:flex; gap:6px; align-items:flex-end;}
-.req-form-subject strong{white-space:nowrap;}
-.req-form-subject span{border-bottom:1px solid #999; flex:1; min-height:16px; padding-bottom:1px;}
+.rf-district-title{text-align:center; font-family:var(--font-display); font-size:17px; font-weight:800; letter-spacing:.3px; margin-bottom:8px;}
+.rf-banner{
+display:flex; align-items:center; gap:0; border:1.5px solid #d8b24a; border-radius:8px; overflow:hidden;
+background:#fff; margin-bottom:10px; min-height:78px;
+}
+.rf-banner .rf-crest{flex:0 0 auto; width:78px; height:78px; display:flex; align-items:center; justify-content:center; padding:6px;}
+.rf-banner .rf-crest img{max-width:100%; max-height:100%; object-fit:contain;}
+.rf-banner .rf-wordmark{flex:1 1 auto; text-align:center; padding:8px 6px;}
+.rf-banner .rf-wordmark .rf-org{font-family:var(--font-display); font-size:26px; font-weight:800; letter-spacing:.3px; color:#1c6b3a; line-height:1.05;}
+.rf-banner .rf-wordmark .rf-motto{font-size:12px; font-style:italic; font-weight:700; color:#c07a1e; margin-top:2px;}
+.rf-banner .rf-seal{flex:0 0 auto; width:70px; height:70px; margin:0 8px; border-radius:50%; border:2px solid #1c6b3a; background:radial-gradient(circle at 50% 40%,#eaf3ec,#cfe3d5); display:flex; align-items:center; justify-content:center; text-align:center; font-size:6.5px; font-weight:700; color:#1c4d2c; line-height:1.15; padding:4px;}
+.req-form-header{text-align:center; margin-bottom:2px;}
+.req-form-header .rf-title{font-family:var(--font-display); font-size:19px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; margin-top:6px;}
+.rf-refno{text-align:right; font-size:12.5px; margin:2px 0 10px; font-weight:600;}
+.rf-refno .mono{color:#b8382a; font-weight:800;}
+table.req-form-meta-table{width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:12.5px;}
+table.req-form-meta-table td{border:1px solid #333; padding:5px 8px; vertical-align:bottom;}
+table.req-form-meta-table td strong{margin-right:6px;}
+table.req-form-meta-table td .rf-fill{display:inline-block; min-height:16px; vertical-align:bottom;}
+table.req-form-meta-table td .rf-fill img{max-height:22px; max-width:140px; object-fit:contain; vertical-align:bottom;}
+.req-form-subject{font-size:12.5px; margin:0 0 14px; line-height:2;}
+.req-form-subject strong{white-space:nowrap; margin-right:4px;}
+.req-form-subject .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
 table.req-form-table{width:100%; border-collapse:collapse; margin-bottom:14px; font-size:12px;}
 table.req-form-table th, table.req-form-table td{border:1px solid #333; padding:6px 8px;}
-table.req-form-table th{background:#EFEFEF; font-size:10.5px; text-transform:uppercase; text-align:left;}
+table.req-form-table th{background:#e6e6e6; font-size:10.5px; text-transform:uppercase; text-align:left;}
 table.req-form-table td.num, table.req-form-table th.num{text-align:right; font-family:var(--font-mono);}
-table.req-form-table tr.rf-section-head td{font-weight:700;}
+table.req-form-table tr.rf-section-head td{font-weight:700; background:#fafafa;}
 table.req-form-table tr.rf-subtotal td{font-weight:700; border-top:2px double #333;}
-table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333; background:#F7F7F7; font-size:12.5px;}
-.req-form-words{font-size:12.5px; margin-bottom:32px; display:flex; gap:6px; align-items:flex-end;}
-.req-form-words strong{white-space:nowrap;}
-.req-form-words span{border-bottom:1px solid #999; flex:1; min-height:16px; padding-bottom:1px;}
-.req-form-signatures{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:26px; text-align:center;}
-.req-form-signatures .sig-line{border-top:1px solid #333; margin-bottom:6px; height:34px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:2px;}
-.req-form-signatures .sig-line img{max-height:30px; max-width:90%; object-fit:contain;}
-.req-form-signatures .sig-role{font-size:12px; font-weight:600;}
-.req-form-signatures .sig-label{font-size:10.5px; color:#555; margin-top:2px;}
+table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #333; background:#efefef; font-size:12.5px; text-transform:uppercase;}
+.req-form-words{font-size:12.5px; margin-bottom:30px; line-height:2;}
+.req-form-words strong{white-space:nowrap; margin-right:4px;}
+.req-form-words .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
+.req-form-signatures{display:grid; grid-template-columns:repeat(3,1fr); border:1px solid #333; margin-top:18px;}
+.req-form-signatures > div{padding:10px 12px 12px; border-left:1px solid #333;}
+.req-form-signatures > div:first-child{border-left:none;}
+.req-form-signatures .sig-role{font-size:12px; font-weight:600; margin-bottom:26px;}
+.req-form-signatures .sig-line{border-top:1px dotted #666; margin-bottom:6px; height:26px; display:flex; align-items:flex-end; padding-bottom:2px;}
+.req-form-signatures .sig-line img{max-height:26px; max-width:90%; object-fit:contain;}
+.req-form-signatures .sig-label{font-size:12px; font-weight:800;}
 @media print{
+@page{ size:A4; margin:12mm; }
 body *{visibility:hidden;}
 #print-form-container, #print-form-container *{visibility:visible;}
 .overlay#modal-print-form{position:absolute; inset:auto; background:none; padding:0;}
@@ -1095,6 +1109,10 @@ Departments
 <select id="req-budget-code"></select>
 <div class="help-text" id="req-balance-hint"></div>
 </div>
+<div class="form-grid">
+<div class="field"><label>Budget Output Code</label><input type="text" id="req-budget-output-code" readonly disabled/></div>
+<div class="field"><label>Activity Budget Limit</label><input type="text" id="req-activity-budget-limit" readonly disabled/></div>
+</div>
 <div class="field">
 <label>Activity (optional — must belong to work plan)</label>
 <select id="req-activity"><option value="">— None —</option></select>
@@ -1105,15 +1123,15 @@ Departments
 <div class="help-text">Used to generate this requisition's reference number (format: KTC-RQ-YY-MM-DD-Payment Voucher Number).</div>
 </div>
 <div class="field">
-<label>Subject</label>
+<label>Budget Output Subject</label>
 <input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works" />
 </div>
 <div class="field-section">
-<span class="kicker">Line Items</span>
+<span class="kicker">Sub Activity Line Items</span>
 <div class="table-wrap" style="margin-top:8px;">
 <table>
 <thead>
-<tr><th>No.</th><th class="wrap">Description</th><th>Units</th><th>Qty</th><th>Rate</th><th>Amount</th><th></th></tr>
+<tr><th>Sub Activity<br>S/No.</th><th class="wrap">Description</th><th>Units</th><th>Qty</th><th>Rate</th><th>Amount</th><th></th></tr>
 </thead>
 <tbody id="req-lineitems-body"></tbody>
 </table>
@@ -1122,7 +1140,7 @@ Departments
 <button type="button" class="btn btn-ghost" id="req-add-section">+ Add Section</button>
 <button type="button" class="btn btn-ghost" id="req-add-row">+ Add Line</button>
 </div>
-<div class="help-text">A section (e.g. "Field fuel", "Stationery for two days in 5 wards") can hold one or more priced lines. Qty × Rate fills the Amount automatically — or type the Amount directly for items like facilitation and transport.</div>
+<div class="help-text">Each "+ Add Section" starts a new Sub Activity (S/N 01, S/N 02, S/N 03…) which can hold one or more priced description lines underneath it — matching the paper form's sub-activity blocks. Qty × Rate fills the Amount automatically, or type the Amount directly for items like facilitation and transport.</div>
 <div style="text-align:right; margin-top:12px; font-family:var(--font-mono); font-size:17px; font-weight:700; color:var(--navy-950);">
 Grand Total: UGX <span id="req-grand-total">0</span>
 </div>
@@ -2684,7 +2702,7 @@ tbody.innerHTML = STATE.reqLineItems.map((li, idx) => {
 const showNo = li.item_no !== lastNo;
 lastNo = li.item_no;
 return `<tr>
-<td style="font-weight:700;">${showNo ? String(li.item_no).padStart(2,'0') : ''}</td>
+<td style="font-weight:700;">${showNo ? 'S/N ' + String(li.item_no).padStart(2,'0') : ''}</td>
 <td class="wrap"><input type="text" data-li-idx="${idx}" data-li-field="description" value="${escapeHtml(li.description)}" placeholder="${li.isHeader ? 'Section title, e.g. Field fuel' : 'Item description'}" style="width:100%; border:1px solid var(--line); border-radius:6px; padding:6px 8px; font-size:12.5px;" oninput="updateReqLineItem(${idx},'description',this.value)"/></td>
 <td><input type="text" data-li-idx="${idx}" data-li-field="units" value="${escapeHtml(li.units||'')}" style="width:56px; border:1px solid var(--line); border-radius:6px; padding:6px 8px; font-size:12.5px;" oninput="updateReqLineItem(${idx},'units',this.value)"/></td>
 <td><input type="number" data-li-idx="${idx}" data-li-field="qty" value="${li.qty ?? ''}" style="width:64px; border:1px solid var(--line); border-radius:6px; padding:6px 8px; font-size:12.5px;" oninput="updateReqLineItem(${idx},'qty',this.value)"/></td>
@@ -2738,6 +2756,8 @@ const id = document.getElementById('req-budget-code').value;
 const bc = STATE.budgetCodes.find(c => String(c.id) === String(id));
 const hint = document.getElementById('req-balance-hint');
 hint.textContent = bc ? `Available balance: UGX ${money(bc.available_balance)}` : '';
+document.getElementById('req-budget-output-code').value = bc ? bc.code : '';
+document.getElementById('req-activity-budget-limit').value = bc ? `UGX ${money(bc.allocated_amount)}` : '';
 }
 async function updateActivityOptions() {
 const id = document.getElementById('req-budget-code').value;
@@ -2962,7 +2982,7 @@ sectionSum = 0;
 }
 const isHeaderRow = (li.qty == null && li.rate == null && (!li.amount || Number(li.amount) === 0));
 rowsHtml += `<tr class="${isHeaderRow ? 'rf-section-head' : ''}">
-<td>${(i === 0 || items[i-1].item_no !== li.item_no) ? String(li.item_no).padStart(2,'0') : ''}</td>
+<td>${(i === 0 || items[i-1].item_no !== li.item_no) ? 'S/N ' + String(li.item_no).padStart(2,'0') : ''}</td>
 <td class="wrap">${escapeHtml(li.description)}</td>
 <td>${escapeHtml(li.units || '')}</td>
 <td class="num">${li.qty ? money(li.qty) : ''}</td>
@@ -2980,33 +3000,47 @@ const hodSigUrl = findStageSignatureUrl(r, 'hod');
 const treasurerSigUrl = findStageSignatureUrl(r, 'treasurer');
 const clerkSigUrl = findStageSignatureUrl(r, 'clerk');
 const sigImg = (url) => url ? `<img src="${API_BASE}${url}" alt="Signature" />` : '';
+const dots = (text) => `<span class="rf-dots">${escapeHtml(text || '').padEnd(1,'\u00A0') || '&nbsp;'}</span>`;
 return `
 <div class="req-form-paper">
-<div class="req-form-header">
-<div class="rf-org">KARUGUTU TOWN COUNCIL</div>
-<div class="rf-sub">Funds Requisition Form</div>
+<div class="rf-district-title">NTOROKO DISTRICT LOCAL GOVERNMENT</div>
+<div class="rf-banner">
+<div class="rf-crest"><img src="logoo.jpeg" alt="Karugutu Town Council Crest"/></div>
+<div class="rf-wordmark">
+<div class="rf-org">Karugutu Town Council</div>
+<div class="rf-motto">"Serving The Community With Integrity"</div>
 </div>
+<div class="rf-seal">NTOROKO DISTRICT LOCAL GOVT</div>
+</div>
+<div class="req-form-header"><div class="rf-title">Funds Requisition Form</div></div>
 <div class="rf-refno">No. <span class="mono">${escapeHtml(r.ref_no)}</span></div>
-<div class="req-form-meta">
-<div><strong>Department:</strong><span>${escapeHtml(r.department_name || '—')}</span></div>
-<div><strong>Date of Submission:</strong><span>${fmtDate(r.created_at)}</span></div>
-<div><strong>Names:</strong><span>${escapeHtml(r.requester_name || '—')}</span></div>
-<div><strong>Signature:</strong><span>${sigImg(requesterSigUrl)}</span></div>
-<div><strong>PV No.:</strong><span>${escapeHtml(r.payment_voucher_number || '—')}</span></div>
-</div>
-<div class="req-form-subject"><strong>Subject:</strong><span>${escapeHtml(subject)}</span></div>
+<table class="req-form-meta-table">
+<tr>
+<td style="width:50%;"><strong>Department:</strong><span class="rf-fill">${escapeHtml(r.department_name || '—')}</span></td>
+<td style="width:50%;"><strong>Date of Submission:</strong><span class="rf-fill">${fmtDate(r.created_at)}</span></td>
+</tr>
+<tr>
+<td><strong>Names:</strong><span class="rf-fill">${escapeHtml(r.requester_name || '—')}</span></td>
+<td><strong>Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
+</tr>
+<tr>
+<td><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(r.budget_code || '—')}</span></td>
+<td><strong>Activity Budget Limit:</strong><span class="rf-fill">${r.activity_budget_limit != null ? 'UGX ' + money(r.activity_budget_limit) : '—'}</span></td>
+</tr>
+</table>
+<div class="req-form-subject"><strong>Budget Output Subject:</strong>${dots(subject)}</div>
 <table class="req-form-table">
-<thead><tr><th>No.</th><th>Description</th><th>Units</th><th>Qty</th><th>Rate</th><th class="num">Amount</th></tr></thead>
+<thead><tr><th style="width:9%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:9%;">Units</th><th style="width:9%;">Qty</th><th style="width:12%;">Rate</th><th class="num" style="width:14%;">Amount</th></tr></thead>
 <tbody>
 ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No line items recorded</td></tr>'}
 <tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">${money(grandTotal)}</td></tr>
 </tbody>
 </table>
-<div class="req-form-words"><strong>Amount in words:</strong><span>${escapeHtml(words)}</span></div>
+<div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
 <div class="req-form-signatures">
-<div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-role">Recommended by</div><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-role">Checked and approved by</div><div class="sig-label">Town Treasurer</div></div>
-<div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-role">Authorised by</div><div class="sig-label">Town Clerk</div></div>
+<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-label">Head of Department</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-label">Town Treasurer</div></div>
+<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-label">Town Clerk</div></div>
 </div>
 </div>
 `;
