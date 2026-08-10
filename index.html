@@ -1709,6 +1709,10 @@ return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUppe
 }
 function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+// Shows a department as "090: Community Based Services" wherever a
+// department object is available, so its PBS code is always visible next
+// to its name instead of the name alone.
+function deptLabel(d) { if (!d) return null; return d.code ? `${d.code}: ${d.name}` : d.name; }
 // ---- Multi-point text formatting (e.g. Functional Definition cells) --------
 // Renders a block of text as one line per "point" instead of one continuous
 // run-on line. If the source text already contains real line breaks, each
@@ -1939,7 +1943,7 @@ document.getElementById('set-name').textContent = me.full_name || '—';
 document.getElementById('set-role').textContent = statusLabel(me.role);
 document.getElementById('set-email').textContent = me.email || '—';
 const dept = STATE.departments.find(d => d.id === me.department_id);
-document.getElementById('set-dept').textContent = dept ? dept.name : '—';
+document.getElementById('set-dept').textContent = deptLabel(dept) || '—';
 STATE.signatureUrl = me.signature_url || null;
 renderSignaturePreview();
 } catch (e) { toast(e.message, 'error'); }
@@ -2033,7 +2037,7 @@ const el = document.getElementById(id);
 if (!el) return;
 const keepFirst = id === 'wp-dept-filter';
 el.innerHTML = (keepFirst ? '<option value="">All Departments</option>' : '<option value="">— Select —</option>') +
-STATE.departments.map(d => `<option value="${d.id}">${escapeHtml(d.name)}</option>`).join('');
+STATE.departments.map(d => `<option value="${d.id}">${escapeHtml(deptLabel(d))}</option>`).join('');
 });
 }
 async function loadWorkplans() {
@@ -3068,7 +3072,7 @@ function syncPvDepartment() {
 const deptSel = document.getElementById('req-form-department');
 const dept = STATE.departments.find(d => String(d.id) === String(deptSel.value));
 const pvDept = document.getElementById('pv-form-department');
-if (pvDept) pvDept.value = dept ? dept.name : '—';
+if (pvDept) pvDept.value = deptLabel(dept) || '—';
 }
 // Populates the "Budget Output Code" select with the budget lines for the
 // chosen department, and keeps "Activity Budget Limit" in sync with whichever
@@ -3764,7 +3768,7 @@ return `<tr>
 <td>${escapeHtml(u.full_name)}</td><td>${escapeHtml(u.email)}</td>
 <td>${escapeHtml(u.position || '—')}</td><td>${escapeHtml(u.telephone || '—')}</td>
 <td>${statusLabel(u.role)}</td>
-<td>${escapeHtml(dept ? dept.name : '—')}</td>
+<td>${escapeHtml(deptLabel(dept) || '—')}</td>
 <td><span class="pill pill-${u.is_active ? 'approved' : 'rejected'}">${u.is_active ? 'Active' : 'Disabled'}</span></td>
 <td><button class="btn btn-ghost" style="padding:6px 10px;" onclick="toggleUser(${u.id})">${u.is_active ? 'Disable' : 'Enable'}</button></td>
 <td style="white-space:nowrap;">
