@@ -1711,14 +1711,18 @@ function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 // Strict separation of concern: shows a department using its NAME ONLY.
 // The PBS department code is a distinct identifier and is intentionally
-// never appended here — this is used for the Departments page, dropdowns,
-// user records, requisitions, dept-summary cards/charts, etc.
-// The single exception is the Annual Work Plan & Budget Estimates table's
-// Department column, which shows "<code>: <name>" instead, via the
-// backend-supplied `department_code_and_name` field on each budget code
-// (see its one usage in renderBudgetCodes()) — never derived client-side,
-// so this rule can't drift out of sync with the backend's rule.
+// never appended here — this is used for the Departments page's own
+// Department column, user records, requisitions, dept-output charts, etc.
 function deptLabel(d) { if (!d) return null; return d.name; }
+// Shows a department as "<code>: <name>" (e.g. "090: Community Based
+// Services"). Used for the Annual Work Plan & Budget Estimates table's
+// Department column (via the backend-supplied `department_code_and_name`
+// field on each budget code — see renderBudgetCodes()), the Department
+// Budget Summary table (renderDeptSummaryTable()), and every dropdown that
+// lists departments (Work Plan filter, Budget Code form, Requisition form,
+// User form — see loadDepartments()). NOT used for the Departments page's
+// own Department column, which shows name alone via deptLabel() above.
+function deptLabelWithCode(d) { if (!d) return null; return d.code ? `${d.code}: ${d.name}` : d.name; }
 // ---- Multi-point text formatting (e.g. Functional Definition cells) --------
 // Renders a block of text as one line per "point" instead of one continuous
 // run-on line. If the source text already contains real line breaks, each
@@ -2043,7 +2047,7 @@ const el = document.getElementById(id);
 if (!el) return;
 const keepFirst = id === 'wp-dept-filter';
 el.innerHTML = (keepFirst ? '<option value="">All Departments</option>' : '<option value="">— Select —</option>') +
-STATE.departments.map(d => `<option value="${d.id}">${escapeHtml(deptLabel(d))}</option>`).join('');
+STATE.departments.map(d => `<option value="${d.id}">${escapeHtml(deptLabelWithCode(d))}</option>`).join('');
 });
 }
 async function loadWorkplans() {
@@ -2328,7 +2332,7 @@ return;
 }
 const map = {};
 codes.forEach(c => {
-const name = c.department_name || 'Unassigned';
+const name = c.department_code_and_name || c.department_name || 'Unassigned';
 if (!map[name]) map[name] = { deptId: c.department_id, q1: 0, q2: 0, q3: 0, q4: 0, total: 0, uncommitted: 0 };
 map[name].q1 += Number(c.q1_amount) || 0;
 map[name].q2 += Number(c.q2_amount) || 0;
