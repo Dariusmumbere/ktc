@@ -569,6 +569,15 @@ table.req-form-table.entry tr.rf-grand td{font-family:var(--font-mono);}
 .pv-certify{font-size:11.5px; line-height:1.7; border:1px solid #333; padding:10px 12px; margin:10px 0 14px;}
 .pv-certify p{margin:0 0 8px;}
 .pv-certify p:last-child{margin-bottom:0;}
+/* Authority / Total / Approved Vote / Account No / Approved Estimate / Cheque
+   Instruction No — on the paper form these are plain fill-in-the-blank lines
+   inside the same bordered box as the certify paragraphs below, not a boxed
+   mini-table, so they're styled to match that (dotted fill, no cell borders). */
+.pv-plain-line{display:flex; flex-wrap:wrap; gap:6px; align-items:baseline; font-size:12.5px; margin-bottom:8px;}
+.pv-plain-line strong{white-space:nowrap; font-weight:700;}
+.pv-plain-line .rf-dots{flex:1; min-width:80px;}
+.pv-plain-line.entry input{flex:1; min-width:80px; border:none; border-bottom:1px dotted #888; background:transparent; font:inherit; font-size:12.5px; padding:2px 4px;}
+.pv-plain-line.entry input:focus{outline:none; border-bottom:1px dotted var(--gold-600); background:#fffdf2;}
 table.pv-block-table{width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px;}
 table.pv-block-table td{border:1px solid #333; padding:6px 8px; vertical-align:top;}
 table.pv-block-table td strong{display:block; font-size:11px; margin-bottom:4px;}
@@ -1201,22 +1210,11 @@ Departments
 <tbody id="pv-lineitems-body"></tbody>
 <tfoot><tr class="rf-grand"><td colspan="4" style="text-align:right;">TOTAL</td><td class="num">UGX <span id="pv-grand-total">0</span></td></tr></tfoot>
 </table>
-<table class="pv-block-table">
-<tr>
-<td style="width:50%;"><strong>Authority</strong><input type="text" id="pv-authority" placeholder="e.g. Approved work plan / Council minute ref."/></td>
-<td style="width:50%;"><strong>Total</strong><input type="text" id="pv-total-shs" readonly/></td>
-</tr>
-<tr>
-<td><strong>Approved Vote</strong><input type="text" id="pv-approved-vote"/></td>
-<td><strong>Account No.</strong><input type="text" id="pv-account-no"/></td>
-</tr>
-<tr>
-<td><strong>Approved Estimate</strong><input type="text" id="pv-approved-estimate"/></td>
-<td><strong>Cheque Payment Instruction No.</strong><input type="text" id="pv-instruction-no"/></td>
-</tr>
-</table>
 <div class="pv-certify">
-<p><strong>I HEREBY CERTIFY</strong> that the above amount is correct and was incurred under the authority quoted, that the above services has been duly and properly performed / supplies have been received in good condition: that the payment price charge is in accordance with regulations the terms of contract or agreement which are fair and reasonable and that the above expenditure of Shs (in words) <span id="pv-amount-words">—</span> will not cause an excess over the provision made under the authority quoted on this voucher or under programme/sub-programme shown below:</p>
+<div class="pv-plain-line entry"><strong>Authority</strong><input type="text" id="pv-authority" placeholder="e.g. Approved work plan / Council minute ref."/><strong>Total</strong><input type="text" id="pv-total-shs" readonly/></div>
+<div class="pv-plain-line entry"><strong>Approved vote</strong><input type="text" id="pv-approved-vote"/><strong>Account No.</strong><input type="text" id="pv-account-no"/></div>
+<div class="pv-plain-line entry"><strong>approved Estimate</strong><input type="text" id="pv-approved-estimate"/><strong>Cheque payment instruction No</strong><input type="text" id="pv-instruction-no"/></div>
+<p style="margin-top:10px;"><strong>I HEREBY CERTIFY</strong> that the above amount is correct and was incurred under the authority quoted, that the above services has been duly and properly performed / supplies have been received in good condition: that the payment price charge is in accordance with regulations the terms of contract or agreement which are fair and reasonable and that the above expenditure of Shs (in words) <span id="pv-amount-words">—</span> will not cause an excess over the provision made under the authority quoted on this voucher or under programme/sub-programme shown below:</p>
 <p><strong>I FURTHER CERTIFY</strong> that the stores that have been taken on charge, or are expendable, as indicated above.</p>
 </div>
 <div class="req-form-signatures preview" style="grid-template-columns:repeat(2,1fr);">
@@ -1250,16 +1248,16 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </table>
 <table class="pv-block-table">
 <tr>
-<td>
+<td colspan="2">
 <div class="rf-sig-slot"><strong>Signature of payee</strong><div class="sig-line" id="pv-sig-payee" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-payee')">🖊 Attach Signature</button></div>
-</td>
-<td>
-<div class="rf-sig-slot"><strong>Signature of paying officer (cashier)</strong><div class="sig-line" id="pv-sig-cashier" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-cashier')">🖊 Attach Signature</button></div>
 </td>
 </tr>
 <tr>
-<td colspan="2">
+<td>
 <div class="rf-sig-slot"><strong>Signature of witness to payment</strong><div class="sig-line" id="pv-sig-witness" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-witness')">🖊 Attach Signature</button></div>
+</td>
+<td>
+<div class="rf-sig-slot"><strong>Signature of paying officer (cashier)</strong><div class="sig-line" id="pv-sig-cashier" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-cashier')">🖊 Attach Signature</button></div>
 </td>
 </tr>
 </table>
@@ -3249,11 +3247,11 @@ const treasurerSigUrl = findStageSignatureUrl(r, 'treasurer');
 const clerkSigUrl = findStageSignatureUrl(r, 'clerk');
 const sigImg = (url) => url ? `<img src="${API_BASE}${url}" alt="Signature" />` : '';
 const dots = (text) => `<span class="rf-dots">${escapeHtml(text || '').padEnd(1,'\u00A0') || '&nbsp;'}</span>`;
-const budgetRow = (r.budget_code || r.activity_budget_limit != null) ? `
+const budgetRow = `
 <tr>
 <td><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(r.budget_code || '—')}</span></td>
 <td><strong>Activity Budget Limit:</strong><span class="rf-fill">${r.activity_budget_limit != null ? 'UGX ' + money(r.activity_budget_limit) : '—'}</span></td>
-</tr>` : '';
+</tr>`;
 return `
 <div class="req-form-paper">
 <img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
@@ -3308,22 +3306,11 @@ ${pvRowsHtml || '<tr><td colspan="5" style="text-align:center; color:#777;">No l
 <tr class="rf-grand"><td colspan="4" style="text-align:right;">TOTAL</td><td class="num">UGX ${money(grandTotal)}</td></tr>
 </tbody>
 </table>
-<table class="req-form-meta-table">
-<tr>
-<td style="width:50%;"><strong>Authority:</strong><span class="rf-fill">${escapeHtml(voucher.authority || '—')}</span></td>
-<td style="width:50%;"><strong>Total:</strong><span class="rf-fill">UGX ${money(grandTotal)}</span></td>
-</tr>
-<tr>
-<td><strong>Approved Vote:</strong><span class="rf-fill">${escapeHtml(voucher.approved_vote || '—')}</span></td>
-<td><strong>Account No.:</strong><span class="rf-fill">${escapeHtml(voucher.account_no || '—')}</span></td>
-</tr>
-<tr>
-<td><strong>Approved Estimate:</strong><span class="rf-fill">${escapeHtml(voucher.approved_estimate || '—')}</span></td>
-<td><strong>Cheque Payment Instruction No.:</strong><span class="rf-fill">${escapeHtml(voucher.cheque_instruction_no || '—')}</span></td>
-</tr>
-</table>
 <div class="pv-certify">
-<p><strong>I HEREBY CERTIFY</strong> that the above amount is correct and was incurred under the authority quoted, that the above services has been duly and properly performed / supplies have been received in good condition: that the payment price charge is in accordance with regulations the terms of contract or agreement which are fair and reasonable and that the above expenditure of Shs (in words) ${dots(words)} will not cause an excess over the provision made under the authority quoted on this voucher or under programme/sub-programme shown below:</p>
+<div class="pv-plain-line"><strong>Authority:</strong>${dots(voucher.authority)}<strong>Total</strong>${dots('UGX ' + money(grandTotal))}</div>
+<div class="pv-plain-line"><strong>Approved vote</strong>${dots(voucher.approved_vote)}<strong>Account No.</strong>${dots(voucher.account_no)}</div>
+<div class="pv-plain-line"><strong>approved Estimate</strong>${dots(voucher.approved_estimate)}<strong>Cheque payment instruction No</strong>${dots(voucher.cheque_instruction_no)}</div>
+<p style="margin-top:10px;"><strong>I HEREBY CERTIFY</strong> that the above amount is correct and was incurred under the authority quoted, that the above services has been duly and properly performed / supplies have been received in good condition: that the payment price charge is in accordance with regulations the terms of contract or agreement which are fair and reasonable and that the above expenditure of Shs (in words) ${dots(words)} will not cause an excess over the provision made under the authority quoted on this voucher or under programme/sub-programme shown below:</p>
 <p><strong>I FURTHER CERTIFY</strong> that the stores that have been taken on charge, or are expendable, as indicated above.</p>
 </div>
 <div class="req-form-signatures" style="grid-template-columns:repeat(2,1fr);">
@@ -3355,11 +3342,11 @@ Date: ${dots(voucher.passed_payment_date)}<br/>
 </table>
 <table class="pv-block-table">
 <tr>
-<td><strong>Signature of payee</strong><div style="margin-top:16px;">__________________</div></td>
-<td><strong>Signature of paying officer (cashier)</strong><div style="margin-top:16px;">__________________</div></td>
+<td colspan="2"><strong>Signature of payee</strong><div style="margin-top:16px;">__________________</div></td>
 </tr>
 <tr>
-<td colspan="2"><strong>Signature of witness to payment</strong><div style="margin-top:16px;">__________________</div></td>
+<td><strong>Signature of witness to payment</strong><div style="margin-top:16px;">__________________</div></td>
+<td><strong>Signature of paying officer (cashier)</strong><div style="margin-top:16px;">__________________</div></td>
 </tr>
 </table>
 <table class="pv-block-table">
