@@ -337,7 +337,6 @@ tbody tr:nth-child(even){background:#FAFCFB;}
 tbody tr:hover{background:var(--gold-100);}
 tbody tr:last-child td {
 border-bottom: none;
-text-align: center;
 }
 td.wrap, th.wrap{white-space:normal;}
 .num{font-family:var(--font-mono); text-align:center;}
@@ -506,7 +505,7 @@ table.req-form-meta-table{width:100%; border-collapse:collapse; margin:8px 0 14p
 table.req-form-meta-table td{border:1px solid #333; padding:5px 8px; vertical-align:bottom;}
 table.req-form-meta-table td strong{margin-right:6px;}
 table.req-form-meta-table td .rf-fill{display:inline-block; min-height:16px; vertical-align:bottom;}
-table.req-form-meta-table td .rf-fill img{max-height:22px; max-width:140px; object-fit:contain; vertical-align:bottom;}
+table.req-form-meta-table td .rf-fill img{max-height:44px; max-width:180px; object-fit:contain; vertical-align:bottom;}
 .req-form-subject{font-size:12.5px; margin:0 0 14px; line-height:2;}
 .req-form-subject strong{white-space:nowrap; margin-right:4px;}
 .req-form-subject .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
@@ -527,8 +526,12 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #e279
 .req-form-signatures > div{padding:10px 12px 12px; border-left:1px solid #333;}
 .req-form-signatures > div:first-child{border-left:none;}
 .req-form-signatures .sig-role{font-size:12px; font-weight:600; margin-bottom:26px;}
-.req-form-signatures .sig-line{border-top:1px dotted #666; margin-bottom:6px; height:26px; display:flex; align-items:flex-end; padding-bottom:2px;}
-.req-form-signatures .sig-line img{max-height:26px; max-width:90%; object-fit:contain;}
+.req-form-signatures .sig-line{border-top:1px dotted #666; margin-bottom:6px; height:46px; display:flex; align-items:flex-end; padding-bottom:2px;}
+/* Unscoped so every signature box — including the Payment Voucher's Vote
+Book / Verified by / Passed Payment / payee / witness / cashier boxes,
+which sit in a plain table rather than inside .req-form-signatures — gets
+the same enlarged, clearly-visible signature image once one is attached. */
+.sig-line img{max-height:44px; max-width:95%; object-fit:contain;}
 .req-form-signatures .sig-label{font-size:12px; font-weight:800;}
 @media print{
 @page{ size:A4; margin:12mm; }
@@ -651,7 +654,7 @@ vertical-align:middle; flex-shrink:0;
 </div>
 <div class="login-body">
 <div class="login-error" id="login-error"></div>
-<form id="login-form">
+<form id="login-form" autocomplete="off">
 <div class="field">
 <label>Signing in as</label>
 <select id="login-role" required>
@@ -666,12 +669,12 @@ vertical-align:middle; flex-shrink:0;
 </div>
 <div class="field">
 <label>Email address</label>
-<input type="email" id="login-email" required autocomplete="username" placeholder="you@karugutu.town.go.ug" />
+<input type="email" id="login-email" required autocomplete="off" placeholder="you@karugutu.town.go.ug" />
 </div>
 <div class="field">
 <label>Password</label>
 <div class="password-field-wrap">
-<input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••••" />
+<input type="password" id="login-password" required autocomplete="new-password" placeholder="••••••••" />
 <button type="button" class="password-toggle-btn" id="login-password-toggle" aria-label="Show password" title="Show password">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
 </button>
@@ -1163,9 +1166,9 @@ Departments
 <td><div class="rf-field"><strong>Names:</strong><input type="text" id="req-form-names" readonly/></div></td>
 <td>
 <div class="rf-field rf-sig-slot">
-<div style="display:flex; align-items:baseline; gap:6px; width:100%;"><strong>Signature:</strong><input type="text" id="req-form-signature" readonly value="On file"/></div>
+<div style="display:flex; align-items:baseline; gap:6px; width:100%;"><strong>Signature:</strong></div>
 <div class="rf-fill" id="req-sig-requester"></div>
-<button type="button" class="sig-attach-btn no-print" onclick="attachSignature('req-sig-requester')">🖊 Attach My Signature</button>
+<button type="button" class="sig-attach-btn no-print" id="req-sig-requester-btn" onclick="attachSignature('req-sig-requester', this)">🖊 Attach My Signature</button>
 </div>
 </td>
 </tr>
@@ -1186,12 +1189,17 @@ Departments
 </div>
 <div class="req-form-words entry"><strong>Amount in words:</strong> <span id="req-amount-words">—</span></div>
 <div class="req-form-signatures preview">
-<div><div class="sig-role">Recommended by,</div><div class="sig-line" id="req-sig-hod"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('req-sig-hod')">🖊 Attach Signature</button><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line" id="req-sig-treasurer"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('req-sig-treasurer')">🖊 Attach Signature</button><div class="sig-label">Town Treasurer</div></div>
-<div><div class="sig-role">Authorised by</div><div class="sig-line" id="req-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('req-sig-clerk')">🖊 Attach Signature</button><div class="sig-label">Town Clerk</div></div>
+<div><div class="sig-role">Recommended by,</div><div class="sig-line" id="req-sig-hod"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-hod-btn" data-sig-role="hod" onclick="attachSignature('req-sig-hod', this, 'hod')">🖊 Attach Signature</button><div class="sig-label">Head of Department</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line" id="req-sig-treasurer"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-treasurer-btn" data-sig-role="treasurer" onclick="attachSignature('req-sig-treasurer', this, 'treasurer')">🖊 Attach Signature</button><div class="sig-label">Town Treasurer</div></div>
+<div><div class="sig-role">Authorised by</div><div class="sig-line" id="req-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('req-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-label">Town Clerk</div></div>
 </div>
 </div>
-<div class="help-text" style="margin-top:10px;">"Add Sub Activity" starts a new Sub Activity (S/N 01, S/N 02, S/N 03…) which can hold one or more priced description lines underneath it. Qty × Rate fills the Amount automatically, or type the Amount directly for items like facilitation and transport. The three approval boxes above are completed later by the Head of Department, Town Treasurer and Town Clerk as this requisition moves through approval — "Attach Signature" fills a box with whichever signature is on file for the account currently signed in.</div>
+<div class="help-text" style="margin-top:10px;">"Add Sub Activity" starts a new Sub Activity (S/N 01, S/N 02, S/N 03…) which can hold one or more priced description lines underneath it. Qty × Rate fills the Amount automatically, or type the Amount directly for items like facilitation and transport. The three approval boxes above are completed later by the Head of Department, Town Treasurer and Town Clerk as this requisition moves through approval — each box can only be signed by the account signed in as that role, never by anyone else (including the System Administrator).</div>
+<div style="display:flex; gap:8px; margin:14px 0 0; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
+<button class="btn btn-ghost" data-close="modal-req">Cancel</button>
+<button class="btn btn-ghost" id="req-save-draft-mid">Save Draft</button>
+<button class="btn btn-primary" id="req-submit-now-mid">Submit for Approval</button>
+</div>
 <!-- ===== Cheque Payment Voucher — same header/council masthead as the Requisition Form above, filled in together with it in the same modal ===== -->
 <div class="pv-form" id="pv-form-entry">
 <img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
@@ -1201,6 +1209,10 @@ Departments
 <tr>
 <td style="width:50%;"><div class="rf-field"><strong>Department:</strong><input type="text" id="pv-form-department" readonly/></div></td>
 <td style="width:50%;"><div class="rf-field"><strong>Cheque No:</strong><input type="text" id="pv-cheque-no" placeholder="e.g. 004521"/></div></td>
+</tr>
+<tr>
+<td><div class="rf-field"><strong>Budget Output Code:</strong><input type="text" id="pv-form-budgetcode" placeholder="e.g. 000123"/></div></td>
+<td><div class="rf-field"><strong>Payment Voucher Reference No:</strong><input type="text" id="pv-form-pvref" placeholder="e.g. PV/2026/001"/></div></td>
 </tr>
 <tr>
 <td><div class="rf-field"><strong>Dr. To:</strong><input type="text" id="pv-dr-to" placeholder="Payee name"/></div></td>
@@ -1222,8 +1234,8 @@ Departments
 <p><strong>I FURTHER CERTIFY</strong> that the stores that have been taken on charge, or are expendable, as indicated above.</p>
 </div>
 <div class="req-form-signatures preview" style="grid-template-columns:repeat(2,1fr);">
-<div><div class="sig-role">Signature,</div><div class="sig-line" id="pv-sig-controller"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-controller')">🖊 Attach Signature</button><div class="sig-label">Vote Controller</div></div>
-<div><div class="sig-role">Signature,</div><div class="sig-line" id="pv-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-clerk')">🖊 Attach Signature</button><div class="sig-label">Town Clerk</div></div>
+<div><div class="sig-role">Signature,</div><div class="sig-line" id="pv-sig-controller"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-controller-btn" data-sig-role="hod" onclick="attachSignature('pv-sig-controller', this, 'hod')">🖊 Attach Signature</button><div class="sig-label">Vote Controller</div></div>
+<div><div class="sig-role">Signature,</div><div class="sig-line" id="pv-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('pv-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-label">Town Clerk</div></div>
 </div>
 <div class="pv-received-line" style="margin-top:14px;">
 Received / paid this Day <input type="text" class="pv-day" id="pv-day"/> ................. 20<input type="text" class="pv-day" id="pv-year" style="width:36px;"/> in payment of the above account he Sum of shillings <input type="text" class="pv-words" id="pv-words-line" readonly/> (in words).
@@ -1234,34 +1246,34 @@ Received / paid this Day <input type="text" class="pv-day" id="pv-day"/> .......
 <strong>Entered In Vote Book</strong>
 <div class="help-text" style="margin:0 0 6px;">(To be completed by office of origin)</div>
 Date: <input type="text" id="pv-vb-date"/><br/>
-<div class="rf-sig-slot" style="margin-top:6px;"><div class="sig-line" id="pv-sig-vb" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-vb')">🖊 Attach Signature</button></div>
+<div class="rf-sig-slot" style="margin-top:6px;"><div class="sig-line" id="pv-sig-vb" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-vb-btn" onclick="attachSignature('pv-sig-vb', this)">🖊 Attach Signature</button></div>
 Department – Clerk: <input type="text" id="pv-vb-dept"/>
 </td>
 <td style="width:33%;">
 <strong>Verified by</strong>
 Date: <input type="text" id="pv-verified-date"/><br/>
-<div class="rf-sig-slot" style="margin-top:6px;"><div class="sig-line" id="pv-sig-verified" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-verified')">🖊 Attach Signature</button></div>
+<div class="rf-sig-slot" style="margin-top:6px;"><div class="sig-line" id="pv-sig-verified" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-verified-btn" onclick="attachSignature('pv-sig-verified', this)">🖊 Attach Signature</button></div>
 </td>
 <td style="width:33%;">
 <strong>Passed Payment for (HoF)</strong>
 Shs: <input type="text" id="pv-passed-shs" readonly/><br/>
 Date: <input type="text" id="pv-passed-date"/><br/>
-<div class="rf-sig-slot" style="margin-top:6px;"><div class="sig-line" id="pv-sig-passed" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-passed')">🖊 Attach Signature</button></div>
+<div class="rf-sig-slot" style="margin-top:6px;"><div class="sig-line" id="pv-sig-passed" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-passed-btn" data-sig-role="treasurer" onclick="attachSignature('pv-sig-passed', this, 'treasurer')">🖊 Attach Signature</button></div>
 </td>
 </tr>
 </table>
 <table class="pv-block-table">
 <tr>
 <td colspan="2">
-<div class="rf-sig-slot"><strong>Signature of payee</strong><div class="sig-line" id="pv-sig-payee" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-payee')">🖊 Attach Signature</button></div>
+<div class="rf-sig-slot"><strong>Signature of payee</strong><div class="sig-line" id="pv-sig-payee" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-payee-btn" onclick="attachSignature('pv-sig-payee', this)">🖊 Attach Signature</button></div>
 </td>
 </tr>
 <tr>
 <td>
-<div class="rf-sig-slot"><strong>Signature of witness to payment</strong><div class="sig-line" id="pv-sig-witness" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-witness')">🖊 Attach Signature</button></div>
+<div class="rf-sig-slot"><strong>Signature of witness to payment</strong><div class="sig-line" id="pv-sig-witness" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-witness-btn" onclick="attachSignature('pv-sig-witness', this)">🖊 Attach Signature</button></div>
 </td>
 <td>
-<div class="rf-sig-slot"><strong>Signature of paying officer (cashier)</strong><div class="sig-line" id="pv-sig-cashier" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" onclick="attachSignature('pv-sig-cashier')">🖊 Attach Signature</button></div>
+<div class="rf-sig-slot"><strong>Signature of paying officer (cashier)</strong><div class="sig-line" id="pv-sig-cashier" style="width:100%;"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-cashier-btn" onclick="attachSignature('pv-sig-cashier', this)">🖊 Attach Signature</button></div>
 </td>
 </tr>
 </table>
@@ -1796,8 +1808,32 @@ localStorage.removeItem('ktc_token'); localStorage.removeItem('ktc_role');
 localStorage.removeItem('ktc_name'); localStorage.removeItem('ktc_user_id');
 document.getElementById('app-screen').style.display = 'none';
 document.getElementById('login-screen').style.display = 'flex';
+stopIdleTimer();
 }
 document.getElementById('logout-btn').addEventListener('click', logout);
+// ---- Inactivity auto-logout (10 minutes) ----------------------------------
+// The session token itself is now long-lived — signing a user out is
+// handled here, purely based on real inactivity, so an actively-working
+// user is never logged out mid-task the way a fixed-lifetime token used to.
+const IDLE_TIMEOUT_MS = 10 * 60 * 1000;
+let idleTimer = null;
+function resetIdleTimer() {
+if (!STATE.token) return;
+clearTimeout(idleTimer);
+idleTimer = setTimeout(() => {
+if (STATE.token) {
+logout();
+toast('You have been signed out after 10 minutes of inactivity', 'error');
+}
+}, IDLE_TIMEOUT_MS);
+}
+function stopIdleTimer() {
+clearTimeout(idleTimer);
+idleTimer = null;
+}
+['mousedown', 'mousemove', 'keydown', 'wheel', 'scroll', 'touchstart', 'click'].forEach(evt => {
+document.addEventListener(evt, () => { if (STATE.token) resetIdleTimer(); }, { passive: true });
+});
 async function enterApp() {
 document.getElementById('login-screen').style.display = 'none';
 document.getElementById('app-screen').style.display = 'block';
@@ -1812,6 +1848,7 @@ switchView('dashboard');
 refreshNotifications();
 setInterval(refreshNotifications, 30000);
 api('/api/auth/me').then(me => { STATE.signatureUrl = me.signature_url || null; STATE.departmentId = me.department_id || null; }).catch(() => {});
+resetIdleTimer();
 }
 function applyRoleVisibility() {
 const navMap = {
@@ -2806,14 +2843,16 @@ finally { e.target.value = ''; }
 });
 // ---- Requisitions --------------------------------------------------------------
 function resetReqLineItems() {
-// Start every new requisition with a section header plus at least 5
-// blank priced lines underneath it, instead of just one, so there's
-// room to fill the form without repeatedly clicking "Add Line".
-STATE.reqLineItems = [
-{ item_no: 1, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: true },
-];
+// Start every new requisition with two Sub Activity sections (S/N 01 and
+// S/N 02), each with 5 blank priced lines underneath it, instead of just
+// one section, so there's room to fill the form without repeatedly
+// clicking "Add Sub Activity" / "Add Line".
+STATE.reqLineItems = [];
+for (let sectionNo = 1; sectionNo <= 2; sectionNo++) {
+STATE.reqLineItems.push({ item_no: sectionNo, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: true });
 for (let i = 0; i < 5; i++) {
-STATE.reqLineItems.push({ item_no: 1, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: false, ledger_folio: '', charge_date: '' });
+STATE.reqLineItems.push({ item_no: sectionNo, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: false, ledger_folio: '', charge_date: '' });
+}
 }
 }
 function currentReqSectionNo() {
@@ -2918,37 +2957,79 @@ li[field] = value;
 // Fills the signature box nearest wherever this was clicked with whichever
 // signature is on file for the account currently signed in. Actual
 // approval-stage signatures are still recorded automatically from the
-// approval history once a requisition is approved — this is a convenience
-// for whoever happens to be filling the box in front of them right now.
-function attachSignature(targetId) {
+// approval history once a requisition is approved — this is a preview for
+// whoever happens to be filling the box in front of them right now.
+// Strictly role-gated: a box marked with a required role (Head of
+// Department, Town Treasurer, Town Clerk) can only be signed by an account
+// currently signed in as that exact role — never by anyone else, and never
+// by the System Administrator on someone else's behalf.
+const SIG_ROLE_LABELS = { hod: 'Head of Department', treasurer: 'Town Treasurer', clerk: 'Town Clerk' };
+function attachSignature(targetId, btn, requiredRole) {
 const el = document.getElementById(targetId);
 if (!el) return;
+if (requiredRole && STATE.role !== requiredRole) {
+toast(`Only the ${SIG_ROLE_LABELS[requiredRole] || requiredRole} can attach a signature here`, 'error');
+return;
+}
 if (!STATE.signatureUrl) {
 toast('No signature on file yet — upload one in My Settings first', 'error');
 return;
 }
-el.innerHTML = `<img src="${API_BASE}${STATE.signatureUrl}" alt="Signature" style="max-height:26px; max-width:90%; object-fit:contain;"/>`;
+el.innerHTML = `<img src="${API_BASE}${STATE.signatureUrl}" alt="Signature"/>`;
+// Once a signature has been placed, the "Attach Signature" prompt for that
+// box is no longer relevant — remove it rather than leaving it visible.
+if (btn) btn.style.display = 'none';
+}
+// Shows/hides each "Attach Signature" button according to whether the
+// signed-in account's role is allowed to sign that particular box. Boxes
+// with no required role (e.g. Signature of payee/witness/cashier, which
+// aren't tied to a system role) stay visible for whoever is filling the
+// form. Called whenever the New/Edit Requisition modal opens.
+function refreshSignatureButtonVisibility() {
+document.querySelectorAll('.sig-attach-btn[data-sig-role]').forEach(btn => {
+const requiredRole = btn.getAttribute('data-sig-role');
+btn.style.display = (STATE.role === requiredRole) ? '' : 'none';
+});
 }
 async function openRequisitionModal(editReq) {
 STATE.editingRequisitionId = editReq ? editReq.id : null;
 document.getElementById('req-modal-title').textContent = editReq ? `Edit Requisition — ${editReq.ref_no}` : 'New Requisition';
 document.getElementById('req-save-draft').textContent = editReq ? 'Save Changes' : 'Save Draft';
 document.getElementById('req-submit-now').textContent = editReq ? 'Save & Submit for Approval' : 'Submit for Approval';
+document.getElementById('req-save-draft-mid').textContent = editReq ? 'Save Changes' : 'Save Draft';
+document.getElementById('req-submit-now-mid').textContent = editReq ? 'Save & Submit for Approval' : 'Submit for Approval';
 // Fill in the paper-form fields that mirror who's submitting this and when.
 const deptSel = document.getElementById('req-form-department');
 deptSel.value = String((editReq ? editReq.department_id : STATE.departmentId) || '');
 document.getElementById('req-form-names').value = editReq ? (editReq.requester_name || STATE.name || '—') : (STATE.name || '—');
 document.getElementById('req-form-date').value = editReq ? fmtDate(editReq.created_at) : fmtDate(new Date().toISOString());
-document.getElementById('req-form-signature').value = (editReq ? editReq.requester_signature_url : STATE.signatureUrl) ? 'On file' : 'Not yet uploaded — add one in My Settings';
 document.getElementById('req-form-refno-preview').textContent = editReq ? editReq.ref_no : '(assigned on save)';
 document.getElementById('pv-form-refno-preview').textContent = editReq ? editReq.ref_no : '(assigned on save)';
 syncPvDepartment();
 loadReqBudgetCodes(deptSel.value, editReq ? editReq.budget_code_id : null);
-// Clear the Attach Signature boxes and voucher-only fields for a fresh form.
-['req-sig-requester','req-sig-hod','req-sig-treasurer','req-sig-clerk',
+// Clear the Attach Signature boxes and voucher-only fields for a fresh form,
+// then re-show every "Attach Signature" button (a fresh form has nothing
+// signed yet) before role-gating and requester pre-fill run below.
+const allSigBoxIds = ['req-sig-requester','req-sig-hod','req-sig-treasurer','req-sig-clerk',
 'pv-sig-controller','pv-sig-clerk','pv-sig-vb','pv-sig-verified','pv-sig-passed',
-'pv-sig-payee','pv-sig-cashier','pv-sig-witness'].forEach(id => { const b = document.getElementById(id); if (b) b.innerHTML = ''; });
+'pv-sig-payee','pv-sig-cashier','pv-sig-witness'];
+allSigBoxIds.forEach(id => {
+const b = document.getElementById(id); if (b) b.innerHTML = '';
+const btn = document.getElementById(id + '-btn'); if (btn) btn.style.display = '';
+});
+// The requester's own signature is the one box that's actually recorded on
+// the requisition itself — pre-fill it from the record being edited (or
+// from the current account's own signature for a brand-new requisition),
+// and hide its "Attach Signature" prompt once it's filled.
+const requesterSigUrl = editReq ? editReq.requester_signature_url : STATE.signatureUrl;
+if (requesterSigUrl) {
+document.getElementById('req-sig-requester').innerHTML = `<img src="${API_BASE}${requesterSigUrl}" alt="Signature"/>`;
+const reqBtn = document.getElementById('req-sig-requester-btn'); if (reqBtn) reqBtn.style.display = 'none';
+}
+refreshSignatureButtonVisibility();
 const voucher = (editReq && editReq.voucher_data) ? editReq.voucher_data : {};
+document.getElementById('pv-form-budgetcode').value = voucher.budget_output_code || '';
+document.getElementById('pv-form-pvref').value = voucher.pv_reference_no || '';
 document.getElementById('pv-dr-to').value = voucher.dr_to || '';
 document.getElementById('pv-cheque-no').value = voucher.cheque_no || '';
 document.getElementById('pv-address').value = voucher.address || '';
@@ -3035,6 +3116,8 @@ amount: Number(li.amount) || 0,
 }));
 const total = lineItems.reduce((s, li) => s + (Number(li.amount) || 0), 0);
 const voucher = {
+budget_output_code: document.getElementById('pv-form-budgetcode').value.trim() || null,
+pv_reference_no: document.getElementById('pv-form-pvref').value.trim() || null,
 dr_to: document.getElementById('pv-dr-to').value.trim() || null,
 cheque_no: document.getElementById('pv-cheque-no').value.trim() || null,
 address: document.getElementById('pv-address').value.trim() || null,
@@ -3081,6 +3164,8 @@ loadRequisitions();
 }
 document.getElementById('req-save-draft').addEventListener('click', () => submitNewRequisition(false));
 document.getElementById('req-submit-now').addEventListener('click', () => submitNewRequisition(true));
+document.getElementById('req-save-draft-mid').addEventListener('click', () => submitNewRequisition(false));
+document.getElementById('req-submit-now-mid').addEventListener('click', () => submitNewRequisition(true));
 document.getElementById('req-search').addEventListener('input', debounce(loadRequisitions, 300));
 document.getElementById('req-status-filter').addEventListener('change', loadRequisitions);
 async function loadRequisitions() {
@@ -3328,6 +3413,10 @@ ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No lin
 <tr>
 <td style="width:50%;"><strong>Department:</strong><span class="rf-fill">${escapeHtml(r.department_name || '—')}</span></td>
 <td style="width:50%;"><strong>Cheque No:</strong><span class="rf-fill">${escapeHtml(voucher.cheque_no || '—')}</span></td>
+</tr>
+<tr>
+<td><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(voucher.budget_output_code || '—')}</span></td>
+<td><strong>Payment Voucher Reference No:</strong><span class="rf-fill">${escapeHtml(voucher.pv_reference_no || '—')}</span></td>
 </tr>
 <tr>
 <td><strong>Dr. To:</strong><span class="rf-fill">${escapeHtml(voucher.dr_to || '—')}</span></td>
