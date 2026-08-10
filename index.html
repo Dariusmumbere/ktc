@@ -209,6 +209,7 @@ border-bottom:1px solid var(--line); box-shadow:0 1px 0 rgba(10,31,43,.02);
 display:flex; align-items:center; justify-content:space-between; padding:0 22px; position:relative; z-index:10; flex-wrap:wrap; gap:10px;
 }
 .topbar-title{font-family:var(--font-display); font-size:22px; font-weight:600; letter-spacing:.1px;}
+.topbar-title.topbar-title-pbs{color:var(--info); font-size:24px;}
 .topbar-sub{font-size:11.5px; color:var(--ink-500); margin-top:1px;}
 .topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
 .icon-btn{
@@ -757,23 +758,6 @@ Departments
 </div>
 </div>
 <div class="topbar-right">
-<div id="topbar-workplan-controls" style="display:none; align-items:center; gap:8px;">
-<div style="text-align:right;">
-<div class="kicker" style="font-size:9.5px;">Annual Work Plan</div>
-<div style="font-family:var(--font-display); font-weight:600; font-size:13px; white-space:nowrap;">FY <span id="wp-fy-title">—</span></div>
-</div>
-<select class="filter-select" id="wp-select" style="min-width:190px;"></select>
-<button class="icon-btn" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
-</button>
-<button class="icon-btn" id="wp-edit-workplan-btn" title="Edit Annual Work Plan &amp; Budget Estimates" style="display:none;">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-</button>
-<!-- Downloads the full Annual Work Plan & Budget PDF (all sections + revenue/workplan tables) -->
-<button class="icon-btn" id="wp-download-pdf-btn" title="Download Annual Work Plan &amp; Budget as PDF">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-</button>
-</div>
 <button class="icon-btn" id="notif-btn" title="Notifications">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M9.5 20a2.5 2.5 0 0 0 5 0"/></svg>
 <span class="badge-dot" id="notif-badge" style="display:none;">0</span>
@@ -848,10 +832,37 @@ Departments
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
+<div class="card card-pad" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:18px;">
+<div>
+<div class="kicker" style="font-size:9.5px;">Annual Work Plan</div>
+<div style="font-family:var(--font-display); font-weight:600; font-size:16px; white-space:nowrap;">FY <span id="wp-fy-title">—</span></div>
+</div>
+<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+<select class="filter-select" id="wp-select" style="min-width:190px;"></select>
+<button class="icon-btn" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button class="icon-btn" id="wp-edit-workplan-btn" title="Edit Annual Work Plan &amp; Budget Estimates" style="display:none;">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+</button>
+<!-- Downloads the full Annual Work Plan & Budget PDF (all sections + revenue/workplan tables) -->
+<button class="icon-btn" id="wp-download-pdf-btn" title="Download Annual Work Plan &amp; Budget as PDF">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+</button>
+</div>
+</div>
+<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+<button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
+<button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
+<input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
+<button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity & Budget Estimates</button>
+<button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
+<input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
+</div>
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
-<div class="kicker" style="color:var(--teal-700);">APPROVED SUMMARY OF THE COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
+<div class="kicker" style="font-size:13px; color:var(--navy-950);">SUMMARY OF THE COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-revenue-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-revenue-summary-table">
@@ -860,7 +871,7 @@ Departments
 <th>PBS Fund<br>Code</th>
 <th>Source of Financing<br>Name</th>
 <th>Functional Definition<br>in PBS</th>
-<th>Approved Budget<br>Amount (UGX)</th>
+<th>Budget<br>Amount (UGX)</th>
 </tr>
 </thead>
 <tbody id="wp-revenue-summary-body">
@@ -877,7 +888,7 @@ Departments
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
-<div class="kicker" style="color:var(--teal-700);">APPROVED DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
+<div class="kicker" style="font-size:13px; color:var(--navy-950);">DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-dept-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-dept-summary-table">
@@ -908,14 +919,6 @@ Departments
 </tfoot>
 </table>
 </div>
-</div>
-<div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;">
-<button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
-<button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
-<input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
-<button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity & Budget Estimates</button>
-<button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
-<input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
 </div>
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
@@ -1889,7 +1892,7 @@ document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin')
 // ---- Navigation -----------------------------------------------------------
 const VIEW_TITLES = {
 dashboard: ['Dashboard', 'Overview of financial activity'],
-workplan: ['Programme-Based Budgeting System', 'Annual work plans, budget estimates, Execution and Absorption '],
+workplan: ['Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)', 'Annual work plans, budget estimates, Execution and Absorption '],
 requisitions: ['Requisitions', 'Requisition tracking and submission'],
 approvals: ['Approvals', 'Three-stage approval workflow'],
 accountability: ['Accountability', 'Post-approval documentation and verification'],
@@ -1902,8 +1905,8 @@ document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggl
 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 document.getElementById('view-' + view).classList.add('active');
 document.getElementById('topbar-title').textContent = VIEW_TITLES[view][0];
+document.getElementById('topbar-title').classList.toggle('topbar-title-pbs', view === 'workplan');
 document.getElementById('topbar-sub').textContent = VIEW_TITLES[view][1];
-document.getElementById('topbar-workplan-controls').style.display = (view === 'workplan') ? 'flex' : 'none';
 closeNotifPanel();
 if (view === 'dashboard') loadDashboard();
 if (view === 'workplan') loadWorkplanView();
