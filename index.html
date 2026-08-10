@@ -502,7 +502,7 @@ background:#fff; padding:10px 6px 6px; font-family:var(--font-body); color:#1818
 .req-form-header .rf-title{font-family:var(--font-display); font-size:19px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; margin-top:6px;}
 .rf-refno{text-align:right; font-size:12.5px; margin:2px 0 10px; font-weight:600;}
 .rf-refno .mono{color:#b8382a; font-weight:800;}
-table.req-form-meta-table{width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:12.5px;}
+table.req-form-meta-table{width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:12.5px; border:1px solid #333;}
 table.req-form-meta-table td{border:1px solid #333; padding:5px 8px; vertical-align:bottom;}
 table.req-form-meta-table td strong{margin-right:6px;}
 table.req-form-meta-table td .rf-fill{display:inline-block; min-height:16px; vertical-align:bottom;}
@@ -510,7 +510,7 @@ table.req-form-meta-table td .rf-fill img{max-height:22px; max-width:140px; obje
 .req-form-subject{font-size:12.5px; margin:0 0 14px; line-height:2;}
 .req-form-subject strong{white-space:nowrap; margin-right:4px;}
 .req-form-subject .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
-table.req-form-table{width:100%; border-collapse:collapse; margin-bottom:14px; font-size:12px;}
+table.req-form-table{width:100%; border-collapse:collapse; margin-bottom:14px; font-size:12px; border:1px solid #e2790f;}
 /* Requisition / Payment Voucher line-item table rules are orange per
    Council request, so the printed and on-screen line grid stands out
    from the rest of the black-ruled paper form. */
@@ -1168,6 +1168,10 @@ Departments
 <button type="button" class="sig-attach-btn no-print" onclick="attachSignature('req-sig-requester')">🖊 Attach My Signature</button>
 </div>
 </td>
+</tr>
+<tr>
+<td><div class="rf-field"><strong>Budget Output Code:</strong><select id="req-form-budgetcode"><option value="">— Select budget output —</option></select></div></td>
+<td><div class="rf-field"><strong>Activity Budget Limit:</strong><input type="text" id="req-form-budgetlimit" readonly placeholder="—"/></div></td>
 </tr>
 </table>
 <div class="req-form-subject entry"><strong>Budget Output Subject:</strong><input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works"/></div>
@@ -2939,6 +2943,7 @@ document.getElementById('req-form-signature').value = (editReq ? editReq.request
 document.getElementById('req-form-refno-preview').textContent = editReq ? editReq.ref_no : '(assigned on save)';
 document.getElementById('pv-form-refno-preview').textContent = editReq ? editReq.ref_no : '(assigned on save)';
 syncPvDepartment();
+loadReqBudgetCodes(deptSel.value, editReq ? editReq.budget_code_id : null);
 // Clear the Attach Signature boxes and voucher-only fields for a fresh form.
 ['req-sig-requester','req-sig-hod','req-sig-treasurer','req-sig-clerk',
 'pv-sig-controller','pv-sig-clerk','pv-sig-vb','pv-sig-verified','pv-sig-passed',
@@ -2977,13 +2982,44 @@ renderReqLineItems();
 openModal('modal-req');
 }
 document.getElementById('new-req-btn').addEventListener('click', () => openRequisitionModal());
-document.getElementById('req-form-department').addEventListener('change', syncPvDepartment);
+document.getElementById('req-form-department').addEventListener('change', () => { syncPvDepartment(); loadReqBudgetCodes(document.getElementById('req-form-department').value, null); });
 function syncPvDepartment() {
 const deptSel = document.getElementById('req-form-department');
 const dept = STATE.departments.find(d => String(d.id) === String(deptSel.value));
 const pvDept = document.getElementById('pv-form-department');
 if (pvDept) pvDept.value = dept ? dept.name : '—';
 }
+// Populates the "Budget Output Code" select with the budget lines for the
+// chosen department, and keeps "Activity Budget Limit" in sync with whichever
+// one is picked — mirrors the paper form, where the limit is read straight
+// off the selected budget output.
+async function loadReqBudgetCodes(departmentId, selectedId) {
+const sel = document.getElementById('req-form-budgetcode');
+const limitEl = document.getElementById('req-form-budgetlimit');
+sel.innerHTML = '<option value="">— Select budget output —</option>';
+limitEl.value = '';
+if (!departmentId) return;
+try {
+const codes = await api(`/api/budget-codes?department_id=${departmentId}`);
+STATE.reqBudgetCodesForDept = codes;
+codes.forEach(c => {
+const opt = document.createElement('option');
+opt.value = c.id;
+opt.textContent = `${c.code} — ${c.output_description || ''}`;
+sel.appendChild(opt);
+});
+if (selectedId) sel.value = String(selectedId);
+updateReqBudgetLimit();
+} catch (e) { /* budget codes are optional on this form; fail quietly */ }
+}
+function updateReqBudgetLimit() {
+const sel = document.getElementById('req-form-budgetcode');
+const limitEl = document.getElementById('req-form-budgetlimit');
+const codes = STATE.reqBudgetCodesForDept || [];
+const bc = codes.find(c => String(c.id) === String(sel.value));
+limitEl.value = bc ? `UGX ${money(bc.allocated_amount)}` : '';
+}
+document.getElementById('req-form-budgetcode').addEventListener('change', updateReqBudgetLimit);
 async function submitNewRequisition(submitNow) {
 const subject = document.getElementById('req-subject').value.trim();
 const departmentId = document.getElementById('req-form-department').value;
@@ -3019,6 +3055,7 @@ item: document.getElementById('pv-item').value.trim() || null,
 };
 const payload = {
 department_id: departmentId ? Number(departmentId) : null,
+budget_code_id: document.getElementById('req-form-budgetcode').value ? Number(document.getElementById('req-form-budgetcode').value) : null,
 subject,
 line_items: lineItems,
 voucher,
