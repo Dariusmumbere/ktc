@@ -1709,9 +1709,15 @@ return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUppe
 }
 function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
-// Shows a department as "090: Community Based Services" wherever a
-// department object is available, so its PBS code is always visible next
-// to its name instead of the name alone.
+// Strict separation of concern: shows a department using its NAME ONLY.
+// The PBS department code is a distinct identifier and is intentionally
+// never appended here — this is used for the Departments page, dropdowns,
+// user records, requisitions, dept-summary cards/charts, etc.
+// The single exception is the Annual Work Plan & Budget Estimates table's
+// Department column, which shows "<code>: <name>" instead, via the
+// backend-supplied `department_code_and_name` field on each budget code
+// (see its one usage in renderBudgetCodes()) — never derived client-side,
+// so this rule can't drift out of sync with the backend's rule.
 function deptLabel(d) { if (!d) return null; return d.name; }
 // ---- Multi-point text formatting (e.g. Functional Definition cells) --------
 // Renders a block of text as one line per "point" instead of one continuous
@@ -2500,7 +2506,7 @@ return;
 }
 tbody.innerHTML = codes.map(c => `
 <tr>
-<td class="wrap">${escapeHtml(c.department_name || '—')}</td>
+<td class="wrap">${escapeHtml(c.department_code_and_name || c.department_name || '—')}</td>
 <td class="wrap">${escapeHtml(c.service_area || '—')}</td>
 <td class="wrap">${escapeHtml(c.programme || '—')}</td>
 <td class="wrap">${escapeHtml(c.sub_programme || '—')}</td>
