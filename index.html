@@ -397,7 +397,7 @@ point begins on its own line rather than running together as one line. */
 .rev-auto-chip::before{content:""; width:6px; height:6px; border-radius:2px; background:var(--success);}
 /* ---------------- Work Plan & Budget: compact, height-constrained,
 dual-scrollable tables (Department Budget Summary + main grid) ---------- */
-#wp-dept-summary-wrap{max-height:260px; overflow-x:auto; overflow-y:auto;}
+#wp-dept-summary-wrap{overflow-x:auto;}
 #wp-main-table-wrap{max-height:300px; overflow-x:auto; overflow-y:auto;}
 #wp-dept-summary-wrap thead th, #wp-main-table-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-dept-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3;}
@@ -920,7 +920,7 @@ Departments
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
-<div class="kicker" style="color:var(--teal-700);">Revenue Source by Category for the FY 2026/27</div>
+<div class="kicker" style="color:var(--teal-700);">APPROVED COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-revenue-detail-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-revenue-detail-table">
@@ -956,7 +956,7 @@ Departments
 </div>
 <select class="filter-select" id="wp-dept-filter"><option value="">All Departments</option></select>
 </div>
-<div class="kicker" id="wp-main-table-heading" style="margin-bottom:10px; font-size:13px; color:var(--navy-950);">Annual Workplan for the FY <span id="wp-main-fy-label">—</span></div>
+<div class="kicker" id="wp-main-table-heading" style="margin-bottom:10px; font-size:13px; color:var(--navy-950);">APPROVED COUNCIL ANNUAL WORK PLAN AND BUDGET ESTIMATES FOR FY 2026/2027</div>
 <div class="table-wrap" id="wp-main-table-wrap">
 <table id="wp-main-table">
 <thead>
@@ -1712,7 +1712,7 @@ function escapeHtml(s) { const d = document.createElement('div'); d.textContent 
 // Shows a department as "090: Community Based Services" wherever a
 // department object is available, so its PBS code is always visible next
 // to its name instead of the name alone.
-function deptLabel(d) { if (!d) return null; return d.code ? `${d.code}: ${d.name}` : d.name; }
+function deptLabel(d) { if (!d) return null; return d.name; }
 // ---- Multi-point text formatting (e.g. Functional Definition cells) --------
 // Renders a block of text as one line per "point" instead of one continuous
 // run-on line. If the source text already contains real line breaks, each
@@ -2484,7 +2484,6 @@ const deptId = document.getElementById('wp-dept-filter').value;
 const search = document.getElementById('wp-search').value.trim();
 const wp = STATE.workplans.find(w => String(w.id) === String(wpId));
 document.getElementById('wp-fy-title').textContent = wp ? wp.financial_year : '—';
-document.getElementById('wp-main-fy-label').textContent = wp ? wp.financial_year : '—';
 try {
 let path = '/api/budget-codes?';
 if (wpId) path += `work_plan_id=${wpId}&`;
