@@ -218,6 +218,16 @@ display:flex; align-items:center; justify-content:space-between; padding:0 22px;
 .topbar-title-lg{white-space:nowrap; max-width:none; font-size:clamp(13px,1.5vw,22px);}
 }
 .topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
+.topbar.topbar-workplan{border-bottom:none !important; box-shadow:none !important;}
+.topbar.topbar-workplan .topbar-title-wrap{display:none !important;}
+#view-workplan > .card:first-of-type{flex-wrap:nowrap !important;}
+#view-workplan > .card:first-of-type #wp-select{width:auto !important; min-width:0 !important; flex:1 1 auto !important;}
+#view-workplan > .card:first-of-type > div[style*="display:flex"]{flex-shrink:0 !important;}
+@media (max-width:640px){
+#view-workplan > .card:first-of-type{flex-wrap:wrap !important;}
+#view-workplan > .card:first-of-type #wp-select{width:100% !important;}
+}
+#wp-main-table-wrap{max-height:600px !important;}
 .icon-btn{
 position:relative; width:36px;height:36px; border-radius:9px; border:1px solid var(--line); background:#fff;
 display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-700);
@@ -652,29 +662,6 @@ vertical-align:middle; flex-shrink:0;
 .th-clear-btn:hover{background:rgba(184,56,42,.9); color:#fff; opacity:1;}
 .th-clear-btn svg{width:14px;height:14px; display:block; pointer-events:none;}
 .th-with-clear{display:flex; align-items:center; justify-content:space-between; gap:6px; white-space:nowrap;}
-
-#view-workplan > .card:first-of-type {
-  flex-wrap: nowrap !important;
-}
-
-#view-workplan > .card:first-of-type #wp-select {
-  width: auto !important;
-  min-width: 0 !important;
-  flex: 1 1 auto !important;
-}
-
-#view-workplan > .card:first-of-type > div[style*="display:flex"] {
-  flex-shrink: 0 !important;
-}
-
-@media (max-width: 640px) {
-  #view-workplan > .card:first-of-type {
-    flex-wrap: wrap !important;
-  }
-  #view-workplan > .card:first-of-type #wp-select {
-    width: 100% !important;
-  }
-}
 </style>
 </head>
 <body>
@@ -868,7 +855,7 @@ Departments
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
-<div class="card" style="background:#fff; border:none; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:var(--shadow-sm); width:100%; box-sizing:border-box;">
+<div class="card" style="background:#fff; border:none; padding:16px 20px; margin:0; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:none; width:100%; box-sizing:border-box;">
 <select class="filter-select" id="wp-select" style="flex:1 1 auto; width:100%; min-width:260px; max-width:none; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
 <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
 <button class="icon-btn" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
@@ -947,12 +934,12 @@ Departments
 </div>
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
-<div style="padding:14px 18px 4px;">
-<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
-</div>
-<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; padding:0 18px 14px;">
+<div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; padding:14px 18px 0;">
 <button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
 <button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
+</div>
+<div style="padding:8px 18px 4px;">
+<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-revenue-detail-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-revenue-detail-table">
@@ -988,11 +975,11 @@ Departments
 </div>
 <select class="filter-select" id="wp-dept-filter"><option value="">All Departments</option></select>
 </div>
-<div class="kicker" id="wp-main-table-heading" style="margin-bottom:10px; font-size:13px; color:var(--navy-950);">APPROVED COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
-<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+<div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
 <button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity Output & Expenditure Estimates</button>
 <button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
 </div>
+<div class="kicker" id="wp-main-table-heading" style="margin-bottom:10px; font-size:13px; color:var(--navy-950);">APPROVED COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
 <div class="table-wrap" id="wp-main-table-wrap">
 <table id="wp-main-table">
 <thead>
@@ -1946,6 +1933,7 @@ const isWorkplanView = (view === 'workplan');
 topbarTitleEl.classList.toggle('topbar-title-lg', isWorkplanView);
 topbarTitleWrap.classList.toggle('topbar-title-wrap-center', isWorkplanView);
 topbarSubEl.style.display = isWorkplanView ? 'none' : '';
+document.querySelector('.topbar').classList.toggle('topbar-workplan', isWorkplanView);
 closeNotifPanel();
 if (view === 'dashboard') loadDashboard();
 if (view === 'workplan') loadWorkplanView();
@@ -2258,7 +2246,7 @@ html += `
 <td class="wrap">${escapeHtml(r.source_of_financing_name || '—')}</td>
 <td class="wrap rev-func-def">${formatMultilinePoints(r.functional_definition)}</td>
 <td></td>
-<td class="num mono">${money(total)}</td>
+<td></td>
 <td style="white-space:nowrap; text-align:right;">${admin ? `
 <button class="btn btn-ghost" style="padding:4px 8px; font-size:10.5px;" onclick="toggleRevAddItemRow(${r.id})">+ Sub Row</button>
 <button class="btn btn-ghost" style="padding:4px 8px; font-size:10.5px; margin-left:4px;" onclick="openEditRevenueSource(${r.id})">Edit</button>
@@ -2516,9 +2504,9 @@ const pct = ((v / total) * 100).toFixed(1);
 return `
 <div style="display:flex; align-items:center; gap:9px; font-size:12.5px; margin-bottom:8px;">
 <span style="width:12px;height:12px;border-radius:3px; background:${palette[i % palette.length]}; flex-shrink:0;"></span>
-<span style="font-weight:600; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(name)}</span>
+<span style="font-weight:600; flex:0 1 auto; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(name)}</span>
 <span class="mono" style="color:var(--ink-500); flex-shrink:0;">UGX ${money(v)}</span>
-<span class="mono" style="color:var(--gold-600); font-weight:700; flex-shrink:0; min-width:44px; text-align:right;">${pct}%</span>
+<span class="mono" style="color:var(--gold-600); font-weight:700; flex-shrink:0;">${pct}%</span>
 </div>`;
 }).join('');
 el.innerHTML = `
