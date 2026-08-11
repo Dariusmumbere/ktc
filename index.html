@@ -7,7 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-/* KTC-IPFMS design tokens — institutional teal + ink navy + ledger gold; serif display, Inter interface, Plex Mono figures */
+/* ==========================================================================
+KTC-IPFMS — Design tokens
+Institutional teal + ink navy + ledger gold. Serif display for authority,
+Inter for interface, Plex Mono for reference numbers & figures.
+========================================================================== */
 :root{
 --navy-950:#0A1F2B;
 --navy-900:#0D2B3A;
@@ -32,6 +36,7 @@
 --warning-bg:#FBF1DE;
 --info:#2E5E8C;
 --info-bg:#E9F1FA;
+--title-green:#1B6B3F;
 --wp-head-bg:#F0B90B;
 --wp-head-text:#3A2900;
 --radius:10px;
@@ -69,10 +74,10 @@ a{color:inherit;}
 @keyframes fadeInUp{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
 @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
 @keyframes scaleIn{from{opacity:0; transform:scale(.97) translateY(6px);} to{opacity:1; transform:scale(1) translateY(0);}}
-/* Seal / crest — signature brand element */
+/* ---------------- Seal / crest (signature element) ---------------- */
 .crest{ width:38px;height:38px;flex-shrink:0; filter:drop-shadow(0 3px 6px rgba(10,31,43,.35)); border-radius:7px; overflow:hidden; background:rgba(255,255,255,.06); }
 .crest img{width:100%;height:100%;display:block; object-fit:cover;}
-/* Login screen */
+/* ---------------- Login ---------------- */
 #login-screen{
 min-height:100vh; display:flex; align-items:center; justify-content:center;
 position:relative; overflow:hidden;
@@ -159,7 +164,7 @@ padding:10px 12px; border-radius:var(--radius-sm); font-size:13px; margin-bottom
 animation:fadeIn .2s var(--ease);
 }
 .login-hint{margin-top:18px; font-size:11.5px; color:var(--ink-500); text-align:center; line-height:1.6;}
-/* App shell */
+/* ---------------- App shell ---------------- */
 #app-screen{display:none; height:100vh; overflow:hidden;}
 .shell{display:flex; height:100vh;}
 .sidebar{
@@ -204,19 +209,28 @@ min-height:64px; flex-shrink:0; background:rgba(255,255,255,.86); backdrop-filte
 border-bottom:1px solid var(--line); box-shadow:0 1px 0 rgba(10,31,43,.02);
 display:flex; align-items:center; justify-content:space-between; padding:0 22px; position:relative; z-index:10; flex-wrap:wrap; gap:10px;
 }
-.topbar-title{font-family:var(--font-display); font-size:22px; font-weight:600; letter-spacing:.1px;}
+.topbar-title{font-family:var(--font-display); font-size:22px; font-weight:600; letter-spacing:.1px; color:var(--title-green);}
 .topbar-sub{font-size:11.5px; color:var(--ink-500); margin-top:1px;}
 .topbar-title-wrap{min-width:0; flex:1;}
 .topbar-title-wrap-center{text-align:center;}
-.topbar-title-lg{font-size:23px; font-weight:600; line-height:1.32; color:var(--navy-950); letter-spacing:.1px; max-width:640px; margin:0 auto;}
+.topbar-title-lg{font-size:23px; font-weight:600; line-height:1.32; color:var(--title-green); letter-spacing:.1px; max-width:640px; margin:0 auto;}
 @media (min-width:901px){
 .topbar-title-wrap-center{display:flex; justify-content:center;}
 .topbar-title-lg{white-space:nowrap; max-width:none; font-size:clamp(13px,1.5vw,22px);}
 }
 .topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
 .topbar.topbar-workplan{border-bottom:none !important; box-shadow:none !important;}
-/* Fix: title wrap must stay visible on the Work Plan & Budget tab so the centered heading actually renders */
-.topbar.topbar-workplan .topbar-title-wrap{display:flex !important;}
+.topbar.topbar-workplan .topbar-title-wrap{display:none !important;}
+/* The Work Plan view's title used to live centered in the topbar (lots of
+   empty space around it from the 64px-tall bar + centering). It now lives
+   as the first element inside #view-workplan instead — see
+   .workplan-page-title below — so the topbar stays compact for this view. */
+.workplan-page-title{
+font-family:var(--font-display); font-weight:600; color:var(--title-green);
+font-size:clamp(15px,1.9vw,20px); line-height:1.34; letter-spacing:.1px;
+text-align:center; margin:0 0 14px; padding:2px 4px 0;
+}
+@media (max-width:560px){.workplan-page-title{font-size:14.5px; text-align:left; margin-bottom:12px;}}
 #view-workplan > .card:first-of-type{flex-wrap:nowrap !important;}
 #view-workplan > .card:first-of-type #wp-select{width:auto !important; min-width:0 !important; flex:1 1 auto !important;}
 #view-workplan > .card:first-of-type > div[style*="display:flex"]{flex-shrink:0 !important;}
@@ -241,7 +255,7 @@ box-shadow:0 0 0 2px #fff;
 .content{flex:1; overflow-y:auto; padding:24px 26px 60px;}
 .view{display:none;}
 .view.active{display:block; animation:fadeInUp .35s var(--ease) both;}
-/* Notification panel */
+/* ---------------- Notification panel ---------------- */
 .notif-panel{
 position:absolute; top:58px; right:22px; width:340px; max-height:420px; overflow-y:auto;
 background:rgba(255,255,255,.98); backdrop-filter:blur(14px); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-lg);
@@ -260,13 +274,13 @@ z-index:80; display:none;
 .notif-item .msg{color:var(--ink-900);}
 .notif-item .time{color:var(--ink-500); font-size:10.5px; margin-top:2px;}
 .notif-empty{padding:24px 14px; text-align:center; color:var(--ink-500); font-size:12.5px;}
-/* Section headers, cards */
+/* ---------------- Section headers, cards ---------------- */
 .section-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:18px; flex-wrap:wrap; gap:12px;}
 .section-head h2{font-family:var(--font-display); font-size:22px; margin:0; font-weight:600; letter-spacing:.1px;}
 .section-head .sub{color:var(--ink-500); font-size:12.5px; margin-top:2px;}
 .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-sm); transition:box-shadow .2s var(--ease), border-color .2s var(--ease);}
 .card-pad{padding:18px 20px;}
-/* Dashboard stat cards — deliberately distinct treatment */
+/* Dashboard stat cards (home tab — deliberately distinct treatment) */
 .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px;}
 .stat-card{
 background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius);
@@ -306,7 +320,7 @@ background:#F7FBFA; box-shadow:0 1px 3px rgba(10,31,43,.08);
 .tl-body{flex:1; min-width:0;}
 .tl-title{font-size:12.5px; font-weight:600;}
 .tl-meta{font-size:11px; color:var(--ink-500); margin-top:1px;}
-/* Table styling — echoes the reference work-plan grid */
+/* ---------------- Table styling (echoes the reference work-plan grid) ---------------- */
 .table-wrap{overflow-x:auto; border-radius:var(--radius); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
 table{width:100%; border-collapse:collapse; min-width:720px; background:#fff;}
 thead th{
@@ -314,13 +328,22 @@ background:var(--navy-950); color:#fff; font-size:10.5px; text-transform:upperca
 padding:12px; text-align:left; font-weight:700; white-space:nowrap; position:sticky; top:0;
 box-shadow:0 1px 0 rgba(201,154,62,.35);
 }
-/* Work Plan & Budget grid uses a deep-yellow header instead of navy, per Council request */
+/* Work Plan & Budget grid gets a distinct deep-yellow header treatment
+(per Council request) instead of the navy header used elsewhere. */
 #view-workplan .table-wrap thead th{
 background:var(--wp-head-bg);
 color:var(--wp-head-text);
 box-shadow:0 1px 0 rgba(58,41,0,.35);
 }
-/* Department Budget Summary table: navy+white header, mint/white striped rows, left-aligned bold figures — per Council request, overrides generic .num right-align */
+/* Department Budget Summary table (nested white card, inside the teal
+header band) needs its own explicit, high-contrast treatment — the
+deep-yellow work-plan header and the app-wide near-white row striping
+are both too low-contrast in that context to read clearly. Header uses
+solid navy + white text (like the main app tables); rows alternate a
+clearly visible mint/white band with bold, dark, explicitly-colored text
+so figures stand out regardless of the surrounding white card.
+Column titles are centered; row content is left aligned, per Council
+request, overriding the generic .num right-alignment for this table. */
 #wp-dept-summary-table thead th{
 background:var(--teal-700) !important;
 color:#FFFFFF !important;
@@ -346,7 +369,14 @@ border-bottom: none;
 td.wrap, th.wrap{white-space:normal;}
 .num{font-family:var(--font-mono); text-align:center;}
 .mono{font-family:var(--font-mono);}
-/* Revenue Sources Summary table — same high-contrast treatment as Department Budget Summary; Approved Budget Amount auto-derived from sub rows below; body left-aligned, headers centered */
+/* ---------------- Revenue Sources Summary table --------------------------
+Same high-contrast treatment as the Department Budget Summary table
+(solid teal header, alternating mint/white rows), displayed above it.
+THIS TABLE STAYS EXACTLY AS IT IS — its Approved Budget Amount column is
+obtained automatically from the Revenue Source by Category for the FY 2026/27 below it (each row's
+Category Total = sum of that source's sub rows). Row content (body rows)
+is left-aligned per Council request — only the column headers stay
+centered. */
 #wp-revenue-summary-table thead th{
 background:var(--teal-700) !important;
 color:#FFFFFF !important;
@@ -365,7 +395,9 @@ text-align:center;
 #wp-revenue-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
 #wp-revenue-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-revenue-summary-body td{padding:7px 9px; font-size:11.5px;}
-/* Functional Definition column: each point on its own line rather than one run-on line */
+/* Functional Definition column in the summary table: allow each point to
+sit on its own line (line breaks are inserted when the data is rendered)
+rather than running on as one continuous line of text. */
 #wp-revenue-summary-body td.rev-func-def{white-space:normal; line-height:1.5;}
 #wp-revenue-detail-wrap{max-height:420px; overflow-x:auto; overflow-y:auto;}
 #wp-revenue-detail-wrap thead th{
@@ -386,10 +418,13 @@ padding:8px 9px; font-size:9.5px; line-height:1.25;
 #wp-revenue-detail-body tr.rev-add-row td{background:#FFF9EC; padding:8px 9px;}
 #wp-revenue-detail-body tr.rev-add-row input{width:100%; border:1px solid var(--line); border-radius:6px; padding:6px 8px; font-size:12px; background:#fff;}
 #wp-revenue-detail-body tr.rev-add-row input:focus{border-color:var(--teal-500); outline:none; box-shadow:var(--shadow-ring);}
+/* Functional Definition column in the Revenue Entry (detail) table: each
+point begins on its own line rather than running together as one line. */
 #wp-revenue-detail-body td.rev-func-def{white-space:normal; line-height:1.5;}
 .rev-auto-chip{display:inline-flex; align-items:center; gap:4px; background:var(--success-bg); color:var(--success); border-radius:10px; padding:1.5px 8px; font-size:9.5px; font-weight:700; margin-left:6px; vertical-align:middle;}
 .rev-auto-chip::before{content:""; width:6px; height:6px; border-radius:2px; background:var(--success);}
-/* Work Plan & Budget: compact, height-constrained, dual-scrollable tables */
+/* ---------------- Work Plan & Budget: compact, height-constrained,
+dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-dept-summary-wrap{overflow-x:auto;}
 #wp-main-table-wrap{max-height:440px; min-height:220px; overflow-x:auto; overflow-y:auto;}
 #wp-dept-summary-wrap thead th, #wp-main-table-wrap thead th{position:sticky; top:0; z-index:3;}
@@ -400,14 +435,18 @@ padding:8px 9px; font-size:9.5px; line-height:1.25;
 #wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
 #wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:400; line-height:1.3;}
 #wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px;}
-/* Funding Source (18th col): less room than before */
+/* Funding Source (18th column): give it noticeably less room than before */
 #wp-main-table th:nth-child(18), #wp-main-table td:nth-child(18){white-space:normal; max-width:78px; width:78px;}
-/* Department (1st col): wrap across two lines to fit the narrower width */
+/* Department (1st column): wrap the name across two lines to use the
+narrower column width efficiently rather than forcing extra scroll */
 #wp-main-table th:nth-child(1), #wp-main-table td:nth-child(1){white-space:normal; max-width:104px; width:104px;}
-/* PIAP Output Description (7th) / PIAP Output Indicator (8th): need more room for long narrative text */
+/* PIAP Output Description (7th) and PIAP Output Indicator (8th) columns —
+sit between Budget Output Code/Description and Unit of Measure — need
+noticeably more room than the other wrapped columns since they hold
+long narrative text. */
 #wp-main-table th:nth-child(7), #wp-main-table td:nth-child(7),
 #wp-main-table th:nth-child(8), #wp-main-table td:nth-child(8){white-space:normal; max-width:220px; width:220px;}
-/* Q1–Q4 and Total Budget: keep numbers compact */
+/* Q1–Q4 and Total Budget columns: keep numbers compact */
 #wp-main-table th:nth-child(13), #wp-main-table td:nth-child(13),
 #wp-main-table th:nth-child(14), #wp-main-table td:nth-child(14),
 #wp-main-table th:nth-child(15), #wp-main-table td:nth-child(15),
@@ -420,7 +459,7 @@ padding:8px 9px; font-size:9.5px; line-height:1.25;
 .search-box input:focus{border-color:var(--teal-500); box-shadow:var(--shadow-ring);}
 select.filter-select{padding:9px 12px; border:1.5px solid var(--line); border-radius:var(--radius-sm); font-size:13px; background:#fff; transition:border-color .15s var(--ease);}
 select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow-ring);}
-/* Badges / pills */
+/* ---------------- Badges / pills ---------------- */
 .pill{display:inline-flex; align-items:center; gap:5px; padding:3.5px 10px; border-radius:20px; font-size:10.5px; font-weight:700; text-transform:capitalize; letter-spacing:.2px;}
 .pill::before{content:""; width:5px; height:5px; border-radius:50%; background:currentColor; flex-shrink:0; opacity:.85;}
 .pill-draft{background:#EEF1F1; color:var(--ink-700);}
@@ -430,7 +469,7 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 .pill-rejected, .pill-flagged{background:var(--danger-bg); color:var(--danger);}
 .pill-returned{background:#F1E9FB; color:#6A3FA0;}
 .pill-pending{background:var(--warning-bg); color:var(--warning);}
-/* Modal */
+/* ---------------- Modal ---------------- */
 .overlay{position:fixed; inset:0; background:rgba(10,20,26,.6); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; z-index:100; padding:20px;}
 .overlay.show{display:flex; animation:fadeIn .18s var(--ease);}
 .modal{background:#fff; border-radius:var(--radius-lg); width:100%; max-width:560px; max-height:88vh; overflow-y:auto; box-shadow:var(--shadow-lg); animation:scaleIn .25s var(--ease);}
@@ -443,7 +482,7 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 .modal-foot{padding:16px 22px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;}
 .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 14px;}
 .form-grid .span2{grid-column:1/-1;}
-/* Toasts */
+/* ---------------- Toasts ---------------- */
 #toast-stack{position:fixed; bottom:20px; right:20px; z-index:200; display:flex; flex-direction:column; gap:10px;}
 .toast{
 background:var(--navy-950); color:#fff; padding:13px 16px; border-radius:10px; box-shadow:var(--shadow-lg);
@@ -475,20 +514,38 @@ cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
 .help-text{font-size:11.5px; color:var(--ink-500); margin-top:4px;}
 .divider{height:1px; background:var(--line); margin:16px 0;}
 .kicker{font-size:10.5px; text-transform:uppercase; letter-spacing:.7px; color:var(--gold-600); font-weight:700;}
-/* Section groups inside forms */
+/* ---------------- Table title dropdowns (Work Plan & Budget tables) ---------------- */
+/* Displays each table's heading as a select (so the heading reads the same
+   way the work-plan-year picker above it does) with the Edit-heading icon
+   button — and, on the two tables that have them, the Add/Import icon
+   buttons — placed immediately to its right, matching the icon-btn look
+   used on the Annual Work Plan title bar. */
+.table-title-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 18px 4px;}
+.table-title-select{
+flex:1 1 260px; min-width:0; appearance:auto; cursor:pointer;
+background:transparent; border:1px solid transparent; border-radius:6px;
+font-family:var(--font-body); font-weight:700; font-size:12.5px; text-transform:uppercase;
+letter-spacing:.5px; color:var(--navy-950); padding:5px 6px; margin:-5px -6px;
+}
+.table-title-select:hover{background:rgba(10,31,43,.04); border-color:var(--line);}
+.table-title-select:focus-visible{outline:2px solid var(--teal-500); outline-offset:2px; background:rgba(10,31,43,.04);}
+.table-title-actions{display:flex; align-items:center; gap:8px; flex-shrink:0;}
+/* ---------------- Section groups inside forms ---------------- */
 .field-section{margin-top:4px;}
 .field-section .kicker{display:block; margin-bottom:2px;}
-/* My Settings / Signature */
+/* ---------------- My Settings / Signature ---------------- */
 .sig-preview-box{
 width:180px; height:80px; border:1.5px dashed var(--line-strong); border-radius:var(--radius-sm);
 display:flex; align-items:center; justify-content:center; background:var(--paper); overflow:hidden; flex-shrink:0;
 }
 .sig-preview-box img{max-width:100%; max-height:100%; object-fit:contain;}
-/* Printable Requisition Form — mirrors the Council's paper form */
+/* ---------------- Printable Requisition Form (mirrors the Council's paper form) ---------------- */
 .req-form-paper{
 background:#fff; padding:10px 6px 6px; font-family:var(--font-body); color:#181818;
 }
-/* Requisition header banner image (header.jpg) replaces the old text+crest+seal composite to match the printed letterhead */
+/* Requisition form header — a single pre-composed banner image (header.jpg)
+   replaces the old text+crest+seal composite so the on-screen form matches
+   the Council's printed letterhead exactly. */
 .rf-header-img{display:block; width:100%; height:auto; margin-bottom:10px; border-radius:4px;}
 .req-form-header{text-align:center; margin-bottom:2px;}
 .req-form-header .rf-title{font-family:var(--font-display); font-size:19px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; margin-top:6px;}
@@ -503,7 +560,9 @@ table.req-form-meta-table td .rf-fill img{max-height:44px; max-width:180px; obje
 .req-form-subject strong{white-space:nowrap; margin-right:4px;}
 .req-form-subject .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
 table.req-form-table{width:100%; border-collapse:collapse; margin-bottom:14px; font-size:12px; border:1px solid #e2790f;}
-/* Requisition / Payment Voucher line-item table rules are orange, per Council request, to stand out from the black-ruled paper form */
+/* Requisition / Payment Voucher line-item table rules are orange per
+   Council request, so the printed and on-screen line grid stands out
+   from the rest of the black-ruled paper form. */
 table.req-form-table th, table.req-form-table td{border:1px solid #e2790f; padding:6px 8px;}
 table.req-form-table th{background:#fdf1e2; font-size:10.5px; text-transform:uppercase; text-align:left; color:#8a4a09;}
 table.req-form-table td.num, table.req-form-table th.num{text-align:right; font-family:var(--font-mono);}
@@ -518,7 +577,10 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #e279
 .req-form-signatures > div:first-child{border-left:none;}
 .req-form-signatures .sig-role{font-size:12px; font-weight:600; margin-bottom:26px;}
 .req-form-signatures .sig-line{border-top:1px dotted #666; margin-bottom:6px; height:46px; display:flex; align-items:flex-end; padding-bottom:2px;}
-/* Unscoped so every signature box (incl. Payment Voucher's plain-table boxes) gets the enlarged signature image once attached */
+/* Unscoped so every signature box — including the Payment Voucher's Vote
+Book / Verified by / Passed Payment / payee / witness / cashier boxes,
+which sit in a plain table rather than inside .req-form-signatures — gets
+the same enlarged, clearly-visible signature image once one is attached. */
 .sig-line img{max-height:44px; max-width:95%; object-fit:contain;}
 .req-form-signatures .sig-label{font-size:12px; font-weight:800;}
 @media print{
@@ -529,7 +591,7 @@ body *{visibility:hidden;}
 #print-form-container{position:absolute; top:0; left:0; width:100%; max-width:none; box-shadow:none; border:none; max-height:none;}
 .no-print{display:none !important;}
 }
-/* Requisition data-entry form styled as the paper form itself */
+/* ---------------- Requisition data-entry form (styled as the paper form itself) ---------------- */
 .req-digital-controls{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px 14px; margin-bottom:16px;}
 .req-digital-controls .form-grid{margin-top:8px;}
 table.req-form-meta-table.entry td{padding:5px 8px;}
@@ -551,7 +613,7 @@ table.req-form-table.entry tr.rf-grand td{font-family:var(--font-mono);}
 .req-form-words.entry{font-size:12.5px; margin-bottom:18px;}
 .req-form-signatures.preview .sig-line{border-top:1px dotted #ccc;}
 .req-form-signatures.preview{opacity:.7;}
-/* Attach-signature buttons + Cheque Payment Voucher (entry form) */
+/* ---------------- Attach-signature buttons + Cheque Payment Voucher (entry form) ---------------- */
 .sig-attach-btn{display:inline-flex; align-items:center; gap:4px; font-size:10.5px; padding:3px 8px; margin-top:4px; border:1px dashed var(--gold-600, #b8860b); background:#fffdf2; color:#7a5b00; border-radius:5px; cursor:pointer;}
 .sig-attach-btn:hover{background:#fff4d6;}
 .rf-sig-slot{display:flex; flex-direction:column; align-items:flex-start;}
@@ -560,7 +622,10 @@ table.req-form-table.entry tr.rf-grand td{font-family:var(--font-mono);}
 .pv-certify{font-size:11.5px; line-height:1.7; border:1px solid #333; padding:10px 12px; margin:10px 0 14px;}
 .pv-certify p{margin:0 0 8px;}
 .pv-certify p:last-child{margin-bottom:0;}
-/* Authority/Total/Approved Vote/Account No/Approved Estimate/Cheque Instruction No sit as dotted fill-in lines (no cell borders), matching the paper form */
+/* Authority / Total / Approved Vote / Account No / Approved Estimate / Cheque
+   Instruction No — on the paper form these are plain fill-in-the-blank lines
+   inside the same bordered box as the certify paragraphs below, not a boxed
+   mini-table, so they're styled to match that (dotted fill, no cell borders). */
 .pv-plain-line{display:flex; flex-wrap:wrap; gap:6px; align-items:baseline; font-size:12.5px; margin-bottom:8px;}
 .pv-plain-line strong{white-space:nowrap; font-weight:700;}
 .pv-plain-line .rf-dots{flex:1; min-width:80px;}
@@ -576,7 +641,7 @@ table.pv-block-table input:focus{outline:1px dashed var(--gold-600); background:
 .pv-received-line input:focus{outline:none; border-bottom:1px dotted var(--gold-600); background:#fffdf2;}
 .pv-received-line input.pv-day{width:44px;}
 .pv-received-line input.pv-words{width:60%; min-width:180px; text-align:left;}
-/* Hamburger / responsive sidebar */
+/* ---------------- Hamburger / responsive sidebar ---------------- */
 .hamburger-btn{display:none;}
 .sidebar-backdrop{display:none;}
 @media (max-width: 900px){
@@ -607,27 +672,26 @@ display:none; position:fixed; inset:0; background:rgba(10,20,26,.55); z-index:14
 #wp-dept-summary-wrap tfoot td {
 text-align: left !important;
 }
-/* Left-align all table headers in the green work-plan header band */
+/* Align all table headers in the green div to the left */
 #wp-revenue-summary-wrap thead th,
 #wp-dept-summary-wrap thead th,
 #wp-revenue-detail-wrap thead th {
   text-align: left !important;
 }
-/* Clear-all header icon buttons */
+/* ---------------- Clear-all header icon buttons ---------------- */
 .th-clear-btn{
 background:none; border:none; cursor:pointer; padding:4px; border-radius:5px;
 display:inline-flex; align-items:center; justify-content:center;
 color:inherit; opacity:.85; transition:background .15s var(--ease), color .15s var(--ease), opacity .15s var(--ease);
 vertical-align:middle; flex-shrink:0;
 }
-.topbar-title { color: #0055cc !important; }
 .th-clear-btn:hover{background:rgba(184,56,42,.9); color:#fff; opacity:1;}
 .th-clear-btn svg{width:14px;height:14px; display:block; pointer-events:none;}
 .th-with-clear{display:flex; align-items:center; justify-content:space-between; gap:6px; white-space:nowrap;}
 </style>
 </head>
 <body>
-<!-- LOGIN -->
+<!-- ===================== LOGIN ===================== -->
 <div id="login-screen">
 <div class="login-card">
 <div class="login-band">
@@ -673,7 +737,7 @@ vertical-align:middle; flex-shrink:0;
 </div>
 </div>
 </div>
-<!-- APP -->
+<!-- ===================== APP ===================== -->
 <div id="app-screen">
 <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 <div class="shell">
@@ -757,7 +821,7 @@ Departments
 <div id="notif-list"></div>
 </div>
 <div class="content">
-<!-- DASHBOARD -->
+<!-- ===== DASHBOARD ===== -->
 <div class="view active" id="view-dashboard">
 <div class="section-head">
 <div>
@@ -815,8 +879,9 @@ Departments
 </div>
 </div>
 </div>
-<!-- WORK PLAN & BUDGET (styled per reference) -->
+<!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
+<div class="workplan-page-title" id="workplan-page-title">Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)</div>
 <div class="card" style="background:#fff; border:none; padding:16px 20px; margin:0; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:none; width:100%; box-sizing:border-box;">
 <select class="filter-select" id="wp-select" style="flex:1 1 auto; width:100%; min-width:260px; max-width:none; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
 <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
@@ -826,7 +891,7 @@ Departments
 <button class="icon-btn" id="wp-edit-workplan-btn" title="Edit Annual Work Plan &amp; Budget Estimates" style="display:none;">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
 </button>
-<!-- Downloads the full Annual Work Plan & Budget PDF -->
+<!-- Downloads the full Annual Work Plan & Budget PDF (all sections + revenue/workplan tables) -->
 <button class="icon-btn" id="wp-download-pdf-btn" title="Download Annual Work Plan &amp; Budget as PDF">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
 </button>
@@ -836,8 +901,13 @@ Departments
 <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
-<div style="padding:14px 18px 4px;">
-<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED SUMMARY OF THE COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
+<div class="table-title-row">
+<select class="table-title-select" id="wp-revenue-summary-title-select"></select>
+<div class="table-title-actions">
+<button class="icon-btn" id="wp-revenue-summary-edit-btn" style="display:none;" title="Edit this table's heading">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+</button>
+</div>
 </div>
 <div class="table-wrap" id="wp-revenue-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-revenue-summary-table">
@@ -861,8 +931,13 @@ Departments
 </div>
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
-<div style="padding:14px 18px 4px;">
-<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
+<div class="table-title-row">
+<select class="table-title-select" id="wp-dept-summary-title-select"></select>
+<div class="table-title-actions">
+<button class="icon-btn" id="wp-dept-summary-edit-btn" style="display:none;" title="Edit this table's heading">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+</button>
+</div>
 </div>
 <div class="table-wrap" id="wp-dept-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-dept-summary-table">
@@ -896,12 +971,19 @@ Departments
 </div>
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
-<div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; padding:14px 18px 0;">
-<button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
-<button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
+<div class="table-title-row">
+<select class="table-title-select" id="wp-revenue-detail-title-select"></select>
+<div class="table-title-actions">
+<button class="icon-btn" id="wp-revenue-detail-edit-btn" style="display:none;" title="Edit this table's heading">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+</button>
+<button class="icon-btn" id="wp-new-revenue-btn" style="display:none;" title="Add Revenue Sources">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button class="icon-btn" id="wp-import-revenue-btn" style="display:none;" title="Import Revenue Sources From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+</button>
 </div>
-<div style="padding:8px 18px 4px;">
-<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-revenue-detail-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-revenue-detail-table">
@@ -937,11 +1019,20 @@ Departments
 </div>
 <select class="filter-select" id="wp-dept-filter"><option value="">All Departments</option></select>
 </div>
-<div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
-<button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity Output & Expenditure Estimates</button>
-<button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
+<div class="table-title-row" style="padding:0 0 10px;">
+<select class="table-title-select" id="wp-main-table-title-select"></select>
+<div class="table-title-actions">
+<button class="icon-btn" id="wp-main-table-edit-btn" style="display:none;" title="Edit this table's heading">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+</button>
+<button class="icon-btn" id="wp-new-btn" style="display:none;" title="Add Activity Output & Expenditure Estimates">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button class="icon-btn" id="wp-import-btn" style="display:none;" title="Import Activity & Budget Estimates From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+</button>
 </div>
-<div class="kicker" id="wp-main-table-heading" style="margin-bottom:10px; font-size:13px; color:var(--navy-950);">APPROVED COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
+</div>
 <div class="table-wrap" id="wp-main-table-wrap">
 <table id="wp-main-table">
 <thead>
@@ -995,7 +1086,7 @@ Departments
 </div>
 </div>
 </div>
-<!-- REQUISITIONS -->
+<!-- ===== REQUISITIONS ===== -->
 <div class="view" id="view-requisitions">
 <div class="section-head">
 <div>
@@ -1030,7 +1121,7 @@ Departments
 </table>
 </div>
 </div>
-<!-- APPROVALS -->
+<!-- ===== APPROVALS ===== -->
 <div class="view" id="view-approvals">
 <div class="section-head">
 <div>
@@ -1047,7 +1138,7 @@ Departments
 </table>
 </div>
 </div>
-<!-- ACCOUNTABILITY -->
+<!-- ===== ACCOUNTABILITY ===== -->
 <div class="view" id="view-accountability">
 <div class="section-head">
 <div>
@@ -1064,7 +1155,7 @@ Departments
 </table>
 </div>
 </div>
-<!-- REPORTS / AUDIT -->
+<!-- ===== REPORTS / AUDIT ===== -->
 <div class="view" id="view-reports">
 <div class="section-head">
 <div>
@@ -1095,7 +1186,7 @@ Departments
 <div id="audit-view-result"></div>
 </div>
 </div>
-<!-- USERS -->
+<!-- ===== USERS ===== -->
 <div class="view" id="view-users">
 <div class="section-head">
 <div>
@@ -1111,7 +1202,7 @@ Departments
 </table>
 </div>
 </div>
-<!-- DEPARTMENTS -->
+<!-- ===== DEPARTMENTS ===== -->
 <div class="view" id="view-departments">
 <div class="section-head">
 <div>
@@ -1132,7 +1223,7 @@ Departments
 </div>
 </div>
 <div id="toast-stack"></div>
-<!-- MODAL: New / Submit Requisition (styled as the Council's paper Funds Requisition Form) -->
+<!-- ===== MODAL: New / Submit Requisition (styled as the Council's paper Funds Requisition Form) ===== -->
 <div class="overlay" id="modal-req">
 <div class="modal modal-lg" style="max-width:800px;">
 <div class="modal-head"><h3 id="req-modal-title">New Requisition</h3><button class="modal-close" data-close="modal-req">&times;</button></div>
@@ -1185,7 +1276,7 @@ Departments
 <button class="btn btn-ghost" id="req-save-draft-mid">Save Draft</button>
 <button class="btn btn-primary" id="req-submit-now-mid">Submit for Approval</button>
 </div>
-<!-- Cheque Payment Voucher — same header/masthead as the Requisition Form above, filled in together with it in the same modal -->
+<!-- ===== Cheque Payment Voucher — same header/council masthead as the Requisition Form above, filled in together with it in the same modal ===== -->
 <div class="pv-form" id="pv-form-entry">
 <img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
 <div class="req-form-header"><div class="rf-title">Cheque Payment Voucher</div></div>
@@ -1284,7 +1375,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- MODAL: Requisition Detail -->
+<!-- ===== MODAL: Requisition Detail ===== -->
 <div class="overlay" id="modal-req-detail">
 <div class="modal modal-lg">
 <div class="modal-head"><h3 id="rd-title">Requisition</h3><button class="modal-close" data-close="modal-req-detail">&times;</button></div>
@@ -1292,7 +1383,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <div class="modal-foot" id="rd-foot"></div>
 </div>
 </div>
-<!-- MODAL: Printable Requisition Form -->
+<!-- ===== MODAL: Printable Requisition Form (Karugutu Town Council paper layout) ===== -->
 <div class="overlay" id="modal-print-form">
 <div class="modal modal-lg" id="print-form-container" style="max-width:760px;">
 <div class="modal-head no-print"><h3>Requisition Form</h3><button class="modal-close" data-close="modal-print-form">&times;</button></div>
@@ -1303,7 +1394,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- MODAL: My Settings (profile + signature) -->
+<!-- ===== MODAL: My Settings (profile + signature) ===== -->
 <div class="overlay" id="modal-settings">
 <div class="modal">
 <div class="modal-head"><h3>My Settings</h3><button class="modal-close" data-close="modal-settings">&times;</button></div>
@@ -1337,7 +1428,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- MODAL: New User -->
+<!-- ===== MODAL: New User ===== -->
 <div class="overlay" id="modal-user">
 <div class="modal">
 <div class="modal-head"><h3 id="u-modal-title">New User</h3><button class="modal-close" data-close="modal-user">&times;</button></div>
@@ -1367,7 +1458,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- MODAL: New Department -->
+<!-- ===== MODAL: New Department ===== -->
 <div class="overlay" id="modal-dept">
 <div class="modal">
 <div class="modal-head"><h3 id="d-modal-title">New Department</h3><button class="modal-close" data-close="modal-dept">&times;</button></div>
@@ -1381,7 +1472,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- MODAL: New / Edit Budget Estimates Data Entry Form -->
+<!-- ===== MODAL: New / Edit Budget Estimates Data Entry Form ===== -->
 <div class="overlay" id="modal-bc">
 <div class="modal modal-lg">
 <div class="modal-head"><h3 id="bc-modal-title">New Budget Estimates Data Entry Form</h3><button class="modal-close" data-close="modal-bc">&times;</button></div>
@@ -1433,7 +1524,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- MODAL: New / Edit Work Plan -->
+<!-- ===== MODAL: New / Edit Work Plan ===== -->
 <div class="overlay" id="modal-wp">
 <div class="modal">
 <div class="modal-head"><h3 id="wpn-modal-title">New Work Plan</h3><button class="modal-close" data-close="modal-wp">&times;</button></div>
@@ -1448,7 +1539,21 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- MODAL: New / Edit Revenue Source (category + sub rows) -->
+<!-- ===== MODAL: Edit a Work Plan & Budget table heading ===== -->
+<div class="overlay" id="modal-table-heading">
+<div class="modal">
+<div class="modal-head"><h3 id="th-modal-title">Edit Table Heading</h3><button class="modal-close" data-close="modal-table-heading">&times;</button></div>
+<div class="modal-body">
+<div class="field"><label>Heading</label><textarea id="th-heading-input" rows="3" placeholder="e.g. APPROVED COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027"></textarea></div>
+<div class="help-text">This changes the heading shown above this table for the currently selected work plan only — pick a different work plan above to give another financial year its own wording.</div>
+</div>
+<div class="modal-foot">
+<button class="btn btn-ghost" data-close="modal-table-heading">Cancel</button>
+<button class="btn btn-primary" id="th-save-btn">Save Heading</button>
+</div>
+</div>
+</div>
+<!-- ===== MODAL: New / Edit Revenue Source (category + sub rows) ===== -->
 <div class="overlay" id="modal-rev">
 <div class="modal modal-lg">
 <div class="modal-head"><h3 id="rev-modal-title">New Revenue Source</h3><button class="modal-close" data-close="modal-rev">&times;</button></div>
@@ -1494,7 +1599,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- MODAL: Single-page Document Viewer (Auditor review) -->
+<!-- ===== MODAL: Single-page Document Viewer (Auditor review) ===== -->
 <div class="overlay" id="modal-doc-view">
 <div class="modal modal-lg" style="max-width:940px;">
 <div class="modal-head"><h3 id="dv-title">Accountability Documents</h3><button class="modal-close" data-close="modal-doc-view">&times;</button></div>
@@ -1502,7 +1607,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <div class="modal-foot" id="dv-foot"></div>
 </div>
 </div>
-<!-- MODAL: Upload document -->
+<!-- ===== MODAL: Upload document ===== -->
 <div class="overlay" id="modal-upload">
 <div class="modal">
 <div class="modal-head"><h3>Upload Accountability Document</h3><button class="modal-close" data-close="modal-upload">&times;</button></div>
@@ -1525,8 +1630,10 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 <script>
-// KTC-IPFMS frontend application logic (vanilla JS, no build step)
-// Configuration
+/* ==========================================================================
+KTC-IPFMS — Frontend application logic (vanilla JS, no build step)
+========================================================================== */
+// ---- Configuration --------------------------------------------------------
 const KTC_BACKEND_URL = 'https://ktc-backend-5yz9.onrender.com';
 const API_BASE = localStorage.getItem('ktc_api_base') || KTC_BACKEND_URL;
 let STATE = {
@@ -1546,6 +1653,7 @@ editingDepartmentId: null,
 editingUserId: null,
 editingRequisitionId: null,
 editingRevenueSourceId: null,
+editingHeadingSelectId: null,
 reqLineItems: [],
 signatureUrl: null,
 };
@@ -1590,9 +1698,11 @@ function categorizeRevenueSource(r) {
   for (const cat of REVENUE_SUMMARY_CATEGORIES) {
     if (cat.match(r)) return cat.key;
   }
-  return null; // no match against the three fixed categories -> excluded from summary totals
+  return null; // entries that don't match any of the three fixed categories are excluded from the summary totals
 }
-// Revenue Source modal dropdowns are drawn from REVENUE_SUMMARY_CATEGORIES, plus an "Other" option
+// ---- Revenue Source modal: PBS Fund Code / Revenue Source / Functional Definition
+// are drawn from the fixed REVENUE_SUMMARY_CATEGORIES constants as dropdowns (plus
+// an "Other" option for anything outside the three standard categories).
 const REV_CUSTOM_VALUE = '__custom__';
 const REV_FIELD_MAP = {
   'rev-fund-code': { customId: 'rev-fund-code-custom', catField: 'pbs_fund_code' },
@@ -1618,7 +1728,7 @@ function onRevCategorySelect(changedId) {
   if (val === REV_CUSTOM_VALUE) { setRevCustomVisible(changedId, true); return; }
   setRevCustomVisible(changedId, false);
   if (!val) return;
-  // The three fields describe one fixed category — keep them in sync
+  // The three fields describe one fixed category — keep them in sync.
   for (const otherId of Object.keys(REV_FIELD_MAP)) {
     if (otherId === changedId) continue;
     document.getElementById(otherId).value = val;
@@ -1633,7 +1743,7 @@ function getRevFieldValue(selectId) {
   const cat = REVENUE_SUMMARY_CATEGORIES.find(c => c.key === val);
   return cat ? cat[cfg.catField] : '';
 }
-// Fetch helper
+// ---- Fetch helper -----------------------------------------------------------
 async function api(path, opts = {}) {
 const headers = opts.headers || {};
 if (!(opts.body instanceof FormData)) headers['Content-Type'] = 'application/json';
@@ -1651,7 +1761,7 @@ throw new Error(msg);
 }
 return data;
 }
-// Toasts
+// ---- Toasts -----------------------------------------------------------------
 function toast(message, type = 'info') {
 const stack = document.getElementById('toast-stack');
 const el = document.createElement('div');
@@ -1690,11 +1800,27 @@ return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUppe
 }
 function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
-// deptLabel: department NAME ONLY — used for Departments page, user records, requisitions, dept-output charts
+// Strict separation of concern: shows a department using its NAME ONLY.
+// The PBS department code is a distinct identifier and is intentionally
+// never appended here — this is used for the Departments page's own
+// Department column, user records, requisitions, dept-output charts, etc.
 function deptLabel(d) { if (!d) return null; return d.name; }
-// deptLabelWithCode: "<code>: <name>" — used for Work Plan dept column/summary and every dept dropdown
+// Shows a department as "<code>: <name>" (e.g. "090: Community Based
+// Services"). Used for the Annual Work Plan & Budget Estimates table's
+// Department column (via the backend-supplied `department_code_and_name`
+// field on each budget code — see renderBudgetCodes()), the Department
+// Budget Summary table (renderDeptSummaryTable()), and every dropdown that
+// lists departments (Work Plan filter, Budget Code form, Requisition form,
+// User form — see loadDepartments()). NOT used for the Departments page's
+// own Department column, which shows name alone via deptLabel() above.
 function deptLabelWithCode(d) { if (!d) return null; return d.code ? `${d.code}: ${d.name}` : d.name; }
-// Multi-point text formatting (e.g. Functional Definition cells): one line per point instead of a run-on line
+// ---- Multi-point text formatting (e.g. Functional Definition cells) --------
+// Renders a block of text as one line per "point" instead of one continuous
+// run-on line. If the source text already contains real line breaks, each
+// line becomes its own point. Otherwise, if it looks like it packs several
+// numbered/lettered/bulleted points onto a single line (e.g. "1. ... 2. ..."
+// or "(a) ... (b) ..." or "• ... • ..."), it is split at those markers so
+// each point still starts on a new line.
 function formatMultilinePoints(text) {
 if (text === null || text === undefined || String(text).trim() === '') return '—';
 let normalized = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -1709,7 +1835,7 @@ points = parts.length > 1 ? parts : [candidate];
 }
 return points.map(p => escapeHtml(p)).join('<br>');
 }
-// Number-to-words (for the "Amount in words" line on the printed form)
+// ---- Number-to-words (for the "Amount in words" line on the printed form) --
 function numberToWords(n) {
 n = Math.floor(Math.abs(Number(n) || 0));
 const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten',
@@ -1740,7 +1866,7 @@ const rounded = Math.round(Number(amount) || 0);
 if (rounded === 0) return 'Zero shillings only';
 return `${numberToWords(rounded)} Shillings Only`;
 }
-// Auth
+// ---- Auth ---------------------------------------------------------------------
 document.getElementById('login-password-toggle').addEventListener('click', () => {
 const input = document.getElementById('login-password');
 const btn = document.getElementById('login-password-toggle');
@@ -1790,7 +1916,10 @@ document.getElementById('login-screen').style.display = 'flex';
 stopIdleTimer();
 }
 document.getElementById('logout-btn').addEventListener('click', logout);
-// Inactivity auto-logout (10 min) — token is long-lived; sign-out is purely based on real inactivity
+// ---- Inactivity auto-logout (10 minutes) ----------------------------------
+// The session token itself is now long-lived — signing a user out is
+// handled here, purely based on real inactivity, so an actively-working
+// user is never logged out mid-task the way a fixed-lifetime token used to.
 const IDLE_TIMEOUT_MS = 10 * 60 * 1000;
 let idleTimer = null;
 function resetIdleTimer() {
@@ -1847,8 +1976,12 @@ document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].
 document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 document.getElementById('wp-revenue-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-revenue-summary-edit-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-dept-summary-edit-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-revenue-detail-edit-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-main-table-edit-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 }
-// Navigation
+// ---- Navigation -----------------------------------------------------------
 const VIEW_TITLES = {
 dashboard: ['Dashboard', 'Overview of financial activity'],
 workplan: ['Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)', ''],
@@ -1863,15 +1996,12 @@ function switchView(view) {
 document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === view));
 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 document.getElementById('view-' + view).classList.add('active');
-document.getElementById('topbar-title').textContent = VIEW_TITLES[view][0];
-document.getElementById('topbar-sub').textContent = VIEW_TITLES[view][1];
-const topbarTitleEl = document.getElementById('topbar-title');
-const topbarTitleWrap = document.getElementById('topbar-title-wrap');
-const topbarSubEl = document.getElementById('topbar-sub');
 const isWorkplanView = (view === 'workplan');
-topbarTitleEl.classList.toggle('topbar-title-lg', isWorkplanView);
-topbarTitleWrap.classList.toggle('topbar-title-wrap-center', isWorkplanView);
-topbarSubEl.style.display = isWorkplanView ? 'none' : '';
+// The Work Plan view shows its own title inline at the top of the view
+// (see .workplan-page-title) instead of in the topbar, so the topbar keeps
+// its normal compact title for every other view and stays empty here.
+document.getElementById('topbar-title').textContent = isWorkplanView ? '' : VIEW_TITLES[view][0];
+document.getElementById('topbar-sub').textContent = isWorkplanView ? '' : VIEW_TITLES[view][1];
 document.querySelector('.topbar').classList.toggle('topbar-workplan', isWorkplanView);
 closeNotifPanel();
 if (view === 'dashboard') loadDashboard();
@@ -1889,7 +2019,7 @@ btn.addEventListener('click', () => { switchView(btn.dataset.view); closeSidebar
 document.querySelectorAll('[data-view-link]').forEach(btn => {
 btn.addEventListener('click', () => { switchView(btn.dataset.viewLink); closeSidebar(); });
 });
-// Mobile sidebar (hamburger)
+// ---- Mobile sidebar (hamburger) --------------------------------------------
 function openSidebar() {
 document.querySelector('.sidebar').classList.add('open');
 document.getElementById('sidebar-backdrop').classList.add('show');
@@ -1904,12 +2034,12 @@ if (sb.classList.contains('open')) closeSidebar(); else openSidebar();
 }
 document.getElementById('hamburger-btn').addEventListener('click', toggleSidebar);
 document.getElementById('sidebar-backdrop').addEventListener('click', closeSidebar);
-// Modals
+// ---- Modals -----------------------------------------------------------------
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => closeModal(el.dataset.close)));
 document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', (e) => { if (e.target === ov) ov.classList.remove('show'); }));
-// My Settings (profile + signature)
+// ---- My Settings (profile + signature) -------------------------------------
 document.getElementById('user-chip-btn').addEventListener('click', openSettingsModal);
 async function openSettingsModal() {
 openModal('modal-settings');
@@ -1975,7 +2105,7 @@ renderSignaturePreview();
 toast('Signature removed', 'info');
 } catch (e) { toast(e.message, 'error'); }
 });
-// Notifications
+// ---- Notifications ------------------------------------------------------------
 document.getElementById('notif-btn').addEventListener('click', async () => {
 const panel = document.getElementById('notif-panel');
 panel.classList.toggle('show');
@@ -2007,7 +2137,7 @@ list.innerHTML = items.map(n => `
 </div>`).join('');
 } catch (e) { list.innerHTML = '<div class="notif-empty">Could not load notifications.</div>'; }
 }
-// Departments / Work Plans (shared reference data)
+// ---- Departments / Work Plans (shared reference data) --------------------------
 async function loadDepartments() {
 STATE.departments = await api('/api/departments');
 const selects = ['wp-dept-filter', 'u-department', 'bc-department', 'req-form-department'];
@@ -2028,8 +2158,92 @@ const opts = STATE.workplans.map(w => `<option value="${w.id}" style="text-align
 if (wpSel) wpSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (bcSel) bcSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (revSel) revSel.innerHTML = opts || '<option value="">No work plans yet</option>';
+renderTableTitles();
 }
-// Dashboard
+// ---- Work Plan & Budget table heading dropdowns ---------------------------------
+// Each of the four tables shows its heading as a select (so it reads
+// consistently with the work-plan-year picker above it). Per-table custom
+// text is stored on the selected work plan (revenue_summary_title,
+// dept_summary_title, revenue_detail_title, main_table_title); when a work
+// plan hasn't set one, a standard template built from its financial_year
+// is shown instead — so headings always reflect whichever year is picked.
+const TABLE_TITLE_FIELDS = {
+'wp-revenue-summary-title-select': {
+field: 'revenue_summary_title',
+editBtn: 'wp-revenue-summary-edit-btn',
+label: 'Revenue Summary table',
+template: fy => `APPROVED SUMMARY OF THE COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY ${fy}`,
+},
+'wp-dept-summary-title-select': {
+field: 'dept_summary_title',
+editBtn: 'wp-dept-summary-edit-btn',
+label: 'Departmental Summary table',
+template: fy => `APPROVED DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY ${fy}`,
+},
+'wp-revenue-detail-title-select': {
+field: 'revenue_detail_title',
+editBtn: 'wp-revenue-detail-edit-btn',
+label: 'Revenue Detail table',
+template: fy => `APPROVED COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY ${fy}`,
+},
+'wp-main-table-title-select': {
+field: 'main_table_title',
+editBtn: 'wp-main-table-edit-btn',
+label: 'Main Activity & Budget table',
+template: fy => `APPROVED COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY ${fy}`,
+},
+};
+function currentTableHeadingText(selectId) {
+const cfg = TABLE_TITLE_FIELDS[selectId];
+const wpId = document.getElementById('wp-select').value;
+const wp = STATE.workplans.find(w => String(w.id) === String(wpId));
+const fy = wp ? wp.financial_year : '2026/2027';
+return (wp && wp[cfg.field]) ? wp[cfg.field] : cfg.template(fy);
+}
+function renderTableTitles() {
+Object.keys(TABLE_TITLE_FIELDS).forEach(selectId => {
+const sel = document.getElementById(selectId);
+if (!sel) return;
+const text = currentTableHeadingText(selectId);
+sel.innerHTML = `<option value="${escapeHtml(text)}">${escapeHtml(text)}</option>`;
+});
+}
+document.querySelectorAll('.table-title-select').forEach(sel => {
+// Single-option display selects — prevent the native dropdown from
+// opening (nothing to choose), keeping them purely as a heading display
+// consistent with the work-plan-year picker's look above.
+sel.addEventListener('mousedown', e => e.preventDefault());
+});
+document.querySelectorAll('.table-title-actions .icon-btn[id$="-edit-btn"]').forEach(btn => {
+btn.addEventListener('click', () => {
+const selectId = btn.id.replace('-edit-btn', '-title-select');
+const cfg = TABLE_TITLE_FIELDS[selectId];
+if (!cfg) return;
+const wpId = document.getElementById('wp-select').value;
+if (!wpId) { toast('Select a work plan first', 'error'); return; }
+STATE.editingHeadingSelectId = selectId;
+document.getElementById('th-modal-title').textContent = `Edit Heading — ${cfg.label}`;
+document.getElementById('th-heading-input').value = currentTableHeadingText(selectId);
+openModal('modal-table-heading');
+});
+});
+document.getElementById('th-save-btn').addEventListener('click', async () => {
+const selectId = STATE.editingHeadingSelectId;
+const cfg = selectId && TABLE_TITLE_FIELDS[selectId];
+if (!cfg) return;
+const text = document.getElementById('th-heading-input').value.trim();
+if (!text) { toast('Heading cannot be empty', 'error'); return; }
+const wpId = document.getElementById('wp-select').value;
+try {
+const updated = await api(`/api/workplans/${wpId}/headings`, { method: 'PATCH', body: JSON.stringify({ [cfg.field]: text }) });
+const idx = STATE.workplans.findIndex(w => String(w.id) === String(wpId));
+if (idx > -1) STATE.workplans[idx] = updated;
+renderTableTitles();
+closeModal('modal-table-heading');
+toast('Heading updated', 'success');
+} catch (e) { toast(e.message, 'error'); }
+});
+// ---- Dashboard -----------------------------------------------------------------
 async function loadDashboard() {
 try {
 const s = await api('/api/dashboard/stats');
@@ -2087,15 +2301,15 @@ return `
 </div>`;
 }).join('');
 }
-// Work Plan & Budget view
+// ---- Work Plan & Budget view -----------------------------------------------------
 async function loadWorkplanView() {
 await loadWorkplans();
 await renderBudgetCodes();
 await renderRevenueSources();
 }
-document.getElementById('wp-select').addEventListener('change', () => { renderBudgetCodes(); renderRevenueSources(); });
+document.getElementById('wp-select').addEventListener('change', () => { renderBudgetCodes(); renderRevenueSources(); renderTableTitles(); });
 document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
-// Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save
+// Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
 async function downloadWorkPlanPdf() {
 const wpId = document.getElementById('wp-select').value;
 if (!wpId) { toast('Select a work plan first', 'error'); return; }
@@ -2116,7 +2330,11 @@ finally { btn.disabled = false; }
 }
 document.getElementById('wp-dept-filter').addEventListener('change', renderBudgetCodes);
 document.getElementById('wp-search').addEventListener('input', debounce(renderBudgetCodes, 300));
-// Renders the Revenue Sources Summary table plus the Revenue Source by Category detail (categories with sub rows); the summary's amount is auto-derived as each source's Category Total
+// Renders the "Revenue Sources Summary" table (unchanged, per Council request)
+// AND the new "Revenue Source by Category for the FY 2026/27" detail (categories with sub rows) that
+// appears right after the summary. The summary's Approved Budget Amount for
+// each source is obtained automatically on the backend as the Category Total
+// (sum of that source's sub-row Approved Estimates).
 async function renderRevenueSources() {
   const tbody = document.getElementById('wp-revenue-summary-body');
   const totalEl = document.getElementById('wp-revenue-summary-total');
@@ -2129,7 +2347,8 @@ async function renderRevenueSources() {
     STATE.revenueSources = sources;
     renderRevenueDetailTable(sources);
 
-    // Sum each matching source's Category Total into one of the three fixed Council categories
+    // Sum each matching source's Category Total (auto-derived from its sub
+    // rows) into one of the three fixed Council revenue categories.
     const categoryTotals = { gou: 0, lr: 0, mdp: 0 };
     sources.forEach(r => {
       const key = categorizeRevenueSource(r);
@@ -2146,7 +2365,8 @@ async function renderRevenueSources() {
     const total = categoryTotals.gou + categoryTotals.lr + categoryTotals.mdp;
     totalEl.textContent = 'UGX ' + money(total);
   } catch (e) {
-    // Keep the three fixed rows visible with zeroed amounts rather than an empty-state message
+    // Even on error, keep the three fixed rows visible with zeroed amounts
+    // rather than an empty-state message, since their content is constant.
     tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
       <tr>
         <td>${escapeHtml(cat.pbs_fund_code)} — ${escapeHtml(cat.source_of_financing_name)}</td>
@@ -2158,7 +2378,10 @@ async function renderRevenueSources() {
     renderRevenueDetailTable([]);
   }
 }
-// Renders category head rows (fund code/source/definition), sub rows, inline "+ Sub Row" adder, and an auto Category Total row
+// Renders the "Revenue Source by Category for the FY 2026/27": one category head row per revenue source
+// (PBS Fund Code + Revenue Source + Functional Definition title), its sub rows
+// (revenue items with Approved Estimates), an inline "+ Sub Row" adder and an
+// Auto Category Total row (sum of sub rows) — mirroring the Council's sheet.
 function renderRevenueDetailTable(sources) {
 const tbody = document.getElementById('wp-revenue-detail-body');
 if (!sources || sources.length === 0) {
@@ -2245,12 +2468,13 @@ toast('Sub row removed', 'success');
 renderRevenueSources();
 } catch (e) { toast(e.message, 'error'); }
 }
-// Clear all: Revenue Sources
+// ---- Clear all: Revenue Sources (source of revenue table) --------------------
 document.getElementById('wp-revenue-clear-btn').addEventListener('click', async () => {
 const wpId = document.getElementById('wp-select').value;
 if (!wpId) { toast('Please select a work plan first', 'error'); return; }
 if (!confirm('Clear ALL revenue sources (and their sub rows) for this work plan? This cannot be undone.')) return;
-// Empty the tables on screen immediately so the clear feels instant
+// Empty the tables on screen immediately so the clear feels instant, rather
+// than waiting on the network round trip before anything visibly changes.
 document.getElementById('wp-revenue-detail-body').innerHTML = '<tr><td colspan="6"><div class="empty-state" style="padding:16px;">Clearing…</div></td></tr>';
 document.getElementById('wp-revenue-summary-body').innerHTML = '<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
 try {
@@ -2260,11 +2484,13 @@ toast(`Cleared ${result.deleted} revenue source(s)`, 'success');
 renderRevenueSources();
 }
 });
-// Clear all: Annual Work Plan / Budget Estimates
+// ---- Clear all: Annual Work Plan / Budget Estimates ---------------------------
 document.getElementById('wp-clear-btn').addEventListener('click', async () => {
 const wpId = document.getElementById('wp-select').value;
 if (!wpId) { toast('Please select a work plan first', 'error'); return; }
 if (!confirm('Clear ALL activity & budget estimate rows for this work plan? This cannot be undone.')) return;
+// Empty the main table and the dependent Department Budget Summary table
+// on screen immediately, before the request even resolves.
 document.getElementById('wp-table-body').innerHTML = '<tr><td colspan="20"><div class="empty-state" style="padding:16px;">Clearing…</div></td></tr>';
 renderDeptSummaryTable([]);
 try {
@@ -2276,7 +2502,7 @@ toast(msg, 'success');
 renderBudgetCodes();
 }
 });
-// Renders the Department Budget Summary table in the work-plan header
+// Renders the "Department Budget Summary" table in the work-plan header.
 function renderDeptSummaryTable(codes) {
 const tbody = document.getElementById('wp-dept-summary-body');
 const totalsIds = { q1: 'wp-summary-q1', q2: 'wp-summary-q2', q3: 'wp-summary-q3', q4: 'wp-summary-q4', total: 'wp-summary-total', uncommitted: 'wp-summary-uncommitted' };
@@ -2327,7 +2553,10 @@ if (!codes || codes.length === 0) {
 el.innerHTML = '<div class="empty-state" style="padding:20px;">No budget data yet.</div>';
 return;
 }
-// Note: baseline_value/planned_target are best-effort — for rows recorded as narrative text (see baseline_note/target_note), this is only the first number found, not a precise total
+// Note: baseline_value/planned_target are a best-effort numeric figure —
+// for rows where the source workbook recorded a narrative or multi-part
+// value (see baseline_note/target_note, shown in the table and on hover),
+// this is only the first number found in that text, not a precise total.
 const map = {};
 codes.forEach(c => {
 const name = c.department_name || 'Unassigned';
@@ -2423,15 +2652,14 @@ const start = acc;
 acc += pct;
 return `${palette[i % palette.length]} ${start.toFixed(2)}% ${acc.toFixed(2)}%`;
 }).join(', ');
-// Legend: department name shown in full (wraps rather than truncating), with padding before the amount/pct
 const legend = rows.map(([name, v], i) => {
 const pct = ((v / total) * 100).toFixed(1);
 return `
 <div style="display:flex; align-items:center; gap:9px; font-size:12.5px; margin-bottom:8px;">
 <span style="width:12px;height:12px;border-radius:3px; background:${palette[i % palette.length]}; flex-shrink:0;"></span>
-<span style="font-weight:600; flex:1 1 auto; min-width:0; padding-right:14px; word-break:break-word;">${escapeHtml(name)}</span>
-<span class="mono" style="color:var(--ink-500); flex-shrink:0; padding-left:6px;">UGX ${money(v)}</span>
-<span class="mono" style="color:var(--gold-600); font-weight:700; flex-shrink:0; padding-left:10px;">${pct}%</span>
+<span style="font-weight:600; flex:0 1 auto; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(name)}</span>
+<span class="mono" style="color:var(--ink-500); flex-shrink:0;">UGX ${money(v)}</span>
+<span class="mono" style="color:var(--gold-600); font-weight:700; flex-shrink:0;">${pct}%</span>
 </div>`;
 }).join('');
 el.innerHTML = `
@@ -2641,7 +2869,7 @@ renderRevenueSources();
 }
 } catch (e) { toast(e.message, 'error'); }
 });
-// Revenue Sources (category + sub rows)
+// ---- Revenue Sources (category + sub rows) -----------------------------------
 function resetRevenueSourceForm() {
 STATE.editingRevenueSourceId = null;
 STATE.revItems = [];
@@ -2655,7 +2883,8 @@ setRevCustomVisible(selectId, false);
 document.getElementById('rev-amount').value = 0;
 renderRevItems();
 }
-// Sub-row builder inside the Revenue Source form (mirrors the reference sheet's sub rows)
+// Sub-row builder inside the Revenue Source form (mirrors the sub rows in the
+// Revenue Source by Category for the FY 2026/27 / reference image).
 function renderRevItems() {
 const tbody = document.getElementById('rev-items-body');
 if (!STATE.revItems.length) {
@@ -2758,7 +2987,7 @@ closeModal('modal-rev');
 renderRevenueSources();
 } catch (e) { toast(e.message, 'error'); }
 });
-// Import Revenue Sources from Excel
+// ---- Import Revenue Sources from Excel ---------------------------------------
 document.getElementById('wp-import-revenue-btn').addEventListener('click', () => {
 const wpVal = document.getElementById('wp-select').value;
 if (!wpVal) { toast('Please select a work plan to import into first', 'error'); return; }
@@ -2781,7 +3010,7 @@ renderRevenueSources();
 } catch (err) { toast(err.message, 'error'); }
 finally { e.target.value = ''; }
 });
-// Import Budget Estimates from Excel
+// ---- Import Budget Estimates from Excel ------------------------------------
 document.getElementById('wp-import-btn').addEventListener('click', () => {
 const wpVal = document.getElementById('wp-select').value;
 if (!wpVal) { toast('Please select a work plan to import into first', 'error'); return; }
@@ -2806,9 +3035,12 @@ renderBudgetCodes();
 } catch (err) { toast(err.message, 'error'); }
 finally { e.target.value = ''; }
 });
-// Requisitions
+// ---- Requisitions --------------------------------------------------------------
 function resetReqLineItems() {
-// Start with two Sub Activity sections (S/N 01, S/N 02), each with 5 blank priced lines
+// Start every new requisition with two Sub Activity sections (S/N 01 and
+// S/N 02), each with 5 blank priced lines underneath it, instead of just
+// one section, so there's room to fill the form without repeatedly
+// clicking "Add Sub Activity" / "Add Line".
 STATE.reqLineItems = [];
 for (let sectionNo = 1; sectionNo <= 2; sectionNo++) {
 STATE.reqLineItems.push({ item_no: sectionNo, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: true });
@@ -2874,7 +3106,10 @@ return `<tr>
 <td class="no-print"><button type="button" class="rf-row-remove" title="Remove line" onclick="removeReqLineItem(${idx})">✕</button></td>
 </tr>`;
 }).join('');
-// Payment Voucher table mirrors the same line items, adding Ledger Folio and a per-line charge Date
+// Payment Voucher table mirrors the same line items (so the same work
+// isn't entered twice) but adds the two "Taken on charge expenditure"
+// columns — Ledger Folio and a per-line charge Date — which only appear
+// on the voucher.
 if (pvTbody) {
 let lastPvNo = null;
 pvTbody.innerHTML = STATE.reqLineItems.filter(li => !li.isHeader || li.description).map((li, idx) => {
@@ -2912,7 +3147,16 @@ const li = STATE.reqLineItems[idx];
 if (!li) return;
 li[field] = value;
 }
-// Attach Signature (entry forms): fills the nearest box with the signature on file for the signed-in account; role-gated for HOD/Treasurer/Clerk boxes
+// ---- Attach Signature (entry forms) --------------------------------------------
+// Fills the signature box nearest wherever this was clicked with whichever
+// signature is on file for the account currently signed in. Actual
+// approval-stage signatures are still recorded automatically from the
+// approval history once a requisition is approved — this is a preview for
+// whoever happens to be filling the box in front of them right now.
+// Strictly role-gated: a box marked with a required role (Head of
+// Department, Town Treasurer, Town Clerk) can only be signed by an account
+// currently signed in as that exact role — never by anyone else, and never
+// by the System Administrator on someone else's behalf.
 const SIG_ROLE_LABELS = { hod: 'Head of Department', treasurer: 'Town Treasurer', clerk: 'Town Clerk' };
 function attachSignature(targetId, btn, requiredRole) {
 const el = document.getElementById(targetId);
@@ -2926,9 +3170,15 @@ toast('No signature on file yet — upload one in My Settings first', 'error');
 return;
 }
 el.innerHTML = `<img src="${API_BASE}${STATE.signatureUrl}" alt="Signature"/>`;
-if (btn) btn.style.display = 'none'; // once signed, hide that box's prompt
+// Once a signature has been placed, the "Attach Signature" prompt for that
+// box is no longer relevant — remove it rather than leaving it visible.
+if (btn) btn.style.display = 'none';
 }
-// Shows/hides each "Attach Signature" button per role gating; boxes with no required role stay visible for whoever is filling the form
+// Shows/hides each "Attach Signature" button according to whether the
+// signed-in account's role is allowed to sign that particular box. Boxes
+// with no required role (e.g. Signature of payee/witness/cashier, which
+// aren't tied to a system role) stay visible for whoever is filling the
+// form. Called whenever the New/Edit Requisition modal opens.
 function refreshSignatureButtonVisibility() {
 document.querySelectorAll('.sig-attach-btn[data-sig-role]').forEach(btn => {
 const requiredRole = btn.getAttribute('data-sig-role');
@@ -2942,6 +3192,7 @@ document.getElementById('req-save-draft').textContent = editReq ? 'Save Changes'
 document.getElementById('req-submit-now').textContent = editReq ? 'Save & Submit for Approval' : 'Submit for Approval';
 document.getElementById('req-save-draft-mid').textContent = editReq ? 'Save Changes' : 'Save Draft';
 document.getElementById('req-submit-now-mid').textContent = editReq ? 'Save & Submit for Approval' : 'Submit for Approval';
+// Fill in the paper-form fields that mirror who's submitting this and when.
 const deptSel = document.getElementById('req-form-department');
 deptSel.value = String((editReq ? editReq.department_id : STATE.departmentId) || '');
 document.getElementById('req-form-names').value = editReq ? (editReq.requester_name || STATE.name || '—') : (STATE.name || '—');
@@ -2950,7 +3201,9 @@ document.getElementById('req-form-refno-preview').textContent = editReq ? editRe
 document.getElementById('pv-form-refno-preview').textContent = editReq ? editReq.ref_no : '(assigned on save)';
 syncPvDepartment();
 loadReqBudgetCodes(deptSel.value, editReq ? editReq.budget_code_id : null);
-// Reset signature boxes/voucher fields, re-show every Attach Signature button, then role-gate + pre-fill requester
+// Clear the Attach Signature boxes and voucher-only fields for a fresh form,
+// then re-show every "Attach Signature" button (a fresh form has nothing
+// signed yet) before role-gating and requester pre-fill run below.
 const allSigBoxIds = ['req-sig-requester','req-sig-hod','req-sig-treasurer','req-sig-clerk',
 'pv-sig-controller','pv-sig-clerk','pv-sig-vb','pv-sig-verified','pv-sig-passed',
 'pv-sig-payee','pv-sig-cashier','pv-sig-witness'];
@@ -2958,7 +3211,10 @@ allSigBoxIds.forEach(id => {
 const b = document.getElementById(id); if (b) b.innerHTML = '';
 const btn = document.getElementById(id + '-btn'); if (btn) btn.style.display = '';
 });
-// Requester's own signature is the one recorded on the requisition itself
+// The requester's own signature is the one box that's actually recorded on
+// the requisition itself — pre-fill it from the record being edited (or
+// from the current account's own signature for a brand-new requisition),
+// and hide its "Attach Signature" prompt once it's filled.
 const requesterSigUrl = editReq ? editReq.requester_signature_url : STATE.signatureUrl;
 if (requesterSigUrl) {
 document.getElementById('req-sig-requester').innerHTML = `<img src="${API_BASE}${requesterSigUrl}" alt="Signature"/>`;
@@ -2986,6 +3242,8 @@ document.getElementById('pv-inter-clearance').value = voucher.inter_dept_clearan
 document.getElementById('pv-program-estimate').value = voucher.program_of_estimate || '';
 document.getElementById('pv-sub-program').value = voucher.sub_program || '';
 document.getElementById('pv-item').value = voucher.item || '';
+// Reset the line items and paint the paper form right away so it appears
+// on screen the instant the button is clicked.
 if (!editReq) { resetReqLineItems(); document.getElementById('req-subject').value = ''; }
 if (editReq) {
 document.getElementById('req-subject').value = editReq.subject || '';
@@ -3006,7 +3264,10 @@ const dept = STATE.departments.find(d => String(d.id) === String(deptSel.value))
 const pvDept = document.getElementById('pv-form-department');
 if (pvDept) pvDept.value = deptLabel(dept) || '—';
 }
-// Populates the Budget Output Code select for the chosen department; keeps Activity Budget Limit in sync with the pick
+// Populates the "Budget Output Code" select with the budget lines for the
+// chosen department, and keeps "Activity Budget Limit" in sync with whichever
+// one is picked — mirrors the paper form, where the limit is read straight
+// off the selected budget output.
 async function loadReqBudgetCodes(departmentId, selectedId) {
 const sel = document.getElementById('req-form-budgetcode');
 const limitEl = document.getElementById('req-form-budgetlimit');
@@ -3231,7 +3492,7 @@ closeModal('modal-req-detail');
 loadApprovals(); loadRequisitions(); loadDashboard();
 } catch (e) { toast(e.message, 'error'); }
 }
-// Printable Requisition Form (mirrors the Council's paper layout)
+// ---- Printable Requisition Form (mirrors the Council's paper layout) -------
 async function openPrintForm(reqId) {
 const body = document.getElementById('pf-body');
 body.innerHTML = '<div class="loading-row"><span class="spinner spinner-dark"></span></div>';
@@ -3425,7 +3686,7 @@ Date: ${dots(voucher.passed_payment_date)}<br/>
 </div>
 `;
 }
-// Approvals
+// ---- Approvals ------------------------------------------------------------------
 async function loadApprovals() {
 const tbody = document.getElementById('approval-table-body');
 tbody.innerHTML = '<tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
@@ -3448,7 +3709,7 @@ return `
 }).join('');
 } catch (e) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
-// Accountability
+// ---- Accountability --------------------------------------------------------------
 async function loadAccountability() {
 const tbody = document.getElementById('acc-table-body');
 tbody.innerHTML = '<tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
@@ -3466,7 +3727,7 @@ tbody.innerHTML = items.map(r => `
 </tr>`).join('');
 } catch (e) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
-// Single-page document viewer (Auditor review)
+// ---- Single-page document viewer (Auditor review) --------------------------------
 async function openDocumentViewer(reqId) {
 STATE.currentReqId = reqId;
 const body = document.getElementById('dv-body');
@@ -3571,7 +3832,7 @@ closeModal('modal-req-detail');
 loadAccountability(); loadRequisitions();
 } catch (e) { toast(e.message, 'error'); }
 }
-// Reports / Audit
+// ---- Reports / Audit --------------------------------------------------------------
 document.querySelectorAll('.tabs-sub button').forEach(btn => {
 btn.addEventListener('click', () => {
 document.querySelectorAll('.tabs-sub button').forEach(b => b.classList.remove('active'));
@@ -3619,7 +3880,7 @@ ${r.accountability ? `<div class="divider"></div><div class="kicker">Auditor Rem
 </div>`;
 } catch (e) { result.innerHTML = `<div class="empty-state">${escapeHtml(e.message)}</div>`; }
 });
-// Users
+// ---- Users ------------------------------------------------------------------------
 let STATE_USERS_CACHE = [];
 document.getElementById('new-user-btn').addEventListener('click', () => {
 STATE.editingUserId = null;
@@ -3712,7 +3973,7 @@ async function toggleUser(id) {
 try { await api(`/api/users/${id}/toggle-active`, { method: 'PATCH' }); loadUsers(); toast('User status updated', 'success'); }
 catch (e) { toast(e.message, 'error'); }
 }
-// Departments view
+// ---- Departments view ---------------------------------------------------------------
 document.getElementById('new-dept-btn').addEventListener('click', () => {
 STATE.editingDepartmentId = null;
 document.getElementById('d-modal-title').textContent = 'New Department';
@@ -3774,9 +4035,9 @@ tbody.innerHTML = deps.map(d => `<tr>
 '<tr><td colspan="3"><div class="empty-state">No departments yet.</div></td></tr>';
 } catch (e) { tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
-// Utilities
+// ---- Utilities -----------------------------------------------------------------------
 function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); }; }
-// Boot
+// ---- Boot -----------------------------------------------------------------------------
 if (STATE.token) { enterApp().catch(() => logout()); }
 </script>
 </body>
