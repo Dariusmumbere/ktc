@@ -849,6 +849,18 @@ Departments
 </button>
 </div>
 </div>
+<div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-bottom:20px;">
+<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+<button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
+<button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
+<input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
+</div>
+<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+<button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity & Budget Estimates</button>
+<button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
+<input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
+</div>
+</div>
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
@@ -908,18 +920,6 @@ Departments
 </tr>
 </tfoot>
 </table>
-</div>
-</div>
-<div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:18px;">
-<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-<button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
-<button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
-<input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
-</div>
-<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-<button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity & Budget Estimates</button>
-<button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
-<input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
 </div>
 </div>
 </div>
