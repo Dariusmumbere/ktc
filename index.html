@@ -652,6 +652,29 @@ vertical-align:middle; flex-shrink:0;
 .th-clear-btn:hover{background:rgba(184,56,42,.9); color:#fff; opacity:1;}
 .th-clear-btn svg{width:14px;height:14px; display:block; pointer-events:none;}
 .th-with-clear{display:flex; align-items:center; justify-content:space-between; gap:6px; white-space:nowrap;}
+
+#view-workplan > .card:first-of-type {
+  flex-wrap: nowrap !important;
+}
+
+#view-workplan > .card:first-of-type #wp-select {
+  width: auto !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+#view-workplan > .card:first-of-type > div[style*="display:flex"] {
+  flex-shrink: 0 !important;
+}
+
+@media (max-width: 640px) {
+  #view-workplan > .card:first-of-type {
+    flex-wrap: wrap !important;
+  }
+  #view-workplan > .card:first-of-type #wp-select {
+    width: 100% !important;
+  }
+}
 </style>
 </head>
 <body>
