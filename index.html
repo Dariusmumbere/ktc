@@ -338,7 +338,7 @@ text-align:center;
 #wp-dept-summary-wrap tfoot td{text-align:left;}
 #view-workplan .table-wrap tfoot tr{background:#EAF0EF !important;}
 #view-workplan .table-wrap tfoot td{color:var(--navy-950); font-weight:700;}
-tbody td{padding:11.5px 12px; border-bottom:1px solid #EEF2F1; font-size:12.5px; white-space:nowrap;}
+tbody td{padding:11.5px 12px; border-bottom:1px solid #EEF2F1; font-size:12.5px; white-space:nowrap; vertical-align:top;}
 tbody tr{transition:background .12s var(--ease);}
 tbody tr:nth-child(even){background:#FAFCFB;}
 tbody tr:hover{background:var(--gold-100);}
@@ -419,6 +419,12 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 /* Department (1st column): wrap the name across two lines to use the
 narrower column width efficiently rather than forcing extra scroll */
 #wp-main-table th:nth-child(1), #wp-main-table td:nth-child(1){white-space:normal; max-width:104px; width:104px;}
+/* PIAP Output Description (7th) and PIAP Output Indicator (8th) columns —
+sit between Budget Output Code/Description and Unit of Measure — need
+noticeably more room than the other wrapped columns since they hold
+long narrative text. */
+#wp-main-table th:nth-child(7), #wp-main-table td:nth-child(7),
+#wp-main-table th:nth-child(8), #wp-main-table td:nth-child(8){white-space:normal; max-width:220px; width:220px;}
 /* Q1–Q4 and Total Budget columns: keep numbers compact */
 #wp-main-table th:nth-child(13), #wp-main-table td:nth-child(13),
 #wp-main-table th:nth-child(14), #wp-main-table td:nth-child(14),
@@ -839,8 +845,8 @@ Departments
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
-<div class="card" style="background:#fff; border:none; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:var(--shadow-sm);">
-<select class="filter-select" id="wp-select" style="flex:0 1 480px; min-width:260px; max-width:480px; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
+<div class="card" style="background:#fff; border:none; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:var(--shadow-sm); width:100%; box-sizing:border-box;">
+<select class="filter-select" id="wp-select" style="flex:1 1 auto; width:100%; min-width:260px; max-width:none; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
 <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
 <button class="icon-btn" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
@@ -859,7 +865,7 @@ Departments
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
-<div class="kicker" style="color:var(--teal-700);">APPROVED SUMMARY OF THE COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
+<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED SUMMARY OF THE COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-revenue-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-revenue-summary-table">
@@ -884,7 +890,7 @@ Departments
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
-<div class="kicker" style="color:var(--teal-700);">APPROVED DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
+<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-dept-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-dept-summary-table">
@@ -2794,9 +2800,9 @@ renderRevenueSources();
 document.getElementById('rev-create-btn').addEventListener('click', async () => {
 const payload = {
 work_plan_id: Number(document.getElementById('rev-workplan').value),
-pbs_fund_code: document.getElementById('rev-fund-code').value.trim(),
-source_of_financing_name: document.getElementById('rev-source-name').value.trim(),
-functional_definition: document.getElementById('rev-functional-def').value.trim(),
+pbs_fund_code: getRevFieldValue('rev-fund-code').trim(),
+source_of_financing_name: getRevFieldValue('rev-source-name').trim(),
+functional_definition: getRevFieldValue('rev-functional-def').trim(),
 approved_budget_amount: Number(document.getElementById('rev-amount').value || 0),
 items: STATE.revItems
 .filter(it => it.description && it.description.trim() !== '')
