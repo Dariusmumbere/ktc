@@ -210,7 +210,7 @@ display:grid; grid-template-columns:auto 1fr auto; align-items:center; column-ga
 }
 .topbar-title-block{min-width:0; text-align:center;}
 .topbar-title{font-family:var(--font-display); font-size:22px; font-weight:600; letter-spacing:.1px; line-height:1.22;}
-.topbar-title.topbar-title-pbs{color:var(--info); font-size:18px; line-height:1.25;}
+.topbar-title.topbar-title-pbs{color:var(--info); font-size:22px; line-height:1.28;}
 .topbar-sub{font-size:11.5px; color:var(--ink-500); margin-top:1px; line-height:1.2;}
 .topbar-right{display:flex; align-items:center; gap:14px; padding:6px 0; justify-self:end;}
 .icon-btn{
@@ -844,10 +844,11 @@ Departments
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
-<div class="card card-pad" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; margin-bottom:18px;">
+<!-- The 3 buttons (new/edit/download) sit inline right after the title/FY
+     selector, on the same row, instead of centered on a row below it. -->
+<div class="card card-pad" style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
 
 <select class="filter-select" id="wp-select" style="min-width:260px; max-width:100%; text-align:center; text-align-last:center; font-size:18px; font-weight:700; color:var(--navy-950); padding:10px 16px;"></select>
-<div style="display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
 <button class="icon-btn" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
 </button>
@@ -858,7 +859,6 @@ Departments
 <button class="icon-btn" id="wp-download-pdf-btn" title="Download Annual Work Plan &amp; Budget as PDF">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
 </button>
-</div>
 </div>
 <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
 <button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
@@ -1664,12 +1664,52 @@ function getRevFieldValue(selectId) {
   const cat = REVENUE_SUMMARY_CATEGORIES.find(c => c.key === val);
   return cat ? cat[cfg.catField] : '';
 }
+// ---- Lightweight client-side response cache ----------------------------------
+// The Work Plan & Budget tables (Annual Workplan + Revenue Sources) were the
+// ones that used to spin forever: on a slow/flaky connection the fetch below
+// had no timeout, so a request that never resolved left the spinner running
+// indefinitely with no way out. Two fixes, paired:
+//   1. api() now races every request against a timeout (see AbortController
+//      below) so a stuck request always turns into a clear, retryable error
+//      instead of an endless spinner.
+//   2. Successful table responses are cached here in memory for a short TTL,
+//      keyed by the exact request path. Re-opening the Work Plan & Budget tab,
+//      or flipping back to a work plan/department/search combo already seen,
+//      paints instantly from cache while a fresh request quietly revalidates
+//      in the background — mirroring the backend's own response cache.
+const CLIENT_CACHE_TTL_MS = 60000;
+const _clientCache = new Map();
+function cacheGet(key) {
+  const hit = _clientCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.ts > CLIENT_CACHE_TTL_MS) { _clientCache.delete(key); return null; }
+  return hit.value;
+}
+function cacheSet(key, value) { _clientCache.set(key, { ts: Date.now(), value }); }
+function cacheInvalidate(prefix) {
+  for (const k of _clientCache.keys()) { if (k.startsWith(prefix)) _clientCache.delete(k); }
+}
 // ---- Fetch helper -----------------------------------------------------------
 async function api(path, opts = {}) {
 const headers = opts.headers || {};
 if (!(opts.body instanceof FormData)) headers['Content-Type'] = 'application/json';
 if (STATE.token) headers['Authorization'] = 'Bearer ' + STATE.token;
-const res = await fetch(API_BASE + path, { ...opts, headers });
+const method = (opts.method || 'GET').toUpperCase();
+// A request that never gets a response (dropped connection, an overloaded
+// server, etc.) used to leave table spinners running forever. Aborting after
+// a generous timeout turns that into a normal, catchable error instead.
+const controller = new AbortController();
+const timeoutMs = opts.timeoutMs || 25000;
+const timer = setTimeout(() => controller.abort(), timeoutMs);
+let res;
+try {
+res = await fetch(API_BASE + path, { ...opts, headers, signal: controller.signal });
+} catch (e) {
+if (e.name === 'AbortError') throw new Error('The request timed out — the server took too long to respond. Please try again.');
+throw e;
+} finally {
+clearTimeout(timer);
+}
 if (res.status === 401) {
 logout();
 throw new Error('Session expired. Please sign in again.');
@@ -1679,6 +1719,13 @@ try { data = await res.json(); } catch (e) { /* no body */ }
 if (!res.ok) {
 const msg = (data && data.detail) ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Something went wrong';
 throw new Error(msg);
+}
+// Any write to budget-codes/revenue-sources invalidates the matching
+// client-side cache namespace, mirroring the backend's own invalidation, so
+// the next render pulls fresh data instead of a stale cached copy.
+if (method !== 'GET') {
+if (path.startsWith('/api/budget-codes')) cacheInvalidate('budget_codes:');
+if (path.startsWith('/api/revenue-sources') || path.startsWith('/api/revenue-source-items')) cacheInvalidate('revenue_sources:');
 }
 return data;
 }
@@ -2164,37 +2211,58 @@ document.getElementById('wp-search').addEventListener('input', debounce(renderBu
 // appears right after the summary. The summary's Approved Budget Amount for
 // each source is obtained automatically on the backend as the Category Total
 // (sum of that source's sub-row Approved Estimates).
+// Paints the Revenue Sources Summary + detail tables from an already-fetched
+// list of revenue sources. Split out from renderRevenueSources so a cache hit
+// can paint instantly, matching the budget-codes table's approach.
+function paintRevenueSources(sources) {
+  const tbody = document.getElementById('wp-revenue-summary-body');
+  const totalEl = document.getElementById('wp-revenue-summary-total');
+  renderRevenueDetailTable(sources);
+
+  // Sum each matching source's Category Total (auto-derived from its sub
+  // rows) into one of the three fixed Council revenue categories.
+  const categoryTotals = { gou: 0, lr: 0, mdp: 0 };
+  sources.forEach(r => {
+    const key = categorizeRevenueSource(r);
+    if (key) categoryTotals[key] += Number(r.approved_budget_amount) || 0;
+  });
+
+  tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
+    <tr>
+      <td class="mono">${escapeHtml(cat.pbs_fund_code)}</td>
+      <td>${escapeHtml(cat.source_of_financing_name)}</td>
+      <td class="rev-func-def">${formatMultilinePoints(cat.functional_definition)}</td>
+      <td class="num mono">${money(categoryTotals[cat.key])}</td>
+    </tr>`).join('');
+
+  const total = categoryTotals.gou + categoryTotals.lr + categoryTotals.mdp;
+  totalEl.textContent = 'UGX ' + money(total);
+}
 async function renderRevenueSources() {
   const tbody = document.getElementById('wp-revenue-summary-body');
   const totalEl = document.getElementById('wp-revenue-summary-total');
-  tbody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
   const wpId = document.getElementById('wp-select').value;
+  let path = '/api/revenue-sources';
+  if (wpId) path += `?work_plan_id=${wpId}`;
+  const cacheKey = 'revenue_sources:' + path;
+  const cached = cacheGet(cacheKey);
+  if (cached) {
+    // Instant paint from cache, then silently revalidate below.
+    STATE.revenueSources = cached;
+    paintRevenueSources(cached);
+  } else {
+    tbody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  }
   try {
-    let path = '/api/revenue-sources';
-    if (wpId) path += `?work_plan_id=${wpId}`;
     const sources = await api(path);
     STATE.revenueSources = sources;
-    renderRevenueDetailTable(sources);
-
-    // Sum each matching source's Category Total (auto-derived from its sub
-    // rows) into one of the three fixed Council revenue categories.
-    const categoryTotals = { gou: 0, lr: 0, mdp: 0 };
-    sources.forEach(r => {
-      const key = categorizeRevenueSource(r);
-      if (key) categoryTotals[key] += Number(r.approved_budget_amount) || 0;
-    });
-
-    tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
-      <tr>
-        <td class="mono">${escapeHtml(cat.pbs_fund_code)}</td>
-        <td>${escapeHtml(cat.source_of_financing_name)}</td>
-        <td class="rev-func-def">${formatMultilinePoints(cat.functional_definition)}</td>
-        <td class="num mono">${money(categoryTotals[cat.key])}</td>
-      </tr>`).join('');
-
-    const total = categoryTotals.gou + categoryTotals.lr + categoryTotals.mdp;
-    totalEl.textContent = 'UGX ' + money(total);
+    cacheSet(cacheKey, sources);
+    paintRevenueSources(sources);
   } catch (e) {
+    if (cached) {
+      toast(e.message, 'error');
+      return;
+    }
     // Even on error, keep the three fixed rows visible with zeroed amounts
     // rather than an empty-state message, since their content is constant.
     tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
@@ -2498,21 +2566,12 @@ el.innerHTML = `
 <div style="flex:1; min-width:240px;">${legend}</div>
 `;
 }
-async function renderBudgetCodes() {
+// Paints the Annual Workplan table (+ its dependent Department Budget
+// Summary table and charts) from an already-fetched list of budget codes.
+// Split out from renderBudgetCodes so a cache hit can paint instantly, and
+// the network response (fresh or revalidated) paints the same way.
+function paintBudgetCodesTable(codes) {
 const tbody = document.getElementById('wp-table-body');
-tbody.innerHTML = '<tr><td colspan="20" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
-const wpId = document.getElementById('wp-select').value;
-const deptId = document.getElementById('wp-dept-filter').value;
-const search = document.getElementById('wp-search').value.trim();
-const wp = STATE.workplans.find(w => String(w.id) === String(wpId));
-document.getElementById('wp-fy-title').textContent = wp ? wp.financial_year : '—';
-try {
-let path = '/api/budget-codes?';
-if (wpId) path += `work_plan_id=${wpId}&`;
-if (deptId) path += `department_id=${deptId}&`;
-if (search) path += `search=${encodeURIComponent(search)}&`;
-const codes = await api(path);
-STATE.budgetCodes = codes;
 renderDeptSummaryTable(codes);
 if (codes.length === 0) {
 tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
@@ -2545,11 +2604,43 @@ tbody.innerHTML = codes.map(c => `
 </tr>`).join('');
 renderDeptOutputChart(codes);
 renderDeptPieChart(codes);
+}
+async function renderBudgetCodes() {
+const tbody = document.getElementById('wp-table-body');
+const wpId = document.getElementById('wp-select').value;
+const deptId = document.getElementById('wp-dept-filter').value;
+const search = document.getElementById('wp-search').value.trim();
+const wp = STATE.workplans.find(w => String(w.id) === String(wpId));
+document.getElementById('wp-fy-title').textContent = wp ? wp.financial_year : '—';
+let path = '/api/budget-codes?';
+if (wpId) path += `work_plan_id=${wpId}&`;
+if (deptId) path += `department_id=${deptId}&`;
+if (search) path += `search=${encodeURIComponent(search)}&`;
+const cacheKey = 'budget_codes:' + path;
+const cached = cacheGet(cacheKey);
+if (cached) {
+// Instant paint from cache, then silently revalidate below.
+STATE.budgetCodes = cached;
+paintBudgetCodesTable(cached);
+} else {
+tbody.innerHTML = '<tr><td colspan="20" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+}
+try {
+const codes = await api(path);
+STATE.budgetCodes = codes;
+cacheSet(cacheKey, codes);
+paintBudgetCodesTable(codes);
 } catch (e) {
+if (cached) {
+// Already showing good data from cache — surface the error quietly
+// instead of blanking out a table that's already on screen.
+toast(e.message, 'error');
+} else {
 tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
 renderDeptSummaryTable([]);
 renderDeptOutputChart([]);
 renderDeptPieChart([]);
+}
 }
 }
 async function deleteBudgetCode(id) {
