@@ -211,6 +211,17 @@ display:flex; align-items:center; justify-content:space-between; padding:0 22px;
 .topbar-title{font-family:var(--font-display); font-size:22px; font-weight:600; letter-spacing:.1px;}
 .topbar-title.topbar-title-pbs{color:var(--info); font-size:24px;}
 .topbar-sub{font-size:11.5px; color:var(--ink-500); margin-top:1px;}
+/* When the PBS/IFMS heading is showing, lift its wrapper out of the normal
+left-aligned flow and center it on the bar as a whole, independent of the
+hamburger button on the left and the notification bell on the right. */
+#topbar-title-wrap:has(.topbar-title-pbs){
+position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+text-align:center; max-width:min(72%, 780px); width:max-content;
+}
+#topbar-title-wrap:has(.topbar-title-pbs) .topbar-title,
+#topbar-title-wrap:has(.topbar-title-pbs) .topbar-sub{
+text-align:center;
+}
 .topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
 .icon-btn{
 position:relative; width:36px;height:36px; border-radius:9px; border:1px solid var(--line); background:#fff;
@@ -327,7 +338,7 @@ text-align:center;
 #wp-dept-summary-body tr:nth-child(even){background:#FFFFFF;}
 #wp-dept-summary-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-dept-summary-body tr:hover{background:var(--gold-100);}
-#wp-dept-summary-body td{color:var(--ink-900); font-weight:600; text-align:left;}
+#wp-dept-summary-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
 #wp-dept-summary-body td.mono, #wp-dept-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
 #wp-dept-summary-wrap tfoot td{text-align:left;}
 #view-workplan .table-wrap tfoot tr{background:#EAF0EF !important;}
@@ -406,7 +417,7 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-dept-summary-body td{padding:7px 9px; font-size:11.5px;}
 #wp-main-table{min-width:1560px;}
 #wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
-#wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:400; line-height:1.3;}
+#wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:400; line-height:1.3; vertical-align:top;}
 #wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px;}
 /* Funding Source (18th column): give it noticeably less room than before */
 #wp-main-table th:nth-child(18), #wp-main-table td:nth-child(18){white-space:normal; max-width:78px; width:78px;}
@@ -419,6 +430,13 @@ narrower column width efficiently rather than forcing extra scroll */
 #wp-main-table th:nth-child(15), #wp-main-table td:nth-child(15),
 #wp-main-table th:nth-child(16), #wp-main-table td:nth-child(16),
 #wp-main-table th:nth-child(17), #wp-main-table td:nth-child(17){max-width:92px; width:92px;}
+/* Budget Output Description (6th) and the two PIAP columns (7th, 8th):
+these hold long narrative text, so give them noticeably more room. */
+#wp-main-table th:nth-child(6), #wp-main-table td:nth-child(6),
+#wp-main-table th:nth-child(7), #wp-main-table td:nth-child(7),
+#wp-main-table th:nth-child(8), #wp-main-table td:nth-child(8){max-width:220px; width:220px;}
+/* Unit of Measure (9th): short values only ("Number", "%"), so keep it narrow */
+#wp-main-table th:nth-child(9), #wp-main-table td:nth-child(9){max-width:54px; width:54px;}
 .toolbar{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
 .search-box{position:relative; flex:1; min-width:220px;}
 .search-box svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); width:15px;height:15px; color:var(--ink-500); pointer-events:none;}
@@ -752,7 +770,7 @@ Departments
 <button class="icon-btn hamburger-btn" id="hamburger-btn" title="Menu">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
 </button>
-<div style="min-width:0;">
+<div style="min-width:0;" id="topbar-title-wrap">
 <div class="topbar-title" id="topbar-title">Dashboard</div>
 <div class="topbar-sub" id="topbar-sub">Overview of financial activity</div>
 </div>
@@ -832,10 +850,10 @@ Departments
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
-<div class="card card-pad" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:18px;">
+<div class="card card-pad" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; margin-bottom:18px;">
 
-<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-<select class="filter-select" id="wp-select" style="min-width:190px;"></select>
+<select class="filter-select" id="wp-select" style="min-width:260px; max-width:520px; width:100%; font-size:18px; font-weight:700; text-align:center; text-align-last:center; -moz-text-align-last:center; color:var(--navy-950);"></select>
+<div style="display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
 <button class="icon-btn" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
 </button>
@@ -1889,7 +1907,7 @@ document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin')
 // ---- Navigation -----------------------------------------------------------
 const VIEW_TITLES = {
 dashboard: ['Dashboard', 'Overview of financial activity'],
-workplan: ['Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)', 'Annual work plans, budget estimates, Execution and Absorption '],
+workplan: ['Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)', ''],
 requisitions: ['Requisitions', 'Requisition tracking and submission'],
 approvals: ['Approvals', 'Three-stage approval workflow'],
 accountability: ['Accountability', 'Post-approval documentation and verification'],
