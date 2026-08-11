@@ -213,6 +213,10 @@ display:flex; align-items:center; justify-content:space-between; padding:0 22px;
 .topbar-title-wrap{min-width:0; flex:1;}
 .topbar-title-wrap-center{text-align:center;}
 .topbar-title-lg{font-size:23px; font-weight:600; line-height:1.32; color:var(--navy-950); letter-spacing:.1px; max-width:640px; margin:0 auto;}
+@media (min-width:901px){
+.topbar-title-wrap-center{display:flex; justify-content:center;}
+.topbar-title-lg{white-space:nowrap; max-width:none; font-size:clamp(13px,1.5vw,22px);}
+}
 .topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
 .icon-btn{
 position:relative; width:36px;height:36px; border-radius:9px; border:1px solid var(--line); background:#fff;
@@ -401,7 +405,7 @@ point begins on its own line rather than running together as one line. */
 /* ---------------- Work Plan & Budget: compact, height-constrained,
 dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-dept-summary-wrap{overflow-x:auto;}
-#wp-main-table-wrap{max-height:300px; overflow-x:auto; overflow-y:auto;}
+#wp-main-table-wrap{max-height:440px; min-height:220px; overflow-x:auto; overflow-y:auto;}
 #wp-dept-summary-wrap thead th, #wp-main-table-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-dept-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3;}
 #wp-dept-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
@@ -835,8 +839,8 @@ Departments
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
-<div class="card" style="background:#fff; border:none; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; box-shadow:var(--shadow-sm);">
-<select class="filter-select" id="wp-select" style="flex:1; min-width:260px; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
+<div class="card" style="background:#fff; border:none; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:var(--shadow-sm);">
+<select class="filter-select" id="wp-select" style="flex:0 1 480px; min-width:260px; max-width:480px; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
 <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
 <button class="icon-btn" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
@@ -850,18 +854,8 @@ Departments
 </button>
 </div>
 </div>
-<div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-bottom:20px;">
-<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-<button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
-<button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
 <input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
-</div>
-<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-<button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity Output & Expenditure Estimates</button>
-<button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
 <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
-</div>
-</div>
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
@@ -871,18 +865,17 @@ Departments
 <table id="wp-revenue-summary-table">
 <thead>
 <tr>
-<th>PBS Fund<br>Code</th>
-<th>Source of Financing<br>Name</th>
-<th>Functional Definition<br>in PBS</th>
-<th>Approved Budget<br>Amount (UGX)</th>
+<th>Revenue Source</th>
+<th>Revenue Source Definition</th>
+<th>Revenue Source Amount (UGX)</th>
 </tr>
 </thead>
 <tbody id="wp-revenue-summary-body">
-<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 <tfoot>
 <tr style="font-weight:700; background:#EAF0EF; text-align:left;">
-<td colspan="3">Total Revenue</td>
+<td colspan="2">Total Revenue</td>
 <td class="num mono" id="wp-revenue-summary-total">—</td>
 </tr>
 </tfoot>
@@ -928,6 +921,10 @@ Departments
 <div style="padding:14px 18px 4px;">
 <div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
 </div>
+<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; padding:0 18px 14px;">
+<button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
+<button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
+</div>
 <div class="table-wrap" id="wp-revenue-detail-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-revenue-detail-table">
 <thead>
@@ -963,6 +960,10 @@ Departments
 <select class="filter-select" id="wp-dept-filter"><option value="">All Departments</option></select>
 </div>
 <div class="kicker" id="wp-main-table-heading" style="margin-bottom:10px; font-size:13px; color:var(--navy-950);">APPROVED COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
+<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+<button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity Output & Expenditure Estimates</button>
+<button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
+</div>
 <div class="table-wrap" id="wp-main-table-wrap">
 <table id="wp-main-table">
 <thead>
@@ -2067,7 +2068,7 @@ STATE.workplans = await api('/api/workplans');
 const wpSel = document.getElementById('wp-select');
 const bcSel = document.getElementById('bc-workplan');
 const revSel = document.getElementById('rev-workplan');
-const opts = STATE.workplans.map(w => `<option value="${w.id}">${escapeHtml(w.title)} — FY ${escapeHtml(w.financial_year)}</option>`).join('');
+const opts = STATE.workplans.map(w => `<option value="${w.id}" style="text-align:center;">${escapeHtml(w.title)} — FY ${escapeHtml(w.financial_year)}</option>`).join('');
 if (wpSel) wpSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (bcSel) bcSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (revSel) revSel.innerHTML = opts || '<option value="">No work plans yet</option>';
@@ -2167,7 +2168,7 @@ document.getElementById('wp-search').addEventListener('input', debounce(renderBu
 async function renderRevenueSources() {
   const tbody = document.getElementById('wp-revenue-summary-body');
   const totalEl = document.getElementById('wp-revenue-summary-total');
-  tbody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
   const wpId = document.getElementById('wp-select').value;
   try {
     let path = '/api/revenue-sources';
@@ -2186,8 +2187,7 @@ async function renderRevenueSources() {
 
     tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
       <tr>
-        <td class="mono">${escapeHtml(cat.pbs_fund_code)}</td>
-        <td>${escapeHtml(cat.source_of_financing_name)}</td>
+        <td>${escapeHtml(cat.pbs_fund_code)} — ${escapeHtml(cat.source_of_financing_name)}</td>
         <td class="rev-func-def">${formatMultilinePoints(cat.functional_definition)}</td>
         <td class="num mono">${money(categoryTotals[cat.key])}</td>
       </tr>`).join('');
@@ -2199,8 +2199,7 @@ async function renderRevenueSources() {
     // rather than an empty-state message, since their content is constant.
     tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
       <tr>
-        <td class="mono">${escapeHtml(cat.pbs_fund_code)}</td>
-        <td>${escapeHtml(cat.source_of_financing_name)}</td>
+        <td>${escapeHtml(cat.pbs_fund_code)} — ${escapeHtml(cat.source_of_financing_name)}</td>
         <td class="rev-func-def">${formatMultilinePoints(cat.functional_definition)}</td>
         <td class="num mono">0</td>
       </tr>`).join('');
@@ -2307,7 +2306,7 @@ if (!confirm('Clear ALL revenue sources (and their sub rows) for this work plan?
 // Empty the tables on screen immediately so the clear feels instant, rather
 // than waiting on the network round trip before anything visibly changes.
 document.getElementById('wp-revenue-detail-body').innerHTML = '<tr><td colspan="6"><div class="empty-state" style="padding:16px;">Clearing…</div></td></tr>';
-document.getElementById('wp-revenue-summary-body').innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+document.getElementById('wp-revenue-summary-body').innerHTML = '<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
 try {
 const result = await api(`/api/revenue-sources/clear?work_plan_id=${wpId}`, { method: 'DELETE' });
 toast(`Cleared ${result.deleted} revenue source(s)`, 'success');
