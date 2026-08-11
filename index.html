@@ -206,13 +206,14 @@ box-shadow:0 0 0 2px rgba(255,255,255,.12), 0 2px 6px rgba(0,0,0,.3);
 .topbar{
 min-height:64px; flex-shrink:0; background:rgba(255,255,255,.86); backdrop-filter:blur(10px) saturate(1.4); -webkit-backdrop-filter:blur(10px) saturate(1.4);
 border-bottom:1px solid var(--line); box-shadow:0 1px 0 rgba(10,31,43,.02);
-display:grid; grid-template-columns:auto 1fr auto; align-items:center; column-gap:12px; padding:8px 22px; position:relative; z-index:10;
+display:flex; align-items:center; justify-content:space-between; padding:0 22px; position:relative; z-index:10; flex-wrap:wrap; gap:10px;
 }
-.topbar-title-block{min-width:0; text-align:center;}
-.topbar-title{font-family:var(--font-display); font-size:22px; font-weight:600; letter-spacing:.1px; line-height:1.22;}
-.topbar-title.topbar-title-pbs{color:var(--info); font-size:22px; line-height:1.28;}
-.topbar-sub{font-size:11.5px; color:var(--ink-500); margin-top:1px; line-height:1.2;}
-.topbar-right{display:flex; align-items:center; gap:14px; padding:6px 0; justify-self:end;}
+.topbar-title{font-family:var(--font-display); font-size:22px; font-weight:600; letter-spacing:.1px;}
+.topbar-sub{font-size:11.5px; color:var(--ink-500); margin-top:1px;}
+.topbar-title-wrap{min-width:0; flex:1;}
+.topbar-title-wrap-center{text-align:center;}
+.topbar-title-lg{font-size:23px; font-weight:600; line-height:1.32; color:var(--navy-950); letter-spacing:.1px; max-width:640px; margin:0 auto;}
+.topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
 .icon-btn{
 position:relative; width:36px;height:36px; border-radius:9px; border:1px solid var(--line); background:#fff;
 display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-700);
@@ -420,19 +421,6 @@ narrower column width efficiently rather than forcing extra scroll */
 #wp-main-table th:nth-child(15), #wp-main-table td:nth-child(15),
 #wp-main-table th:nth-child(16), #wp-main-table td:nth-child(16),
 #wp-main-table th:nth-child(17), #wp-main-table td:nth-child(17){max-width:92px; width:92px;}
-/* Unit of Measure (9th column): narrower, since values here are short
-(e.g. "Number", "%", "Km") and don't need the standard wrap width. */
-#wp-main-table th:nth-child(9), #wp-main-table td:nth-child(9){white-space:normal; max-width:55px; width:55px;}
-/* Budget Output Description (6th) and the two PIAP columns (7th, 8th):
-these carry the longest narrative text in the grid, so give them
-noticeably more room than the standard wrap column width. */
-#wp-main-table th:nth-child(6), #wp-main-table td:nth-child(6),
-#wp-main-table th:nth-child(7), #wp-main-table td:nth-child(7),
-#wp-main-table th:nth-child(8), #wp-main-table td:nth-child(8){white-space:normal; max-width:210px; width:210px;}
-/* Row content in the two work-plan grids (Department Summary + main
-Annual Work Plan table) should start at the top of the row rather than
-sit vertically centered, so multi-line cells align cleanly. */
-#wp-dept-summary-body td, #wp-main-table tbody td{vertical-align:top;}
 .toolbar{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
 .search-box{position:relative; flex:1; min-width:220px;}
 .search-box svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); width:15px;height:15px; color:var(--ink-500); pointer-events:none;}
@@ -628,6 +616,7 @@ display:none; position:fixed; inset:0; background:rgba(10,20,26,.55); z-index:14
 @media (max-width:560px){
 .stat-grid{grid-template-columns:1fr;}
 .topbar{padding:0 14px;}
+.topbar-title-lg{font-size:18px; line-height:1.3;}
 .content{padding:14px 12px 50px;}
 .toolbar{flex-direction:column; align-items:stretch;}
 .req-form-meta{grid-template-columns:1fr;}
@@ -765,11 +754,12 @@ Departments
 <button class="icon-btn hamburger-btn" id="hamburger-btn" title="Menu">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
 </button>
-<div class="topbar-title-block" id="topbar-title-block">
+<div class="topbar-title-wrap" id="topbar-title-wrap">
 <div class="topbar-title" id="topbar-title">Dashboard</div>
 <div class="topbar-sub" id="topbar-sub">Overview of financial activity</div>
 </div>
 <div class="topbar-right">
+<span id="wp-fy-title" style="display:none;">—</span>
 <button class="icon-btn" id="notif-btn" title="Notifications">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M9.5 20a2.5 2.5 0 0 0 5 0"/></svg>
 <span class="badge-dot" id="notif-badge" style="display:none;">0</span>
@@ -844,11 +834,9 @@ Departments
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
-<!-- The 3 buttons (new/edit/download) sit inline right after the title/FY
-     selector, on the same row, instead of centered on a row below it. -->
-<div class="card card-pad" style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
-
-<select class="filter-select" id="wp-select" style="min-width:260px; max-width:100%; text-align:center; text-align-last:center; font-size:18px; font-weight:700; color:var(--navy-950); padding:10px 16px;"></select>
+<div class="card" style="background:#fff; border:none; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; box-shadow:var(--shadow-sm);">
+<select class="filter-select" id="wp-select" style="flex:1; min-width:260px; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
+<div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
 <button class="icon-btn" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
 </button>
@@ -860,18 +848,11 @@ Departments
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
 </button>
 </div>
-<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
-<button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
-<button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
-<input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
-<button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity Output & Expenditure Estimates</button>
-<button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
-<input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
 </div>
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
-<div class="kicker" style="font-size:13px; color:var(--navy-950);">SUMMARY OF THE COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
+<div class="kicker" style="color:var(--teal-700);">APPROVED SUMMARY OF THE COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-revenue-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-revenue-summary-table">
@@ -880,7 +861,7 @@ Departments
 <th>PBS Fund<br>Code</th>
 <th>Source of Financing<br>Name</th>
 <th>Functional Definition<br>in PBS</th>
-<th>Budget<br>Amount (UGX)</th>
+<th>Approved Budget<br>Amount (UGX)</th>
 </tr>
 </thead>
 <tbody id="wp-revenue-summary-body">
@@ -897,7 +878,7 @@ Departments
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
-<div class="kicker" style="font-size:13px; color:var(--navy-950);">DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
+<div class="kicker" style="color:var(--teal-700);">APPROVED DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-dept-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-dept-summary-table">
@@ -927,6 +908,18 @@ Departments
 </tr>
 </tfoot>
 </table>
+</div>
+</div>
+<div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:18px;">
+<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+<button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
+<button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
+<input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
+</div>
+<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+<button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity & Budget Estimates</button>
+<button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
+<input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
 </div>
 </div>
 </div>
@@ -1664,52 +1657,12 @@ function getRevFieldValue(selectId) {
   const cat = REVENUE_SUMMARY_CATEGORIES.find(c => c.key === val);
   return cat ? cat[cfg.catField] : '';
 }
-// ---- Lightweight client-side response cache ----------------------------------
-// The Work Plan & Budget tables (Annual Workplan + Revenue Sources) were the
-// ones that used to spin forever: on a slow/flaky connection the fetch below
-// had no timeout, so a request that never resolved left the spinner running
-// indefinitely with no way out. Two fixes, paired:
-//   1. api() now races every request against a timeout (see AbortController
-//      below) so a stuck request always turns into a clear, retryable error
-//      instead of an endless spinner.
-//   2. Successful table responses are cached here in memory for a short TTL,
-//      keyed by the exact request path. Re-opening the Work Plan & Budget tab,
-//      or flipping back to a work plan/department/search combo already seen,
-//      paints instantly from cache while a fresh request quietly revalidates
-//      in the background — mirroring the backend's own response cache.
-const CLIENT_CACHE_TTL_MS = 60000;
-const _clientCache = new Map();
-function cacheGet(key) {
-  const hit = _clientCache.get(key);
-  if (!hit) return null;
-  if (Date.now() - hit.ts > CLIENT_CACHE_TTL_MS) { _clientCache.delete(key); return null; }
-  return hit.value;
-}
-function cacheSet(key, value) { _clientCache.set(key, { ts: Date.now(), value }); }
-function cacheInvalidate(prefix) {
-  for (const k of _clientCache.keys()) { if (k.startsWith(prefix)) _clientCache.delete(k); }
-}
 // ---- Fetch helper -----------------------------------------------------------
 async function api(path, opts = {}) {
 const headers = opts.headers || {};
 if (!(opts.body instanceof FormData)) headers['Content-Type'] = 'application/json';
 if (STATE.token) headers['Authorization'] = 'Bearer ' + STATE.token;
-const method = (opts.method || 'GET').toUpperCase();
-// A request that never gets a response (dropped connection, an overloaded
-// server, etc.) used to leave table spinners running forever. Aborting after
-// a generous timeout turns that into a normal, catchable error instead.
-const controller = new AbortController();
-const timeoutMs = opts.timeoutMs || 25000;
-const timer = setTimeout(() => controller.abort(), timeoutMs);
-let res;
-try {
-res = await fetch(API_BASE + path, { ...opts, headers, signal: controller.signal });
-} catch (e) {
-if (e.name === 'AbortError') throw new Error('The request timed out — the server took too long to respond. Please try again.');
-throw e;
-} finally {
-clearTimeout(timer);
-}
+const res = await fetch(API_BASE + path, { ...opts, headers });
 if (res.status === 401) {
 logout();
 throw new Error('Session expired. Please sign in again.');
@@ -1719,13 +1672,6 @@ try { data = await res.json(); } catch (e) { /* no body */ }
 if (!res.ok) {
 const msg = (data && data.detail) ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Something went wrong';
 throw new Error(msg);
-}
-// Any write to budget-codes/revenue-sources invalidates the matching
-// client-side cache namespace, mirroring the backend's own invalidation, so
-// the next render pulls fresh data instead of a stale cached copy.
-if (method !== 'GET') {
-if (path.startsWith('/api/budget-codes')) cacheInvalidate('budget_codes:');
-if (path.startsWith('/api/revenue-sources') || path.startsWith('/api/revenue-source-items')) cacheInvalidate('revenue_sources:');
 }
 return data;
 }
@@ -1948,7 +1894,7 @@ document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin')
 // ---- Navigation -----------------------------------------------------------
 const VIEW_TITLES = {
 dashboard: ['Dashboard', 'Overview of financial activity'],
-workplan: ['Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)'],
+workplan: ['Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)', ''],
 requisitions: ['Requisitions', 'Requisition tracking and submission'],
 approvals: ['Approvals', 'Three-stage approval workflow'],
 accountability: ['Accountability', 'Post-approval documentation and verification'],
@@ -1961,8 +1907,14 @@ document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggl
 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 document.getElementById('view-' + view).classList.add('active');
 document.getElementById('topbar-title').textContent = VIEW_TITLES[view][0];
-document.getElementById('topbar-title').classList.toggle('topbar-title-pbs', view === 'workplan');
 document.getElementById('topbar-sub').textContent = VIEW_TITLES[view][1];
+const topbarTitleEl = document.getElementById('topbar-title');
+const topbarTitleWrap = document.getElementById('topbar-title-wrap');
+const topbarSubEl = document.getElementById('topbar-sub');
+const isWorkplanView = (view === 'workplan');
+topbarTitleEl.classList.toggle('topbar-title-lg', isWorkplanView);
+topbarTitleWrap.classList.toggle('topbar-title-wrap-center', isWorkplanView);
+topbarSubEl.style.display = isWorkplanView ? 'none' : '';
 closeNotifPanel();
 if (view === 'dashboard') loadDashboard();
 if (view === 'workplan') loadWorkplanView();
@@ -2211,58 +2163,37 @@ document.getElementById('wp-search').addEventListener('input', debounce(renderBu
 // appears right after the summary. The summary's Approved Budget Amount for
 // each source is obtained automatically on the backend as the Category Total
 // (sum of that source's sub-row Approved Estimates).
-// Paints the Revenue Sources Summary + detail tables from an already-fetched
-// list of revenue sources. Split out from renderRevenueSources so a cache hit
-// can paint instantly, matching the budget-codes table's approach.
-function paintRevenueSources(sources) {
-  const tbody = document.getElementById('wp-revenue-summary-body');
-  const totalEl = document.getElementById('wp-revenue-summary-total');
-  renderRevenueDetailTable(sources);
-
-  // Sum each matching source's Category Total (auto-derived from its sub
-  // rows) into one of the three fixed Council revenue categories.
-  const categoryTotals = { gou: 0, lr: 0, mdp: 0 };
-  sources.forEach(r => {
-    const key = categorizeRevenueSource(r);
-    if (key) categoryTotals[key] += Number(r.approved_budget_amount) || 0;
-  });
-
-  tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
-    <tr>
-      <td class="mono">${escapeHtml(cat.pbs_fund_code)}</td>
-      <td>${escapeHtml(cat.source_of_financing_name)}</td>
-      <td class="rev-func-def">${formatMultilinePoints(cat.functional_definition)}</td>
-      <td class="num mono">${money(categoryTotals[cat.key])}</td>
-    </tr>`).join('');
-
-  const total = categoryTotals.gou + categoryTotals.lr + categoryTotals.mdp;
-  totalEl.textContent = 'UGX ' + money(total);
-}
 async function renderRevenueSources() {
   const tbody = document.getElementById('wp-revenue-summary-body');
   const totalEl = document.getElementById('wp-revenue-summary-total');
+  tbody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
   const wpId = document.getElementById('wp-select').value;
-  let path = '/api/revenue-sources';
-  if (wpId) path += `?work_plan_id=${wpId}`;
-  const cacheKey = 'revenue_sources:' + path;
-  const cached = cacheGet(cacheKey);
-  if (cached) {
-    // Instant paint from cache, then silently revalidate below.
-    STATE.revenueSources = cached;
-    paintRevenueSources(cached);
-  } else {
-    tbody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
-  }
   try {
+    let path = '/api/revenue-sources';
+    if (wpId) path += `?work_plan_id=${wpId}`;
     const sources = await api(path);
     STATE.revenueSources = sources;
-    cacheSet(cacheKey, sources);
-    paintRevenueSources(sources);
+    renderRevenueDetailTable(sources);
+
+    // Sum each matching source's Category Total (auto-derived from its sub
+    // rows) into one of the three fixed Council revenue categories.
+    const categoryTotals = { gou: 0, lr: 0, mdp: 0 };
+    sources.forEach(r => {
+      const key = categorizeRevenueSource(r);
+      if (key) categoryTotals[key] += Number(r.approved_budget_amount) || 0;
+    });
+
+    tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
+      <tr>
+        <td class="mono">${escapeHtml(cat.pbs_fund_code)}</td>
+        <td>${escapeHtml(cat.source_of_financing_name)}</td>
+        <td class="rev-func-def">${formatMultilinePoints(cat.functional_definition)}</td>
+        <td class="num mono">${money(categoryTotals[cat.key])}</td>
+      </tr>`).join('');
+
+    const total = categoryTotals.gou + categoryTotals.lr + categoryTotals.mdp;
+    totalEl.textContent = 'UGX ' + money(total);
   } catch (e) {
-    if (cached) {
-      toast(e.message, 'error');
-      return;
-    }
     // Even on error, keep the three fixed rows visible with zeroed amounts
     // rather than an empty-state message, since their content is constant.
     tbody.innerHTML = REVENUE_SUMMARY_CATEGORIES.map(cat => `
@@ -2566,12 +2497,21 @@ el.innerHTML = `
 <div style="flex:1; min-width:240px;">${legend}</div>
 `;
 }
-// Paints the Annual Workplan table (+ its dependent Department Budget
-// Summary table and charts) from an already-fetched list of budget codes.
-// Split out from renderBudgetCodes so a cache hit can paint instantly, and
-// the network response (fresh or revalidated) paints the same way.
-function paintBudgetCodesTable(codes) {
+async function renderBudgetCodes() {
 const tbody = document.getElementById('wp-table-body');
+tbody.innerHTML = '<tr><td colspan="20" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+const wpId = document.getElementById('wp-select').value;
+const deptId = document.getElementById('wp-dept-filter').value;
+const search = document.getElementById('wp-search').value.trim();
+const wp = STATE.workplans.find(w => String(w.id) === String(wpId));
+document.getElementById('wp-fy-title').textContent = wp ? wp.financial_year : '—';
+try {
+let path = '/api/budget-codes?';
+if (wpId) path += `work_plan_id=${wpId}&`;
+if (deptId) path += `department_id=${deptId}&`;
+if (search) path += `search=${encodeURIComponent(search)}&`;
+const codes = await api(path);
+STATE.budgetCodes = codes;
 renderDeptSummaryTable(codes);
 if (codes.length === 0) {
 tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
@@ -2604,43 +2544,11 @@ tbody.innerHTML = codes.map(c => `
 </tr>`).join('');
 renderDeptOutputChart(codes);
 renderDeptPieChart(codes);
-}
-async function renderBudgetCodes() {
-const tbody = document.getElementById('wp-table-body');
-const wpId = document.getElementById('wp-select').value;
-const deptId = document.getElementById('wp-dept-filter').value;
-const search = document.getElementById('wp-search').value.trim();
-const wp = STATE.workplans.find(w => String(w.id) === String(wpId));
-document.getElementById('wp-fy-title').textContent = wp ? wp.financial_year : '—';
-let path = '/api/budget-codes?';
-if (wpId) path += `work_plan_id=${wpId}&`;
-if (deptId) path += `department_id=${deptId}&`;
-if (search) path += `search=${encodeURIComponent(search)}&`;
-const cacheKey = 'budget_codes:' + path;
-const cached = cacheGet(cacheKey);
-if (cached) {
-// Instant paint from cache, then silently revalidate below.
-STATE.budgetCodes = cached;
-paintBudgetCodesTable(cached);
-} else {
-tbody.innerHTML = '<tr><td colspan="20" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
-}
-try {
-const codes = await api(path);
-STATE.budgetCodes = codes;
-cacheSet(cacheKey, codes);
-paintBudgetCodesTable(codes);
 } catch (e) {
-if (cached) {
-// Already showing good data from cache — surface the error quietly
-// instead of blanking out a table that's already on screen.
-toast(e.message, 'error');
-} else {
 tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
 renderDeptSummaryTable([]);
 renderDeptOutputChart([]);
 renderDeptPieChart([]);
-}
 }
 }
 async function deleteBudgetCode(id) {
