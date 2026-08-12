@@ -238,17 +238,8 @@ transition:background .15s var(--ease), border-color .15s var(--ease), transform
 .icon-btn svg{width:17px;height:17px;}
 .icon-btn-sm{width:28px;height:28px;border-radius:7px;}
 .icon-btn-sm svg{width:14px;height:14px;}
-/* ---------------- Editable table titles (dropdown + edit/add-new icons) ---------------- */
+/* ---------------- Table titles + their icon actions (Add / Import etc) ---------------- */
 .table-title-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
-.table-title-select{
-font-family:var(--font-display); font-weight:700; text-transform:uppercase; letter-spacing:.7px;
-border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 8px; margin:0;
-cursor:pointer; max-width:100%; min-width:0; flex:0 1 auto;
-white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-transition:border-color .15s var(--ease), background .15s var(--ease);
-}
-.table-title-select:hover{border-color:var(--line); background:var(--paper);}
-.table-title-select:focus-visible{border-color:var(--teal-500);}
 .table-title-actions{display:flex; align-items:center; gap:6px; flex-shrink:0;}
 /* Pull the Annual Work Plan title (dropdown container) right up to the top
    of the view, removing the large empty band that used to sit above it. */
@@ -439,7 +430,7 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-dept-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3;}
 #wp-dept-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-dept-summary-body td{padding:7px 9px; font-size:11.5px;}
-#wp-main-table{min-width:1560px;}
+#wp-main-table{min-width:1680px;}
 #wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
 #wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:400; line-height:1.3;}
 #wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px;}
@@ -448,6 +439,9 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 /* Department (1st column): wrap the name across two lines to use the
 narrower column width efficiently rather than forcing extra scroll */
 #wp-main-table th:nth-child(1), #wp-main-table td:nth-child(1){white-space:normal; max-width:104px; width:104px;}
+/* Budget Output Description (6th column): holds long narrative text, so
+give it noticeably more room than the other wrapped columns. */
+#wp-main-table th:nth-child(6), #wp-main-table td:nth-child(6){white-space:normal; max-width:260px; width:260px;}
 /* PIAP Output Description (7th) and PIAP Output Indicator (8th) columns —
 sit between Budget Output Code/Description and Unit of Measure — need
 noticeably more room than the other wrapped columns since they hold
@@ -894,17 +888,7 @@ Departments
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
-<div class="table-title-row">
-<select class="kicker table-title-select" id="tt-select-revenue-summary" style="font-size:13px; color:var(--navy-950);" title="Choose which saved title to display"></select>
-<div class="table-title-actions">
-<button type="button" class="icon-btn icon-btn-sm tt-edit-btn" style="display:none;" title="Edit this title" onclick="openEditTableTitle('wp_revenue_summary')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-</button>
-<button type="button" class="icon-btn icon-btn-sm tt-add-btn" style="display:none;" title="Add a new title" onclick="openNewTableTitle('wp_revenue_summary')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
-</button>
-</div>
-</div>
+<div class="kicker" id="wp-title-revenue-summary" style="font-size:13px; color:var(--navy-950);">APPROVED SUMMARY OF THE COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-revenue-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-revenue-summary-table">
@@ -929,17 +913,7 @@ Departments
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
-<div class="table-title-row">
-<select class="kicker table-title-select" id="tt-select-dept-summary" style="font-size:13px; color:var(--navy-950);" title="Choose which saved title to display"></select>
-<div class="table-title-actions">
-<button type="button" class="icon-btn icon-btn-sm tt-edit-btn" style="display:none;" title="Edit this title" onclick="openEditTableTitle('wp_dept_summary')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-</button>
-<button type="button" class="icon-btn icon-btn-sm tt-add-btn" style="display:none;" title="Add a new title" onclick="openNewTableTitle('wp_dept_summary')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
-</button>
-</div>
-</div>
+<div class="kicker" id="wp-title-dept-summary" style="font-size:13px; color:var(--navy-950);">APPROVED DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
 </div>
 <div class="table-wrap" id="wp-dept-summary-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px;">
 <table id="wp-dept-summary-table">
@@ -973,19 +947,15 @@ Departments
 </div>
 </div>
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
-<div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; padding:14px 18px 0;">
-<button class="btn" id="wp-new-revenue-btn" style="display:none; background:var(--info); border-color:var(--info); color:#fff; box-shadow:0 4px 12px rgba(46,94,140,.35);">+ Add Revenue Sources</button>
-<button class="btn" id="wp-import-revenue-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Revenue Sources From Excel</button>
-</div>
-<div style="padding:8px 18px 4px;">
+<div style="padding:14px 18px 4px;">
 <div class="table-title-row">
-<select class="kicker table-title-select" id="tt-select-revenue-detail" style="font-size:13px; color:var(--navy-950);" title="Choose which saved title to display"></select>
+<div class="kicker" id="wp-title-revenue-detail" style="font-size:13px; color:var(--navy-950);">APPROVED COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027</div>
 <div class="table-title-actions">
-<button type="button" class="icon-btn icon-btn-sm tt-edit-btn" style="display:none;" title="Edit this title" onclick="openEditTableTitle('wp_revenue_detail')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-</button>
-<button type="button" class="icon-btn icon-btn-sm tt-add-btn" style="display:none;" title="Add a new title" onclick="openNewTableTitle('wp_revenue_detail')">
+<button type="button" class="icon-btn icon-btn-sm" id="wp-new-revenue-btn" style="display:none;" title="Add Revenue Sources">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="wp-import-revenue-btn" style="display:none;" title="Import Revenue Sources From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
 </button>
 </div>
 </div>
@@ -1024,18 +994,14 @@ Departments
 </div>
 <select class="filter-select" id="wp-dept-filter"><option value="">All Departments</option></select>
 </div>
-<div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
-<button class="btn btn-gold" id="wp-new-btn" style="display:none;">Add Activity Output & Expenditure Estimates</button>
-<button class="btn" id="wp-import-btn" style="display:none; background:var(--success); border-color:var(--success); color:#fff; box-shadow:0 4px 12px rgba(31,138,95,.35);">⇪ Import Activity & Budget Estimates From Excel</button>
-</div>
 <div class="table-title-row" id="wp-main-table-heading" style="margin-bottom:10px;">
-<select class="kicker table-title-select" id="tt-select-main-table" style="font-size:13px; color:var(--navy-950);" title="Choose which saved title to display"></select>
+<div class="kicker" id="wp-title-main-table" style="font-size:13px; color:var(--navy-950);">APPROVED COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
 <div class="table-title-actions">
-<button type="button" class="icon-btn icon-btn-sm tt-edit-btn" style="display:none;" title="Edit this title" onclick="openEditTableTitle('wp_main_table')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-</button>
-<button type="button" class="icon-btn icon-btn-sm tt-add-btn" style="display:none;" title="Add a new title" onclick="openNewTableTitle('wp_main_table')">
+<button type="button" class="icon-btn icon-btn-sm" id="wp-new-btn" style="display:none;" title="Add Activity Output & Expenditure Estimates">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="wp-import-btn" style="display:none;" title="Import Activity & Budget Estimates From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
 </button>
 </div>
 </div>
@@ -1532,30 +1498,25 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 <!-- ===== MODAL: New / Edit Work Plan ===== -->
 <div class="overlay" id="modal-wp">
-<div class="modal">
+<div class="modal modal-lg">
 <div class="modal-head"><h3 id="wpn-modal-title">New Work Plan</h3><button class="modal-close" data-close="modal-wp">&times;</button></div>
 <div class="modal-body">
+<div class="form-grid">
 <div class="field"><label>Financial Year</label><input type="text" id="wpn-fy" placeholder="e.g. 2026/27"/></div>
 <div class="field"><label>Title</label><input type="text" id="wpn-title" placeholder="e.g. Annual Work Plan and Budget"/></div>
+</div>
 <div class="help-text">Once created, this work plan becomes available for budget codes to be attached to.</div>
+<div class="divider"></div>
+<span class="kicker">Table Headings For This Work Plan</span>
+<div class="help-text" style="margin-top:2px; margin-bottom:10px;">These are the headings shown above the four Work Plan &amp; Budget tables. Leave any of them blank to fall back to a default built from the financial year above.</div>
+<div class="field"><label>Revenue Summary Table Heading</label><input type="text" id="wpn-title-revenue-summary" placeholder="e.g. APPROVED SUMMARY OF THE COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027"/></div>
+<div class="field"><label>Departmental Summary Table Heading</label><input type="text" id="wpn-title-dept-summary" placeholder="e.g. APPROVED DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027"/></div>
+<div class="field"><label>Revenue Estimates Table Heading</label><input type="text" id="wpn-title-revenue-detail" placeholder="e.g. APPROVED COUNCIL BUDGET FRAMEWORK PAPER AND PRELIMINARY REVENUE ESTIMATES FOR FY 2026/2027"/></div>
+<div class="field"><label>Annual Work Plan Table Heading</label><input type="text" id="wpn-title-main-table" placeholder="e.g. APPROVED COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027"/></div>
 </div>
 <div class="modal-foot">
 <button class="btn btn-ghost" data-close="modal-wp">Cancel</button>
 <button class="btn btn-primary" id="wpn-create-btn">Create Work Plan</button>
-</div>
-</div>
-</div>
-<!-- ===== MODAL: Edit / Add New table title (used by all four work plan tables) ===== -->
-<div class="overlay" id="modal-tt">
-<div class="modal">
-<div class="modal-head"><h3 id="tt-modal-title">Edit Table Title</h3><button class="modal-close" data-close="modal-tt">&times;</button></div>
-<div class="modal-body">
-<div class="field"><label>Title</label><input type="text" id="tt-title-input" placeholder="e.g. APPROVED COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2027/2028"/></div>
-<div class="help-text">Saved titles stay in the dropdown so you can switch back to a previous year's heading at any time.</div>
-</div>
-<div class="modal-foot">
-<button class="btn btn-ghost" data-close="modal-tt">Cancel</button>
-<button class="btn btn-primary" id="tt-create-btn">Save Changes</button>
 </div>
 </div>
 </div>
@@ -1981,7 +1942,6 @@ document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].
 document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 document.getElementById('wp-revenue-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
-document.querySelectorAll('.tt-edit-btn, .tt-add-btn').forEach(btn => { btn.style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none'; });
 }
 // ---- Navigation -----------------------------------------------------------
 const VIEW_TITLES = {
@@ -2163,75 +2123,26 @@ const opts = STATE.workplans.map(w => `<option value="${w.id}" style="text-align
 if (wpSel) wpSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (bcSel) bcSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (revSel) revSel.innerHTML = opts || '<option value="">No work plans yet</option>';
+applyWorkplanTableTitles();
 }
-// ---- Editable table titles (the 4 work-plan table headings) ------------------------
-const TABLE_TITLE_CONFIGS = [
-{ key: 'wp_revenue_summary', selectId: 'tt-select-revenue-summary' },
-{ key: 'wp_dept_summary', selectId: 'tt-select-dept-summary' },
-{ key: 'wp_revenue_detail', selectId: 'tt-select-revenue-detail' },
-{ key: 'wp_main_table', selectId: 'tt-select-main-table' },
-];
-STATE.tableTitles = {};
-async function loadTableTitles() {
-for (const cfg of TABLE_TITLE_CONFIGS) {
-const sel = document.getElementById(cfg.selectId);
-if (!sel) continue;
-try {
-const rows = await api(`/api/table-titles?table_key=${encodeURIComponent(cfg.key)}`);
-STATE.tableTitles[cfg.key] = rows;
-const prevValue = sel.value;
-sel.innerHTML = rows.map(r => `<option value="${r.id}">${escapeHtml(r.title)}</option>`).join('') || '<option value="">No title yet</option>';
-if (prevValue && rows.some(r => String(r.id) === String(prevValue))) sel.value = prevValue;
-else if (rows.length) sel.value = rows[rows.length - 1].id;
-} catch (e) { toast(e.message, 'error'); }
+// ---- Work-plan table headings (the 4 Work Plan & Budget table titles) --------------
+// Each work plan carries its own heading for the 4 tables below; switching
+// the "Annual Work Plan" dropdown swaps all 4 headings to match. They are
+// only ever edited from the New/Edit Work Plan modal (see wpn-* fields).
+const WORKPLAN_TABLE_TITLE_FIELDS = {
+'wp-title-revenue-summary': 'title_revenue_summary',
+'wp-title-dept-summary': 'title_dept_summary',
+'wp-title-revenue-detail': 'title_revenue_detail',
+'wp-title-main-table': 'title_main_table',
+};
+function applyWorkplanTableTitles() {
+const wpVal = document.getElementById('wp-select').value;
+const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+for (const [elId, field] of Object.entries(WORKPLAN_TABLE_TITLE_FIELDS)) {
+const el = document.getElementById(elId);
+if (el && wp && wp[field]) el.textContent = wp[field];
 }
 }
-function currentTableTitleRow(key) {
-const cfg = TABLE_TITLE_CONFIGS.find(c => c.key === key);
-const sel = document.getElementById(cfg.selectId);
-const rows = STATE.tableTitles[key] || [];
-return rows.find(r => String(r.id) === String(sel.value));
-}
-function openEditTableTitle(key) {
-const row = currentTableTitleRow(key);
-if (!row) { toast('Please select a title to edit first', 'error'); return; }
-STATE.editingTableTitleKey = key;
-STATE.editingTableTitleId = row.id;
-document.getElementById('tt-modal-title').textContent = 'Edit Table Title';
-document.getElementById('tt-create-btn').textContent = 'Save Changes';
-document.getElementById('tt-title-input').value = row.title;
-openModal('modal-tt');
-}
-function openNewTableTitle(key) {
-const row = currentTableTitleRow(key);
-STATE.editingTableTitleKey = key;
-STATE.editingTableTitleId = null;
-document.getElementById('tt-modal-title').textContent = 'Add New Title';
-document.getElementById('tt-create-btn').textContent = 'Add Title';
-document.getElementById('tt-title-input').value = row ? row.title : '';
-openModal('modal-tt');
-}
-document.getElementById('tt-create-btn').addEventListener('click', async () => {
-const title = document.getElementById('tt-title-input').value.trim();
-const key = STATE.editingTableTitleKey;
-if (!title) { toast('Please enter a title', 'error'); return; }
-try {
-let savedId;
-if (STATE.editingTableTitleId) {
-const row = await api(`/api/table-titles/${STATE.editingTableTitleId}`, { method: 'PATCH', body: JSON.stringify({ table_key: key, title }) });
-savedId = row.id;
-toast('Title updated', 'success');
-} else {
-const row = await api('/api/table-titles', { method: 'POST', body: JSON.stringify({ table_key: key, title }) });
-savedId = row.id;
-toast('Title added', 'success');
-}
-closeModal('modal-tt');
-await loadTableTitles();
-const cfg = TABLE_TITLE_CONFIGS.find(c => c.key === key);
-document.getElementById(cfg.selectId).value = savedId;
-} catch (e) { toast(e.message, 'error'); }
-});
 // ---- Dashboard -----------------------------------------------------------------
 async function loadDashboard() {
 try {
@@ -2293,11 +2204,10 @@ return `
 // ---- Work Plan & Budget view -----------------------------------------------------
 async function loadWorkplanView() {
 await loadWorkplans();
-await loadTableTitles();
 await renderBudgetCodes();
 await renderRevenueSources();
 }
-document.getElementById('wp-select').addEventListener('change', () => { renderBudgetCodes(); renderRevenueSources(); });
+document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); renderBudgetCodes(); renderRevenueSources(); });
 document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
 // Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
 async function downloadWorkPlanPdf() {
@@ -2822,6 +2732,10 @@ document.getElementById('wpn-modal-title').textContent = 'New Work Plan';
 document.getElementById('wpn-create-btn').textContent = 'Create Work Plan';
 document.getElementById('wpn-fy').value = '';
 document.getElementById('wpn-title').value = '';
+document.getElementById('wpn-title-revenue-summary').value = '';
+document.getElementById('wpn-title-dept-summary').value = '';
+document.getElementById('wpn-title-revenue-detail').value = '';
+document.getElementById('wpn-title-main-table').value = '';
 openModal('modal-wp');
 });
 document.getElementById('wp-edit-workplan-btn').addEventListener('click', () => {
@@ -2833,27 +2747,38 @@ document.getElementById('wpn-modal-title').textContent = `Edit Work Plan — ${w
 document.getElementById('wpn-create-btn').textContent = 'Save Changes';
 document.getElementById('wpn-fy').value = wp.financial_year;
 document.getElementById('wpn-title').value = wp.title;
+document.getElementById('wpn-title-revenue-summary').value = wp.title_revenue_summary || '';
+document.getElementById('wpn-title-dept-summary').value = wp.title_dept_summary || '';
+document.getElementById('wpn-title-revenue-detail').value = wp.title_revenue_detail || '';
+document.getElementById('wpn-title-main-table').value = wp.title_main_table || '';
 openModal('modal-wp');
 });
 document.getElementById('wpn-create-btn').addEventListener('click', async () => {
 const financial_year = document.getElementById('wpn-fy').value.trim();
 const title = document.getElementById('wpn-title').value.trim();
+const title_revenue_summary = document.getElementById('wpn-title-revenue-summary').value.trim();
+const title_dept_summary = document.getElementById('wpn-title-dept-summary').value.trim();
+const title_revenue_detail = document.getElementById('wpn-title-revenue-detail').value.trim();
+const title_main_table = document.getElementById('wpn-title-main-table').value.trim();
 if (!financial_year || !title) { toast('Please complete both fields', 'error'); return; }
+const payload = { financial_year, title, title_revenue_summary, title_dept_summary, title_revenue_detail, title_main_table };
 try {
 if (STATE.editingWorkPlanId) {
-await api(`/api/workplans/${STATE.editingWorkPlanId}`, { method: 'PATCH', body: JSON.stringify({ financial_year, title }) });
+await api(`/api/workplans/${STATE.editingWorkPlanId}`, { method: 'PATCH', body: JSON.stringify(payload) });
 toast('Work plan updated', 'success');
 closeModal('modal-wp');
 await loadWorkplans();
 document.getElementById('wp-select').value = STATE.editingWorkPlanId;
+applyWorkplanTableTitles();
 renderBudgetCodes();
 renderRevenueSources();
 } else {
-const wp = await api('/api/workplans', { method: 'POST', body: JSON.stringify({ financial_year, title }) });
+const wp = await api('/api/workplans', { method: 'POST', body: JSON.stringify(payload) });
 toast('Work plan created', 'success');
 closeModal('modal-wp');
 await loadWorkplans();
 document.getElementById('wp-select').value = wp.id;
+applyWorkplanTableTitles();
 renderBudgetCodes();
 renderRevenueSources();
 }
