@@ -445,8 +445,9 @@ give it noticeably more room than the other wrapped columns. */
 /* PIAP Output Description (7th) and PIAP Output Indicator (8th) columns —
 sit between Budget Output Code/Description and Unit of Measure — need
 noticeably more room than the other wrapped columns since they hold
-long narrative text. */
-#wp-main-table th:nth-child(7), #wp-main-table td:nth-child(7),
+long narrative text. PIAP Output Description is widened by half its
+original width (220px -> 330px) for extra room. */
+#wp-main-table th:nth-child(7), #wp-main-table td:nth-child(7){white-space:normal; max-width:330px; width:330px;}
 #wp-main-table th:nth-child(8), #wp-main-table td:nth-child(8){white-space:normal; max-width:220px; width:220px;}
 /* Q1–Q4 and Total Budget columns: keep numbers compact */
 #wp-main-table th:nth-child(13), #wp-main-table td:nth-child(13),
