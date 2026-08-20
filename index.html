@@ -589,13 +589,40 @@ table.req-form-meta-table.entry input:focus, table.req-form-meta-table.entry sel
 .req-form-subject.entry{display:flex; align-items:baseline; gap:6px;}
 .req-form-subject.entry input{flex:1; border:none; border-bottom:1px dotted #888; background:transparent; font:inherit; font-size:12.5px; padding:2px 4px;}
 .req-form-subject.entry input:focus{outline:none; border-bottom:1px dotted var(--gold-600); background:#fffdf2;}
+/* Budget Output Subject, now a row inside req-form-table rather than a
+separate block above it. */
+tr.req-subject-row td{background:#fffaf3;}
+tr.req-subject-row .rf-field{display:flex; align-items:baseline; gap:6px;}
+tr.req-subject-row input{flex:1; min-width:0; border:none; background:transparent; font:inherit; font-size:12.5px; padding:2px 4px; color:#181818;}
+tr.req-subject-row input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
 table.req-form-table.entry td{padding:3px 4px;}
 table.req-form-table.entry input{width:100%; border:none; background:transparent; font:inherit; font-size:12px; padding:4px 4px; color:#181818;}
 table.req-form-table.entry input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
 table.req-form-table.entry input[data-li-field="qty"], table.req-form-table.entry input[data-li-field="rate"], table.req-form-table.entry input[data-li-field="amount"]{text-align:right; font-family:var(--font-mono);}
+/* Description column is a textarea so long text wraps onto new lines and
+grows the row, instead of a single-line input that hides overflow text. */
+table.req-form-table.entry textarea[data-li-field="description"]{
+width:100%; border:none; background:transparent; font:inherit; font-size:12px; padding:4px 4px; color:#181818;
+resize:none; overflow:hidden; white-space:pre-wrap; word-wrap:break-word; line-height:1.35; display:block; min-height:20px;
+}
+table.req-form-table.entry textarea[data-li-field="description"]:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
 table.req-form-table.entry .rf-row-remove{background:none; border:none; color:var(--ink-500); cursor:pointer; font-size:13px; padding:2px 4px;}
 table.req-form-table.entry .rf-row-remove:hover{color:var(--danger, #b8382a);}
 table.req-form-table.entry tr.rf-grand td{font-family:var(--font-mono);}
+/* Budget Output Code search field (replaces the old <select> dropdown) */
+.rf-bc-search-wrap{position:relative; flex:1; min-width:0;}
+.rf-bc-search-wrap input{width:100%;}
+.rf-bc-results{
+display:none; position:absolute; z-index:40; top:100%; left:0; right:0; margin-top:2px;
+background:#fff; border:1px solid var(--line); border-radius:6px; box-shadow:0 8px 20px rgba(10,20,26,.14);
+max-height:220px; overflow-y:auto; text-align:left;
+}
+.rf-bc-results.open{display:block;}
+.rf-bc-results .rf-bc-opt{padding:7px 10px; font-size:12px; cursor:pointer; border-bottom:1px solid var(--line);}
+.rf-bc-results .rf-bc-opt:last-child{border-bottom:none;}
+.rf-bc-results .rf-bc-opt:hover, .rf-bc-results .rf-bc-opt.active{background:#fdf1e2;}
+.rf-bc-results .rf-bc-opt .rf-bc-code{font-weight:700; font-family:var(--font-mono); margin-right:6px;}
+.rf-bc-results .rf-bc-empty{padding:8px 10px; font-size:12px; color:var(--ink-500);}
 .req-form-words.entry{font-size:12.5px; margin-bottom:18px;}
 .req-form-signatures.preview .sig-line{border-top:1px dotted #ccc;}
 .req-form-signatures.preview{opacity:.7;}
@@ -744,9 +771,9 @@ Dashboard
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 5v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5M9 9h6M9 13h6M9 17h3"/></svg>
 Work Plan &amp; Budget
 </button>
-<button class="nav-item" data-view="requisitions">
+<button class="nav-item" data-view="requisitions" style="font-size:12px; line-height:1.25;">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6l1 3H8l1-3z"/><path d="M6 6h12v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V6z"/><path d="M9 11h6M9 15h4"/></svg>
-Requisitions
+Requisition Voucher, Payment Voucher and Accountability documents
 </button>
 <button class="nav-item" data-view="approvals">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
@@ -1207,11 +1234,31 @@ Departments
 <div class="rf-refno">No. <span class="mono" id="req-form-refno-preview">(assigned on save)</span></div>
 <table class="req-form-meta-table entry">
 <tr>
-<td style="width:50%;"><div class="rf-field"><strong>Department:</strong><select id="req-form-department"></select></div></td>
-<td style="width:50%;"><div class="rf-field"><strong>Date of Submission:</strong><input type="text" id="req-form-date" readonly/></div></td>
+<td style="width:33.33%;"><div class="rf-field"><strong>System User:</strong><input type="text" id="req-form-sysuser" readonly/></div></td>
+<td style="width:33.33%;"><div class="rf-field"><strong>Email:</strong><input type="text" id="req-form-sysemail" readonly/></div></td>
+<td style="width:33.34%;"><div class="rf-field"><strong>Role:</strong><input type="text" id="req-form-sysrole" readonly/></div></td>
 </tr>
 <tr>
-<td><div class="rf-field"><strong>Names:</strong><input type="text" id="req-form-names" readonly/></div></td>
+<td style="width:33.33%;"><div class="rf-field"><strong>Financial Year:</strong><select id="req-form-fy">
+<option value="2026/27">2026/27</option>
+<option value="2027/28">2027/28</option>
+<option value="2028/29">2028/29</option>
+<option value="2029/30">2029/30</option>
+</select></div></td>
+<td style="width:33.33%;"><div class="rf-field"><strong>Quarter:</strong><select id="req-form-quarter">
+<option value="Q1">Q1</option>
+<option value="Q2">Q2</option>
+<option value="Q3">Q3</option>
+<option value="Q4">Q4</option>
+</select></div></td>
+<td style="width:33.34%;"><div class="rf-field"><strong>Date:</strong><input type="text" id="req-form-date" readonly/></div></td>
+</tr>
+<tr>
+<td style="width:50%;"><div class="rf-field"><strong>Department:</strong><select id="req-form-department"></select></div></td>
+<td style="width:50%;"><div class="rf-field"><strong>Position:</strong><input type="text" id="req-form-position" placeholder="e.g. Senior Accountant"/></div></td>
+</tr>
+<tr>
+<td><div class="rf-field"><strong>Requisitioner (Full names):</strong><input type="text" id="req-form-names" placeholder="Enter your full name"/></div></td>
 <td>
 <div class="rf-field rf-sig-slot">
 <div style="display:flex; align-items:baseline; gap:6px; width:100%;"><strong>Signature:</strong></div>
@@ -1221,13 +1268,19 @@ Departments
 </td>
 </tr>
 <tr>
-<td><div class="rf-field"><strong>Budget Output Code:</strong><select id="req-form-budgetcode"><option value="">— Select budget output —</option></select></div></td>
+<td><div class="rf-field"><strong>Budget Output Code:</strong>
+<div class="rf-bc-search-wrap">
+<input type="text" id="req-form-budgetcode-search" autocomplete="off" placeholder="Search budget code or output description…"/>
+<input type="hidden" id="req-form-budgetcode"/>
+<div class="rf-bc-results" id="req-form-budgetcode-results"></div>
+</div>
+</div></td>
 <td><div class="rf-field"><strong>Activity Budget Limit:</strong><input type="text" id="req-form-budgetlimit" readonly placeholder="—"/></div></td>
 </tr>
 </table>
-<div class="req-form-subject entry"><strong>Budget Output Subject:</strong><input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works"/></div>
 <table class="req-form-table entry">
 <thead><tr><th style="width:9%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:9%;">Units</th><th style="width:9%;">Qty</th><th style="width:12%;">Rate</th><th class="num" style="width:13%;">Amount</th><th class="no-print" style="width:24px;"></th></tr></thead>
+<tbody><tr class="req-subject-row"><td colspan="7"><div class="rf-field"><strong>Budget Output Subject:</strong><input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works"/></div></td></tr></tbody>
 <tbody id="req-lineitems-body"></tbody>
 <tfoot><tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">UGX <span id="req-grand-total">0</span></td><td class="no-print"></td></tr></tfoot>
 </table>
@@ -1608,6 +1661,8 @@ token: localStorage.getItem('ktc_token') || null,
 role: localStorage.getItem('ktc_role') || null,
 name: localStorage.getItem('ktc_name') || null,
 userId: localStorage.getItem('ktc_user_id') || null,
+email: null,
+position: null,
 departments: [],
 workplans: [],
 budgetCodes: [],
@@ -1621,6 +1676,7 @@ editingUserId: null,
 editingRequisitionId: null,
 editingRevenueSourceId: null,
 reqLineItems: [],
+reqBudgetCodesForDept: [],
 signatureUrl: null,
 };
 
@@ -1760,6 +1816,23 @@ const d = new Date(iso);
 return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' • ' +
 d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
+// Uganda's financial year runs 1 Jul – 30 Jun, split into calendar quarters
+// Q1 Jul-Sep, Q2 Oct-Dec, Q3 Jan-Mar, Q4 Apr-Jun. These are only used to
+// pre-select a sensible default on the Financial Year / Quarter fields —
+// the requisitioner can always change either before saving.
+function currentFinancialYearGuess() {
+const now = new Date();
+const y = now.getFullYear();
+const startYear = now.getMonth() >= 6 ? y : y - 1; // getMonth() 6 = July
+return `${startYear}/${String((startYear + 1) % 100).padStart(2, '0')}`;
+}
+function currentQuarterGuess() {
+const m = new Date().getMonth(); // 0-11
+if (m >= 6 && m <= 8) return 'Q1';
+if (m >= 9 && m <= 11) return 'Q2';
+if (m >= 0 && m <= 2) return 'Q3';
+return 'Q4';
+}
 function initials(name) {
 if (!name) return '?';
 return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
@@ -1874,7 +1947,7 @@ btn.disabled = false; btn.innerHTML = 'Sign in to your account';
 }
 });
 function logout() {
-STATE = { ...STATE, token: null, role: null, name: null, userId: null, signatureUrl: null };
+STATE = { ...STATE, token: null, role: null, name: null, userId: null, signatureUrl: null, email: null, position: null };
 localStorage.removeItem('ktc_token'); localStorage.removeItem('ktc_role');
 localStorage.removeItem('ktc_name'); localStorage.removeItem('ktc_user_id');
 document.getElementById('app-screen').style.display = 'none';
@@ -1918,7 +1991,7 @@ await loadWorkplans();
 switchView('dashboard');
 refreshNotifications();
 setInterval(refreshNotifications, 30000);
-api('/api/auth/me').then(me => { STATE.signatureUrl = me.signature_url || null; STATE.departmentId = me.department_id || null; }).catch(() => {});
+api('/api/auth/me').then(me => { STATE.signatureUrl = me.signature_url || null; STATE.departmentId = me.department_id || null; STATE.email = me.email || null; STATE.position = me.position || null; }).catch(() => {});
 resetIdleTimer();
 }
 function applyRoleVisibility() {
@@ -3013,7 +3086,7 @@ const showNo = li.item_no !== lastNo;
 lastNo = li.item_no;
 return `<tr>
 <td style="font-weight:700;">${showNo ? 'S/N ' + String(li.item_no).padStart(2,'0') : ''}</td>
-<td class="wrap"><input type="text" data-li-idx="${idx}" data-li-field="description" value="${escapeHtml(li.description)}" placeholder="${li.isHeader ? 'Sub activity title, e.g. Field fuel' : 'Item description'}" oninput="updateReqLineItem(${idx},'description',this.value)"/></td>
+<td class="wrap"><textarea data-li-idx="${idx}" data-li-field="description" rows="1" placeholder="${li.isHeader ? 'Sub activity title, e.g. Field fuel' : 'Item description'}" oninput="updateReqLineItem(${idx},'description',this.value)">${escapeHtml(li.description)}</textarea></td>
 <td><input type="text" data-li-idx="${idx}" data-li-field="units" value="${escapeHtml(li.units||'')}" oninput="updateReqLineItem(${idx},'units',this.value)"/></td>
 <td><input type="number" data-li-idx="${idx}" data-li-field="qty" value="${li.qty ?? ''}" oninput="updateReqLineItem(${idx},'qty',this.value)"/></td>
 <td><input type="number" data-li-idx="${idx}" data-li-field="rate" value="${li.rate ?? ''}" oninput="updateReqLineItem(${idx},'rate',this.value)"/></td>
@@ -3056,6 +3129,14 @@ if (activeIdx !== null && activeField) {
 const el = tbody.querySelector(`[data-li-idx="${activeIdx}"][data-li-field="${activeField}"]`);
 if (el) { el.focus(); const v = el.value; el.value = ''; el.value = v; }
 }
+// Every description cell is a textarea (not a single-line input) so long
+// item descriptions wrap onto new lines instead of being hidden past the
+// edge of the cell — grow each one to fit its content right after paint.
+tbody.querySelectorAll('textarea[data-li-field="description"]').forEach(autoGrowTextarea);
+}
+function autoGrowTextarea(el) {
+el.style.height = 'auto';
+el.style.height = el.scrollHeight + 'px';
 }
 function updatePvLineItem(idx, field, value) {
 const li = STATE.reqLineItems[idx];
@@ -3110,8 +3191,22 @@ document.getElementById('req-submit-now-mid').textContent = editReq ? 'Save & Su
 // Fill in the paper-form fields that mirror who's submitting this and when.
 const deptSel = document.getElementById('req-form-department');
 deptSel.value = String((editReq ? editReq.department_id : STATE.departmentId) || '');
-document.getElementById('req-form-names').value = editReq ? (editReq.requester_name || STATE.name || '—') : (STATE.name || '—');
+// Row 1 — System user identity fields; always mirror the signed-in
+// account, never editable, regardless of new vs. edit mode.
+document.getElementById('req-form-sysuser').value = STATE.name || '—';
+document.getElementById('req-form-sysemail').value = STATE.email || '—';
+document.getElementById('req-form-sysrole').value = statusLabel(STATE.role) || '—';
+// Row 2 — Financial Year / Quarter / Date.
+document.getElementById('req-form-fy').value = editReq && editReq.financial_year ? editReq.financial_year : currentFinancialYearGuess();
+document.getElementById('req-form-quarter').value = editReq && editReq.quarter ? editReq.quarter : currentQuarterGuess();
 document.getElementById('req-form-date').value = editReq ? fmtDate(editReq.created_at) : fmtDate(new Date().toISOString());
+// Row 3 — Position (defaults to the account's own position on file, but
+// stays editable in case it needs adjusting for this requisition).
+document.getElementById('req-form-position').value = editReq ? (editReq.requester_position || STATE.position || '') : (STATE.position || '');
+// Requisitioner (Full names) is now typed by the person filling the
+// form rather than being a read-only mirror of the account name — it's
+// pre-filled with the account's name as a starting point either way.
+document.getElementById('req-form-names').value = editReq ? (editReq.requester_name || STATE.name || '') : (STATE.name || '');
 document.getElementById('req-form-refno-preview').textContent = editReq ? editReq.ref_no : '(assigned on save)';
 document.getElementById('pv-form-refno-preview').textContent = editReq ? editReq.ref_no : '(assigned on save)';
 syncPvDepartment();
@@ -3179,37 +3274,88 @@ const dept = STATE.departments.find(d => String(d.id) === String(deptSel.value))
 const pvDept = document.getElementById('pv-form-department');
 if (pvDept) pvDept.value = deptLabel(dept) || '—';
 }
-// Populates the "Budget Output Code" select with the budget lines for the
-// chosen department, and keeps "Activity Budget Limit" in sync with whichever
+// Populates the Budget Output Code search results for the chosen
+// department, and keeps "Activity Budget Limit" in sync with whichever
 // one is picked — mirrors the paper form, where the limit is read straight
-// off the selected budget output.
+// off the selected budget output. The dropdown <select> has been replaced
+// by a type-to-search field (see wireReqBudgetCodeSearch below).
 async function loadReqBudgetCodes(departmentId, selectedId) {
-const sel = document.getElementById('req-form-budgetcode');
+const searchEl = document.getElementById('req-form-budgetcode-search');
+const hiddenEl = document.getElementById('req-form-budgetcode');
 const limitEl = document.getElementById('req-form-budgetlimit');
-sel.innerHTML = '<option value="">— Select budget output —</option>';
+STATE.reqBudgetCodesForDept = [];
+hiddenEl.value = '';
+searchEl.value = '';
 limitEl.value = '';
+closeReqBudgetCodeResults();
 if (!departmentId) return;
 try {
 const codes = await api(`/api/budget-codes?department_id=${departmentId}`);
 STATE.reqBudgetCodesForDept = codes;
-codes.forEach(c => {
-const opt = document.createElement('option');
-opt.value = c.id;
-opt.textContent = `${c.code} — ${c.output_description || ''}`;
-sel.appendChild(opt);
-});
-if (selectedId) sel.value = String(selectedId);
-updateReqBudgetLimit();
+if (selectedId) {
+const bc = codes.find(c => String(c.id) === String(selectedId));
+if (bc) selectReqBudgetCode(bc);
+}
 } catch (e) { /* budget codes are optional on this form; fail quietly */ }
 }
 function updateReqBudgetLimit() {
-const sel = document.getElementById('req-form-budgetcode');
+const hiddenEl = document.getElementById('req-form-budgetcode');
 const limitEl = document.getElementById('req-form-budgetlimit');
 const codes = STATE.reqBudgetCodesForDept || [];
-const bc = codes.find(c => String(c.id) === String(sel.value));
+const bc = codes.find(c => String(c.id) === String(hiddenEl.value));
 limitEl.value = bc ? `UGX ${money(bc.allocated_amount)}` : '';
 }
-document.getElementById('req-form-budgetcode').addEventListener('change', updateReqBudgetLimit);
+function selectReqBudgetCode(bc) {
+document.getElementById('req-form-budgetcode').value = bc.id;
+document.getElementById('req-form-budgetcode-search').value = `${bc.code} — ${bc.output_description || ''}`;
+updateReqBudgetLimit();
+closeReqBudgetCodeResults();
+}
+function closeReqBudgetCodeResults() {
+const resultsEl = document.getElementById('req-form-budgetcode-results');
+resultsEl.classList.remove('open');
+resultsEl.innerHTML = '';
+}
+function renderReqBudgetCodeResults(query) {
+const resultsEl = document.getElementById('req-form-budgetcode-results');
+const codes = STATE.reqBudgetCodesForDept || [];
+const q = (query || '').trim().toLowerCase();
+const matches = q
+? codes.filter(c => (c.code || '').toLowerCase().includes(q) || (c.output_description || '').toLowerCase().includes(q))
+: codes;
+if (!codes.length) {
+resultsEl.innerHTML = '<div class="rf-bc-empty">Select a Department first, or no budget codes exist for it yet.</div>';
+} else if (!matches.length) {
+resultsEl.innerHTML = '<div class="rf-bc-empty">No matching budget output code found.</div>';
+} else {
+resultsEl.innerHTML = matches.slice(0, 30).map(c =>
+`<div class="rf-bc-opt" data-bc-id="${c.id}"><span class="rf-bc-code">${escapeHtml(c.code)}</span>${escapeHtml(c.output_description || '')}</div>`
+).join('');
+resultsEl.querySelectorAll('.rf-bc-opt').forEach(opt => {
+opt.addEventListener('mousedown', (e) => {
+e.preventDefault();
+const bc = (STATE.reqBudgetCodesForDept || []).find(c => String(c.id) === opt.dataset.bcId);
+if (bc) selectReqBudgetCode(bc);
+});
+});
+}
+resultsEl.classList.add('open');
+}
+function wireReqBudgetCodeSearch() {
+const searchEl = document.getElementById('req-form-budgetcode-search');
+const hiddenEl = document.getElementById('req-form-budgetcode');
+searchEl.addEventListener('input', () => {
+// Typing again after a selection was made clears the selected id until
+// a fresh choice is made from the results, so a half-edited search
+// string can't be silently submitted as if it were still the old pick.
+hiddenEl.value = '';
+document.getElementById('req-form-budgetlimit').value = '';
+renderReqBudgetCodeResults(searchEl.value);
+});
+searchEl.addEventListener('focus', () => renderReqBudgetCodeResults(searchEl.value));
+searchEl.addEventListener('blur', () => setTimeout(closeReqBudgetCodeResults, 120));
+}
+wireReqBudgetCodeSearch();
 async function submitNewRequisition(submitNow) {
 const subject = document.getElementById('req-subject').value.trim();
 const departmentId = document.getElementById('req-form-department').value;
@@ -3249,11 +3395,16 @@ const payload = {
 department_id: departmentId ? Number(departmentId) : null,
 budget_code_id: document.getElementById('req-form-budgetcode').value ? Number(document.getElementById('req-form-budgetcode').value) : null,
 subject,
+financial_year: document.getElementById('req-form-fy').value || null,
+quarter: document.getElementById('req-form-quarter').value || null,
+requester_name: document.getElementById('req-form-names').value.trim() || null,
+requester_position: document.getElementById('req-form-position').value.trim() || null,
 line_items: lineItems,
 voucher,
 };
-if (!payload.department_id || !subject || total <= 0) {
-toast('Please select a department, complete the subject and add at least one priced line item', 'error'); return;
+const requisitionerName = document.getElementById('req-form-names').value.trim();
+if (!payload.department_id || !requisitionerName || !subject || total <= 0) {
+toast('Please select a department, enter the requisitioner\'s name, complete the subject and add at least one priced line item', 'error'); return;
 }
 try {
 if (STATE.editingRequisitionId) {
