@@ -430,7 +430,7 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-dept-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3;}
 #wp-dept-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-dept-summary-body td{padding:7px 9px; font-size:11.5px;}
-#wp-main-table{min-width:1680px;}
+#wp-main-table{min-width:1810px;}
 #wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
 #wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:400; line-height:1.3;}
 #wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px;}
@@ -440,8 +440,9 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 narrower column width efficiently rather than forcing extra scroll */
 #wp-main-table th:nth-child(1), #wp-main-table td:nth-child(1){white-space:normal; max-width:104px; width:104px;}
 /* Budget Output Description (6th column): holds long narrative text, so
-give it noticeably more room than the other wrapped columns. */
-#wp-main-table th:nth-child(6), #wp-main-table td:nth-child(6){white-space:normal; max-width:260px; width:260px;}
+give it noticeably more room than the other wrapped columns. Widened by
+half its original width (260px -> 390px) for extra room. */
+#wp-main-table th:nth-child(6), #wp-main-table td:nth-child(6){white-space:normal; max-width:390px; width:390px;}
 /* PIAP Output Description (7th) and PIAP Output Indicator (8th) columns —
 sit between Budget Output Code/Description and Unit of Measure — need
 noticeably more room than the other wrapped columns since they hold
@@ -1240,7 +1241,7 @@ Departments
 <div class="rf-refno">Ref No. <span class="mono" id="req-form-refno-preview">(assigned on save)</span></div>
 <table class="req-form-meta-table entry">
 <tr>
-<td style="width:33.33%;"><div class="rf-field"><strong>System User:</strong><input type="text" id="req-form-sysuser" readonly/></div></td>
+<td style="width:33.33%;"><div class="rf-field"><strong>System User Name:</strong><input type="text" id="req-form-sysuser" readonly/></div></td>
 <td style="width:33.33%;"><div class="rf-field"><strong>Email:</strong><input type="text" id="req-form-sysemail" readonly/></div></td>
 <td style="width:33.34%;"><div class="rf-field"><strong>Role:</strong><input type="text" id="req-form-sysrole" readonly/></div></td>
 </tr>
@@ -1260,12 +1261,13 @@ Departments
 <td style="width:33.34%;"><div class="rf-field"><strong>Date:</strong><input type="text" id="req-form-date" readonly/></div></td>
 </tr>
 <tr>
-<td style="width:50%;"><div class="rf-field"><strong>Department:</strong><select id="req-form-department"></select></div></td>
-<td style="width:50%;"><div class="rf-field"><strong>Position:</strong><input type="text" id="req-form-position" placeholder="e.g. Senior Accountant"/></div></td>
+<td colspan="2" style="width:66.66%;"><div class="rf-field"><strong>Department:</strong><select id="req-form-department"></select></div></td>
+<td style="width:33.34%;"><div class="rf-field"><strong>Position:</strong><input type="text" id="req-form-position" placeholder="e.g. Senior Accountant"/></div></td>
 </tr>
 <tr>
-<td><div class="rf-field"><strong>Requisitioner (Full names):</strong><input type="text" id="req-form-names" placeholder="Enter your full name"/></div></td>
-<td>
+<td style="width:33.33%;"><div class="rf-field"><strong>Requisitioner<br/>(Full names):</strong><input type="text" id="req-form-names" placeholder="Enter your full name"/></div></td>
+<td style="width:33.33%;"><div class="rf-field"><strong>Mob. No.:</strong><input type="text" id="req-form-mobile" placeholder="e.g. 0772 123456"/></div></td>
+<td style="width:33.34%;">
 <div class="rf-field rf-sig-slot">
 <strong>Signature:</strong>
 <div class="rf-fill" id="req-sig-requester"></div>
@@ -1274,26 +1276,32 @@ Departments
 </td>
 </tr>
 <tr>
-<td><div class="rf-field"><strong>Budget Output Code:</strong>
+<td style="width:33.33%;"><div class="rf-field"><strong>Budget Output Code:</strong>
 <div class="rf-bc-search-wrap">
-<input type="text" id="req-form-budgetcode-search" autocomplete="off" placeholder="Search budget code or output description…"/>
+<input type="text" id="req-form-budgetcode-search" autocomplete="off" placeholder="Type the budget output code…"/>
 <input type="hidden" id="req-form-budgetcode"/>
 <div class="rf-bc-results" id="req-form-budgetcode-results"></div>
 </div>
 </div></td>
-<td><div class="rf-field"><strong>Activity Budget Limit:</strong><input type="text" id="req-form-budgetlimit" readonly placeholder="—"/></div></td>
+<td style="width:33.33%;"><div class="rf-field"><strong>Activity Budget Limit:</strong><input type="text" id="req-form-budgetlimit" readonly placeholder="—"/></div></td>
+<td style="width:33.34%;"><div class="rf-field"><strong>Activity Budget Balance:</strong><input type="text" id="req-form-budgetbalance" readonly placeholder="—"/></div></td>
+</tr>
+<tr>
+<td colspan="3"><div class="rf-field"><strong>Budget Output Description:</strong><input type="text" id="req-form-budgetdesc" readonly placeholder="—"/></div></td>
 </tr>
 <tr>
 <td colspan="3"><div class="rf-field"><strong>Budget Output Subject:</strong><input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works"/></div></td>
 </tr>
 </table>
 <table class="req-form-table entry">
-<thead><tr><th style="width:9%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:9%;">Units</th><th style="width:9%;">Qty</th><th style="width:12%;">Rate</th><th class="num" style="width:13%;">Amount</th><th class="no-print" style="width:52px;">Line</th></tr></thead>
+<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate</th><th class="num" style="width:13%;">Amount</th><th class="no-print" style="width:52px;">Line</th></tr></thead>
 <tbody id="req-lineitems-body"></tbody>
 <tfoot><tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">UGX <span id="req-grand-total">0</span></td><td class="no-print"></td></tr></tfoot>
 </table>
-<div style="display:flex; gap:8px; margin:10px 0 16px; flex-wrap:wrap;" class="no-print">
-<button type="button" class="btn btn-ghost" id="req-add-section">Add Sub Activity</button>
+<div style="display:flex; gap:8px; margin:10px 0 16px; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
+<button class="btn btn-ghost" data-close="modal-req">Cancel</button>
+<button type="button" class="btn btn-ghost" id="req-print-draft">🖶 Print</button>
+<button class="btn btn-primary" id="req-route-hod-mid">Submit to Head of Department</button>
 </div>
 <div class="req-form-words entry"><strong>Amount in words:</strong> <span id="req-amount-words">—</span></div>
 <div class="req-form-signatures preview">
@@ -1306,10 +1314,6 @@ Departments
 <div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Town Treasurer has approved this requisition">Submit to Town Clerk</button></div>
 <div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-auditor" disabled title="Available once the Town Clerk has approved this requisition">Submit to Internal Auditor</button></div>
 </div>
-</div>
-<div style="display:flex; gap:8px; margin:14px 0 0; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
-<button class="btn btn-ghost" data-close="modal-req">Cancel</button>
-<button class="btn btn-primary" id="req-route-hod-mid">Submit to Head of Department</button>
 </div>
 <!-- ===== Cheque Payment Voucher — same header/council masthead as the Requisition Form above, filled in together with it in the same modal ===== -->
 <div class="pv-form" id="pv-form-entry">
@@ -1775,11 +1779,39 @@ function getRevFieldValue(selectId) {
   return cat ? cat[cfg.catField] : '';
 }
 // ---- Fetch helper -----------------------------------------------------------
+// fetchWithTimeout wraps the raw network call with an AbortController-based
+// timeout, since a hung request (e.g. a backend host that's slow to wake up)
+// would otherwise leave the caller waiting indefinitely instead of failing
+// in a way the retry logic below can act on.
+async function fetchWithTimeout(url, opts, timeoutMs) {
+const controller = new AbortController();
+const timer = setTimeout(() => controller.abort(), timeoutMs);
+try {
+return await fetch(url, { ...opts, signal: controller.signal });
+} finally {
+clearTimeout(timer);
+}
+}
 async function api(path, opts = {}) {
 const headers = opts.headers || {};
 if (!(opts.body instanceof FormData)) headers['Content-Type'] = 'application/json';
 if (STATE.token) headers['Authorization'] = 'Bearer ' + STATE.token;
-const res = await fetch(API_BASE + path, { ...opts, headers });
+// Network-level failures (DNS/connection errors, a cold backend instance
+// timing out, a dropped connection, etc.) surface here as a rejected
+// promise rather than an HTTP error response — retry once after a short
+// pause before giving up, since these are frequently transient (e.g. a
+// free-tier host waking from sleep on the very first request).
+let res;
+try {
+res = await fetchWithTimeout(API_BASE + path, { ...opts, headers }, 20000);
+} catch (networkErr) {
+try {
+await new Promise(r => setTimeout(r, 1500));
+res = await fetchWithTimeout(API_BASE + path, { ...opts, headers }, 30000);
+} catch (retryErr) {
+throw new Error('Could not reach the server. Please check your connection and try again in a moment.');
+}
+}
 if (res.status === 401) {
 logout();
 throw new Error('Session expired. Please sign in again.');
@@ -2000,7 +2032,7 @@ await loadWorkplans();
 switchView('dashboard');
 refreshNotifications();
 setInterval(refreshNotifications, 30000);
-api('/api/auth/me').then(me => { STATE.signatureUrl = me.signature_url || null; STATE.departmentId = me.department_id || null; STATE.email = me.email || null; STATE.position = me.position || null; }).catch(() => {});
+api('/api/auth/me').then(me => { STATE.signatureUrl = me.signature_url || null; STATE.departmentId = me.department_id || null; STATE.email = me.email || null; STATE.position = me.position || null; STATE.telephone = me.telephone || null; }).catch(() => {});
 resetIdleTimer();
 }
 function applyRoleVisibility() {
@@ -3034,12 +3066,12 @@ finally { e.target.value = ''; }
 });
 // ---- Requisitions --------------------------------------------------------------
 function resetReqLineItems() {
-// Start every new requisition with two Sub Activity sections (S/N 01 and
-// S/N 02), each with 5 blank priced lines underneath it, instead of just
-// one section, so there's room to fill the form without repeatedly
-// clicking "Add Sub Activity" / "Add Line".
+// Start every new requisition with three Sub Activity sections (S/N 01,
+// 02 and 03), each with 5 blank priced lines underneath it, so there's
+// room to fill the form without needing an "Add Sub Activity" control
+// (removed — sections are now fixed at three per requisition).
 STATE.reqLineItems = [];
-for (let sectionNo = 1; sectionNo <= 2; sectionNo++) {
+for (let sectionNo = 1; sectionNo <= 3; sectionNo++) {
 STATE.reqLineItems.push({ item_no: sectionNo, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: true });
 for (let i = 0; i < 5; i++) {
 STATE.reqLineItems.push({ item_no: sectionNo, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: false, ledger_folio: '', charge_date: '' });
@@ -3050,11 +3082,6 @@ function currentReqSectionNo() {
 if (!STATE.reqLineItems.length) return 1;
 return STATE.reqLineItems[STATE.reqLineItems.length - 1].item_no;
 }
-document.getElementById('req-add-section').addEventListener('click', () => {
-const nextNo = STATE.reqLineItems.reduce((max, li) => Math.max(max, li.item_no), 0) + 1;
-STATE.reqLineItems.push({ item_no: nextNo, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: true });
-renderReqLineItems();
-});
 function insertReqLineItemAfter(idx) {
 const ref = STATE.reqLineItems[idx];
 const sectionNo = ref ? ref.item_no : currentReqSectionNo();
@@ -3216,10 +3243,21 @@ document.getElementById('req-form-position').value = editReq ? (editReq.requeste
 // form rather than being a read-only mirror of the account name — it's
 // pre-filled with the account's name as a starting point either way.
 document.getElementById('req-form-names').value = editReq ? (editReq.requester_name || STATE.name || '') : (STATE.name || '');
+// Mob. No. — the requisitioner's own telephone, pre-filled from the
+// account's own number on file either way, same reasoning as above.
+document.getElementById('req-form-mobile').value = editReq ? (editReq.requester_mobile || STATE.telephone || '') : (STATE.telephone || '');
 document.getElementById('req-form-refno-preview').textContent = editReq ? editReq.ref_no : '(assigned on save)';
 document.getElementById('pv-form-refno-preview').textContent = editReq ? editReq.ref_no : '(assigned on save)';
 syncPvDepartment();
-loadReqBudgetCodes(deptSel.value, editReq ? editReq.budget_code_id : null);
+loadReqBudgetCodes(deptSel.value, editReq ? editReq.budget_code_id : null).then(() => {
+// If the requisition was saved with a typed Budget Output Code that
+// doesn't correspond to a known BudgetCode record, still show it here
+// (once loadReqBudgetCodes has finished resetting the field) so it
+// isn't lost when re-opening the form.
+if (editReq && !editReq.budget_code_id && editReq.budget_output_code_text) {
+document.getElementById('req-form-budgetcode-search').value = editReq.budget_output_code_text;
+}
+});
 // Clear the Attach Signature boxes and voucher-only fields for a fresh form,
 // then re-show every "Attach Signature" button (a fresh form has nothing
 // signed yet) before role-gating and requester pre-fill run below.
@@ -3284,18 +3322,19 @@ const pvDept = document.getElementById('pv-form-department');
 if (pvDept) pvDept.value = deptLabel(dept) || '—';
 }
 // Populates the Budget Output Code search results for the chosen
-// department, and keeps "Activity Budget Limit" in sync with whichever
-// one is picked — mirrors the paper form, where the limit is read straight
-// off the selected budget output. The dropdown <select> has been replaced
-// by a type-to-search field (see wireReqBudgetCodeSearch below).
+// department, and keeps "Activity Budget Limit" / "Activity Budget
+// Balance" / "Budget Output Description" in sync with whichever code is
+// picked — mirrors the paper form, where these are read straight off the
+// selected budget output. The code field itself is free-typed (not a
+// locked dropdown): the results list below it is just a lookup aid, and
+// typing a code that isn't on file is still accepted as-is.
 async function loadReqBudgetCodes(departmentId, selectedId) {
 const searchEl = document.getElementById('req-form-budgetcode-search');
 const hiddenEl = document.getElementById('req-form-budgetcode');
-const limitEl = document.getElementById('req-form-budgetlimit');
 STATE.reqBudgetCodesForDept = [];
 hiddenEl.value = '';
 searchEl.value = '';
-limitEl.value = '';
+clearReqBudgetFields();
 closeReqBudgetCodeResults();
 if (!departmentId) return;
 try {
@@ -3307,18 +3346,44 @@ if (bc) selectReqBudgetCode(bc);
 }
 } catch (e) { /* budget codes are optional on this form; fail quietly */ }
 }
+function clearReqBudgetFields() {
+document.getElementById('req-form-budgetlimit').value = '';
+document.getElementById('req-form-budgetbalance').value = '';
+document.getElementById('req-form-budgetdesc').value = '';
+}
 function updateReqBudgetLimit() {
 const hiddenEl = document.getElementById('req-form-budgetcode');
 const limitEl = document.getElementById('req-form-budgetlimit');
+const balanceEl = document.getElementById('req-form-budgetbalance');
+const descEl = document.getElementById('req-form-budgetdesc');
 const codes = STATE.reqBudgetCodesForDept || [];
 const bc = codes.find(c => String(c.id) === String(hiddenEl.value));
 limitEl.value = bc ? `UGX ${money(bc.allocated_amount)}` : '';
+balanceEl.value = bc ? `UGX ${money(bc.available_balance)}` : '';
+descEl.value = bc ? (bc.output_description || '') : '';
 }
+// Selecting from the dropdown fills the code field with the code alone
+// (no " — description" suffix) — the description has its own row below.
 function selectReqBudgetCode(bc) {
 document.getElementById('req-form-budgetcode').value = bc.id;
-document.getElementById('req-form-budgetcode-search').value = `${bc.code} — ${bc.output_description || ''}`;
+document.getElementById('req-form-budgetcode-search').value = bc.code;
 updateReqBudgetLimit();
 closeReqBudgetCodeResults();
+}
+// Typing a code and moving on without picking from the dropdown still
+// tries to match it against the department's known codes (exact,
+// case-insensitive) so the limit/balance/description auto-fill even
+// without an explicit selection; a code with no match is simply kept as
+// free text and the read-only fields stay blank.
+function tryMatchTypedReqBudgetCode() {
+const searchEl = document.getElementById('req-form-budgetcode-search');
+const hiddenEl = document.getElementById('req-form-budgetcode');
+if (hiddenEl.value) return; // already resolved to a known code
+const typed = searchEl.value.trim().toLowerCase();
+if (!typed) { clearReqBudgetFields(); return; }
+const codes = STATE.reqBudgetCodesForDept || [];
+const bc = codes.find(c => (c.code || '').toLowerCase() === typed);
+if (bc) { selectReqBudgetCode(bc); } else { clearReqBudgetFields(); }
 }
 function closeReqBudgetCodeResults() {
 const resultsEl = document.getElementById('req-form-budgetcode-results');
@@ -3333,9 +3398,9 @@ const matches = q
 ? codes.filter(c => (c.code || '').toLowerCase().includes(q) || (c.output_description || '').toLowerCase().includes(q))
 : codes;
 if (!codes.length) {
-resultsEl.innerHTML = '<div class="rf-bc-empty">Select a Department first, or no budget codes exist for it yet.</div>';
+resultsEl.innerHTML = '<div class="rf-bc-empty">Select a Department first, or type a Budget Output Code directly.</div>';
 } else if (!matches.length) {
-resultsEl.innerHTML = '<div class="rf-bc-empty">No matching budget output code found.</div>';
+resultsEl.innerHTML = '<div class="rf-bc-empty">No matching budget output code on file — you can still type it in directly.</div>';
 } else {
 resultsEl.innerHTML = matches.slice(0, 30).map(c =>
 `<div class="rf-bc-opt" data-bc-id="${c.id}"><span class="rf-bc-code">${escapeHtml(c.code)}</span>${escapeHtml(c.output_description || '')}</div>`
@@ -3355,17 +3420,22 @@ const searchEl = document.getElementById('req-form-budgetcode-search');
 const hiddenEl = document.getElementById('req-form-budgetcode');
 searchEl.addEventListener('input', () => {
 // Typing again after a selection was made clears the selected id until
-// a fresh choice is made from the results, so a half-edited search
-// string can't be silently submitted as if it were still the old pick.
+// a fresh choice is made (or the typed text is re-matched on blur), so
+// a half-edited search string can't be silently submitted as if it
+// were still the old pick.
 hiddenEl.value = '';
-document.getElementById('req-form-budgetlimit').value = '';
+clearReqBudgetFields();
 renderReqBudgetCodeResults(searchEl.value);
 });
 searchEl.addEventListener('focus', () => renderReqBudgetCodeResults(searchEl.value));
-searchEl.addEventListener('blur', () => setTimeout(closeReqBudgetCodeResults, 120));
+searchEl.addEventListener('blur', () => { tryMatchTypedReqBudgetCode(); setTimeout(closeReqBudgetCodeResults, 120); });
 }
 wireReqBudgetCodeSearch();
 async function submitNewRequisition(submitNow) {
+// In case the person is still focused in the Budget Output Code field
+// (or typed a code and clicked straight to Submit without tabbing away),
+// resolve it against known codes one more time before reading its value.
+tryMatchTypedReqBudgetCode();
 const subject = document.getElementById('req-subject').value.trim();
 const departmentId = document.getElementById('req-form-department').value;
 const lineItems = STATE.reqLineItems
@@ -3403,11 +3473,13 @@ item: document.getElementById('pv-item').value.trim() || null,
 const payload = {
 department_id: departmentId ? Number(departmentId) : null,
 budget_code_id: document.getElementById('req-form-budgetcode').value ? Number(document.getElementById('req-form-budgetcode').value) : null,
+budget_output_code_text: document.getElementById('req-form-budgetcode-search').value.trim() || null,
 subject,
 financial_year: document.getElementById('req-form-fy').value || null,
 quarter: document.getElementById('req-form-quarter').value || null,
 requester_name: document.getElementById('req-form-names').value.trim() || null,
 requester_position: document.getElementById('req-form-position').value.trim() || null,
+requester_mobile: document.getElementById('req-form-mobile').value.trim() || null,
 line_items: lineItems,
 voucher,
 };
@@ -3433,6 +3505,40 @@ loadRequisitions();
 }
 document.getElementById('req-route-hod').addEventListener('click', () => submitNewRequisition(true));
 document.getElementById('req-route-hod-mid').addEventListener('click', () => submitNewRequisition(true));
+// Print the form as currently filled in, without needing to save first —
+// builds a lightweight object shaped like the saved-requisition payload
+// that renderPrintFormHtml() already knows how to render.
+document.getElementById('req-print-draft').addEventListener('click', () => {
+tryMatchTypedReqBudgetCode();
+const deptSel = document.getElementById('req-form-department');
+const dept = STATE.departments.find(d => String(d.id) === deptSel.value);
+const bcId = document.getElementById('req-form-budgetcode').value;
+const bc = (STATE.reqBudgetCodesForDept || []).find(c => String(c.id) === String(bcId));
+const draft = {
+ref_no: document.getElementById('req-form-refno-preview').textContent || '(unsaved draft)',
+created_at: new Date().toISOString(),
+department_name: deptLabel(dept) || '—',
+requester_name: document.getElementById('req-form-names').value.trim() || STATE.name || '—',
+requester_mobile: document.getElementById('req-form-mobile').value.trim() || null,
+requester_position: document.getElementById('req-form-position').value.trim() || null,
+requester_signature_url: STATE.signatureUrl || null,
+budget_code: bc ? bc.code : (document.getElementById('req-form-budgetcode-search').value.trim() || null),
+budget_output: bc ? bc.output_description : document.getElementById('req-form-budgetdesc').value,
+activity_budget_limit: bc ? bc.allocated_amount : null,
+activity_budget_balance: bc ? bc.available_balance : null,
+subject: document.getElementById('req-subject').value.trim(),
+line_items: STATE.reqLineItems.filter(li => li.description && li.description.trim() !== ''),
+voucher_data: {
+budget_output_code: document.getElementById('pv-form-budgetcode').value.trim() || null,
+dr_to: document.getElementById('pv-dr-to').value.trim() || null,
+address: document.getElementById('pv-address').value.trim() || null,
+cheque_no: document.getElementById('pv-cheque-no').value.trim() || null,
+},
+approvals: [],
+};
+document.getElementById('pf-body').innerHTML = renderPrintFormHtml(draft);
+openModal('modal-print-form');
+});
 document.getElementById('req-search').addEventListener('input', debounce(loadRequisitions, 300));
 document.getElementById('req-status-filter').addEventListener('change', loadRequisitions);
 async function loadRequisitions() {
@@ -3640,6 +3746,7 @@ const budgetRow = `
 <tr>
 <td><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(r.budget_code || '—')}</span></td>
 <td><strong>Activity Budget Limit:</strong><span class="rf-fill">${r.activity_budget_limit != null ? 'UGX ' + money(r.activity_budget_limit) : '—'}</span></td>
+<td><strong>Activity Budget Balance:</strong><span class="rf-fill">${r.activity_budget_balance != null ? 'UGX ' + money(r.activity_budget_balance) : '—'}</span></td>
 </tr>`;
 return `
 <div class="req-form-paper">
@@ -3653,13 +3760,14 @@ return `
 </tr>
 <tr>
 <td><strong>Names:</strong><span class="rf-fill">${escapeHtml(r.requester_name || '—')}</span></td>
+<td><strong>Mob. No.:</strong><span class="rf-fill">${escapeHtml(r.requester_mobile || '—')}</span></td>
 <td><strong>Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
 </tr>
 ${budgetRow}
 </table>
 <div class="req-form-subject"><strong>Budget Output Subject:</strong>${dots(subject)}</div>
 <table class="req-form-table">
-<thead><tr><th style="width:9%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:9%;">Units</th><th style="width:9%;">Qty</th><th style="width:12%;">Rate</th><th class="num" style="width:14%;">Amount</th></tr></thead>
+<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate</th><th class="num" style="width:13%;">Amount</th></tr></thead>
 <tbody>
 ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No line items recorded</td></tr>'}
 <tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">${money(grandTotal)}</td></tr>
