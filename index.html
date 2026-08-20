@@ -1294,24 +1294,22 @@ Departments
 <div style="display:flex; gap:8px; margin:10px 0 16px; flex-wrap:wrap;" class="no-print">
 <button type="button" class="btn btn-ghost" id="req-add-section">Add Sub Activity</button>
 </div>
-<div class="req-route-stack no-print" style="display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin:0 0 18px;">
-<button type="button" class="btn btn-primary" id="req-route-hod">Submit to Head of Department</button>
-<button type="button" class="btn btn-ghost" id="req-route-treasurer" disabled title="Available once the Head of Department has approved this requisition">Submit to Town Treasurer</button>
-<button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Town Treasurer has approved this requisition">Submit to Town Clerk</button>
-<button type="button" class="btn btn-ghost" id="req-route-auditor" disabled title="Available once the Town Clerk has approved this requisition">Submit to Internal Auditor</button>
-</div>
 <div class="req-form-words entry"><strong>Amount in words:</strong> <span id="req-amount-words">—</span></div>
 <div class="req-form-signatures preview">
 <div><div class="sig-role">Recommended by,</div><div class="sig-line" id="req-sig-hod"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-hod-btn" data-sig-role="hod" onclick="attachSignature('req-sig-hod', this, 'hod')">🖊 Attach Signature</button><div class="sig-label">Head of Department</div></div>
 <div><div class="sig-role">Checked and approved by,</div><div class="sig-line" id="req-sig-treasurer"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-treasurer-btn" data-sig-role="treasurer" onclick="attachSignature('req-sig-treasurer', this, 'treasurer')">🖊 Attach Signature</button><div class="sig-label">Town Treasurer</div></div>
 <div><div class="sig-role">Authorised by</div><div class="sig-line" id="req-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('req-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-label">Town Clerk</div></div>
 </div>
+<div class="req-route-stack no-print" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0 0;">
+<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-treasurer" disabled title="Available once the Head of Department has approved this requisition">Submit to Town Treasurer</button></div>
+<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Town Treasurer has approved this requisition">Submit to Town Clerk</button></div>
+<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-auditor" disabled title="Available once the Town Clerk has approved this requisition">Submit to Internal Auditor</button></div>
+</div>
 </div>
 <div class="help-text" style="margin-top:10px;">"Add Sub Activity" starts a new Sub Activity (S/N 01, S/N 02, S/N 03…) which can hold one or more priced description lines underneath it. Qty × Rate fills the Amount automatically, or type the Amount directly for items like facilitation and transport. The three approval boxes above are completed later by the Head of Department, Town Treasurer and Town Clerk as this requisition moves through approval — each box can only be signed by the account signed in as that role, never by anyone else (including the System Administrator).</div>
 <div style="display:flex; gap:8px; margin:14px 0 0; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
 <button class="btn btn-ghost" data-close="modal-req">Cancel</button>
-<button class="btn btn-ghost" id="req-save-draft-mid">Save Draft</button>
-<button class="btn btn-primary" id="req-submit-now-mid">Submit for Approval</button>
+<button class="btn btn-primary" id="req-route-hod-mid">Submit to Head of Department</button>
 </div>
 <!-- ===== Cheque Payment Voucher — same header/council masthead as the Requisition Form above, filled in together with it in the same modal ===== -->
 <div class="pv-form" id="pv-form-entry">
@@ -1407,8 +1405,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 <div class="modal-foot">
 <button class="btn btn-ghost" data-close="modal-req">Cancel</button>
-<button class="btn btn-ghost" id="req-save-draft">Save Draft</button>
-<button class="btn btn-primary" id="req-submit-now">Submit for Approval</button>
+<button class="btn btn-primary" id="req-route-hod">Submit to Head of Department</button>
 </div>
 </div>
 </div>
@@ -3198,10 +3195,8 @@ btn.style.display = (STATE.role === requiredRole) ? '' : 'none';
 async function openRequisitionModal(editReq) {
 STATE.editingRequisitionId = editReq ? editReq.id : null;
 document.getElementById('req-modal-title').textContent = editReq ? `Edit Requisition — ${editReq.ref_no}` : 'New Requisition';
-document.getElementById('req-save-draft').textContent = editReq ? 'Save Changes' : 'Save Draft';
-document.getElementById('req-submit-now').textContent = editReq ? 'Save & Submit for Approval' : 'Submit for Approval';
-document.getElementById('req-save-draft-mid').textContent = editReq ? 'Save Changes' : 'Save Draft';
-document.getElementById('req-submit-now-mid').textContent = editReq ? 'Save & Submit for Approval' : 'Submit for Approval';
+document.getElementById('req-route-hod').textContent = editReq ? 'Save & Submit to Head of Department' : 'Submit to Head of Department';
+document.getElementById('req-route-hod-mid').textContent = editReq ? 'Save & Submit to Head of Department' : 'Submit to Head of Department';
 // Fill in the paper-form fields that mirror who's submitting this and when.
 const deptSel = document.getElementById('req-form-department');
 deptSel.value = String((editReq ? editReq.department_id : STATE.departmentId) || '');
@@ -3436,11 +3431,8 @@ closeModal('modal-req');
 loadRequisitions();
 } catch (e) { toast(e.message, 'error'); }
 }
-document.getElementById('req-save-draft').addEventListener('click', () => submitNewRequisition(false));
-document.getElementById('req-submit-now').addEventListener('click', () => submitNewRequisition(true));
-document.getElementById('req-save-draft-mid').addEventListener('click', () => submitNewRequisition(false));
-document.getElementById('req-submit-now-mid').addEventListener('click', () => submitNewRequisition(true));
 document.getElementById('req-route-hod').addEventListener('click', () => submitNewRequisition(true));
+document.getElementById('req-route-hod-mid').addEventListener('click', () => submitNewRequisition(true));
 document.getElementById('req-search').addEventListener('input', debounce(loadRequisitions, 300));
 document.getElementById('req-status-filter').addEventListener('change', loadRequisitions);
 async function loadRequisitions() {
