@@ -600,7 +600,8 @@ width:100%; border:none; background:transparent; font:inherit; font-size:12px; p
 resize:none; overflow:hidden; white-space:pre-wrap; word-wrap:break-word; line-height:1.35; display:block; min-height:20px;
 }
 table.req-form-table.entry textarea[data-li-field="description"]:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
-table.req-form-table.entry .rf-row-remove, table.req-form-table.entry .rf-row-add{background:none; border:none; color:var(--ink-500); cursor:pointer; font-size:13px; padding:2px 4px;}
+table.req-form-table.entry td.rf-btn-cell{padding:3px 2px; text-align:center; vertical-align:middle;}
+table.req-form-table.entry .rf-row-remove, table.req-form-table.entry .rf-row-add{background:none; border:none; color:var(--ink-500); cursor:pointer; font-size:13px; padding:2px 3px; line-height:1; width:100%;}
 table.req-form-table.entry .rf-row-remove:hover{color:var(--danger, #b8382a);}
 table.req-form-table.entry .rf-row-add:hover{color:var(--teal-600);}
 table.req-form-table.entry tr.rf-grand td{font-family:var(--font-mono);}
@@ -1274,21 +1275,17 @@ Departments
 </div></td>
 <td><div class="rf-field"><strong>Activity Budget Limit:</strong><input type="text" id="req-form-budgetlimit" readonly placeholder="—"/></div></td>
 </tr>
+<tr>
+<td colspan="2"><div class="rf-field"><strong>Budget Output Subject:</strong><input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works"/></div></td>
+</tr>
 </table>
-<div class="req-form-subject entry"><strong>Budget Output Subject:</strong><input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works"/></div>
 <table class="req-form-table entry">
-<thead><tr><th style="width:9%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:9%;">Units</th><th style="width:9%;">Qty</th><th style="width:12%;">Rate</th><th class="num" style="width:13%;">Amount</th><th class="no-print" style="width:24px;"></th></tr></thead>
+<thead><tr><th style="width:9%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:9%;">Units</th><th style="width:9%;">Qty</th><th style="width:12%;">Rate</th><th class="num" style="width:13%;">Amount</th><th class="no-print" style="width:28px;"></th><th class="no-print" style="width:28px;"></th></tr></thead>
 <tbody id="req-lineitems-body"></tbody>
-<tfoot><tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">UGX <span id="req-grand-total">0</span></td><td class="no-print"></td></tr></tfoot>
+<tfoot><tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">UGX <span id="req-grand-total">0</span></td><td class="no-print"></td><td class="no-print"></td></tr></tfoot>
 </table>
 <div style="display:flex; gap:8px; margin:10px 0 16px; flex-wrap:wrap;" class="no-print">
 <button type="button" class="btn btn-ghost" id="req-add-section">Add Sub Activity</button>
-</div>
-<div class="req-route-stack no-print" style="display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin:0 0 18px;">
-<button type="button" class="btn btn-primary" id="req-route-hod">Submit to Head of Department</button>
-<button type="button" class="btn btn-ghost" id="req-route-treasurer" disabled title="Available once the Head of Department has approved this requisition">Submit to Town Treasurer</button>
-<button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Town Treasurer has approved this requisition">Submit to Town Clerk</button>
-<button type="button" class="btn btn-ghost" id="req-route-auditor" disabled title="Available once the Town Clerk has approved this requisition">Submit to Internal Auditor</button>
 </div>
 <div class="req-form-words entry"><strong>Amount in words:</strong> <span id="req-amount-words">—</span></div>
 <div class="req-form-signatures preview">
@@ -1296,12 +1293,19 @@ Departments
 <div><div class="sig-role">Checked and approved by,</div><div class="sig-line" id="req-sig-treasurer"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-treasurer-btn" data-sig-role="treasurer" onclick="attachSignature('req-sig-treasurer', this, 'treasurer')">🖊 Attach Signature</button><div class="sig-label">Town Treasurer</div></div>
 <div><div class="sig-role">Authorised by</div><div class="sig-line" id="req-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('req-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-label">Town Clerk</div></div>
 </div>
+<!-- Each button sits directly under its matching signature column above,
+     so the Head of Department forwards to the Treasurer, the Treasurer
+     forwards to the Clerk, and the Clerk forwards to the Auditor. -->
+<div class="req-route-buttons no-print">
+<div><button type="button" class="btn btn-ghost" id="req-route-treasurer" disabled title="Available once the Head of Department has approved this requisition">Submit to Town Treasurer</button></div>
+<div><button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Town Treasurer has approved this requisition">Submit to Town Clerk</button></div>
+<div><button type="button" class="btn btn-ghost" id="req-route-auditor" disabled title="Available once the Town Clerk has approved this requisition">Submit to Internal Auditor</button></div>
 </div>
-<div class="help-text" style="margin-top:10px;">"Add Sub Activity" starts a new Sub Activity (S/N 01, S/N 02, S/N 03…) which can hold one or more priced description lines underneath it. Qty × Rate fills the Amount automatically, or type the Amount directly for items like facilitation and transport. The three approval boxes above are completed later by the Head of Department, Town Treasurer and Town Clerk as this requisition moves through approval — each box can only be signed by the account signed in as that role, never by anyone else (including the System Administrator).</div>
+</div>
+<div class="help-text" style="margin-top:10px;">"Add Sub Activity" starts a new Sub Activity (S/N 01, S/N 02, S/N 03…) which can hold one or more priced description lines underneath it. Qty × Rate fills the Amount automatically, or type the Amount directly for items like facilitation and transport. The three approval boxes above are completed later by the Head of Department, Town Treasurer and Town Clerk as this requisition moves through approval — each box can only be signed by the account signed in as that role, never by anyone else (including the System Administrator). The routing button beneath each signature box becomes available once that box has been signed.</div>
 <div style="display:flex; gap:8px; margin:14px 0 0; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
 <button class="btn btn-ghost" data-close="modal-req">Cancel</button>
-<button class="btn btn-ghost" id="req-save-draft-mid">Save Draft</button>
-<button class="btn btn-primary" id="req-submit-now-mid">Submit for Approval</button>
+<button class="btn btn-primary" id="req-route-hod-mid">Submit to Head of Department</button>
 </div>
 <!-- ===== Cheque Payment Voucher — same header/council masthead as the Requisition Form above, filled in together with it in the same modal ===== -->
 <div class="pv-form" id="pv-form-entry">
@@ -1397,8 +1401,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 <div class="modal-foot">
 <button class="btn btn-ghost" data-close="modal-req">Cancel</button>
-<button class="btn btn-ghost" id="req-save-draft">Save Draft</button>
-<button class="btn btn-primary" id="req-submit-now">Submit for Approval</button>
+<button class="btn btn-primary" id="req-route-hod">Submit to Head of Department</button>
 </div>
 </div>
 </div>
@@ -3095,7 +3098,8 @@ return `<tr>
 <td><input type="number" data-li-idx="${idx}" data-li-field="qty" value="${li.qty ?? ''}" oninput="updateReqLineItem(${idx},'qty',this.value)"/></td>
 <td><input type="number" data-li-idx="${idx}" data-li-field="rate" value="${li.rate ?? ''}" oninput="updateReqLineItem(${idx},'rate',this.value)"/></td>
 <td><input type="number" data-li-idx="${idx}" data-li-field="amount" value="${li.amount ?? 0}" oninput="updateReqLineItem(${idx},'amount',this.value)"/></td>
-<td class="no-print" style="white-space:nowrap;"><button type="button" class="rf-row-add" title="Add line" onclick="insertReqLineItemAfter(${idx})">＋</button><button type="button" class="rf-row-remove" title="Remove line" onclick="removeReqLineItem(${idx})">✕</button></td>
+<td class="no-print rf-btn-cell"><button type="button" class="rf-row-add" title="Add line" onclick="insertReqLineItemAfter(${idx})">＋</button></td>
+<td class="no-print rf-btn-cell"><button type="button" class="rf-row-remove" title="Remove line" onclick="removeReqLineItem(${idx})">✕</button></td>
 </tr>`;
 }).join('');
 // Payment Voucher table mirrors the same line items (so the same work
