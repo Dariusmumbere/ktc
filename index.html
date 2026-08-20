@@ -537,19 +537,19 @@ background:#fff; padding:10px 6px 6px; font-family:var(--font-body); color:#1818
 .req-form-header .rf-title{font-family:var(--font-display); font-size:19px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; margin-top:6px;}
 .rf-refno{text-align:right; font-size:12.5px; margin:2px 0 10px; font-weight:600;}
 .rf-refno .mono{color:#b8382a; font-weight:800;}
-table.req-form-meta-table{width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:12.5px; border:1px solid #333;}
-table.req-form-meta-table td{border:1px solid #333; padding:5px 8px; vertical-align:bottom;}
+table.req-form-meta-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:border-box; border-collapse:collapse; margin:8px 0 14px; font-size:12.5px; border:1px solid #333;}
+table.req-form-meta-table td{border:1px solid #333; padding:5px 8px; vertical-align:bottom; overflow-wrap:break-word; word-break:break-word;}
 table.req-form-meta-table td strong{margin-right:6px;}
 table.req-form-meta-table td .rf-fill{display:inline-block; min-height:16px; vertical-align:bottom;}
 table.req-form-meta-table td .rf-fill img{max-height:44px; max-width:180px; object-fit:contain; vertical-align:bottom;}
 .req-form-subject{font-size:12.5px; margin:0 0 14px; line-height:2;}
 .req-form-subject strong{white-space:nowrap; margin-right:4px;}
 .req-form-subject .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
-table.req-form-table{width:100%; border-collapse:collapse; margin-bottom:14px; font-size:12px; border:1px solid #e2790f;}
+table.req-form-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:border-box; border-collapse:collapse; margin-bottom:14px; font-size:12px; border:1px solid #e2790f;}
 /* Requisition / Payment Voucher line-item table rules are orange per
    Council request, so the printed and on-screen line grid stands out
    from the rest of the black-ruled paper form. */
-table.req-form-table th, table.req-form-table td{border:1px solid #e2790f; padding:6px 8px;}
+table.req-form-table th, table.req-form-table td{border:1px solid #e2790f; padding:6px 8px; overflow-wrap:break-word; word-break:break-word;}
 table.req-form-table th{background:#fdf1e2; font-size:10.5px; text-transform:uppercase; text-align:left; color:#8a4a09;}
 table.req-form-table td.num, table.req-form-table th.num{text-align:right; font-family:var(--font-mono);}
 table.req-form-table tr.rf-section-head td{font-weight:700; background:#fffaf3;}
@@ -589,12 +589,6 @@ table.req-form-meta-table.entry input:focus, table.req-form-meta-table.entry sel
 .req-form-subject.entry{display:flex; align-items:baseline; gap:6px;}
 .req-form-subject.entry input{flex:1; border:none; border-bottom:1px dotted #888; background:transparent; font:inherit; font-size:12.5px; padding:2px 4px;}
 .req-form-subject.entry input:focus{outline:none; border-bottom:1px dotted var(--gold-600); background:#fffdf2;}
-/* Budget Output Subject, now a row inside req-form-table rather than a
-separate block above it. */
-tr.req-subject-row td{background:#fffaf3;}
-tr.req-subject-row .rf-field{display:flex; align-items:baseline; gap:6px;}
-tr.req-subject-row input{flex:1; min-width:0; border:none; background:transparent; font:inherit; font-size:12.5px; padding:2px 4px; color:#181818;}
-tr.req-subject-row input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
 table.req-form-table.entry td{padding:3px 4px;}
 table.req-form-table.entry input{width:100%; border:none; background:transparent; font:inherit; font-size:12px; padding:4px 4px; color:#181818;}
 table.req-form-table.entry input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
@@ -606,8 +600,9 @@ width:100%; border:none; background:transparent; font:inherit; font-size:12px; p
 resize:none; overflow:hidden; white-space:pre-wrap; word-wrap:break-word; line-height:1.35; display:block; min-height:20px;
 }
 table.req-form-table.entry textarea[data-li-field="description"]:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
-table.req-form-table.entry .rf-row-remove{background:none; border:none; color:var(--ink-500); cursor:pointer; font-size:13px; padding:2px 4px;}
+table.req-form-table.entry .rf-row-remove, table.req-form-table.entry .rf-row-add{background:none; border:none; color:var(--ink-500); cursor:pointer; font-size:13px; padding:2px 4px;}
 table.req-form-table.entry .rf-row-remove:hover{color:var(--danger, #b8382a);}
+table.req-form-table.entry .rf-row-add:hover{color:var(--teal-600);}
 table.req-form-table.entry tr.rf-grand td{font-family:var(--font-mono);}
 /* Budget Output Code search field (replaces the old <select> dropdown) */
 .rf-bc-search-wrap{position:relative; flex:1; min-width:0;}
@@ -629,7 +624,9 @@ max-height:220px; overflow-y:auto; text-align:left;
 /* ---------------- Attach-signature buttons + Cheque Payment Voucher (entry form) ---------------- */
 .sig-attach-btn{display:inline-flex; align-items:center; gap:4px; font-size:10.5px; padding:3px 8px; margin-top:4px; border:1px dashed var(--gold-600, #b8860b); background:#fffdf2; color:#7a5b00; border-radius:5px; cursor:pointer;}
 .sig-attach-btn:hover{background:#fff4d6;}
-.rf-sig-slot{display:flex; flex-direction:column; align-items:flex-start;}
+.rf-sig-slot{display:flex; flex-direction:row; align-items:center; flex-wrap:wrap; gap:8px;}
+.rf-sig-slot .rf-fill{flex:1 1 auto; min-width:60px;}
+.rf-sig-slot .sig-attach-btn{flex-basis:100%;}
 .pv-form{margin-top:26px; padding-top:18px; border-top:2px dashed var(--line);}
 .pv-form .rf-title{margin-top:2px;}
 .pv-certify{font-size:11.5px; line-height:1.7; border:1px solid #333; padding:10px 12px; margin:10px 0 14px;}
@@ -1261,7 +1258,7 @@ Departments
 <td><div class="rf-field"><strong>Requisitioner (Full names):</strong><input type="text" id="req-form-names" placeholder="Enter your full name"/></div></td>
 <td>
 <div class="rf-field rf-sig-slot">
-<div style="display:flex; align-items:baseline; gap:6px; width:100%;"><strong>Signature:</strong></div>
+<strong>Signature:</strong>
 <div class="rf-fill" id="req-sig-requester"></div>
 <button type="button" class="sig-attach-btn no-print" id="req-sig-requester-btn" onclick="attachSignature('req-sig-requester', this)">🖊 Attach My Signature</button>
 </div>
@@ -1278,15 +1275,20 @@ Departments
 <td><div class="rf-field"><strong>Activity Budget Limit:</strong><input type="text" id="req-form-budgetlimit" readonly placeholder="—"/></div></td>
 </tr>
 </table>
+<div class="req-form-subject entry"><strong>Budget Output Subject:</strong><input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works"/></div>
 <table class="req-form-table entry">
 <thead><tr><th style="width:9%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:9%;">Units</th><th style="width:9%;">Qty</th><th style="width:12%;">Rate</th><th class="num" style="width:13%;">Amount</th><th class="no-print" style="width:24px;"></th></tr></thead>
-<tbody><tr class="req-subject-row"><td colspan="7"><div class="rf-field"><strong>Budget Output Subject:</strong><input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works"/></div></td></tr></tbody>
 <tbody id="req-lineitems-body"></tbody>
 <tfoot><tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">UGX <span id="req-grand-total">0</span></td><td class="no-print"></td></tr></tfoot>
 </table>
 <div style="display:flex; gap:8px; margin:10px 0 16px; flex-wrap:wrap;" class="no-print">
 <button type="button" class="btn btn-ghost" id="req-add-section">Add Sub Activity</button>
-<button type="button" class="btn btn-ghost" id="req-add-row">Add Line</button>
+</div>
+<div class="req-route-stack no-print" style="display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin:0 0 18px;">
+<button type="button" class="btn btn-primary" id="req-route-hod">Submit to Head of Department</button>
+<button type="button" class="btn btn-ghost" id="req-route-treasurer" disabled title="Available once the Head of Department has approved this requisition">Submit to Town Treasurer</button>
+<button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Town Treasurer has approved this requisition">Submit to Town Clerk</button>
+<button type="button" class="btn btn-ghost" id="req-route-auditor" disabled title="Available once the Town Clerk has approved this requisition">Submit to Internal Auditor</button>
 </div>
 <div class="req-form-words entry"><strong>Amount in words:</strong> <span id="req-amount-words">—</span></div>
 <div class="req-form-signatures preview">
@@ -3046,10 +3048,12 @@ const nextNo = STATE.reqLineItems.reduce((max, li) => Math.max(max, li.item_no),
 STATE.reqLineItems.push({ item_no: nextNo, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: true });
 renderReqLineItems();
 });
-document.getElementById('req-add-row').addEventListener('click', () => {
-STATE.reqLineItems.push({ item_no: currentReqSectionNo(), description: '', units: '', qty: 0, rate: 0, amount: 0, isHeader: false, ledger_folio: '', charge_date: '' });
+function insertReqLineItemAfter(idx) {
+const ref = STATE.reqLineItems[idx];
+const sectionNo = ref ? ref.item_no : currentReqSectionNo();
+STATE.reqLineItems.splice(idx + 1, 0, { item_no: sectionNo, description: '', units: '', qty: 0, rate: 0, amount: 0, isHeader: false, ledger_folio: '', charge_date: '' });
 renderReqLineItems();
-});
+}
 function updateReqLineItem(idx, field, value) {
 const li = STATE.reqLineItems[idx];
 if (!li) return;
@@ -3091,7 +3095,7 @@ return `<tr>
 <td><input type="number" data-li-idx="${idx}" data-li-field="qty" value="${li.qty ?? ''}" oninput="updateReqLineItem(${idx},'qty',this.value)"/></td>
 <td><input type="number" data-li-idx="${idx}" data-li-field="rate" value="${li.rate ?? ''}" oninput="updateReqLineItem(${idx},'rate',this.value)"/></td>
 <td><input type="number" data-li-idx="${idx}" data-li-field="amount" value="${li.amount ?? 0}" oninput="updateReqLineItem(${idx},'amount',this.value)"/></td>
-<td class="no-print"><button type="button" class="rf-row-remove" title="Remove line" onclick="removeReqLineItem(${idx})">✕</button></td>
+<td class="no-print" style="white-space:nowrap;"><button type="button" class="rf-row-add" title="Add line" onclick="insertReqLineItemAfter(${idx})">＋</button><button type="button" class="rf-row-remove" title="Remove line" onclick="removeReqLineItem(${idx})">✕</button></td>
 </tr>`;
 }).join('');
 // Payment Voucher table mirrors the same line items (so the same work
@@ -3426,6 +3430,7 @@ document.getElementById('req-save-draft').addEventListener('click', () => submit
 document.getElementById('req-submit-now').addEventListener('click', () => submitNewRequisition(true));
 document.getElementById('req-save-draft-mid').addEventListener('click', () => submitNewRequisition(false));
 document.getElementById('req-submit-now-mid').addEventListener('click', () => submitNewRequisition(true));
+document.getElementById('req-route-hod').addEventListener('click', () => submitNewRequisition(true));
 document.getElementById('req-search').addEventListener('input', debounce(loadRequisitions, 300));
 document.getElementById('req-status-filter').addEventListener('change', loadRequisitions);
 async function loadRequisitions() {
