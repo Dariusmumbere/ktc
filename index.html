@@ -574,58 +574,87 @@ display:flex; align-items:center; justify-content:center; background:var(--paper
 }
 .sig-preview-box img{max-width:100%; max-height:100%; object-fit:contain;}
 /* ---------------- Printable Requisition Form (mirrors the Council's paper form) ---------------- */
+/* All fixed pixel sizing in this block (fonts, padding, margins, heights)
+   is scaled to 86% of its original 100% value — this is the on-screen
+   default requisition layout size. Percentage widths (table width:100%
+   etc.) are left alone since they're already relative to the paper's own
+   container, not an absolute size. */
 .req-form-paper{
-background:#fff; padding:10px 6px 6px; font-family:var(--font-body); color:#181818;
-zoom:.86; /* default on-screen requisition layout size — was 100% (unscaled) */
+background:#fff; padding:8.6px 5.2px 5.2px; font-family:var(--font-body); color:#181818;
 }
 /* Requisition form header — a single pre-composed banner image (header.jpg)
    replaces the old text+crest+seal composite so the on-screen form matches
    the Council's printed letterhead exactly. */
-.rf-header-img{display:block; width:100%; height:auto; margin-bottom:10px; border-radius:4px;}
-.req-form-header{text-align:center; margin-bottom:2px;}
-.req-form-header .rf-title{font-family:var(--font-display); font-size:19px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; margin-top:6px;}
-.rf-refno{text-align:right; font-size:12.5px; margin:2px 0 10px; font-weight:600;}
+.rf-header-img{display:block; width:100%; height:auto; margin-bottom:8.6px; border-radius:4px;}
+.req-form-header{text-align:center; margin-bottom:1.7px;}
+.req-form-header .rf-title{font-family:var(--font-display); font-size:16.34px; font-weight:800; letter-spacing:.34px; text-transform:uppercase; margin-top:5.2px;}
+.rf-refno{text-align:right; font-size:10.75px; margin:1.7px 0 8.6px; font-weight:600;}
 .rf-refno .mono{color:#b8382a; font-weight:800;}
-table.req-form-meta-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:border-box; border-collapse:collapse; margin:8px 0 14px; font-size:12.5px; border:1px solid #333;}
-table.req-form-meta-table td{border:1px solid #333; padding:5px 8px; vertical-align:bottom; overflow-wrap:break-word; word-break:break-word;}
-table.req-form-meta-table td strong{margin-right:6px;}
-table.req-form-meta-table td .rf-fill{display:inline-block; min-height:16px; vertical-align:bottom;}
-table.req-form-meta-table td .rf-fill img{max-height:44px; max-width:180px; object-fit:contain; vertical-align:bottom;}
-.req-form-subject{font-size:12.5px; margin:0 0 14px; line-height:2;}
-.req-form-subject strong{white-space:nowrap; margin-right:4px;}
+table.req-form-meta-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:border-box; border-collapse:collapse; margin:6.9px 0 12.04px; font-size:10.75px; border:1px solid #333;}
+table.req-form-meta-table td{border:1px solid #333; padding:4.3px 6.9px; vertical-align:bottom; overflow-wrap:break-word; word-break:break-word;}
+table.req-form-meta-table td strong{margin-right:5.2px;}
+table.req-form-meta-table td .rf-fill{display:inline-block; min-height:13.76px; vertical-align:bottom;}
+table.req-form-meta-table td .rf-fill img{max-height:37.84px; max-width:154.8px; object-fit:contain; vertical-align:bottom;}
+.req-form-subject{font-size:10.75px; margin:0 0 12.04px; line-height:2;}
+.req-form-subject strong{white-space:nowrap; margin-right:3.44px;}
 .req-form-subject .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
-table.req-form-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:border-box; border-collapse:collapse; margin-bottom:14px; font-size:12px; border:1px solid #e2790f;}
+table.req-form-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:border-box; border-collapse:collapse; margin-bottom:12.04px; font-size:10.32px; border:1px solid #e2790f;}
 /* Requisition / Payment Voucher line-item table rules are orange per
    Council request, so the printed and on-screen line grid stands out
    from the rest of the black-ruled paper form. */
-table.req-form-table th, table.req-form-table td{border:1px solid #e2790f; padding:6px 8px; overflow-wrap:break-word; word-break:break-word;}
-table.req-form-table th{background:#fdf1e2; font-size:10.5px; text-transform:uppercase; text-align:left; color:#8a4a09;}
+table.req-form-table th, table.req-form-table td{border:1px solid #e2790f; padding:5.16px 6.9px; overflow-wrap:break-word; word-break:break-word;}
+table.req-form-table th{background:#fdf1e2; font-size:9.03px; text-transform:uppercase; text-align:left; color:#8a4a09;}
 table.req-form-table td.num, table.req-form-table th.num{text-align:right; font-family:var(--font-mono);}
 table.req-form-table tr.rf-section-head td{font-weight:700; background:#fffaf3;}
 table.req-form-table tr.rf-subtotal td{font-weight:700; border-top:2px double #e2790f;}
-table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #e2790f; background:#fdf1e2; font-size:12.5px; text-transform:uppercase;}
-.req-form-words{font-size:12.5px; margin-bottom:30px; line-height:2;}
-.req-form-words strong{white-space:nowrap; margin-right:4px;}
+table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #e2790f; background:#fdf1e2; font-size:10.75px; text-transform:uppercase;}
+.req-form-words{font-size:10.75px; margin-bottom:25.8px; line-height:2;}
+.req-form-words strong{white-space:nowrap; margin-right:3.44px;}
 .req-form-words .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
-.req-form-signatures{display:grid; grid-template-columns:repeat(3,1fr); border:1px solid #333; margin-top:18px;}
-.req-form-signatures > div{padding:10px 12px 12px; border-left:1px solid #333;}
+.req-form-signatures{display:grid; grid-template-columns:repeat(3,1fr); border:1px solid #333; margin-top:15.48px;}
+.req-form-signatures > div{padding:8.6px 10.32px 10.32px; border-left:1px solid #333;}
 .req-form-signatures > div:first-child{border-left:none;}
-.req-form-signatures .sig-role{font-size:12px; font-weight:600; margin-bottom:26px;}
-.req-form-signatures .sig-line{border-top:1px dotted #666; margin-bottom:6px; height:46px; display:flex; align-items:flex-end; padding-bottom:2px;}
+.req-form-signatures .sig-role{font-size:10.32px; font-weight:600; margin-bottom:22.36px;}
+.req-form-signatures .sig-line{border-top:1px dotted #666; margin-bottom:5.16px; height:39.56px; display:flex; align-items:flex-end; padding-bottom:1.72px;}
 /* Unscoped so every signature box — including the Payment Voucher's Vote
 Book / Verified by / Passed Payment / payee / witness / cashier boxes,
 which sit in a plain table rather than inside .req-form-signatures — gets
 the same enlarged, clearly-visible signature image once one is attached. */
-.sig-line img{max-height:44px; max-width:95%; object-fit:contain;}
-.req-form-signatures .sig-label{font-size:12px; font-weight:800;}
+.sig-line img{max-height:37.84px; max-width:95%; object-fit:contain;}
+.req-form-signatures .sig-label{font-size:10.32px; font-weight:800;}
 @media print{
 @page{ size:A4; margin:12mm; }
 body *{visibility:hidden;}
 #print-form-container, #print-form-container *{visibility:visible;}
 .overlay#modal-print-form{position:absolute; inset:auto; background:none; padding:0;}
 #print-form-container{position:absolute; top:0; left:0; width:100%; max-width:none; box-shadow:none; border:none; max-height:none;}
-#print-form-container .req-form-paper{zoom:1;} /* on-screen 86% default doesn't affect the actual printed page size */
 .no-print{display:none !important;}
+/* The 86% on-screen sizing above is a screen-only default — restore the
+   original full-size dimensions for the physical printed page. */
+#print-form-container .req-form-paper{padding:10px 6px 6px;}
+#print-form-container .rf-header-img{margin-bottom:10px;}
+#print-form-container .req-form-header{margin-bottom:2px;}
+#print-form-container .req-form-header .rf-title{font-size:19px; letter-spacing:.4px; margin-top:6px;}
+#print-form-container .rf-refno{font-size:12.5px; margin:2px 0 10px;}
+#print-form-container table.req-form-meta-table{margin:8px 0 14px; font-size:12.5px;}
+#print-form-container table.req-form-meta-table td{padding:5px 8px;}
+#print-form-container table.req-form-meta-table td strong{margin-right:6px;}
+#print-form-container table.req-form-meta-table td .rf-fill{min-height:16px;}
+#print-form-container table.req-form-meta-table td .rf-fill img{max-height:44px; max-width:180px;}
+#print-form-container .req-form-subject{font-size:12.5px; margin:0 0 14px;}
+#print-form-container .req-form-subject strong{margin-right:4px;}
+#print-form-container table.req-form-table{margin-bottom:14px; font-size:12px;}
+#print-form-container table.req-form-table th, #print-form-container table.req-form-table td{padding:6px 8px;}
+#print-form-container table.req-form-table th{font-size:10.5px;}
+#print-form-container table.req-form-table tr.rf-grand td{font-size:12.5px;}
+#print-form-container .req-form-words{font-size:12.5px; margin-bottom:30px;}
+#print-form-container .req-form-words strong{margin-right:4px;}
+#print-form-container .req-form-signatures{margin-top:18px;}
+#print-form-container .req-form-signatures > div{padding:10px 12px 12px;}
+#print-form-container .req-form-signatures .sig-role{font-size:12px; margin-bottom:26px;}
+#print-form-container .req-form-signatures .sig-line{margin-bottom:6px; height:46px; padding-bottom:2px;}
+#print-form-container .sig-line img{max-height:44px;}
+#print-form-container .req-form-signatures .sig-label{font-size:12px;}
 }
 /* ---------------- Requisition data-entry form (styled as the paper form itself) ---------------- */
 .req-digital-controls{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px 14px; margin-bottom:16px;}
