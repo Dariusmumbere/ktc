@@ -1152,9 +1152,9 @@ Departments
 <div class="table-wrap">
 <table>
 <thead>
-<tr><th>Ref No.</th><th>Requester</th><th>Department</th><th class="wrap">Subject</th><th>Amount (UGX)</th><th>Status</th><th>Stage</th><th>Date</th><th></th></tr>
+<tr><th>Ref No.</th><th>Requester</th><th>Dept Abbr.</th><th>Department</th><th class="wrap">Subject</th><th>Amount (UGX)</th><th>Status</th><th>Stage</th><th>Date</th><th></th></tr>
 </thead>
-<tbody id="req-table-body"><tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+<tbody id="req-table-body"><tr><td colspan="10" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
 </table>
 </div>
 </div>
@@ -1169,9 +1169,9 @@ Departments
 <div class="table-wrap">
 <table>
 <thead>
-<tr><th>Ref No.</th><th>Requester</th><th>Department</th><th class="wrap">Subject</th><th>Amount (UGX)</th><th>Available Balance</th><th>Stage</th><th></th></tr>
+<tr><th>Ref No.</th><th>Requester</th><th>Dept Abbr.</th><th>Department</th><th class="wrap">Subject</th><th>Amount (UGX)</th><th>Available Balance</th><th>Stage</th><th></th></tr>
 </thead>
-<tbody id="approval-table-body"><tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+<tbody id="approval-table-body"><tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
 </table>
 </div>
 </div>
@@ -3603,7 +3603,7 @@ document.getElementById('req-search').addEventListener('input', debounce(loadReq
 document.getElementById('req-status-filter').addEventListener('change', loadRequisitions);
 async function loadRequisitions() {
 const tbody = document.getElementById('req-table-body');
-tbody.innerHTML = '<tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+tbody.innerHTML = '<tr><td colspan="10" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
 const status = document.getElementById('req-status-filter').value;
 const search = document.getElementById('req-search').value.trim().toLowerCase();
 try {
@@ -3611,7 +3611,7 @@ let path = '/api/requisitions';
 if (status) path += `?status=${status}`;
 let items = await api(path);
 if (search) items = items.filter(r => (r.ref_no + ' ' + (r.subject||r.activity_details||'')).toLowerCase().includes(search));
-if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state">No requisitions found.</div></td></tr>'; return; }
+if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state">No requisitions found.</div></td></tr>'; return; }
 STATE_REQUISITIONS_CACHE = items;
 tbody.innerHTML = items.map(r => {
 const isOwnerOrAdmin = (r.requester_id == STATE.userId || STATE.role === 'admin');
@@ -3620,6 +3620,7 @@ return `
 <tr>
 <td class="mono">${r.ref_no}</td>
 <td>${escapeHtml(r.requester_name || '—')}</td>
+<td class="mono">${escapeHtml(r.department_abbr || '—')}</td>
 <td>${escapeHtml(r.department_name || '—')}</td>
 <td class="wrap">${escapeHtml(r.subject || r.activity_details || '—')}</td>
 <td class="num mono">${money(r.amount_requested)}</td>
@@ -3634,7 +3635,7 @@ ${isEditable ? `<button class="btn btn-danger" style="padding:6px 10px; margin-l
 </td>
 </tr>`;
 }).join('');
-} catch (e) { tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+} catch (e) { tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
 let STATE_REQUISITIONS_CACHE = [];
 async function editRequisition(id) {
@@ -3669,7 +3670,8 @@ document.getElementById('rd-title').textContent = r.ref_no;
 body.innerHTML = `
 <div style="margin-bottom:4px;"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div>
 ${renderFilledRequisitionFormHtml(r)}
-${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div>${(r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? '<div class="help-text" style="margin-top:6px;">Upload the Payment Voucher, Official Receipts, Signed Attendance Sheets and any other supporting documents for this requisition.</div>' : ''}</div>` : ''}
+${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div>${(r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? '<div class="help-text" style="margin-top:6px;">Upload the Payment Voucher, Official Receipts, Signed Attendance Sheets and any other supporting documents for this requisition.</div>' : ''}${(r.documents && r.documents.length) ? `<div style="margin-top:14px;">${renderDocumentCardsHtml(r.documents)}</div>` : ''}</div>` : ''}
+${(!r.accountability && r.documents && r.documents.length) ? `<div class="divider"></div><div class="kicker">Attached Documents</div><div style="margin-top:8px;">${renderDocumentCardsHtml(r.documents)}</div>` : ''}
 `;
 let footHtml = `<button class="btn btn-ghost" onclick="openPrintForm(${r.id})">🖶 Print Requisition Form</button>`;
 if (r.status === 'draft' && (r.requester_id == STATE.userId || STATE.role === 'admin')) {
@@ -3992,16 +3994,17 @@ ${renderPvFormHtml(r, parts)}
 // ---- Approvals ------------------------------------------------------------------
 async function loadApprovals() {
 const tbody = document.getElementById('approval-table-body');
-tbody.innerHTML = '<tr><td colspan="8" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+tbody.innerHTML = '<tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
 try {
 const items = await api('/api/approvals/pending');
-if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state">Nothing awaiting your approval right now.</div></td></tr>'; return; }
+if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state">Nothing awaiting your approval right now.</div></td></tr>'; return; }
 tbody.innerHTML = items.map(r => {
 const bc = STATE.budgetCodes.find(c => c.id === r.budget_code_id);
 return `
 <tr>
 <td class="mono">${r.ref_no}</td>
 <td>${escapeHtml(r.requester_name||'—')}</td>
+<td class="mono">${escapeHtml(r.department_abbr || '—')}</td>
 <td>${escapeHtml(r.department_name||'—')}</td>
 <td class="wrap">${escapeHtml(r.subject || r.activity_details || '—')}</td>
 <td class="num mono">${money(r.amount_requested)}</td>
@@ -4010,7 +4013,7 @@ return `
 <td><button class="btn btn-primary" style="padding:6px 10px;" onclick="viewRequisition(${r.id})">Review</button></td>
 </tr>`;
 }).join('');
-} catch (e) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+} catch (e) { tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
 // ---- Accountability --------------------------------------------------------------
 async function loadAccountability() {
@@ -4344,4 +4347,4 @@ function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = 
 if (STATE.token) { enterApp().catch(() => logout()); }
 </script>
 </body>
-</html> 
+</html>
