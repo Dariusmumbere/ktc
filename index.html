@@ -493,10 +493,23 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 .modal.modal-maximized{
 width:100vw !important; max-width:100vw !important; height:100vh !important; max-height:100vh !important; margin:0 !important; border-radius:0 !important;
 display:flex; flex-direction:column;
+/* The base .modal rule sets overflow-y:auto on the modal itself (for its
+   normal small centred size). Left in place here, a tall form would make
+   the *whole* modal scroll instead of just .modal-body — which drags the
+   header (and its minimize/close buttons) up and out of view as soon as
+   the user scrolls. Maximized mode should never scroll itself; only
+   modal-body should. */
+overflow:hidden;
 }
-.modal.modal-maximized .modal-head{flex-shrink:0;}
-.modal.modal-maximized .modal-body{flex:1; overflow-y:auto;}
-.modal.modal-maximized .modal-foot{flex-shrink:0;}
+/* flex-shrink:0 alone isn't enough to keep the header/footer in place —
+   a flex child's default min-height is "auto" (its content size), so
+   modal-body would refuse to shrink to the space actually left over and
+   overflow the flex column instead of scrolling internally. min-height:0
+   is the standard fix that lets it size correctly and confines all
+   scrolling to modal-body, so the header always stays put at the top. */
+.modal.modal-maximized .modal-head{flex-shrink:0; position:sticky; top:0; z-index:5; background:#fff;}
+.modal.modal-maximized .modal-body{flex:1; min-height:0; overflow-y:auto;}
+.modal.modal-maximized .modal-foot{flex-shrink:0; position:sticky; bottom:0; z-index:5; background:#fff;}
 /* Inside a maximized modal, the requisition paper-form and its tables
 should use the full width now available instead of staying capped at
 their normal narrow max-width. */
@@ -1150,7 +1163,7 @@ Departments
 </select>
 </div>
 <div class="table-wrap">
-<table>
+<table id="req-list-table">
 <thead>
 <tr><th>Ref No.</th><th>Requester</th><th>Department</th><th class="wrap">Subject</th><th>Amount (UGX)</th><th>Status</th><th>Stage</th><th>Date</th><th></th></tr>
 </thead>
@@ -3663,6 +3676,10 @@ const foot = document.getElementById('rd-foot');
 body.innerHTML = '<div class="loading-row"><span class="spinner spinner-dark"></span></div>';
 foot.innerHTML = '';
 openModal('modal-req-detail');
+// Same reasoning as the New/Edit Requisition form: the paper-form view is
+// wide, so open it maximized (fullscreen) by default — the minimize
+// button in the header still lets the user shrink it back down.
+toggleModalMaximize('modal-req-detail');
 try {
 const r = await api(`/api/requisitions/${id}`);
 document.getElementById('rd-title').textContent = r.ref_no;
