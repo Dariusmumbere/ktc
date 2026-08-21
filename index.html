@@ -1339,7 +1339,7 @@ Departments
 <div class="rf-refno">Ref No. <span class="mono" id="req-form-refno-preview">(assigned on save)</span></div>
 <table class="req-form-meta-table entry">
 <tr>
-<td style="width:33.33%;"><div class="rf-field rf-field-tight"><strong>System User Name:</strong><span class="rf-fill" id="req-form-sysuser"></span></div></td>
+<td style="width:calc(33.33% + 10px);"><div class="rf-field rf-field-tight"><strong>System User Name:</strong><span class="rf-fill" id="req-form-sysuser"></span></div></td>
 <td style="width:33.33%;"><div class="rf-field rf-field-tight"><strong>Email:</strong><span class="rf-fill" id="req-form-sysemail"></span></div></td>
 <td style="width:33.34%;"><div class="rf-field rf-field-tight"><strong>Role:</strong><span class="rf-fill" id="req-form-sysrole"></span></div></td>
 </tr>
@@ -4017,7 +4017,7 @@ return `
 <div class="rf-refno">Ref No. <span class="mono">${escapeHtml(r.ref_no)}</span></div>
 <table class="req-form-meta-table">
 <tr>
-<td style="width:33.33%;"><strong>System User Name:</strong><span class="rf-fill">${escapeHtml(r.requester_account_name || '—')}</span></td>
+<td style="width:calc(33.33% + 10px);"><strong>System User Name:</strong><span class="rf-fill">${escapeHtml(r.requester_account_name || '—')}</span></td>
 <td style="width:33.33%;"><strong>Email:</strong><span class="rf-fill">${escapeHtml(r.requester_email || '—')}</span></td>
 <td style="width:33.34%;"><strong>Role:</strong><span class="rf-fill" style="text-transform:capitalize;">${escapeHtml(roleLabel)}</span></td>
 </tr>
