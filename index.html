@@ -365,7 +365,7 @@ tbody tr:hover{background:var(--gold-100);}
 tbody tr:last-child td {
 border-bottom: none;
 }
-td.wrap, th.wrap{white-space:normal;}
+td.wrap, th.wrap{white-space:normal; overflow-wrap:break-word; word-break:break-word;}
 .num{font-family:var(--font-mono); text-align:center;}
 .mono{font-family:var(--font-mono);}
 /* ---------------- Revenue Sources Summary table --------------------------
@@ -433,7 +433,7 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-main-table{min-width:1810px;}
 #wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
 #wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:400; line-height:1.3;}
-#wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px;}
+#wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px; overflow-wrap:break-word; word-break:break-word;}
 /* Funding Source (18th column): give it noticeably less room than before */
 #wp-main-table th:nth-child(18), #wp-main-table td:nth-child(18){white-space:normal; max-width:78px; width:78px;}
 /* Department (1st column): wrap the name across two lines to use the
@@ -484,6 +484,19 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 .modal-close:hover{background:var(--danger-bg); color:var(--danger);}
 .modal-body{padding:20px 22px;}
 .modal-foot{padding:16px 22px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;}
+/* ---------------- Modal maximize / minimize (Requisition form) ---------------- */
+.modal-head-actions{display:flex; align-items:center; gap:4px;}
+.modal-max-btn{background:none; border:none; cursor:pointer; color:var(--ink-500); width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; transition:background .15s var(--ease), color .15s var(--ease);}
+.modal-max-btn svg{width:16px; height:16px;}
+.modal-max-btn:hover{background:var(--paper); color:var(--teal-600);}
+#modal-req.req-modal-maximized{padding:0;}
+#modal-req.req-modal-maximized #req-modal-panel{
+width:100vw; height:100vh; max-width:100vw; max-height:100vh; border-radius:0;
+display:flex; flex-direction:column; animation:none;
+}
+#modal-req.req-modal-maximized #req-modal-panel .modal-body{flex:1 1 auto; min-height:0; overflow-y:auto;}
+#modal-req.req-modal-maximized #req-modal-panel .req-form-paper,
+#modal-req.req-modal-maximized #req-modal-panel .pv-form{max-width:none;}
 .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 14px;}
 .form-grid .span2{grid-column:1/-1;}
 /* ---------------- Toasts ---------------- */
@@ -514,7 +527,7 @@ cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
 .tabs-sub button.active{color:var(--teal-700); border-color:var(--teal-600);}
 .detail-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 22px; margin-bottom:16px;}
 .detail-label{font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-500); font-weight:700;}
-.detail-value{font-size:13.5px; margin-top:2px; font-weight:500;}
+.detail-value{font-size:13.5px; margin-top:2px; font-weight:500; overflow-wrap:break-word; word-break:break-word;}
 .help-text{font-size:11.5px; color:var(--ink-500); margin-top:4px;}
 .divider{height:1px; background:var(--line); margin:16px 0;}
 .kicker{font-size:10.5px; text-transform:uppercase; letter-spacing:.7px; color:var(--gold-600); font-weight:700;}
@@ -1231,8 +1244,16 @@ Departments
 <div id="toast-stack"></div>
 <!-- ===== MODAL: New / Submit Requisition (styled as the Council's paper Funds Requisition Form) ===== -->
 <div class="overlay" id="modal-req">
-<div class="modal modal-lg" style="max-width:800px;">
-<div class="modal-head"><h3 id="req-modal-title">New Requisition</h3><button class="modal-close" data-close="modal-req">&times;</button></div>
+<div class="modal modal-lg" id="req-modal-panel" style="max-width:800px;">
+<div class="modal-head"><h3 id="req-modal-title">New Requisition</h3>
+<div class="modal-head-actions">
+<button type="button" class="modal-max-btn" id="req-modal-maximize-btn" onclick="toggleReqModalMaximize()" title="Maximize" aria-label="Maximize form">
+<svg id="req-modal-max-icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m11-5v3a2 2 0 0 0-2 2h-3"/></svg>
+<svg id="req-modal-max-icon-shrink" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M9 3v3a2 2 0 0 1-2 2H4M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg>
+</button>
+<button class="modal-close" data-close="modal-req">&times;</button>
+</div>
+</div>
 <div class="modal-body">
 <!-- Paper-form replica: fill this in exactly as you would the printed Funds Requisition Form -->
 <div class="req-form-paper" id="req-form-entry" style="border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px 16px 18px;">
@@ -1265,7 +1286,7 @@ Departments
 <td style="width:33.34%;"><div class="rf-field"><strong>Position:</strong><input type="text" id="req-form-position" placeholder="e.g. Senior Accountant"/></div></td>
 </tr>
 <tr>
-<td style="width:33.33%;"><div class="rf-field"><strong>Requisitioner<br/>(Full names):</strong><input type="text" id="req-form-names" placeholder="Enter your full name"/></div></td>
+<td style="width:33.33%;"><div class="rf-field"><strong>Requisitioner Full Names:</strong><input type="text" id="req-form-names" placeholder="Enter your full name"/></div></td>
 <td style="width:33.33%;"><div class="rf-field"><strong>Mob. No.:</strong><input type="text" id="req-form-mobile" placeholder="e.g. 0772 123456"/></div></td>
 <td style="width:33.34%;">
 <div class="rf-field rf-sig-slot">
@@ -2115,7 +2136,28 @@ document.getElementById('hamburger-btn').addEventListener('click', toggleSidebar
 document.getElementById('sidebar-backdrop').addEventListener('click', closeSidebar);
 // ---- Modals -----------------------------------------------------------------
 function openModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function closeModal(id) {
+const el = document.getElementById(id);
+el.classList.remove('show');
+if (id === 'modal-req') { el.classList.remove('req-modal-maximized'); setReqModalMaxIcon(false); }
+}
+// Maximize / minimize the Requisition form modal so its tables can widen
+// to use the full screen; clicking again restores it to its normal size.
+function toggleReqModalMaximize() {
+const overlay = document.getElementById('modal-req');
+const maximized = overlay.classList.toggle('req-modal-maximized');
+setReqModalMaxIcon(maximized);
+}
+function setReqModalMaxIcon(maximized) {
+const btn = document.getElementById('req-modal-maximize-btn');
+const expandIcon = document.getElementById('req-modal-max-icon-expand');
+const shrinkIcon = document.getElementById('req-modal-max-icon-shrink');
+if (!btn || !expandIcon || !shrinkIcon) return;
+expandIcon.style.display = maximized ? 'none' : '';
+shrinkIcon.style.display = maximized ? '' : 'none';
+btn.title = maximized ? 'Minimize' : 'Maximize';
+btn.setAttribute('aria-label', maximized ? 'Minimize form' : 'Maximize form');
+}
 document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => closeModal(el.dataset.close)));
 document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', (e) => { if (e.target === ov) ov.classList.remove('show'); }));
 // ---- My Settings (profile + signature) -------------------------------------
@@ -3617,11 +3659,12 @@ body.innerHTML = `
 <div class="detail-grid">
 <div><div class="detail-label">Requester</div><div class="detail-value">${escapeHtml(r.requester_name||'—')}</div></div>
 <div><div class="detail-label">Department</div><div class="detail-value">${escapeHtml(r.department_name||'—')}</div></div>
-<div><div class="detail-label">Budget Code</div><div class="detail-value mono">${escapeHtml(r.budget_code||'—')} — ${escapeHtml(r.budget_output||'')}</div></div>
+<div><div class="detail-label">Budget Code</div><div class="detail-value mono">${escapeHtml(r.budget_code||'—')}</div></div>
 <div><div class="detail-label">Activity</div><div class="detail-value">${escapeHtml(r.activity_name||'—')}</div></div>
 <div><div class="detail-label">Payment Voucher No.</div><div class="detail-value mono">${escapeHtml(r.payment_voucher_number||'—')}</div></div>
 <div><div class="detail-label">Amount Requested</div><div class="detail-value mono">UGX ${money(r.amount_requested)}</div></div>
 <div><div class="detail-label">Status</div><div class="detail-value"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div></div>
+<div class="span2" style="grid-column:1/-1;"><div class="detail-label">Budget Output Description</div><div class="detail-value">${escapeHtml(r.budget_output||'—')}</div></div>
 <div class="span2" style="grid-column:1/-1;"><div class="detail-label">Subject</div><div class="detail-value">${escapeHtml(r.subject || r.activity_details || '—')}</div></div>
 </div>
 <div class="divider"></div>
