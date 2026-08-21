@@ -576,6 +576,7 @@ display:flex; align-items:center; justify-content:center; background:var(--paper
 /* ---------------- Printable Requisition Form (mirrors the Council's paper form) ---------------- */
 .req-form-paper{
 background:#fff; padding:10px 6px 6px; font-family:var(--font-body); color:#181818;
+zoom:.86; /* default on-screen requisition layout size — was 100% (unscaled) */
 }
 /* Requisition form header — a single pre-composed banner image (header.jpg)
    replaces the old text+crest+seal composite so the on-screen form matches
@@ -623,6 +624,7 @@ body *{visibility:hidden;}
 #print-form-container, #print-form-container *{visibility:visible;}
 .overlay#modal-print-form{position:absolute; inset:auto; background:none; padding:0;}
 #print-form-container{position:absolute; top:0; left:0; width:100%; max-width:none; box-shadow:none; border:none; max-height:none;}
+#print-form-container .req-form-paper{zoom:1;} /* on-screen 86% default doesn't affect the actual printed page size */
 .no-print{display:none !important;}
 }
 /* ---------------- Requisition data-entry form (styled as the paper form itself) ---------------- */
@@ -1540,7 +1542,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <option value="admin">System Administrator</option>
 </select>
 </div>
-<div class="field span2"><label>Department</label><select id="u-department"></select></div>
+<div class="field span2"><label id="u-department-label">Department</label><select id="u-department"></select><div class="help-text" id="u-department-hint" style="display:none; margin-top:4px;">Required for Head of Department accounts — a Head of Department without a Department assigned will not see any requisitions awaiting their approval.</div></div>
 </div>
 </div>
 <div class="modal-foot">
@@ -4227,6 +4229,7 @@ document.getElementById('u-position').value = '';
 document.getElementById('u-telephone').value = '';
 document.getElementById('u-role').value = 'staff';
 document.getElementById('u-department').value = '';
+updateUserDeptRequirement();
 openModal('modal-user');
 });
 function openEditUser(id) {
@@ -4243,6 +4246,7 @@ document.getElementById('u-position').value = u.position || '';
 document.getElementById('u-telephone').value = u.telephone || '';
 document.getElementById('u-role').value = u.role;
 document.getElementById('u-department').value = u.department_id || '';
+updateUserDeptRequirement();
 openModal('modal-user');
 }
 async function deleteUser(id) {
@@ -4254,6 +4258,15 @@ toast('User deleted', 'success');
 loadUsers();
 } catch (e) { toast(e.message, 'error'); }
 }
+function updateUserDeptRequirement() {
+const role = document.getElementById('u-role').value;
+const hint = document.getElementById('u-department-hint');
+const label = document.getElementById('u-department-label');
+const isHod = role === 'hod';
+hint.style.display = isHod ? 'block' : 'none';
+label.textContent = isHod ? 'Department (required)' : 'Department';
+}
+document.getElementById('u-role').addEventListener('change', updateUserDeptRequirement);
 document.getElementById('u-create-btn').addEventListener('click', async () => {
 const full_name = document.getElementById('u-name').value.trim();
 const email = document.getElementById('u-email').value.trim();
@@ -4262,6 +4275,14 @@ const position = document.getElementById('u-position').value.trim();
 const telephone = document.getElementById('u-telephone').value.trim();
 const role = document.getElementById('u-role').value;
 const department_id = document.getElementById('u-department').value ? Number(document.getElementById('u-department').value) : null;
+// A Head of Department account with no Department assigned will never
+// match any requisition in the approvals queue — it silently looks like
+// "nothing to approve" instead of failing loudly, so this is caught here
+// before it ever reaches the server.
+if (role === 'hod' && !department_id) {
+toast('Please select a Department for this Head of Department account', 'error');
+return;
+}
 try {
 if (STATE.editingUserId) {
 if (!full_name || !email) { toast('Please complete the name and email fields', 'error'); return; }
