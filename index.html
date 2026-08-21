@@ -374,6 +374,19 @@ horizontally if needed. */
 #approval-queue-table th:nth-child(2), #approval-queue-table td:nth-child(2){min-width:190px;}
 #approval-queue-table th:nth-child(3), #approval-queue-table td:nth-child(3){min-width:160px;}
 #approval-queue-table th:nth-child(7), #approval-queue-table td:nth-child(7){min-width:150px;}
+/* Users & Roles table — widened so the Name/Email/Role/Department columns
+each have sufficient room instead of feeling cramped; the surrounding
+.table-wrap already scrolls horizontally if needed. */
+#users-table{min-width:1120px;}
+#users-table th:nth-child(1), #users-table td:nth-child(1){min-width:170px;}
+#users-table th:nth-child(2), #users-table td:nth-child(2){min-width:220px;}
+#users-table th:nth-child(3), #users-table td:nth-child(3){min-width:160px;}
+#users-table th:nth-child(4), #users-table td:nth-child(4){min-width:140px;}
+#users-table th:nth-child(5), #users-table td:nth-child(5){min-width:130px;}
+#users-table th:nth-child(6), #users-table td:nth-child(6){min-width:160px;}
+#users-table th:nth-child(7), #users-table td:nth-child(7){min-width:110px;}
+#users-table th:nth-child(8), #users-table td:nth-child(8){min-width:90px;}
+#users-table th:nth-child(9), #users-table td:nth-child(9){min-width:90px;}
 tbody td{padding:11.5px 12px; border-bottom:1px solid #EEF2F1; font-size:12.5px; white-space:normal; overflow-wrap:break-word; word-break:break-word; vertical-align:top;}
 tbody tr{transition:background .12s var(--ease);}
 tbody tr:nth-child(even){background:#FAFCFB;}
@@ -501,13 +514,14 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 .modal-head-actions{display:flex; align-items:center; gap:4px; flex-shrink:0;}
 .modal-max-btn{background:none; border:none; cursor:pointer; color:var(--ink-500); font-size:15px; line-height:1; width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; transition:background .15s var(--ease), color .15s var(--ease);}
 .modal-max-btn:hover{background:var(--gold-100); color:var(--navy-950);}
-/* Maximized state — the modal expands to fill the entire screen so wide
+/* Maximized state — the modal expands to 86% of the viewport so wide
    tables (the requisition meta table / line-item table) get the extra
-   width instead of scrolling in a cramped box. Minimizing (toggling the
-   class off) simply restores the modal's normal centred size. */
+   width instead of scrolling in a cramped box, while still leaving a
+   visible margin around it. Minimizing (toggling the class off) simply
+   restores the modal's normal centred size. */
 .overlay.overlay-maximized{padding:0;}
 .modal.modal-maximized{
-width:100vw !important; max-width:100vw !important; height:100vh !important; max-height:100vh !important; margin:0 !important; border-radius:0 !important;
+width:86vw !important; max-width:86vw !important; height:86vh !important; max-height:86vh !important; margin:0 !important; border-radius:var(--radius-lg) !important;
 display:flex; flex-direction:column;
 overflow:hidden !important;
 }
@@ -1286,7 +1300,7 @@ Departments
 <button class="btn btn-primary" id="new-user-btn">+ New User</button>
 </div>
 <div class="table-wrap">
-<table>
+<table id="users-table">
 <thead><tr><th>Name</th><th>Email</th><th>Position</th><th>Telephone</th><th>Role</th><th>Department</th><th>Status</th><th></th><th></th></tr></thead>
 <tbody id="users-table-body"><tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
 </table>
