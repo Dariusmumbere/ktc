@@ -491,12 +491,21 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
    class off) simply restores the modal's normal centred size. */
 .overlay.overlay-maximized{padding:0;}
 .modal.modal-maximized{
-width:100vw; max-width:100vw; height:100vh; max-height:100vh; margin:0; border-radius:0;
+width:100vw !important; max-width:100vw !important; height:100vh !important; max-height:100vh !important; margin:0 !important; border-radius:0 !important;
 display:flex; flex-direction:column;
 }
 .modal.modal-maximized .modal-head{flex-shrink:0;}
 .modal.modal-maximized .modal-body{flex:1; overflow-y:auto;}
 .modal.modal-maximized .modal-foot{flex-shrink:0;}
+/* Inside a maximized modal, the requisition paper-form and its tables
+should use the full width now available instead of staying capped at
+their normal narrow max-width. */
+.modal.modal-maximized .req-form-paper,
+.modal.modal-maximized table.req-form-meta-table,
+.modal.modal-maximized table.req-form-table,
+.modal.modal-maximized .pv-form{
+max-width:100% !important; width:100% !important;
+}
 .modal-body{padding:20px 22px;}
 .modal-foot{padding:16px 22px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;}
 .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 14px;}
@@ -598,11 +607,18 @@ body *{visibility:hidden;}
 .req-digital-controls{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px 14px; margin-bottom:16px;}
 .req-digital-controls .form-grid{margin-top:8px;}
 table.req-form-meta-table.entry td{padding:5px 8px;}
-table.req-form-meta-table.entry .rf-field{display:flex; align-items:baseline; gap:6px;}
+table.req-form-meta-table.entry .rf-field{display:flex; align-items:baseline; gap:4px;}
 table.req-form-meta-table.entry .rf-field strong{white-space:nowrap; font-size:12px;}
-table.req-form-meta-table.entry input, table.req-form-meta-table.entry select{flex:1; min-width:0; border:none; background:transparent; font:inherit; font-size:12.5px; color:#181818; padding:2px 2px;}
+table.req-form-meta-table.entry input, table.req-form-meta-table.entry select, table.req-form-meta-table.entry textarea{flex:1; min-width:0; border:none; background:transparent; font:inherit; font-size:12.5px; color:#181818; padding:2px 0;}
 table.req-form-meta-table.entry input[readonly]{color:#333;}
-table.req-form-meta-table.entry input:focus, table.req-form-meta-table.entry select:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
+table.req-form-meta-table.entry input:focus, table.req-form-meta-table.entry select:focus, table.req-form-meta-table.entry textarea:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
+/* Read-only, system-filled fields (System User Name, Email, Role, Date,
+Activity Budget Limit/Balance) don't need to stretch across the rest of
+the cell — they hug their own content so the value sits immediately
+after the colon instead of leaving a wide empty gap. */
+table.req-form-meta-table.entry .rf-field-tight{display:inline-flex; gap:4px; max-width:100%;}
+table.req-form-meta-table.entry .rf-field-tight .rf-fill{flex:none; font-size:12.5px; color:#333; overflow-wrap:break-word; word-break:break-word; min-height:auto;}
+table.req-form-meta-table.entry .rf-field-desc textarea{width:100%; resize:none; overflow:hidden; white-space:pre-wrap; word-wrap:break-word; overflow-wrap:break-word; line-height:1.35; min-height:20px; display:block;}
 .req-form-subject.entry{display:flex; align-items:baseline; gap:6px;}
 .req-form-subject.entry input{flex:1; border:none; border-bottom:1px dotted #888; background:transparent; font:inherit; font-size:12.5px; padding:2px 4px;}
 .req-form-subject.entry input:focus{outline:none; border-bottom:1px dotted var(--gold-600); background:#fffdf2;}
@@ -1256,9 +1272,9 @@ Departments
 <div class="rf-refno">Ref No. <span class="mono" id="req-form-refno-preview">(assigned on save)</span></div>
 <table class="req-form-meta-table entry">
 <tr>
-<td style="width:33.33%;"><div class="rf-field"><strong>System User Name:</strong><input type="text" id="req-form-sysuser" readonly/></div></td>
-<td style="width:33.33%;"><div class="rf-field"><strong>Email:</strong><input type="text" id="req-form-sysemail" readonly/></div></td>
-<td style="width:33.34%;"><div class="rf-field"><strong>Role:</strong><input type="text" id="req-form-sysrole" readonly/></div></td>
+<td style="width:33.33%;"><div class="rf-field rf-field-tight"><strong>System User Name:</strong><span class="rf-fill" id="req-form-sysuser"></span></div></td>
+<td style="width:33.33%;"><div class="rf-field rf-field-tight"><strong>Email:</strong><span class="rf-fill" id="req-form-sysemail"></span></div></td>
+<td style="width:33.34%;"><div class="rf-field rf-field-tight"><strong>Role:</strong><span class="rf-fill" id="req-form-sysrole"></span></div></td>
 </tr>
 <tr>
 <td style="width:33.33%;"><div class="rf-field"><strong>Financial Year:</strong><select id="req-form-fy">
@@ -1273,7 +1289,7 @@ Departments
 <option value="Q3">Q3</option>
 <option value="Q4">Q4</option>
 </select></div></td>
-<td style="width:33.34%;"><div class="rf-field"><strong>Date:</strong><input type="text" id="req-form-date" readonly/></div></td>
+<td style="width:33.34%;"><div class="rf-field rf-field-tight"><strong>Date:</strong><span class="rf-fill" id="req-form-date"></span></div></td>
 </tr>
 <tr>
 <td colspan="2" style="width:66.66%;"><div class="rf-field"><strong>Department:</strong><select id="req-form-department"></select></div></td>
@@ -1298,11 +1314,11 @@ Departments
 <div class="rf-bc-results" id="req-form-budgetcode-results"></div>
 </div>
 </div></td>
-<td style="width:33.33%;"><div class="rf-field"><strong>Activity Budget Limit:</strong><input type="text" id="req-form-budgetlimit" readonly placeholder="—"/></div></td>
-<td style="width:33.34%;"><div class="rf-field"><strong>Activity Budget Balance:</strong><input type="text" id="req-form-budgetbalance" readonly placeholder="—"/></div></td>
+<td style="width:33.33%;"><div class="rf-field rf-field-tight"><strong>Activity Budget Limit:</strong><span class="rf-fill" id="req-form-budgetlimit">—</span></div></td>
+<td style="width:33.34%;"><div class="rf-field rf-field-tight"><strong>Activity Budget Balance:</strong><span class="rf-fill" id="req-form-budgetbalance">—</span></div></td>
 </tr>
 <tr>
-<td colspan="3"><div class="rf-field"><strong>Budget Output Description:</strong><input type="text" id="req-form-budgetdesc" readonly placeholder="—"/></div></td>
+<td colspan="3"><div class="rf-field rf-field-desc"><strong>Budget Output Description:</strong><textarea id="req-form-budgetdesc" readonly rows="1" placeholder="—"></textarea></div></td>
 </tr>
 <tr>
 <td colspan="3"><div class="rf-field"><strong>Activity Description(Subject):</strong><input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works"/></div></td>
@@ -3157,7 +3173,7 @@ const pvTbody = document.getElementById('pv-lineitems-body');
 const activeEl = document.activeElement;
 const activeIdx = activeEl && activeEl.dataset ? activeEl.dataset.liIdx : null;
 const activeField = activeEl && activeEl.dataset ? activeEl.dataset.liField : null;
-const chargeDate = document.getElementById('req-form-date') ? document.getElementById('req-form-date').value : '';
+const chargeDate = document.getElementById('req-form-date') ? document.getElementById('req-form-date').textContent : '';
 let lastNo = null;
 tbody.innerHTML = STATE.reqLineItems.map((li, idx) => {
 const showNo = li.item_no !== lastNo;
@@ -3269,13 +3285,13 @@ const deptSel = document.getElementById('req-form-department');
 deptSel.value = String((editReq ? editReq.department_id : STATE.departmentId) || '');
 // Row 1 — System user identity fields; always mirror the signed-in
 // account, never editable, regardless of new vs. edit mode.
-document.getElementById('req-form-sysuser').value = STATE.name || '—';
-document.getElementById('req-form-sysemail').value = STATE.email || '—';
-document.getElementById('req-form-sysrole').value = statusLabel(STATE.role) || '—';
+document.getElementById('req-form-sysuser').textContent = STATE.name || '—';
+document.getElementById('req-form-sysemail').textContent = STATE.email || '—';
+document.getElementById('req-form-sysrole').textContent = statusLabel(STATE.role) || '—';
 // Row 2 — Financial Year / Quarter / Date.
 document.getElementById('req-form-fy').value = editReq && editReq.financial_year ? editReq.financial_year : currentFinancialYearGuess();
 document.getElementById('req-form-quarter').value = editReq && editReq.quarter ? editReq.quarter : currentQuarterGuess();
-document.getElementById('req-form-date').value = editReq ? fmtDate(editReq.created_at) : fmtDate(new Date().toISOString());
+document.getElementById('req-form-date').textContent = editReq ? fmtDate(editReq.created_at) : fmtDate(new Date().toISOString());
 // Row 3 — Position (defaults to the account's own position on file, but
 // stays editable in case it needs adjusting for this requisition).
 document.getElementById('req-form-position').value = editReq ? (editReq.requester_position || STATE.position || '') : (STATE.position || '');
@@ -3387,9 +3403,10 @@ if (bc) selectReqBudgetCode(bc);
 } catch (e) { /* budget codes are optional on this form; fail quietly */ }
 }
 function clearReqBudgetFields() {
-document.getElementById('req-form-budgetlimit').value = '';
-document.getElementById('req-form-budgetbalance').value = '';
+document.getElementById('req-form-budgetlimit').textContent = '—';
+document.getElementById('req-form-budgetbalance').textContent = '—';
 document.getElementById('req-form-budgetdesc').value = '';
+autoGrowTextarea(document.getElementById('req-form-budgetdesc'));
 }
 function updateReqBudgetLimit() {
 const hiddenEl = document.getElementById('req-form-budgetcode');
@@ -3398,9 +3415,10 @@ const balanceEl = document.getElementById('req-form-budgetbalance');
 const descEl = document.getElementById('req-form-budgetdesc');
 const codes = STATE.reqBudgetCodesForDept || [];
 const bc = codes.find(c => String(c.id) === String(hiddenEl.value));
-limitEl.value = bc ? `UGX ${money(bc.allocated_amount)}` : '';
-balanceEl.value = bc ? `UGX ${money(bc.available_balance)}` : '';
+limitEl.textContent = bc ? `UGX ${money(bc.allocated_amount)}` : '—';
+balanceEl.textContent = bc ? `UGX ${money(bc.available_balance)}` : '—';
 descEl.value = bc ? (bc.output_description || '') : '';
+autoGrowTextarea(descEl);
 }
 // Selecting from the dropdown fills the code field with the code alone
 // (no " — description" suffix) — the description has its own row below.
@@ -3650,7 +3668,7 @@ document.getElementById('rd-title').textContent = r.ref_no;
 // "View" always mirrors what was actually filled and submitted.
 body.innerHTML = `
 <div style="margin-bottom:4px;"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div>
-${renderPrintFormHtml(r)}
+${renderFilledRequisitionFormHtml(r)}
 ${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div>${(r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? '<div class="help-text" style="margin-top:6px;">Upload the Payment Voucher, Official Receipts, Signed Attendance Sheets and any other supporting documents for this requisition.</div>' : ''}</div>` : ''}
 `;
 let footHtml = `<button class="btn btn-ghost" onclick="openPrintForm(${r.id})">🖶 Print Requisition Form</button>`;
@@ -3700,17 +3718,11 @@ const r = await api(`/api/requisitions/${reqId}`);
 body.innerHTML = renderPrintFormHtml(r);
 } catch (e) { body.innerHTML = `<div class="empty-state">${escapeHtml(e.message)}</div>`; }
 }
-function findStageSignatureUrl(r, stage) {
-const approvals = r.approvals || [];
-for (let i = approvals.length - 1; i >= 0; i--) {
-const a = approvals[i];
-if (a.stage === stage && a.action === 'approve' && a.actor_signature_url) {
-return a.actor_signature_url;
-}
-}
-return null;
-}
-function renderPrintFormHtml(r) {
+// Shared computation used by both the read-only "View" form and the
+// printable form: line-item rows (both the Requisition Form grid and the
+// mirrored Payment Voucher grid), running totals, amount-in-words, and
+// every signature image URL resolved from the approval trail.
+function computeReqFormParts(r) {
 const items = r.line_items || [];
 const voucher = r.voucher_data || {};
 let rowsHtml = '';
@@ -3761,44 +3773,24 @@ const treasurerSigUrl = findStageSignatureUrl(r, 'treasurer');
 const clerkSigUrl = findStageSignatureUrl(r, 'clerk');
 const sigImg = (url) => url ? `<img src="${API_BASE}${url}" alt="Signature" />` : '';
 const dots = (text) => `<span class="rf-dots">${escapeHtml(text || '').padEnd(1,'\u00A0') || '&nbsp;'}</span>`;
-const budgetRow = `
-<tr>
-<td><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(r.budget_code || '—')}</span></td>
-<td><strong>Activity Budget Limit:</strong><span class="rf-fill">${r.activity_budget_limit != null ? 'UGX ' + money(r.activity_budget_limit) : '—'}</span></td>
-<td><strong>Activity Budget Balance:</strong><span class="rf-fill">${r.activity_budget_balance != null ? 'UGX ' + money(r.activity_budget_balance) : '—'}</span></td>
-</tr>`;
+return { items, voucher, rowsHtml, pvRowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, sigImg, dots };
+}
+function findStageSignatureUrl(r, stage) {
+const approvals = r.approvals || [];
+for (let i = approvals.length - 1; i >= 0; i--) {
+const a = approvals[i];
+if (a.stage === stage && a.action === 'approve' && a.actor_signature_url) {
+return a.actor_signature_url;
+}
+}
+return null;
+}
+// The Cheque Payment Voucher half of the form — identical markup whether
+// it's reached via "View" or via "Print", since both mirror the same
+// paper document filled in together with the Requisition Form.
+function renderPvFormHtml(r, parts) {
+const { voucher, pvRowsHtml, grandTotal, words, clerkSigUrl, sigImg, dots } = parts;
 return `
-<div class="req-form-paper">
-<img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
-<div class="req-form-header"><div class="rf-title">Funds Requisition Form</div></div>
-<div class="rf-refno">No. <span class="mono">${escapeHtml(r.ref_no)}</span></div>
-<table class="req-form-meta-table">
-<tr>
-<td style="width:50%;"><strong>Department:</strong><span class="rf-fill">${escapeHtml(r.department_name || '—')}</span></td>
-<td style="width:50%;"><strong>Date of Submission:</strong><span class="rf-fill">${submissionDate}</span></td>
-</tr>
-<tr>
-<td><strong>Names:</strong><span class="rf-fill">${escapeHtml(r.requester_name || '—')}</span></td>
-<td><strong>Mob. No.:</strong><span class="rf-fill">${escapeHtml(r.requester_mobile || '—')}</span></td>
-<td><strong>Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
-</tr>
-${budgetRow}
-</table>
-<div class="req-form-subject"><strong>Activity Description(Subject):</strong>${dots(subject)}</div>
-<table class="req-form-table">
-<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate</th><th class="num" style="width:13%;">Amount</th></tr></thead>
-<tbody>
-${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No line items recorded</td></tr>'}
-<tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">${money(grandTotal)}</td></tr>
-</tbody>
-</table>
-<div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
-<div class="req-form-signatures">
-<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-label">Town Treasurer</div></div>
-<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-label">Town Clerk</div></div>
-</div>
-</div>
 <div class="pv-form">
 <img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
 <div class="req-form-header"><div class="rf-title">Cheque Payment Voucher</div></div>
@@ -3884,6 +3876,117 @@ Date: ${dots(voucher.passed_payment_date)}<br/>
 </tr>
 </table>
 </div>
+`;
+}
+// ---- Print form (mirrors the Council's simplified paper layout exactly) --
+function renderPrintFormHtml(r) {
+const parts = computeReqFormParts(r);
+const { rowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, sigImg, dots } = parts;
+const budgetRow = `
+<tr>
+<td><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(r.budget_code || '—')}</span></td>
+<td><strong>Activity Budget Limit:</strong><span class="rf-fill">${r.activity_budget_limit != null ? 'UGX ' + money(r.activity_budget_limit) : '—'}</span></td>
+<td><strong>Activity Budget Balance:</strong><span class="rf-fill">${r.activity_budget_balance != null ? 'UGX ' + money(r.activity_budget_balance) : '—'}</span></td>
+</tr>`;
+return `
+<div class="req-form-paper">
+<img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
+<div class="req-form-header"><div class="rf-title">Funds Requisition Form</div></div>
+<div class="rf-refno">No. <span class="mono">${escapeHtml(r.ref_no)}</span></div>
+<table class="req-form-meta-table">
+<tr>
+<td style="width:50%;"><strong>Department:</strong><span class="rf-fill">${escapeHtml(r.department_name || '—')}</span></td>
+<td style="width:50%;"><strong>Date of Submission:</strong><span class="rf-fill">${submissionDate}</span></td>
+</tr>
+<tr>
+<td><strong>Names:</strong><span class="rf-fill">${escapeHtml(r.requester_name || '—')}</span></td>
+<td><strong>Mob. No.:</strong><span class="rf-fill">${escapeHtml(r.requester_mobile || '—')}</span></td>
+<td><strong>Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
+</tr>
+${budgetRow}
+</table>
+<div class="req-form-subject"><strong>Activity Description(Subject):</strong>${dots(subject)}</div>
+<table class="req-form-table">
+<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate</th><th class="num" style="width:13%;">Amount</th></tr></thead>
+<tbody>
+${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No line items recorded</td></tr>'}
+<tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">${money(grandTotal)}</td></tr>
+</tbody>
+</table>
+<div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
+<div class="req-form-signatures">
+<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-label">Head of Department</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-label">Town Treasurer</div></div>
+<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-label">Town Clerk</div></div>
+</div>
+</div>
+${renderPvFormHtml(r, parts)}
+`;
+}
+// ---- "View" form — mirrors the full digital entry form (New/Edit
+// Requisition modal) field-for-field, read-only, filled with the saved
+// data: System User Name / Email / Role, Financial Year / Quarter / Date,
+// Department / Position, Requisitioner / Mobile / Signature, Budget
+// Output Code / Limit / Balance / Description, Subject, line items,
+// amount in words, approval signatures, and the same Payment Voucher
+// section — so "View" always shows exactly what was filled under the
+// Requisition tab, not a shortened summary.
+function renderFilledRequisitionFormHtml(r) {
+const parts = computeReqFormParts(r);
+const { rowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, sigImg, dots } = parts;
+const roleLabel = r.requester_role ? statusLabel(r.requester_role) : '—';
+return `
+<div class="req-form-paper">
+<img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
+<div class="req-form-header"><div class="rf-title">Funds Requisition Form</div></div>
+<div class="rf-refno">Ref No. <span class="mono">${escapeHtml(r.ref_no)}</span></div>
+<table class="req-form-meta-table">
+<tr>
+<td style="width:33.33%;"><strong>System User Name:</strong><span class="rf-fill">${escapeHtml(r.requester_account_name || '—')}</span></td>
+<td style="width:33.33%;"><strong>Email:</strong><span class="rf-fill">${escapeHtml(r.requester_email || '—')}</span></td>
+<td style="width:33.34%;"><strong>Role:</strong><span class="rf-fill" style="text-transform:capitalize;">${escapeHtml(roleLabel)}</span></td>
+</tr>
+<tr>
+<td style="width:33.33%;"><strong>Financial Year:</strong><span class="rf-fill">${escapeHtml(r.financial_year || '—')}</span></td>
+<td style="width:33.33%;"><strong>Quarter:</strong><span class="rf-fill">${escapeHtml(r.quarter || '—')}</span></td>
+<td style="width:33.34%;"><strong>Date:</strong><span class="rf-fill">${submissionDate}</span></td>
+</tr>
+<tr>
+<td colspan="2" style="width:66.66%;"><strong>Department:</strong><span class="rf-fill">${escapeHtml(r.department_name || '—')}</span></td>
+<td style="width:33.34%;"><strong>Position:</strong><span class="rf-fill">${escapeHtml(r.requester_position || '—')}</span></td>
+</tr>
+<tr>
+<td style="width:33.33%;"><strong>Requisitioner:</strong><span class="rf-fill">${escapeHtml(r.requester_name || '—')}</span></td>
+<td style="width:33.33%;"><strong>Mob. No.:</strong><span class="rf-fill">${escapeHtml(r.requester_mobile || '—')}</span></td>
+<td style="width:33.34%;"><strong>Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
+</tr>
+<tr>
+<td style="width:33.33%;"><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(r.budget_code || '—')}</span></td>
+<td style="width:33.33%;"><strong>Activity Budget Limit:</strong><span class="rf-fill">${r.activity_budget_limit != null ? 'UGX ' + money(r.activity_budget_limit) : '—'}</span></td>
+<td style="width:33.34%;"><strong>Activity Budget Balance:</strong><span class="rf-fill">${r.activity_budget_balance != null ? 'UGX ' + money(r.activity_budget_balance) : '—'}</span></td>
+</tr>
+<tr>
+<td colspan="3"><strong>Budget Output Description:</strong><span class="rf-fill">${escapeHtml(r.budget_output || '—')}</span></td>
+</tr>
+<tr>
+<td colspan="3"><strong>Activity Description(Subject):</strong><span class="rf-fill">${escapeHtml(subject || '—')}</span></td>
+</tr>
+</table>
+<table class="req-form-table">
+<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate</th><th class="num" style="width:13%;">Amount</th></tr></thead>
+<tbody>
+${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No line items recorded</td></tr>'}
+<tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">${money(grandTotal)}</td></tr>
+</tbody>
+</table>
+<div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
+<div class="req-form-signatures">
+<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-label">Head of Department</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-label">Town Treasurer</div></div>
+<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-label">Town Clerk</div></div>
+</div>
+</div>
+${renderPvFormHtml(r, parts)}
 `;
 }
 // ---- Approvals ------------------------------------------------------------------
@@ -4241,4 +4344,4 @@ function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = 
 if (STATE.token) { enterApp().catch(() => logout()); }
 </script>
 </body>
-</html>
+</html> 
