@@ -653,11 +653,11 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #e279
 /* Space between the dotted signature line and the role label — shows the
    authorizer's name pulled from the system (auto-filled when they attach
    their signature) while staying an editable field on the entry form. */
-.req-form-signatures .sig-name-fill{margin:0 0 6px;}
-.req-form-signatures .sig-name-fill input{width:100%; border:none; background:transparent; font:inherit; font-size:11px; font-weight:600; text-align:center; color:#181818; padding:2px 4px;}
+.req-form-signatures .sig-name-fill{margin:0 0 3px;}
+.req-form-signatures .sig-name-fill input{width:100%; border:none; background:transparent; font:inherit; font-size:11px; font-weight:600; text-align:left; color:#181818; padding:2px 4px;}
 .req-form-signatures .sig-name-fill input::placeholder{font-weight:400; color:var(--ink-500);}
 .req-form-signatures .sig-name-fill input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
-.req-form-signatures .sig-name{margin:0 0 6px; font-size:11px; font-weight:600; text-align:center; min-height:14px;}
+.req-form-signatures .sig-name{margin:0 0 3px; font-size:11px; font-weight:600; text-align:left; min-height:14px;}
 /* Unscoped so every signature box — including the Payment Voucher's Vote
 Book / Verified by / Passed Payment / payee / witness / cashier boxes,
 which sit in a plain table rather than inside .req-form-signatures — gets
@@ -696,7 +696,7 @@ body *{visibility:hidden;}
 #print-form-container .req-form-signatures .sig-role{font-size:13px; margin-bottom:28px;}
 #print-form-container .req-form-signatures .sig-line{margin-bottom:9px; height:50px; padding-bottom:2px;}
 #print-form-container .sig-line img{max-height:44px;}
-#print-form-container .req-form-signatures .sig-name-fill, #print-form-container .req-form-signatures .sig-name{margin:0 0 8px; font-size:13px;}
+#print-form-container .req-form-signatures .sig-name-fill, #print-form-container .req-form-signatures .sig-name{margin:0 0 4px; font-size:13px;}
 #print-form-container .req-form-signatures .sig-label{font-size:13px;}
 }
 /* ---------------- Requisition data-entry form (styled as the paper form itself) ---------------- */
@@ -1398,7 +1398,7 @@ Departments
 <tr>
 <td colspan="3">
 <div class="rf-field rf-sig-slot">
-<strong>Requisitioner Signature:</strong>
+<strong>Signature of Requisitioner:</strong>
 <div class="rf-fill" id="req-sig-requester"></div>
 <button type="button" class="sig-attach-btn no-print" id="req-sig-requester-btn" onclick="attachSignature('req-sig-requester', this)">🖊 Attach My Signature</button>
 </div>
@@ -3799,7 +3799,8 @@ body.innerHTML = renderPrintFormHtml(r);
 // printable form: line-item rows (both the Requisition Form grid and the
 // mirrored Payment Voucher grid), running totals, amount-in-words, and
 // every signature image URL resolved from the approval trail.
-function computeReqFormParts(r) {
+function computeReqFormParts(r, opts = {}) {
+const includeSubtotals = opts.includeSubtotals !== false;
 const items = r.line_items || [];
 const voucher = r.voucher_data || {};
 let rowsHtml = '';
@@ -3808,7 +3809,7 @@ let lastNo = null;
 let sectionSum = 0;
 let grandTotal = 0;
 const flushSection = () => {
-if (lastNo !== null) {
+if (lastNo !== null && includeSubtotals) {
 rowsHtml += `<tr class="rf-subtotal"><td colspan="5" style="text-align:right;">Sub Total</td><td class="num">${money(sectionSum)}</td></tr>`;
 }
 };
@@ -3994,7 +3995,7 @@ return `
 <tr>
 <td><strong>Names:</strong><span class="rf-fill">${escapeHtml(r.requester_name || '—')}</span></td>
 <td><strong>Mob. No.:</strong><span class="rf-fill">${escapeHtml(r.requester_mobile || '—')}</span></td>
-<td><strong>Requisitioner Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
+<td><strong>Signature of Requisitioner:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
 </tr>
 ${budgetRow}
 </table>
@@ -4025,7 +4026,7 @@ ${renderPvFormHtml(r, parts)}
 // section — so "View" always shows exactly what was filled under the
 // Requisition tab, not a shortened summary.
 function renderFilledRequisitionFormHtml(r) {
-const parts = computeReqFormParts(r);
+const parts = computeReqFormParts(r, { includeSubtotals: false });
 const { rowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, hodName, treasurerName, clerkName, sigImg, dots } = parts;
 const roleLabel = r.requester_role ? statusLabel(r.requester_role) : '—';
 return `
@@ -4053,7 +4054,7 @@ return `
 <td style="width:33.34%;"><strong>Position:</strong><span class="rf-fill">${escapeHtml(r.requester_position || '—')}</span></td>
 </tr>
 <tr>
-<td colspan="3"><strong>Requisitioner Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
+<td colspan="3"><strong>Signature of Requisitioner:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
 </tr>
 <tr>
 <td style="width:33.33%;"><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(r.budget_code || '—')}</span></td>
@@ -4071,7 +4072,7 @@ return `
 <thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate</th><th class="num" style="width:13%;">Amount</th></tr></thead>
 <tbody>
 ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No line items recorded</td></tr>'}
-<tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">${money(grandTotal)}</td></tr>
+<tr class="rf-grand"><td colspan="5" style="text-align:right;"><strong>GRAND TOTAL</strong></td><td class="num"><strong>${money(grandTotal)}</strong></td></tr>
 </tbody>
 </table>
 <div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
