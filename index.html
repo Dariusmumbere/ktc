@@ -514,14 +514,16 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 .modal-head-actions{display:flex; align-items:center; gap:4px; flex-shrink:0;}
 .modal-max-btn{background:none; border:none; cursor:pointer; color:var(--ink-500); font-size:15px; line-height:1; width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; transition:background .15s var(--ease), color .15s var(--ease);}
 .modal-max-btn:hover{background:var(--gold-100); color:var(--navy-950);}
-/* Maximized state — the modal expands to 75% of the viewport so wide
-   tables (the requisition meta table / line-item table) get the extra
-   width instead of scrolling in a cramped box, while still leaving a
-   visible margin around it. Minimizing (toggling the class off) simply
-   restores the modal's normal centred size. */
+/* Maximized state — the modal expands to 60% of the viewport width (with
+   a slightly taller height so there's a bit more vertical room for the
+   requisition form) so wide tables (the requisition meta table /
+   line-item table) get the extra width instead of scrolling in a
+   cramped box, while still leaving a visible margin around it.
+   Minimizing (toggling the class off) simply restores the modal's
+   normal centred size. */
 .overlay.overlay-maximized{padding:0;}
 .modal.modal-maximized{
-width:75vw !important; max-width:75vw !important; height:75vh !important; max-height:75vh !important; margin:0 !important; border-radius:var(--radius-lg) !important;
+width:60vw !important; max-width:60vw !important; height:68vh !important; max-height:68vh !important; margin:0 !important; border-radius:var(--radius-lg) !important;
 display:flex; flex-direction:column;
 overflow:hidden !important;
 }
@@ -629,7 +631,7 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #e279
 .req-form-signatures > div{padding:8.6px 10.32px 10.32px; border-left:1px solid #333;}
 .req-form-signatures > div:first-child{border-left:none;}
 .req-form-signatures .sig-role{font-size:10.32px; font-weight:600; margin-bottom:22.36px;}
-.req-form-signatures .sig-line{border-top:1px dotted #666; margin-bottom:5.16px; height:39.56px; display:flex; align-items:flex-end; padding-bottom:1.72px;}
+.req-form-signatures .sig-line{border-bottom:1px dotted #666; margin-bottom:5.16px; height:39.56px; display:flex; align-items:flex-end; padding-bottom:1.72px;}
 /* Unscoped so every signature box — including the Payment Voucher's Vote
 Book / Verified by / Passed Payment / payee / witness / cashier boxes,
 which sit in a plain table rather than inside .req-form-signatures — gets
@@ -727,7 +729,7 @@ max-height:220px; overflow-y:auto; text-align:left;
 .rf-bc-results .rf-bc-opt .rf-bc-code{font-weight:700; font-family:var(--font-mono); margin-right:6px;}
 .rf-bc-results .rf-bc-empty{padding:8px 10px; font-size:12px; color:var(--ink-500);}
 .req-form-words.entry{font-size:12.5px; margin-bottom:18px;}
-.req-form-signatures.preview .sig-line{border-top:1px dotted #ccc;}
+.req-form-signatures.preview .sig-line{border-bottom:1px dotted #ccc;}
 .req-form-signatures.preview{opacity:.7;}
 /* ---------------- Attach-signature buttons + Cheque Payment Voucher (entry form) ---------------- */
 .sig-attach-btn{display:inline-flex; align-items:center; gap:4px; font-size:10.5px; padding:3px 8px; margin-top:4px; border:1px dashed var(--gold-600, #b8860b); background:#fffdf2; color:#7a5b00; border-radius:5px; cursor:pointer;}
@@ -1359,13 +1361,15 @@ Departments
 <td style="width:33.34%;"><div class="rf-field rf-field-tight"><strong>Date:</strong><span class="rf-fill" id="req-form-date"></span></div></td>
 </tr>
 <tr>
-<td colspan="2" style="width:66.66%;"><div class="rf-field"><strong>Department:</strong><select id="req-form-department"></select></div></td>
-<td style="width:33.34%;"><div class="rf-field"><strong>Position:</strong><input type="text" id="req-form-position" placeholder="e.g. Senior Accountant"/></div></td>
+<td colspan="3" style="width:100%;"><div class="rf-field"><strong>Department:</strong><select id="req-form-department"></select></div></td>
 </tr>
 <tr>
 <td style="width:33.33%;"><div class="rf-field"><strong>Requisitioner:</strong><input type="text" id="req-form-names" placeholder="Enter your full name"/></div></td>
 <td style="width:33.33%;"><div class="rf-field"><strong>Mob. No.:</strong><input type="text" id="req-form-mobile" placeholder="e.g. 0772 123456"/></div></td>
-<td style="width:33.34%;">
+<td style="width:33.34%;"><div class="rf-field"><strong>Position:</strong><input type="text" id="req-form-position" placeholder="e.g. Senior Accountant"/></div></td>
+</tr>
+<tr>
+<td colspan="3">
 <div class="rf-field rf-sig-slot">
 <strong>Signature:</strong>
 <div class="rf-fill" id="req-sig-requester"></div>
@@ -1404,12 +1408,12 @@ Departments
 <div class="req-form-words entry"><strong>Amount in words:</strong> <span id="req-amount-words">—</span></div>
 <div class="req-form-signatures preview">
 <div><div class="sig-role">Recommended by,</div><div class="sig-line" id="req-sig-hod"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-hod-btn" data-sig-role="hod" onclick="attachSignature('req-sig-hod', this, 'hod')">🖊 Attach Signature</button><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line" id="req-sig-treasurer"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-treasurer-btn" data-sig-role="treasurer" onclick="attachSignature('req-sig-treasurer', this, 'treasurer')">🖊 Attach Signature</button><div class="sig-label">Town Treasurer</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line" id="req-sig-treasurer"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-treasurer-btn" data-sig-role="treasurer" onclick="attachSignature('req-sig-treasurer', this, 'treasurer')">🖊 Attach Signature</button><div class="sig-label">Senior Treasurer</div></div>
 <div><div class="sig-role">Authorised by</div><div class="sig-line" id="req-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('req-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-label">Town Clerk</div></div>
 </div>
 <div class="req-route-stack no-print" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0 0;">
-<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-treasurer" disabled title="Available once the Head of Department has approved this requisition">Submit to Town Treasurer</button></div>
-<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Town Treasurer has approved this requisition">Submit to Town Clerk</button></div>
+<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-treasurer" disabled title="Available once the Head of Department has approved this requisition">Submit to Senior Treasurer</button></div>
+<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Senior Treasurer has approved this requisition">Submit to Town Clerk</button></div>
 <div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-auditor" disabled title="Available once the Town Clerk has approved this requisition">Submit to Internal Auditor</button></div>
 </div>
 </div>
@@ -2240,7 +2244,7 @@ overlay.classList.toggle('overlay-maximized', maximized);
 const btn = document.getElementById(modalId + '-max-btn');
 if (btn) { btn.textContent = maximized ? '⧉' : '⛶'; btn.title = maximized ? 'Minimize' : 'Maximize'; }
 }
-document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', (e) => { if (e.target === ov) ov.classList.remove('show'); }));
+document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', (e) => { if (e.target === ov && ov.id !== 'modal-req') ov.classList.remove('show'); }));
 // ---- My Settings (profile + signature) -------------------------------------
 document.getElementById('user-chip-btn').addEventListener('click', openSettingsModal);
 async function openSettingsModal() {
@@ -3311,10 +3315,10 @@ li[field] = value;
 // approval history once a requisition is approved — this is a preview for
 // whoever happens to be filling the box in front of them right now.
 // Strictly role-gated: a box marked with a required role (Head of
-// Department, Town Treasurer, Town Clerk) can only be signed by an account
+// Department, Senior Treasurer, Town Clerk) can only be signed by an account
 // currently signed in as that exact role — never by anyone else, and never
 // by the System Administrator on someone else's behalf.
-const SIG_ROLE_LABELS = { hod: 'Head of Department', treasurer: 'Town Treasurer', clerk: 'Town Clerk' };
+const SIG_ROLE_LABELS = { hod: 'Head of Department', treasurer: 'Senior Treasurer', clerk: 'Town Clerk' };
 function attachSignature(targetId, btn, requiredRole) {
 const el = document.getElementById(targetId);
 if (!el) return;
@@ -3991,7 +3995,7 @@ ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No lin
 <div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
 <div class="req-form-signatures">
 <div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-label">Town Treasurer</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-label">Senior Treasurer</div></div>
 <div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-label">Town Clerk</div></div>
 </div>
 </div>
@@ -4027,13 +4031,15 @@ return `
 <td style="width:33.34%;"><strong>Date:</strong><span class="rf-fill">${submissionDate}</span></td>
 </tr>
 <tr>
-<td colspan="2" style="width:66.66%;"><strong>Department:</strong><span class="rf-fill">${escapeHtml(r.department_name || '—')}</span></td>
-<td style="width:33.34%;"><strong>Position:</strong><span class="rf-fill">${escapeHtml(r.requester_position || '—')}</span></td>
+<td colspan="3" style="width:100%;"><strong>Department:</strong><span class="rf-fill">${escapeHtml(r.department_name || '—')}</span></td>
 </tr>
 <tr>
 <td style="width:33.33%;"><strong>Requisitioner:</strong><span class="rf-fill">${escapeHtml(r.requester_name || '—')}</span></td>
 <td style="width:33.33%;"><strong>Mob. No.:</strong><span class="rf-fill">${escapeHtml(r.requester_mobile || '—')}</span></td>
-<td style="width:33.34%;"><strong>Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
+<td style="width:33.34%;"><strong>Position:</strong><span class="rf-fill">${escapeHtml(r.requester_position || '—')}</span></td>
+</tr>
+<tr>
+<td colspan="3"><strong>Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
 </tr>
 <tr>
 <td style="width:33.33%;"><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(r.budget_code || '—')}</span></td>
@@ -4057,7 +4063,7 @@ ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No lin
 <div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
 <div class="req-form-signatures">
 <div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-label">Town Treasurer</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-label">Senior Treasurer</div></div>
 <div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-label">Town Clerk</div></div>
 </div>
 </div>
