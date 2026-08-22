@@ -512,6 +512,12 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 .modal-close{background:none; border:none; cursor:pointer; color:var(--ink-500); font-size:20px; line-height:1; width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; transition:background .15s var(--ease), color .15s var(--ease);}
 .modal-close:hover{background:var(--danger-bg); color:var(--danger);}
 .modal-head-actions{display:flex; align-items:center; gap:4px; flex-shrink:0;}
+/* The New/Edit Requisition modal's title is centered in its header bar
+   (rather than left-aligned like other modals) — the maximize/close
+   buttons are taken out of flow so the title can center against the
+   full header width. */
+#modal-req .modal-head{position:relative; justify-content:center;}
+#modal-req .modal-head-actions{position:absolute; right:22px; top:50%; transform:translateY(-50%);}
 .modal-max-btn{background:none; border:none; cursor:pointer; color:var(--ink-500); font-size:15px; line-height:1; width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; transition:background .15s var(--ease), color .15s var(--ease);}
 .modal-max-btn:hover{background:var(--gold-100); color:var(--navy-950);}
 /* Maximized state — the modal expands to 60% of the viewport width (with
@@ -1377,7 +1383,7 @@ Departments
 <tr>
 <td colspan="3">
 <div class="rf-field rf-sig-slot">
-<strong>Signature:</strong>
+<strong>Requisitioner Signature:</strong>
 <div class="rf-fill" id="req-sig-requester"></div>
 <button type="button" class="sig-attach-btn no-print" id="req-sig-requester-btn" onclick="attachSignature('req-sig-requester', this)">🖊 Attach My Signature</button>
 </div>
@@ -3987,7 +3993,7 @@ return `
 <tr>
 <td><strong>Names:</strong><span class="rf-fill">${escapeHtml(r.requester_name || '—')}</span></td>
 <td><strong>Mob. No.:</strong><span class="rf-fill">${escapeHtml(r.requester_mobile || '—')}</span></td>
-<td><strong>Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
+<td><strong>Requisitioner Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
 </tr>
 ${budgetRow}
 </table>
@@ -4046,7 +4052,7 @@ return `
 <td style="width:33.34%;"><strong>Position:</strong><span class="rf-fill">${escapeHtml(r.requester_position || '—')}</span></td>
 </tr>
 <tr>
-<td colspan="3"><strong>Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
+<td colspan="3"><strong>Requisitioner Signature:</strong><span class="rf-fill">${sigImg(requesterSigUrl)}</span></td>
 </tr>
 <tr>
 <td style="width:33.33%;"><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(r.budget_code || '—')}</span></td>
