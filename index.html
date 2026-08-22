@@ -146,6 +146,12 @@ font-weight:600; font-size:13.5px; cursor:pointer; transition:transform .12s var
 white-space:nowrap; position:relative;
 }
 .btn:active{transform:translateY(1px) scale(.99);}
+.btn-icon{width:14px; height:14px; flex-shrink:0;}
+.foot-nowrap{flex-wrap:nowrap;}
+@media (max-width:480px){
+.foot-nowrap{gap:6px;}
+.foot-nowrap .btn{padding:10px 10px; font-size:12.5px;}
+}
 .btn-primary{background:var(--teal-700); color:#fff; box-shadow:var(--shadow-sm);}
 .btn-primary:hover{background:var(--teal-600); box-shadow:0 6px 16px rgba(15,92,82,.32);}
 .btn-primary:focus-visible{box-shadow:var(--shadow-ring);}
@@ -613,9 +619,9 @@ background:#fff; padding:8.6px 5.2px 5.2px; font-family:var(--font-body); color:
 /* Requisition form header — a single pre-composed banner image (header.jpg)
    replaces the old text+crest+seal composite so the on-screen form matches
    the Council's printed letterhead exactly. */
-.rf-header-img{display:block; width:100%; height:auto; margin:0 auto 8.6px; border-radius:4px;}
+.rf-header-img{display:block; width:91%; height:auto; margin:0 auto 8.6px; border-radius:4px;}
 .req-form-header{text-align:center; margin-bottom:1.7px;}
-.req-form-header .rf-title{font-family:var(--font-display); font-size:16.34px; font-weight:800; letter-spacing:.34px; text-transform:uppercase; margin-top:5.2px;}
+.req-form-header .rf-title{font-family:var(--font-display); font-size:19.5px; font-weight:800; letter-spacing:.34px; text-transform:uppercase; margin-top:6px;}
 .rf-refno{text-align:right; font-size:10.75px; margin:1.7px 0 8.6px; font-weight:600;}
 .rf-refno .mono{color:#b8382a; font-weight:800;}
 table.req-form-meta-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:border-box; border-collapse:collapse; margin:6.9px 0 12.04px; font-size:10.75px; border:1px solid #333;}
@@ -640,16 +646,24 @@ table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #e279
 .req-form-words strong{white-space:nowrap; margin-right:3.44px;}
 .req-form-words .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
 .req-form-signatures{display:grid; grid-template-columns:repeat(3,1fr); border:1px solid #333; margin-top:15.48px;}
-.req-form-signatures > div{padding:8.6px 10.32px 10.32px; border-left:1px solid #333;}
+.req-form-signatures > div{padding:11px 13px 13px; border-left:1px solid #333;}
 .req-form-signatures > div:first-child{border-left:none;}
-.req-form-signatures .sig-role{font-size:10.32px; font-weight:600; margin-bottom:22.36px;}
-.req-form-signatures .sig-line{border-bottom:1px dotted #666; margin-bottom:5.16px; height:39.56px; display:flex; align-items:flex-end; padding-bottom:1.72px;}
+.req-form-signatures .sig-role{font-size:11.5px; font-weight:600; margin-bottom:24px;}
+.req-form-signatures .sig-line{border-bottom:1px dotted #666; margin-bottom:8px; height:44px; display:flex; align-items:flex-end; padding-bottom:1.72px;}
+/* Space between the dotted signature line and the role label — shows the
+   authorizer's name pulled from the system (auto-filled when they attach
+   their signature) while staying an editable field on the entry form. */
+.req-form-signatures .sig-name-fill{margin:0 0 6px;}
+.req-form-signatures .sig-name-fill input{width:100%; border:none; background:transparent; font:inherit; font-size:11px; font-weight:600; text-align:center; color:#181818; padding:2px 4px;}
+.req-form-signatures .sig-name-fill input::placeholder{font-weight:400; color:var(--ink-500);}
+.req-form-signatures .sig-name-fill input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
+.req-form-signatures .sig-name{margin:0 0 6px; font-size:11px; font-weight:600; text-align:center; min-height:14px;}
 /* Unscoped so every signature box — including the Payment Voucher's Vote
 Book / Verified by / Passed Payment / payee / witness / cashier boxes,
 which sit in a plain table rather than inside .req-form-signatures — gets
 the same enlarged, clearly-visible signature image once one is attached. */
 .sig-line img{max-height:37.84px; max-width:95%; object-fit:contain;}
-.req-form-signatures .sig-label{font-size:10.32px; font-weight:800;}
+.req-form-signatures .sig-label{font-size:11.5px; font-weight:800;}
 @media print{
 @page{ size:A4; margin:12mm; }
 body *{visibility:hidden;}
@@ -660,9 +674,9 @@ body *{visibility:hidden;}
 /* The 86% on-screen sizing above is a screen-only default — restore the
    original full-size dimensions for the physical printed page. */
 #print-form-container .req-form-paper{padding:10px 6px 6px;}
-#print-form-container .rf-header-img{width:100%; margin-bottom:10px;}
+#print-form-container .rf-header-img{width:91%; margin:0 auto 10px;}
 #print-form-container .req-form-header{margin-bottom:2px;}
-#print-form-container .req-form-header .rf-title{font-size:19px; letter-spacing:.4px; margin-top:6px;}
+#print-form-container .req-form-header .rf-title{font-size:23px; letter-spacing:.45px; margin-top:7px;}
 #print-form-container .rf-refno{font-size:12.5px; margin:2px 0 10px;}
 #print-form-container table.req-form-meta-table{margin:8px 0 14px; font-size:12.5px;}
 #print-form-container table.req-form-meta-table td{padding:5px 8px;}
@@ -678,11 +692,12 @@ body *{visibility:hidden;}
 #print-form-container .req-form-words{font-size:12.5px; margin-bottom:30px;}
 #print-form-container .req-form-words strong{margin-right:4px;}
 #print-form-container .req-form-signatures{margin-top:18px;}
-#print-form-container .req-form-signatures > div{padding:10px 12px 12px;}
-#print-form-container .req-form-signatures .sig-role{font-size:12px; margin-bottom:26px;}
-#print-form-container .req-form-signatures .sig-line{margin-bottom:6px; height:46px; padding-bottom:2px;}
+#print-form-container .req-form-signatures > div{padding:12px 14px 14px;}
+#print-form-container .req-form-signatures .sig-role{font-size:13px; margin-bottom:28px;}
+#print-form-container .req-form-signatures .sig-line{margin-bottom:9px; height:50px; padding-bottom:2px;}
 #print-form-container .sig-line img{max-height:44px;}
-#print-form-container .req-form-signatures .sig-label{font-size:12px;}
+#print-form-container .req-form-signatures .sig-name-fill, #print-form-container .req-form-signatures .sig-name{margin:0 0 8px; font-size:13px;}
+#print-form-container .req-form-signatures .sig-label{font-size:13px;}
 }
 /* ---------------- Requisition data-entry form (styled as the paper form itself) ---------------- */
 .req-digital-controls{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px 14px; margin-bottom:16px;}
@@ -1413,20 +1428,20 @@ Departments
 <tfoot><tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">UGX <span id="req-grand-total">0</span></td><td class="no-print"></td></tr></tfoot>
 </table>
 <div style="display:flex; gap:8px; margin:10px 0 16px; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
-<button class="btn btn-ghost" data-close="modal-req">Cancel</button>
-<button type="button" class="btn btn-ghost" id="req-print-draft">🖶 Print</button>
-<button class="btn btn-primary" id="req-route-hod-mid">Submit to Head of Department</button>
+<button class="btn btn-ghost" data-close="modal-req"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Cancel</button>
+<button type="button" class="btn btn-ghost" id="req-print-draft"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9V3H18V9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="4" y="9" width="16" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="7" y="14" width="10" height="6" stroke="currentColor" stroke-width="1.8"/></svg>Print</button>
+<button class="btn btn-primary" id="req-route-hod-mid"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.5L10.5 15L16 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="req-route-hod-mid-label">Submit to Head of Department</span></button>
 </div>
 <div class="req-form-words entry"><strong>Amount in words:</strong> <span id="req-amount-words">—</span></div>
 <div class="req-form-signatures preview">
-<div><div class="sig-role">Recommended by,</div><div class="sig-line" id="req-sig-hod"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-hod-btn" data-sig-role="hod" onclick="attachSignature('req-sig-hod', this, 'hod')">🖊 Attach Signature</button><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line" id="req-sig-treasurer"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-treasurer-btn" data-sig-role="treasurer" onclick="attachSignature('req-sig-treasurer', this, 'treasurer')">🖊 Attach Signature</button><div class="sig-label">Senior Treasurer</div></div>
-<div><div class="sig-role">Authorised by</div><div class="sig-line" id="req-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('req-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-label">Town Clerk</div></div>
+<div><div class="sig-role">Recommended by,</div><div class="sig-line" id="req-sig-hod"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-hod-btn" data-sig-role="hod" onclick="attachSignature('req-sig-hod', this, 'hod')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="req-sig-hod-name" placeholder="Name of authorizer"/></div><div class="sig-label">Head of Department</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line" id="req-sig-treasurer"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-treasurer-btn" data-sig-role="treasurer" onclick="attachSignature('req-sig-treasurer', this, 'treasurer')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="req-sig-treasurer-name" placeholder="Name of authorizer"/></div><div class="sig-label">Senior Treasurer</div></div>
+<div><div class="sig-role">Authorised by</div><div class="sig-line" id="req-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('req-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="req-sig-clerk-name" placeholder="Name of authorizer"/></div><div class="sig-label">Town Clerk</div></div>
 </div>
 <div class="req-route-stack no-print" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0 0;">
-<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-treasurer" disabled title="Available once the Head of Department has approved this requisition">Submit to Senior Treasurer</button></div>
-<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Senior Treasurer has approved this requisition">Submit to Town Clerk</button></div>
-<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-auditor" disabled title="Available once the Town Clerk has approved this requisition">Submit to Internal Auditor</button></div>
+<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-treasurer" disabled title="Available once the Head of Department has approved this requisition"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12H16M16 12L12.5 8.5M16 12L12.5 15.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Forward to Senior Treasurer</button></div>
+<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Senior Treasurer has approved this requisition"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12H16M16 12L12.5 8.5M16 12L12.5 15.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Forward to Town Clerk</button></div>
+<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-auditor" disabled title="Available once the Town Clerk has approved this requisition"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12H16M16 12L12.5 8.5M16 12L12.5 15.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Forward to Internal Auditor</button></div>
 </div>
 </div>
 <!-- ===== Cheque Payment Voucher — same header/council masthead as the Requisition Form above, filled in together with it in the same modal ===== -->
@@ -1463,8 +1478,8 @@ Departments
 <p><strong>I FURTHER CERTIFY</strong> that the stores that have been taken on charge, or are expendable, as indicated above.</p>
 </div>
 <div class="req-form-signatures preview" style="grid-template-columns:repeat(2,1fr);">
-<div><div class="sig-role">Signature,</div><div class="sig-line" id="pv-sig-controller"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-controller-btn" data-sig-role="hod" onclick="attachSignature('pv-sig-controller', this, 'hod')">🖊 Attach Signature</button><div class="sig-label">Vote Controller</div></div>
-<div><div class="sig-role">Signature,</div><div class="sig-line" id="pv-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('pv-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-label">Town Clerk</div></div>
+<div><div class="sig-role">Signature,</div><div class="sig-line" id="pv-sig-controller"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-controller-btn" data-sig-role="hod" onclick="attachSignature('pv-sig-controller', this, 'hod')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="pv-sig-controller-name" placeholder="Name of authorizer"/></div><div class="sig-label">Vote Controller</div></div>
+<div><div class="sig-role">Signature,</div><div class="sig-line" id="pv-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="pv-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('pv-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="pv-sig-clerk-name" placeholder="Name of authorizer"/></div><div class="sig-label">Town Clerk</div></div>
 </div>
 <div class="pv-received-line" style="margin-top:14px;">
 Received / paid this Day <input type="text" class="pv-day" id="pv-day"/> ................. 20<input type="text" class="pv-day" id="pv-year" style="width:36px;"/> in payment of the above account he Sum of shillings <input type="text" class="pv-words" id="pv-words-line" readonly/> (in words).
@@ -1521,9 +1536,9 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </table>
 </div>
 </div>
-<div class="modal-foot">
-<button class="btn btn-ghost" data-close="modal-req">Cancel</button>
-<button class="btn btn-primary" id="req-route-hod">Submit to Head of Department</button>
+<div class="modal-foot foot-nowrap">
+<button class="btn btn-ghost" data-close="modal-req"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Cancel</button>
+<button class="btn btn-primary" id="req-route-hod"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.5L10.5 15L16 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="req-route-hod-label">Submit to Head of Department</span></button>
 </div>
 </div>
 </div>
@@ -3347,6 +3362,10 @@ el.innerHTML = `<img src="${API_BASE}${STATE.signatureUrl}" alt="Signature"/>`;
 // Once a signature has been placed, the "Attach Signature" prompt for that
 // box is no longer relevant — remove it rather than leaving it visible.
 if (btn) btn.style.display = 'none';
+// Pull the authorizer's name from the system straight into the name field
+// beneath the signature line — left editable in case it needs correcting.
+const nameField = document.getElementById(targetId + '-name');
+if (nameField && !nameField.value.trim()) nameField.value = STATE.name || '';
 }
 // Shows/hides each "Attach Signature" button according to whether the
 // signed-in account's role is allowed to sign that particular box. Boxes
@@ -3362,8 +3381,8 @@ btn.style.display = (STATE.role === requiredRole) ? '' : 'none';
 async function openRequisitionModal(editReq) {
 STATE.editingRequisitionId = editReq ? editReq.id : null;
 document.getElementById('req-modal-title').textContent = editReq ? `Edit Requisition — ${editReq.ref_no}` : 'New Requisition';
-document.getElementById('req-route-hod').textContent = editReq ? 'Save & Submit to Head of Department' : 'Submit to Head of Department';
-document.getElementById('req-route-hod-mid').textContent = editReq ? 'Save & Submit to Head of Department' : 'Submit to Head of Department';
+document.getElementById('req-route-hod-label').textContent = editReq ? 'Save & Submit to Head of Department' : 'Submit to Head of Department';
+document.getElementById('req-route-hod-mid-label').textContent = editReq ? 'Save & Submit to Head of Department' : 'Submit to Head of Department';
 // Fill in the paper-form fields that mirror who's submitting this and when.
 const deptSel = document.getElementById('req-form-department');
 deptSel.value = String((editReq ? editReq.department_id : STATE.departmentId) || '');
@@ -3407,6 +3426,7 @@ const allSigBoxIds = ['req-sig-requester','req-sig-hod','req-sig-treasurer','req
 allSigBoxIds.forEach(id => {
 const b = document.getElementById(id); if (b) b.innerHTML = '';
 const btn = document.getElementById(id + '-btn'); if (btn) btn.style.display = '';
+const nameField = document.getElementById(id + '-name'); if (nameField) nameField.value = '';
 });
 // The requester's own signature is the one box that's actually recorded on
 // the requisition itself — pre-fill it only when reopening a record that was
@@ -3765,7 +3785,7 @@ body.innerHTML = `
 ${renderFilledRequisitionFormHtml(r)}
 ${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div>${(r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? '<div class="help-text" style="margin-top:6px;">Upload the Payment Voucher, Official Receipts, Signed Attendance Sheets and any other supporting documents for this requisition.</div>' : ''}</div>` : ''}
 `;
-let footHtml = `<button class="btn btn-ghost" onclick="openPrintForm(${r.id})">🖶 Print Requisition Form</button>`;
+let footHtml = `<button class="btn btn-ghost" onclick="openPrintForm(${r.id})"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9V3H18V9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="4" y="9" width="16" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="7" y="14" width="10" height="6" stroke="currentColor" stroke-width="1.8"/></svg>Print Requisition Form</button>`;
 if (r.status === 'draft' && (r.requester_id == STATE.userId || STATE.role === 'admin')) {
 footHtml += `<button class="btn btn-primary" onclick="submitExisting(${r.id})">Submit for Approval</button>`;
 }
@@ -3865,9 +3885,15 @@ const requesterSigUrl = r.requester_signature_url || null;
 const hodSigUrl = findStageSignatureUrl(r, 'hod');
 const treasurerSigUrl = findStageSignatureUrl(r, 'treasurer');
 const clerkSigUrl = findStageSignatureUrl(r, 'clerk');
+// Authorizer's name from the system for the space between the dotted
+// signature line and the role label — resolved from the same approval
+// record as their signature image.
+const hodName = findStageActorName(r, 'hod');
+const treasurerName = findStageActorName(r, 'treasurer');
+const clerkName = findStageActorName(r, 'clerk');
 const sigImg = (url) => url ? `<img src="${API_BASE}${url}" alt="Signature" />` : '';
 const dots = (text) => `<span class="rf-dots">${escapeHtml(text || '').padEnd(1,'\u00A0') || '&nbsp;'}</span>`;
-return { items, voucher, rowsHtml, pvRowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, sigImg, dots };
+return { items, voucher, rowsHtml, pvRowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, hodName, treasurerName, clerkName, sigImg, dots };
 }
 function findStageSignatureUrl(r, stage) {
 const approvals = r.approvals || [];
@@ -3879,11 +3905,21 @@ return a.actor_signature_url;
 }
 return null;
 }
+function findStageActorName(r, stage) {
+const approvals = r.approvals || [];
+for (let i = approvals.length - 1; i >= 0; i--) {
+const a = approvals[i];
+if (a.stage === stage && a.action === 'approve' && a.actor) {
+return a.actor;
+}
+}
+return null;
+}
 // The Cheque Payment Voucher half of the form — identical markup whether
 // it's reached via "View" or via "Print", since both mirror the same
 // paper document filled in together with the Requisition Form.
 function renderPvFormHtml(r, parts) {
-const { voucher, pvRowsHtml, grandTotal, words, clerkSigUrl, sigImg, dots } = parts;
+const { voucher, pvRowsHtml, grandTotal, words, hodSigUrl, clerkSigUrl, hodName, clerkName, sigImg, dots } = parts;
 return `
 <div class="pv-form">
 <img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
@@ -3920,8 +3956,8 @@ ${pvRowsHtml || '<tr><td colspan="5" style="text-align:center; color:#777;">No l
 <p><strong>I FURTHER CERTIFY</strong> that the stores that have been taken on charge, or are expendable, as indicated above.</p>
 </div>
 <div class="req-form-signatures" style="grid-template-columns:repeat(2,1fr);">
-<div><div class="sig-role">Signature,</div><div class="sig-line"></div><div class="sig-label">Vote Controller</div></div>
-<div><div class="sig-role">Signature,</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-label">Town Clerk</div></div>
+<div><div class="sig-role">Signature,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-name">${escapeHtml(hodName || '')}</div><div class="sig-label">Vote Controller</div></div>
+<div><div class="sig-role">Signature,</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-name">${escapeHtml(clerkName || '')}</div><div class="sig-label">Town Clerk</div></div>
 </div>
 <div class="pv-received-line" style="margin-top:14px;">
 Received / paid this Day ${dots(voucher.payment_day)} ................. 20${dots(voucher.payment_month_year)} in payment of the above account he Sum of shillings ${dots(words)} (in words).
@@ -3975,7 +4011,7 @@ Date: ${dots(voucher.passed_payment_date)}<br/>
 // ---- Print form (mirrors the Council's simplified paper layout exactly) --
 function renderPrintFormHtml(r) {
 const parts = computeReqFormParts(r);
-const { rowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, sigImg, dots } = parts;
+const { rowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, hodName, treasurerName, clerkName, sigImg, dots } = parts;
 const budgetRow = `
 <tr>
 <td><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(r.budget_code || '—')}</span></td>
@@ -4009,9 +4045,9 @@ ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No lin
 </table>
 <div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
 <div class="req-form-signatures">
-<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-label">Senior Treasurer</div></div>
-<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-label">Town Clerk</div></div>
+<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-name">${escapeHtml(hodName || '')}</div><div class="sig-label">Head of Department</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-name">${escapeHtml(treasurerName || '')}</div><div class="sig-label">Senior Treasurer</div></div>
+<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-name">${escapeHtml(clerkName || '')}</div><div class="sig-label">Town Clerk</div></div>
 </div>
 </div>
 ${renderPvFormHtml(r, parts)}
@@ -4027,7 +4063,7 @@ ${renderPvFormHtml(r, parts)}
 // Requisition tab, not a shortened summary.
 function renderFilledRequisitionFormHtml(r) {
 const parts = computeReqFormParts(r);
-const { rowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, sigImg, dots } = parts;
+const { rowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, hodName, treasurerName, clerkName, sigImg, dots } = parts;
 const roleLabel = r.requester_role ? statusLabel(r.requester_role) : '—';
 return `
 <div class="req-form-paper">
@@ -4077,9 +4113,9 @@ ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No lin
 </table>
 <div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
 <div class="req-form-signatures">
-<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-label">Senior Treasurer</div></div>
-<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-label">Town Clerk</div></div>
+<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-name">${escapeHtml(hodName || '')}</div><div class="sig-label">Head of Department</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-name">${escapeHtml(treasurerName || '')}</div><div class="sig-label">Senior Treasurer</div></div>
+<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-name">${escapeHtml(clerkName || '')}</div><div class="sig-label">Town Clerk</div></div>
 </div>
 </div>
 ${renderPvFormHtml(r, parts)}
