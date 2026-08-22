@@ -3409,10 +3409,12 @@ const b = document.getElementById(id); if (b) b.innerHTML = '';
 const btn = document.getElementById(id + '-btn'); if (btn) btn.style.display = '';
 });
 // The requester's own signature is the one box that's actually recorded on
-// the requisition itself — pre-fill it from the record being edited (or
-// from the current account's own signature for a brand-new requisition),
-// and hide its "Attach Signature" prompt once it's filled.
-const requesterSigUrl = editReq ? editReq.requester_signature_url : STATE.signatureUrl;
+// the requisition itself — pre-fill it only when reopening a record that was
+// already signed (i.e. editing an existing requisition). A brand-new
+// requisition always starts with this box empty and its "Attach My
+// Signature" button showing, even though the account already has a
+// signature on file — the requester must explicitly click to attach it.
+const requesterSigUrl = editReq ? editReq.requester_signature_url : null;
 if (requesterSigUrl) {
 document.getElementById('req-sig-requester').innerHTML = `<img src="${API_BASE}${requesterSigUrl}" alt="Signature"/>`;
 const reqBtn = document.getElementById('req-sig-requester-btn'); if (reqBtn) reqBtn.style.display = 'none';
@@ -3669,7 +3671,7 @@ department_name: deptLabel(dept) || '—',
 requester_name: document.getElementById('req-form-names').value.trim() || STATE.name || '—',
 requester_mobile: document.getElementById('req-form-mobile').value.trim() || null,
 requester_position: document.getElementById('req-form-position').value.trim() || null,
-requester_signature_url: STATE.signatureUrl || null,
+requester_signature_url: document.getElementById('req-sig-requester').innerHTML.trim() ? STATE.signatureUrl : null,
 budget_code: bc ? bc.code : (document.getElementById('req-form-budgetcode-search').value.trim() || null),
 budget_output: bc ? bc.output_description : document.getElementById('req-form-budgetdesc').value,
 activity_budget_limit: bc ? bc.allocated_amount : null,
