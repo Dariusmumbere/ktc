@@ -858,12 +858,12 @@ vertical-align:middle; flex-shrink:0;
 <label>Signing in as</label>
 <select id="login-role" required>
 <option value="">— Select your role —</option>
-<option value="staff">Staff Member</option>
-<option value="hod">Head of Department</option>
-<option value="treasurer">Senior Treasurer</option>
-<option value="clerk">Town Clerk</option>
-<option value="auditor">Internal Auditor</option>
-<option value="admin">System Administrator</option>
+<option value="staff">Requisitioner</option>
+<option value="hod">First Level Approver</option>
+<option value="treasurer">Budget Controller</option>
+<option value="clerk">Accounting Officer</option>
+<option value="auditor">IFMS Auditor</option>
+<option value="admin">Local System Administrator</option>
 </select>
 </div>
 <div class="field">
@@ -1603,7 +1603,58 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <div class="field span2"><label>Full Name</label><input type="text" id="u-name"/></div>
 <div class="field span2"><label>Email</label><input type="email" id="u-email"/></div>
 <div class="field"><label id="u-password-label">Temporary Password</label><input type="text" id="u-password"/></div>
-<div class="field"><label>Position</label><input type="text" id="u-position" placeholder="e.g. Senior Accountant"/></div>
+<div class="field"><label>Position</label>
+<select id="u-position">
+<option value="">Select Position</option>
+<option value="Town Clerk">Town Clerk</option>
+<option value="Senior Internal Auditor (HoD)">Senior Internal Auditor (HoD)</option>
+<option value="Veterinary Officer (HoD)">Veterinary Officer (HoD)</option>
+<option value="Assistant Animal Husbandry Officer">Assistant Animal Husbandry Officer</option>
+<option value="Assistant Agriculture Officer">Assistant Agriculture Officer</option>
+<option value="Principal Health Inspector (HoD)">Principal Health Inspector (HoD)</option>
+<option value="Health Inspector">Health Inspector</option>
+<option value="Health Assistant">Health Assistant</option>
+<option value="Senior Treasurer (HoD)">Senior Treasurer (HoD)</option>
+<option value="Statistician / Economist">Statistician / Economist</option>
+<option value="Senior Assistant Accountant">Senior Assistant Accountant</option>
+<option value="Assistant Accountant">Assistant Accountant</option>
+<option value="Assistant">Assistant</option>
+<option value="Inventory Management Officer.">Inventory Management Officer.</option>
+<option value="Office Attendant">Office Attendant</option>
+<option value="Senior Assistant Town Clerk (HoD)">Senior Assistant Town Clerk (HoD)</option>
+<option value="Human Resource Officer">Human Resource Officer</option>
+<option value="Assistant Town Clerk">Assistant Town Clerk</option>
+<option value="IT Officer">IT Officer</option>
+<option value="Principal Town Agent">Principal Town Agent</option>
+<option value="Senior Law Enforcement Officer">Senior Law Enforcement Officer</option>
+<option value="Town Agent (Karugutu)">Town Agent (Karugutu)</option>
+<option value="Town Agent (Kaghorwe)">Town Agent (Kaghorwe)</option>
+<option value="Town Agent (Ibanda)">Town Agent (Ibanda)</option>
+<option value="Town Agent (Nyabuhuru)">Town Agent (Nyabuhuru)</option>
+<option value="Town Agent (Kacwamba)">Town Agent (Kacwamba)</option>
+<option value="Stenographer Secretary">Stenographer Secretary</option>
+<option value="Assistant Records Officer">Assistant Records Officer</option>
+<option value="Office Typist (1)">Office Typist (1)</option>
+<option value="Office Typist (2)">Office Typist (2)</option>
+<option value="Driver">Driver</option>
+<option value="Office Attendants (1)">Office Attendants (1)</option>
+<option value="Office Attendants (2)">Office Attendants (2)</option>
+<option value="Porter">Porter</option>
+<option value="Askari (1)">Askari (1)</option>
+<option value="Askari (2)">Askari (2)</option>
+<option value="Senior Engineering Officer (HoD)">Senior Engineering Officer (HoD)</option>
+<option value="Civil Engineer">Civil Engineer</option>
+<option value="Assistant Engineering Officer">Assistant Engineering Officer</option>
+<option value="Plant Operator">Plant Operator</option>
+<option value="Senior Physical Planner (HoD)">Senior Physical Planner (HoD)</option>
+<option value="Physical Planner">Physical Planner</option>
+<option value="Senior Community Development Officer (HoD)">Senior Community Development Officer (HoD)</option>
+<option value="Assistant Labour Officer">Assistant Labour Officer</option>
+<option value="Assistant Community Development Officer">Assistant Community Development Officer</option>
+<option value="Senior Commercial Officer (HoD)">Senior Commercial Officer (HoD)</option>
+<option value="Assistant Commercial Officer">Assistant Commercial Officer</option>
+</select>
+</div>
 <div class="field"><label>Telephone</label><input type="text" id="u-telephone" placeholder="e.g. 0700 000 000"/></div>
 <div class="field"><label>Role</label>
 <select id="u-role">
@@ -1611,6 +1662,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <option value="hod">First Level Approver</option>
 <option value="treasurer">Budget Controller</option>
 <option value="clerk">Accounting Officer</option>
+<option value="auditor">IFMS Auditor</option>
 <option value="admin">Local System Administrator</option>
 </select>
 </div>
@@ -2035,6 +2087,7 @@ staff: 'Requisitioner',
 hod: 'First Level Approver',
 treasurer: 'Budget Controller',
 clerk: 'Accounting Officer',
+auditor: 'IFMS Auditor',
 admin: 'Local System Administrator',
 };
 function adminRoleLabel(role) { return ADMIN_USER_ROLE_LABELS[role] || statusLabel(role); }
@@ -4410,6 +4463,7 @@ document.getElementById('u-password-label').textContent = 'Temporary Password';
 document.getElementById('u-name').value = '';
 document.getElementById('u-email').value = '';
 document.getElementById('u-password').value = '';
+clearDynamicPositionOptions();
 document.getElementById('u-position').value = '';
 document.getElementById('u-telephone').value = '';
 document.getElementById('u-role').value = 'staff';
@@ -4431,6 +4485,7 @@ document.getElementById('u-password-label').textContent = 'New Password (leave b
 document.getElementById('u-name').value = u.full_name || '';
 document.getElementById('u-email').value = u.email || '';
 document.getElementById('u-password').value = '';
+ensurePositionOption(u.position);
 document.getElementById('u-position').value = u.position || '';
 document.getElementById('u-telephone').value = u.telephone || '';
 document.getElementById('u-role').value = u.role;
@@ -4450,6 +4505,23 @@ await api(`/api/users/${id}`, { method: 'DELETE' });
 toast('User deleted', 'success');
 loadUsers();
 } catch (e) { toast(e.message, 'error'); }
+}
+// If an existing user's stored Position isn't one of the standard Council
+// positions listed in the dropdown (e.g. legacy free-text data entered
+// before this became a dropdown), add it as a one-off option so editing
+// the account doesn't silently blank out or overwrite their position.
+function ensurePositionOption(pos) {
+if (!pos) return;
+const sel = document.getElementById('u-position');
+const exists = Array.from(sel.options).some(o => o.value === pos);
+if (!exists) {
+const opt = document.createElement('option');
+opt.value = pos; opt.textContent = pos; opt.dataset.dynamic = '1';
+sel.appendChild(opt);
+}
+}
+function clearDynamicPositionOptions() {
+document.getElementById('u-position').querySelectorAll('option[data-dynamic="1"]').forEach(o => o.remove());
 }
 function updateUserDeptRequirement() {
 const role = document.getElementById('u-role').value;
