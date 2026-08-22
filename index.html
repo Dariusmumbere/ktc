@@ -1561,7 +1561,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- ===== MODAL: My Settings (profile + signature) ===== -->
+<!-- ===== MODAL: My Settings (profile) ===== -->
 <div class="overlay" id="modal-settings">
 <div class="modal">
 <div class="modal-head"><h3>My Settings</h3><button class="modal-close" data-close="modal-settings">&times;</button></div>
@@ -1575,6 +1575,22 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 <div class="modal-foot">
 <button class="btn btn-ghost" data-close="modal-settings">Close</button>
+</div>
+</div>
+</div>
+<!-- ===== MODAL: Session Timeout ("are you still there?") ===== -->
+<!-- No close (×) button and excluded from the click-outside-to-close
+     handler on purpose — the user must explicitly choose to stay signed
+     in or log out, rather than being able to dismiss this silently. -->
+<div class="overlay" id="modal-session-timeout">
+<div class="modal" style="max-width:420px;">
+<div class="modal-head"><h3>Still there?</h3></div>
+<div class="modal-body">
+<p style="margin:0 0 8px; font-size:13.5px; color:var(--ink-700);">Your session has been inactive for 20 minutes. For your security, you'll be signed out automatically in <strong id="session-timeout-countdown">60</strong> seconds unless you choose to continue.</p>
+</div>
+<div class="modal-foot">
+<button class="btn btn-ghost" id="session-logout-btn">Log Out</button>
+<button class="btn btn-primary" id="session-continue-btn">Stay Signed In</button>
 </div>
 </div>
 </div>
@@ -2136,31 +2152,70 @@ localStorage.removeItem('ktc_token'); localStorage.removeItem('ktc_role');
 localStorage.removeItem('ktc_name'); localStorage.removeItem('ktc_user_id');
 document.getElementById('app-screen').style.display = 'none';
 document.getElementById('login-screen').style.display = 'flex';
-stopIdleTimer();
+stopSessionTimer();
 }
 document.getElementById('logout-btn').addEventListener('click', logout);
-// ---- Inactivity auto-logout (10 minutes) ----------------------------------
-// The session token itself is now long-lived — signing a user out is
-// handled here, purely based on real inactivity, so an actively-working
-// user is never logged out mid-task the way a fixed-lifetime token used to.
-const IDLE_TIMEOUT_MS = 10 * 60 * 1000;
-let idleTimer = null;
-function resetIdleTimer() {
+// ---- Session timeout (20 minutes) ------------------------------------------
+// The session token itself is long-lived (see backend) — the actual session
+// length is enforced here, client-side. After 20 minutes with no activity,
+// a "are you still there?" prompt appears; if the user doesn't respond
+// within the grace period, they're treated as inactive and signed out.
+// Responding "Stay Signed In" (or any activity while the prompt is NOT
+// showing) restarts the 20-minute clock.
+const SESSION_TIMEOUT_MS = 20 * 60 * 1000;   // time of inactivity before the prompt appears
+const SESSION_GRACE_MS = 60 * 1000;          // time given to respond to the prompt before auto sign-out
+let sessionTimer = null;
+let sessionGraceTimer = null;
+let sessionCountdownInterval = null;
+function isSessionPromptShowing() {
+const modal = document.getElementById('modal-session-timeout');
+return !!modal && modal.classList.contains('show');
+}
+function resetSessionTimer() {
 if (!STATE.token) return;
-clearTimeout(idleTimer);
-idleTimer = setTimeout(() => {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(showSessionPrompt, SESSION_TIMEOUT_MS);
+}
+function stopSessionTimer() {
+clearTimeout(sessionTimer); sessionTimer = null;
+clearTimeout(sessionGraceTimer); sessionGraceTimer = null;
+clearInterval(sessionCountdownInterval); sessionCountdownInterval = null;
+const modal = document.getElementById('modal-session-timeout');
+if (modal) modal.classList.remove('show');
+}
+function showSessionPrompt() {
+if (!STATE.token) return;
+let secondsLeft = Math.round(SESSION_GRACE_MS / 1000);
+const countdownEl = document.getElementById('session-timeout-countdown');
+if (countdownEl) countdownEl.textContent = secondsLeft;
+openModal('modal-session-timeout');
+clearInterval(sessionCountdownInterval);
+sessionCountdownInterval = setInterval(() => {
+secondsLeft -= 1;
+if (countdownEl) countdownEl.textContent = Math.max(secondsLeft, 0);
+if (secondsLeft <= 0) clearInterval(sessionCountdownInterval);
+}, 1000);
+clearTimeout(sessionGraceTimer);
+sessionGraceTimer = setTimeout(() => {
 if (STATE.token) {
 logout();
-toast('You have been signed out after 10 minutes of inactivity', 'error');
+toast('You have been signed out after 20 minutes of inactivity', 'error');
 }
-}, IDLE_TIMEOUT_MS);
+}, SESSION_GRACE_MS);
 }
-function stopIdleTimer() {
-clearTimeout(idleTimer);
-idleTimer = null;
+function continueSession() {
+clearTimeout(sessionGraceTimer); sessionGraceTimer = null;
+clearInterval(sessionCountdownInterval); sessionCountdownInterval = null;
+closeModal('modal-session-timeout');
+resetSessionTimer();
 }
+document.getElementById('session-continue-btn').addEventListener('click', continueSession);
+document.getElementById('session-logout-btn').addEventListener('click', () => { stopSessionTimer(); logout(); });
 ['mousedown', 'mousemove', 'keydown', 'wheel', 'scroll', 'touchstart', 'click'].forEach(evt => {
-document.addEventListener(evt, () => { if (STATE.token) resetIdleTimer(); }, { passive: true });
+// While the "are you still there?" prompt is showing, background activity
+// no longer silently resets the clock — the user must explicitly choose
+// Stay Signed In or Log Out, which is the whole point of the prompt.
+document.addEventListener(evt, () => { if (STATE.token && !isSessionPromptShowing()) resetSessionTimer(); }, { passive: true });
 });
 async function enterApp() {
 document.getElementById('login-screen').style.display = 'none';
@@ -2176,7 +2231,7 @@ switchView('dashboard');
 refreshNotifications();
 setInterval(refreshNotifications, 30000);
 api('/api/auth/me').then(me => { STATE.signatureUrl = me.signature_url || null; STATE.departmentId = me.department_id || null; STATE.email = me.email || null; STATE.position = me.position || null; STATE.telephone = me.telephone || null; }).catch(() => {});
-resetIdleTimer();
+resetSessionTimer();
 }
 function applyRoleVisibility() {
 const navMap = {
@@ -2285,7 +2340,7 @@ overlay.classList.toggle('overlay-maximized', maximized);
 const btn = document.getElementById(modalId + '-max-btn');
 if (btn) { btn.textContent = maximized ? '⧉' : '⛶'; btn.title = maximized ? 'Minimize' : 'Maximize'; }
 }
-document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', (e) => { if (e.target === ov && ov.id !== 'modal-req') ov.classList.remove('show'); }));
+document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', (e) => { if (e.target === ov && ov.id !== 'modal-req' && ov.id !== 'modal-session-timeout') ov.classList.remove('show'); }));
 // ---- My Settings (profile only — signature now lives on the New/Edit User modal) --------
 document.getElementById('user-chip-btn').addEventListener('click', openSettingsModal);
 async function openSettingsModal() {
@@ -3754,10 +3809,17 @@ footHtml += `<button class="btn btn-primary" onclick="submitExisting(${r.id})">S
 }
 const stageRole = { hod: 'hod', treasurer: 'treasurer', clerk: 'clerk' }[r.current_stage];
 if (stageRole && (STATE.role === stageRole || STATE.role === 'admin')) {
+// An authorizer can't approve without a signature on file — it would leave
+// the printed/approved form with an empty signature box at their stage.
+// Reject/Return don't carry a signature, so they stay available either way.
+const hasSignature = !!STATE.signatureUrl;
 footHtml += `
 <button class="btn btn-danger" onclick="actOnRequisition(${r.id}, 'reject')">Reject</button>
 <button class="btn btn-ghost" onclick="actOnRequisition(${r.id}, 'return')">Return for Correction</button>
-<button class="btn btn-primary" onclick="actOnRequisition(${r.id}, 'approve')">Approve</button>`;
+<button class="btn btn-primary" ${hasSignature ? '' : 'disabled title="You need a signature on file before you can approve — ask an administrator to add one to your account."'} onclick="actOnRequisition(${r.id}, 'approve')">Approve</button>`;
+if (!hasSignature) {
+footHtml += `<div class="help-text" style="width:100%; margin-top:6px; color:var(--danger);">You cannot approve until a signature has been added to your account. Ask an administrator to upload one under Users.</div>`;
+}
 }
 const canUpload = r.accountability && r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin');
 if (canUpload) {
@@ -3774,6 +3836,10 @@ try { await api(`/api/requisitions/${id}/submit`, { method: 'POST' }); toast('Re
 catch (e) { toast(e.message, 'error'); }
 }
 async function actOnRequisition(id, action) {
+if (action === 'approve' && !STATE.signatureUrl) {
+toast('You need a signature on file before you can approve — ask an administrator to add one to your account.', 'error');
+return;
+}
 let comments = '';
 if (action !== 'approve') {
 comments = prompt(`Please provide comments for this ${action === 'reject' ? 'rejection' : 'return'}:`) || '';
