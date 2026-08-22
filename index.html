@@ -514,14 +514,14 @@ select.filter-select:focus{border-color:var(--teal-500); box-shadow:var(--shadow
 .modal-head-actions{display:flex; align-items:center; gap:4px; flex-shrink:0;}
 .modal-max-btn{background:none; border:none; cursor:pointer; color:var(--ink-500); font-size:15px; line-height:1; width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; transition:background .15s var(--ease), color .15s var(--ease);}
 .modal-max-btn:hover{background:var(--gold-100); color:var(--navy-950);}
-/* Maximized state — the modal expands to 86% of the viewport so wide
+/* Maximized state — the modal expands to 75% of the viewport so wide
    tables (the requisition meta table / line-item table) get the extra
    width instead of scrolling in a cramped box, while still leaving a
    visible margin around it. Minimizing (toggling the class off) simply
    restores the modal's normal centred size. */
 .overlay.overlay-maximized{padding:0;}
 .modal.modal-maximized{
-width:86vw !important; max-width:86vw !important; height:86vh !important; max-height:86vh !important; margin:0 !important; border-radius:var(--radius-lg) !important;
+width:75vw !important; max-width:75vw !important; height:75vh !important; max-height:75vh !important; margin:0 !important; border-radius:var(--radius-lg) !important;
 display:flex; flex-direction:column;
 overflow:hidden !important;
 }
