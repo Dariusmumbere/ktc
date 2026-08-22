@@ -1611,6 +1611,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <div class="modal-body">
 <div class="field"><label>Department Name</label><input type="text" id="d-name"/></div>
 <div class="field"><label>Department Code</label><input type="text" id="d-code" placeholder="e.g. FIN"/></div>
+<div class="field"><label>Abbreviation</label><input type="text" id="d-abbr" placeholder="e.g. AMS"/><div class="help-text" style="margin-top:4px;">Used on the Departments page and in generated reference numbers. Leave blank to auto-generate from the Department Name.</div></div>
 </div>
 <div class="modal-foot">
 <button class="btn btn-ghost" data-close="modal-dept">Cancel</button>
@@ -4389,6 +4390,7 @@ document.getElementById('d-modal-title').textContent = 'New Department';
 document.getElementById('d-create-btn').textContent = 'Create Department';
 document.getElementById('d-name').value = '';
 document.getElementById('d-code').value = '';
+document.getElementById('d-abbr').value = '';
 openModal('modal-dept');
 });
 function openEditDepartment(id) {
@@ -4399,6 +4401,7 @@ document.getElementById('d-modal-title').textContent = `Edit Department — ${de
 document.getElementById('d-create-btn').textContent = 'Save Changes';
 document.getElementById('d-name').value = dept.name;
 document.getElementById('d-code').value = dept.code;
+document.getElementById('d-abbr').value = dept.abbreviation || '';
 openModal('modal-dept');
 }
 async function deleteDepartment(id) {
@@ -4412,7 +4415,7 @@ loadDepartmentsView();
 } catch (e) { toast(e.message, 'error'); }
 }
 document.getElementById('d-create-btn').addEventListener('click', async () => {
-const payload = { name: document.getElementById('d-name').value.trim(), code: document.getElementById('d-code').value.trim() };
+const payload = { name: document.getElementById('d-name').value.trim(), code: document.getElementById('d-code').value.trim(), abbreviation: document.getElementById('d-abbr').value.trim() };
 if (!payload.name || !payload.code) { toast('Please complete both fields', 'error'); return; }
 try {
 if (STATE.editingDepartmentId) {
