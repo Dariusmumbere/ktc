@@ -532,7 +532,7 @@ same width as other maximized modals) so more of the requisition form
 is visible without scrolling. This only affects the modal's own height,
 not the height of any requisition row/field inside it. */
 #modal-req .modal.modal-maximized,
-#modal-req-detail .modal.modal-maximized{height:96vh !important; max-height:96vh !important;}
+#modal-req-detail .modal.modal-maximized{height:100vh !important; max-height:100vh !important; margin:0 auto !important;}
 /* The outer .modal normally scrolls (see .modal above), which — when
 maximized — let the modal-head (and its minimize/close buttons) scroll
 out of view along with the body content. Locking the outer element and
@@ -607,7 +607,7 @@ background:#fff; padding:8.6px 5.2px 5.2px; font-family:var(--font-body); color:
 /* Requisition form header — a single pre-composed banner image (header.jpg)
    replaces the old text+crest+seal composite so the on-screen form matches
    the Council's printed letterhead exactly. */
-.rf-header-img{display:block; width:60%; height:auto; margin:0 auto 8.6px; border-radius:4px;}
+.rf-header-img{display:block; width:100%; height:auto; margin:0 auto 8.6px; border-radius:4px;}
 .req-form-header{text-align:center; margin-bottom:1.7px;}
 .req-form-header .rf-title{font-family:var(--font-display); font-size:16.34px; font-weight:800; letter-spacing:.34px; text-transform:uppercase; margin-top:5.2px;}
 .rf-refno{text-align:right; font-size:10.75px; margin:1.7px 0 8.6px; font-weight:600;}
