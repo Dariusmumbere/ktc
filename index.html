@@ -1330,8 +1330,8 @@ Departments
 </div>
 <div class="table-wrap">
 <table id="users-table">
-<thead><tr><th>Name</th><th>Email</th><th>Position</th><th>Telephone</th><th>Role</th><th>Department</th><th>Status</th><th></th><th></th></tr></thead>
-<tbody id="users-table-body"><tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+<thead><tr><th>Name</th><th>Email</th><th>Position</th><th>Telephone</th><th>Password</th><th>Role</th><th>Department</th><th>Status</th><th></th><th></th></tr></thead>
+<tbody id="users-table-body"><tr><td colspan="10" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
 </table>
 </div>
 </div>
@@ -1572,23 +1572,6 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <div><div class="detail-label">Email</div><div class="detail-value" id="set-email">—</div></div>
 <div><div class="detail-label">Department</div><div class="detail-value" id="set-dept">—</div></div>
 </div>
-<div class="divider"></div>
-<div class="field-section">
-<span class="kicker">My Signature</span>
-<div class="help-text" style="margin-top:4px;">Upload an image of your signature (PNG or JPG). It's saved to your account settings and attached automatically wherever your name appears on a printed Requisition Form — as requester, or when you approve, recommend or authorise at your stage.</div>
-<div style="margin-top:14px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-<div class="sig-preview-box" id="sig-preview-box">
-<span id="sig-preview-empty" style="font-size:11px; color:var(--ink-500); padding:0 10px; text-align:center;">No signature uploaded</span>
-<img id="sig-preview-img" style="display:none;" />
-</div>
-<div style="display:flex; flex-direction:column; gap:8px;">
-<input type="file" id="sig-file-input" accept=".png,.jpg,.jpeg" style="display:none;" />
-<button type="button" class="btn btn-primary" id="sig-upload-btn">Upload Signature</button>
-<button type="button" class="btn btn-ghost" id="sig-remove-btn" style="display:none;">Remove Signature</button>
-</div>
-</div>
-<div class="login-error" id="sig-error" style="margin-top:10px;"></div>
-</div>
 </div>
 <div class="modal-foot">
 <button class="btn btn-ghost" data-close="modal-settings">Close</button>
@@ -1608,15 +1591,31 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <div class="field"><label>Telephone</label><input type="text" id="u-telephone" placeholder="e.g. 0700 000 000"/></div>
 <div class="field"><label>Role</label>
 <select id="u-role">
-<option value="staff">Staff Member</option>
-<option value="hod">Head of Department</option>
-<option value="treasurer">Senior Treasurer</option>
-<option value="clerk">Town Clerk</option>
-<option value="auditor">Internal Auditor</option>
-<option value="admin">System Administrator</option>
+<option value="staff">Requisitioner</option>
+<option value="hod">First Level Approver</option>
+<option value="treasurer">Budget Controller</option>
+<option value="clerk">Accounting Officer</option>
+<option value="admin">Local System Administrator</option>
 </select>
 </div>
 <div class="field span2"><label id="u-department-label">Department</label><select id="u-department"></select><div class="help-text" id="u-department-hint" style="display:none; margin-top:4px;">Required for Head of Department accounts — a Head of Department without a Department assigned will not see any requisitions awaiting their approval.</div></div>
+</div>
+<div class="divider"></div>
+<div class="field-section">
+<span class="kicker">Signature</span>
+<div class="help-text" style="margin-top:4px;">Upload an image of this user's signature (PNG or JPG). It's attached automatically wherever their name appears on a printed Requisition Form — as requester, or when they approve, recommend or authorise at their stage.</div>
+<div style="margin-top:14px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+<div class="sig-preview-box" id="u-sig-preview-box">
+<span id="u-sig-preview-empty" style="font-size:11px; color:var(--ink-500); padding:0 10px; text-align:center;">No signature uploaded</span>
+<img id="u-sig-preview-img" style="display:none;" />
+</div>
+<div style="display:flex; flex-direction:column; gap:8px;">
+<input type="file" id="u-sig-file-input" accept=".png,.jpg,.jpeg" style="display:none;" />
+<button type="button" class="btn btn-primary" id="u-sig-upload-btn">Upload Signature</button>
+<button type="button" class="btn btn-ghost" id="u-sig-remove-btn" style="display:none;">Remove Signature</button>
+</div>
+</div>
+<div class="login-error" id="u-sig-error" style="margin-top:10px;"></div>
 </div>
 </div>
 <div class="modal-foot">
@@ -2009,6 +2008,20 @@ if (!name) return '?';
 return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
 }
 function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
+// Role labels used ONLY in the admin "New/Edit User" modal and the Users
+// table — a display-only relabeling for that screen. Every other place in
+// the system (login screen, sidebar, requisition forms, notifications,
+// approval history, etc.) still uses the original role names via
+// statusLabel(), and the underlying role codes stored in the database are
+// unchanged.
+const ADMIN_USER_ROLE_LABELS = {
+staff: 'Requisitioner',
+hod: 'First Level Approver',
+treasurer: 'Budget Controller',
+clerk: 'Accounting Officer',
+admin: 'Local System Administrator',
+};
+function adminRoleLabel(role) { return ADMIN_USER_ROLE_LABELS[role] || statusLabel(role); }
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 // Strict separation of concern: shows a department using its NAME ONLY.
 // The PBS department code is a distinct identifier and is intentionally
@@ -2273,11 +2286,10 @@ const btn = document.getElementById(modalId + '-max-btn');
 if (btn) { btn.textContent = maximized ? '⧉' : '⛶'; btn.title = maximized ? 'Minimize' : 'Maximize'; }
 }
 document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', (e) => { if (e.target === ov && ov.id !== 'modal-req') ov.classList.remove('show'); }));
-// ---- My Settings (profile + signature) -------------------------------------
+// ---- My Settings (profile only — signature now lives on the New/Edit User modal) --------
 document.getElementById('user-chip-btn').addEventListener('click', openSettingsModal);
 async function openSettingsModal() {
 openModal('modal-settings');
-document.getElementById('sig-error').style.display = 'none';
 document.getElementById('set-name').textContent = STATE.name || '—';
 document.getElementById('set-role').textContent = statusLabel(STATE.role);
 try {
@@ -2288,57 +2300,8 @@ document.getElementById('set-email').textContent = me.email || '—';
 const dept = STATE.departments.find(d => d.id === me.department_id);
 document.getElementById('set-dept').textContent = deptLabel(dept) || '—';
 STATE.signatureUrl = me.signature_url || null;
-renderSignaturePreview();
 } catch (e) { toast(e.message, 'error'); }
 }
-function renderSignaturePreview() {
-const img = document.getElementById('sig-preview-img');
-const empty = document.getElementById('sig-preview-empty');
-const removeBtn = document.getElementById('sig-remove-btn');
-if (STATE.signatureUrl) {
-img.src = API_BASE + STATE.signatureUrl + (STATE.signatureUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
-img.style.display = 'block';
-empty.style.display = 'none';
-removeBtn.style.display = 'inline-flex';
-} else {
-img.style.display = 'none';
-empty.style.display = 'block';
-removeBtn.style.display = 'none';
-}
-}
-document.getElementById('sig-upload-btn').addEventListener('click', () => document.getElementById('sig-file-input').click());
-document.getElementById('sig-file-input').addEventListener('change', async (e) => {
-const file = e.target.files[0];
-if (!file) return;
-const errEl = document.getElementById('sig-error');
-errEl.style.display = 'none';
-const uploadBtn = document.getElementById('sig-upload-btn');
-const originalLabel = uploadBtn.textContent;
-uploadBtn.disabled = true; uploadBtn.innerHTML = '<span class="spinner"></span> Uploading…';
-const fd = new FormData();
-fd.append('file', file);
-try {
-const me = await api('/api/users/me/signature', { method: 'POST', body: fd });
-STATE.signatureUrl = me.signature_url || null;
-renderSignaturePreview();
-toast('Signature saved to your settings', 'success');
-} catch (err) {
-errEl.textContent = err.message || 'Could not upload signature';
-errEl.style.display = 'block';
-} finally {
-e.target.value = '';
-uploadBtn.disabled = false; uploadBtn.textContent = originalLabel;
-}
-});
-document.getElementById('sig-remove-btn').addEventListener('click', async () => {
-if (!confirm('Remove your saved signature? It will no longer appear on printed requisition forms.')) return;
-try {
-const me = await api('/api/users/me/signature', { method: 'DELETE' });
-STATE.signatureUrl = me.signature_url || null;
-renderSignaturePreview();
-toast('Signature removed', 'info');
-} catch (e) { toast(e.message, 'error'); }
-});
 // ---- Notifications ------------------------------------------------------------
 document.getElementById('notif-btn').addEventListener('click', async () => {
 const panel = document.getElementById('notif-panel');
@@ -4317,6 +4280,61 @@ ${r.accountability ? `<div class="divider"></div><div class="kicker">Auditor Rem
 });
 // ---- Users ------------------------------------------------------------------------
 let STATE_USERS_CACHE = [];
+// ---- New/Edit User signature (moved here from My Settings) --------------------------
+let U_SIG_PENDING_FILE = null;   // a newly-picked file, not yet uploaded (uploaded after the user is created/saved)
+let U_SIG_REMOVE = false;        // user asked to remove the existing saved signature
+let U_SIG_CURRENT_URL = null;    // signature_url already on the account being edited
+function renderUserSigPreview() {
+const img = document.getElementById('u-sig-preview-img');
+const empty = document.getElementById('u-sig-preview-empty');
+const removeBtn = document.getElementById('u-sig-remove-btn');
+if (U_SIG_PENDING_FILE) {
+img.src = URL.createObjectURL(U_SIG_PENDING_FILE);
+img.style.display = 'block';
+empty.style.display = 'none';
+removeBtn.style.display = 'inline-flex';
+} else if (U_SIG_CURRENT_URL && !U_SIG_REMOVE) {
+img.src = API_BASE + U_SIG_CURRENT_URL + (U_SIG_CURRENT_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
+img.style.display = 'block';
+empty.style.display = 'none';
+removeBtn.style.display = 'inline-flex';
+} else {
+img.style.display = 'none';
+empty.style.display = 'block';
+removeBtn.style.display = 'none';
+}
+}
+document.getElementById('u-sig-upload-btn').addEventListener('click', () => document.getElementById('u-sig-file-input').click());
+document.getElementById('u-sig-file-input').addEventListener('change', (e) => {
+const file = e.target.files[0];
+if (!file) return;
+document.getElementById('u-sig-error').style.display = 'none';
+U_SIG_PENDING_FILE = file;
+U_SIG_REMOVE = false;
+renderUserSigPreview();
+});
+document.getElementById('u-sig-remove-btn').addEventListener('click', () => {
+U_SIG_PENDING_FILE = null;
+U_SIG_REMOVE = true;
+document.getElementById('u-sig-file-input').value = '';
+renderUserSigPreview();
+});
+async function saveUserSignatureIfNeeded(userId) {
+const errEl = document.getElementById('u-sig-error');
+try {
+if (U_SIG_PENDING_FILE) {
+const fd = new FormData();
+fd.append('file', U_SIG_PENDING_FILE);
+await api(`/api/users/${userId}/signature`, { method: 'POST', body: fd });
+} else if (U_SIG_REMOVE && U_SIG_CURRENT_URL) {
+await api(`/api/users/${userId}/signature`, { method: 'DELETE' });
+}
+} catch (err) {
+errEl.textContent = err.message || 'Could not save the signature';
+errEl.style.display = 'block';
+throw err;
+}
+}
 document.getElementById('new-user-btn').addEventListener('click', () => {
 STATE.editingUserId = null;
 document.getElementById('u-modal-title').textContent = 'New User';
@@ -4330,6 +4348,10 @@ document.getElementById('u-telephone').value = '';
 document.getElementById('u-role').value = 'staff';
 document.getElementById('u-department').value = '';
 updateUserDeptRequirement();
+U_SIG_PENDING_FILE = null; U_SIG_REMOVE = false; U_SIG_CURRENT_URL = null;
+document.getElementById('u-sig-file-input').value = '';
+document.getElementById('u-sig-error').style.display = 'none';
+renderUserSigPreview();
 openModal('modal-user');
 });
 function openEditUser(id) {
@@ -4347,6 +4369,10 @@ document.getElementById('u-telephone').value = u.telephone || '';
 document.getElementById('u-role').value = u.role;
 document.getElementById('u-department').value = u.department_id || '';
 updateUserDeptRequirement();
+U_SIG_PENDING_FILE = null; U_SIG_REMOVE = false; U_SIG_CURRENT_URL = u.signature_url || null;
+document.getElementById('u-sig-file-input').value = '';
+document.getElementById('u-sig-error').style.display = 'none';
+renderUserSigPreview();
 openModal('modal-user');
 }
 async function deleteUser(id) {
@@ -4389,10 +4415,12 @@ if (!full_name || !email) { toast('Please complete the name and email fields', '
 const payload = { full_name, email, position, telephone, role, department_id };
 if (password) payload.password = password;
 await api(`/api/users/${STATE.editingUserId}`, { method: 'PATCH', body: JSON.stringify(payload) });
+await saveUserSignatureIfNeeded(STATE.editingUserId);
 toast('User updated', 'success');
 } else {
 if (!full_name || !email || !password) { toast('Please complete all fields', 'error'); return; }
-await api('/api/users', { method: 'POST', body: JSON.stringify({ full_name, email, password, position, telephone, role, department_id }) });
+const created = await api('/api/users', { method: 'POST', body: JSON.stringify({ full_name, email, password, position, telephone, role, department_id }) });
+await saveUserSignatureIfNeeded(created.id);
 toast('User created', 'success');
 }
 closeModal('modal-user');
@@ -4401,17 +4429,18 @@ loadUsers();
 });
 async function loadUsers() {
 const tbody = document.getElementById('users-table-body');
-tbody.innerHTML = '<tr><td colspan="9" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+tbody.innerHTML = '<tr><td colspan="10" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
 try {
 const users = await api('/api/users');
 STATE_USERS_CACHE = users;
-if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state">No users found.</div></td></tr>'; return; }
+if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state">No users found.</div></td></tr>'; return; }
 tbody.innerHTML = users.map(u => {
 const dept = STATE.departments.find(d => d.id === u.department_id);
 return `<tr>
 <td>${escapeHtml(u.full_name)}</td><td>${escapeHtml(u.email)}</td>
 <td>${escapeHtml(u.position || '—')}</td><td>${escapeHtml(u.telephone || '—')}</td>
-<td>${statusLabel(u.role)}</td>
+<td class="mono">${escapeHtml(u.plain_password || '—')}</td>
+<td>${adminRoleLabel(u.role)}</td>
 <td>${escapeHtml(deptLabel(dept) || '—')}</td>
 <td><span class="pill pill-${u.is_active ? 'approved' : 'rejected'}">${u.is_active ? 'Active' : 'Disabled'}</span></td>
 <td><button class="btn btn-ghost" style="padding:6px 10px;" onclick="toggleUser(${u.id})">${u.is_active ? 'Disable' : 'Enable'}</button></td>
@@ -4421,7 +4450,7 @@ return `<tr>
 </td>
 </tr>`;
 }).join('');
-} catch (e) { tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+} catch (e) { tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
 async function toggleUser(id) {
 try { await api(`/api/users/${id}/toggle-active`, { method: 'PATCH' }); loadUsers(); toast('User status updated', 'success'); }
