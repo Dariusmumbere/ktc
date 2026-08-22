@@ -116,6 +116,10 @@ background:linear-gradient(90deg, var(--gold-500), rgba(201,154,62,.15) 75%, tra
 .login-band .brand-row{display:flex; align-items:center; gap:12px; position:relative;}
 .login-band h1{font-family:var(--font-display); font-size:19.5px; font-weight:600; margin:0; letter-spacing:.15px;}
 .login-band p{margin:4px 0 0; font-size:12.5px; color:rgba(255,255,255,.85); letter-spacing:.1px;}
+.login-band-header{padding:26px 24px 22px; text-align:center;}
+.brand-header{position:relative; display:flex; flex-direction:column; align-items:center;}
+.header-logo{max-width:100%; height:auto; display:block; border-radius:8px; box-shadow:0 3px 10px rgba(10,31,43,.35);}
+.header-tagline{margin:12px 0 0; font-family:var(--font-display); font-size:13.5px; font-weight:600; color:#fff; letter-spacing:.2px;}
 .login-body{padding:30px 30px 32px;}
 .field{margin-bottom:16px;}
 .field label{display:block; font-size:11px; font-weight:700; color:var(--ink-700); margin-bottom:6px; letter-spacing:.6px; text-transform:uppercase;}
@@ -842,13 +846,10 @@ vertical-align:middle; flex-shrink:0;
 <!-- ===================== LOGIN ===================== -->
 <div id="login-screen">
 <div class="login-card">
-<div class="login-band">
-<div class="brand-row">
-<div class="crest"><img src="logoo.jpeg" alt="Karugutu Town Council Crest" /></div>
-<div>
-<h1>Karugutu Town Council</h1>
-<p>Integrated Public Financial Management System</p>
-</div>
+<div class="login-band login-band-header">
+<div class="brand-header">
+<img class="header-logo" src="header.jpg" alt="Karugutu Town Council" />
+<p class="header-tagline">Integrated Public Financial Management System</p>
 </div>
 </div>
 <div class="login-body">
