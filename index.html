@@ -77,7 +77,7 @@ a{color:inherit;}
 .crest{ width:38px;height:38px;flex-shrink:0; filter:drop-shadow(0 3px 6px rgba(10,31,43,.35)); border-radius:7px; overflow:hidden; background:rgba(255,255,255,.06); }
 .crest img{width:100%;height:100%;display:block; object-fit:cover;}
 .sidebar .brand{flex-direction:column; align-items:center; text-align:center;}
-.sidebar .brand .crest{width:100%; height:auto; max-width:150px; border-radius:8px;}
+.sidebar .brand .crest{width:100%; height:auto; border-radius:8px;}
 .sidebar .brand .crest img{width:100%; height:auto; object-fit:contain;}
 /* ---------------- Login ---------------- */
 #login-screen{
@@ -123,7 +123,7 @@ background:linear-gradient(90deg, var(--gold-500), rgba(201,154,62,.15) 75%, tra
 .login-band-header::before, .login-band-header::after{display:none;}
 .brand-header{position:relative; display:flex; flex-direction:column; align-items:center;}
 .header-logo{max-width:100%; height:auto; display:block; border-radius:8px; box-shadow:0 3px 10px rgba(10,31,43,.35);}
-.header-tagline{margin:12px 0 0; font-family:var(--font-display); font-size:18px; font-weight:800; color:var(--teal-700); letter-spacing:.2px;}
+.header-tagline{margin:12px 0 0; font-family:var(--font-display); font-size:18px; font-weight:800; color:var(--teal-700) !important; letter-spacing:.2px;}
 .login-body{padding:30px 30px 32px;}
 .field{margin-bottom:16px;}
 .field label{display:block; font-size:11px; font-weight:700; color:var(--ink-700); margin-bottom:6px; letter-spacing:.6px; text-transform:uppercase;}
@@ -897,8 +897,7 @@ vertical-align:middle; flex-shrink:0;
 <aside class="sidebar">
 <div class="brand">
 <div class="crest"><img src="header.jpg" alt="Karugutu Town Council" /></div>
-<div class="brand-name">Karugutu Town Council
-<small>KTC-IPFMS</small>
+<div class="brand-name">Integrated Public Financial Management System
 </div>
 </div>
 <div class="nav-group">
