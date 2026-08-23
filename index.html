@@ -2010,7 +2010,7 @@ res = await fetchWithTimeout(API_BASE + path, { ...opts, headers }, 30000);
 throw new Error('Could not reach the server. Please check your connection and try again in a moment.');
 }
 }
-if (res.status === 401) {
+if (res.status === 401 && path !== '/api/auth/login') {
 logout();
 throw new Error('Session expired. Please sign in again.');
 }
@@ -3866,13 +3866,18 @@ if (stageRole && (STATE.role === stageRole || STATE.role === 'admin')) {
 // An authorizer can't approve without a signature on file — it would leave
 // the printed/approved form with an empty signature box at their stage.
 // Reject/Return don't carry a signature, so they stay available either way.
+// Rather than dead-ending the approver on an admin (the account-level
+// signature used to be admin-only, via the Users screen), they can add
+// their own signature right here — the moment it's on file, Approve
+// unlocks with no page reload needed.
 const hasSignature = !!STATE.signatureUrl;
 footHtml += `
 <button class="btn btn-danger" onclick="actOnRequisition(${r.id}, 'reject')">Reject</button>
 <button class="btn btn-ghost" onclick="actOnRequisition(${r.id}, 'return')">Return for Correction</button>
-<button class="btn btn-primary" ${hasSignature ? '' : 'disabled title="You need a signature on file before you can approve — ask an administrator to add one to your account."'} onclick="actOnRequisition(${r.id}, 'approve')">Approve</button>`;
+${hasSignature ? '' : `<button class="btn btn-gold" id="rd-add-sig-btn" onclick="addMySignatureFromRequisition(${r.id})">🖊 Add Signature</button>`}
+<button class="btn btn-primary" id="rd-approve-btn" ${hasSignature ? '' : 'disabled title="Add your signature first — click \'Add Signature\' above."'} onclick="actOnRequisition(${r.id}, 'approve')">Approve</button>`;
 if (!hasSignature) {
-footHtml += `<div class="help-text" style="width:100%; margin-top:6px; color:var(--danger);">You cannot approve until a signature has been added to your account. Ask an administrator to upload one under Users.</div>`;
+footHtml += `<div class="help-text" style="width:100%; margin-top:6px; color:var(--danger);">Click "Add Signature" to upload your signature. Once it's on file, Approve becomes available.</div>`;
 }
 }
 const canUpload = r.accountability && r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin');
@@ -3891,7 +3896,7 @@ catch (e) { toast(e.message, 'error'); }
 }
 async function actOnRequisition(id, action) {
 if (action === 'approve' && !STATE.signatureUrl) {
-toast('You need a signature on file before you can approve — ask an administrator to add one to your account.', 'error');
+toast('You need a signature on file before you can approve — click "Add Signature" first.', 'error');
 return;
 }
 let comments = '';
@@ -3904,6 +3909,39 @@ toast(`Requisition ${action}d`, action === 'approve' ? 'success' : 'info');
 closeModal('modal-req-detail');
 loadApprovals(); loadRequisitions(); loadDashboard();
 } catch (e) { toast(e.message, 'error'); }
+}
+// Lets an approver (HOD / Senior Treasurer / Town Clerk) add their own
+// signature right from the requisition they're reviewing, instead of the
+// flow dead-ending on "ask an administrator". Uses the account's own
+// self-service signature endpoint, then re-renders the requisition detail
+// footer so "Approve" unlocks immediately — no page reload needed.
+async function addMySignatureFromRequisition(reqId) {
+const input = document.createElement('input');
+input.type = 'file';
+input.accept = 'image/png,image/jpeg';
+input.style.display = 'none';
+document.body.appendChild(input);
+input.addEventListener('change', async () => {
+const file = input.files && input.files[0];
+document.body.removeChild(input);
+if (!file) return;
+const btn = document.getElementById('rd-add-sig-btn');
+if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Uploading…'; }
+try {
+const fd = new FormData();
+fd.append('file', file);
+const me = await api('/api/users/me/signature', { method: 'POST', body: fd });
+STATE.signatureUrl = me.signature_url || null;
+toast('Signature added — you can now approve.', 'success');
+// Re-render the detail modal so the Approve button reflects the
+// signature that's now on file, and the Add Signature button drops off.
+viewRequisition(reqId);
+} catch (e) {
+toast(e.message, 'error');
+if (btn) { btn.disabled = false; btn.innerHTML = '🖊 Add Signature'; }
+}
+});
+input.click();
 }
 // ---- Printable Requisition Form (mirrors the Council's paper layout) -------
 async function openPrintForm(reqId) {
