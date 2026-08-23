@@ -641,16 +641,16 @@ table.req-form-meta-table td .rf-fill img{max-height:37.84px; max-width:154.8px;
 .req-form-subject{font-size:10.75px; margin:0 0 12.04px; line-height:2;}
 .req-form-subject strong{white-space:nowrap; margin-right:3.44px;}
 .req-form-subject .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
-table.req-form-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:border-box; border-collapse:collapse; margin-bottom:12.04px; font-size:10.32px; border:1px solid #e2790f;}
-/* Requisition / Payment Voucher line-item table rules are orange per
-   Council request, so the printed and on-screen line grid stands out
-   from the rest of the black-ruled paper form. */
-table.req-form-table th, table.req-form-table td{border:1px solid #e2790f; padding:5.16px 6.9px; overflow-wrap:break-word; word-break:break-word;}
+table.req-form-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:border-box; border-collapse:collapse; margin-bottom:12.04px; font-size:10.32px; border:1px solid #000;}
+/* Requisition / Payment Voucher line-item table rules are plain black on
+   white, thin single lines throughout (no bold/double rules), matching
+   the rest of the paper form. */
+table.req-form-table th, table.req-form-table td{border:1px solid #000; padding:5.16px 6.9px; overflow-wrap:break-word; word-break:break-word;}
 table.req-form-table th{background:#fdf1e2; font-size:9.03px; text-transform:uppercase; text-align:left; color:#8a4a09;}
 table.req-form-table td.num, table.req-form-table th.num{text-align:right; font-family:var(--font-mono);}
 table.req-form-table tr.rf-section-head td{font-weight:700; background:#fffaf3;}
-table.req-form-table tr.rf-subtotal td{font-weight:700; border-top:2px double #e2790f;}
-table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #e2790f; background:#fdf1e2; font-size:10.75px; text-transform:uppercase;}
+table.req-form-table tr.rf-subtotal td{font-weight:700; border-top:1px solid #000;}
+table.req-form-table tr.rf-grand td{font-weight:700; border-top:1px solid #000; background:#fdf1e2; font-size:10.75px; text-transform:uppercase;}
 /* Rate and Amount — left-aligned per Council request. Scoped to the
 ordinary line-item rows/header (5th & 6th column) so the Sub Total /
 Grand Total rows, which only have two cells each, are unaffected and
@@ -669,7 +669,7 @@ generic `thead th` rule above), and some browsers drop the collapsed
 border between a sticky header and the first body row while scrolling.
 An inset box-shadow isn't subject to border-collapse and always renders,
 so it reliably keeps the line that closes off the header column. */
-table.req-form-table thead th{box-shadow:inset 0 -2px 0 #e2790f;}
+table.req-form-table thead th{box-shadow:inset 0 -1px 0 #000;}
 .req-form-words{font-size:10.75px; margin-bottom:25.8px; line-height:2;}
 .req-form-words strong{white-space:nowrap; margin-right:3.44px;}
 .req-form-words .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
@@ -771,8 +771,8 @@ table.req-form-table.entry .rf-row-add:hover{color:#fff; background:var(--teal-6
    remove-line column and grand-total spacer cells. */
 table.req-form-meta-table td:last-child{border-right:1px solid #333;}
 table.req-form-meta-table tr:last-child td{border-bottom:1px solid #333;}
-table.req-form-table th:last-child, table.req-form-table td:last-child{border-right:1px solid #e2790f;}
-table.req-form-table tr:last-child td, table.req-form-table tfoot tr:last-child td{border-bottom:1px solid #e2790f;}
+table.req-form-table th:last-child, table.req-form-table td:last-child{border-right:1px solid #000;}
+table.req-form-table tr:last-child td, table.req-form-table tfoot tr:last-child td{border-bottom:1px solid #000;}
 table.req-form-table.entry tr.rf-grand td{font-family:var(--font-mono);}
 /* Budget Output Code search field (replaces the old <select> dropdown) */
 .rf-bc-search-wrap{position:relative; flex:1; min-width:0;}
@@ -1467,7 +1467,7 @@ Departments
 <tbody id="req-lineitems-body"></tbody>
 <tfoot><tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">UGX <span id="req-grand-total">0</span></td><td class="no-print"></td></tr></tfoot>
 </table>
-<div style="display:flex; gap:8px; margin:10px 0 16px; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
+<div style="display:flex; gap:8px; margin:10px 0 16px; justify-content:flex-end;" class="no-print foot-nowrap">
 <button class="btn btn-ghost" data-close="modal-req"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Cancel</button>
 <button type="button" class="btn btn-ghost" id="req-print-draft"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9V3H18V9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="4" y="9" width="16" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="7" y="14" width="10" height="6" stroke="currentColor" stroke-width="1.8"/></svg>Print</button>
 <button class="btn btn-primary" id="req-route-hod-mid"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.5L10.5 15L16 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="req-route-hod-mid-label">Submit to Head of Department</span></button>
@@ -3349,9 +3349,9 @@ function resetReqLineItems() {
 // (removed — sections are now fixed at three per requisition).
 STATE.reqLineItems = [];
 for (let sectionNo = 1; sectionNo <= 3; sectionNo++) {
-STATE.reqLineItems.push({ item_no: sectionNo, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: true });
+STATE.reqLineItems.push({ item_no: sectionNo, description: '', units: '', qty: null, rate: 0, amount: 0, isHeader: true });
 for (let i = 0; i < 5; i++) {
-STATE.reqLineItems.push({ item_no: sectionNo, description: '', units: '', qty: null, rate: null, amount: 0, isHeader: false, ledger_folio: '', charge_date: '' });
+STATE.reqLineItems.push({ item_no: sectionNo, description: '', units: '', qty: null, rate: 0, amount: 0, isHeader: false, ledger_folio: '', charge_date: '' });
 }
 }
 }
@@ -3371,12 +3371,14 @@ if (!li) return;
 if (field === 'item_no') {
 li.item_no = value;
 } else if (field === 'qty' || field === 'rate') {
-li[field] = value === '' ? null : Number(value);
+const cleaned = String(value).replace(/[,\s]/g, '');
+li[field] = cleaned === '' ? null : Number(cleaned);
 if (li.qty != null && li.rate != null && !Number.isNaN(li.qty) && !Number.isNaN(li.rate)) {
 li.amount = li.qty * li.rate;
 }
 } else if (field === 'amount') {
-li.amount = Number(value || 0);
+const cleaned = String(value).replace(/[,\s]/g, '');
+li.amount = cleaned === '' ? 0 : Number(cleaned);
 } else {
 li[field] = value;
 }
@@ -3407,13 +3409,19 @@ let lastNo = null;
 tbody.innerHTML = STATE.reqLineItems.map((li, idx) => {
 const showNo = li.item_no !== lastNo;
 lastNo = li.item_no;
+const isActive = (f) => String(idx) === String(activeIdx) && f === activeField;
+const fmtNum = (f, v, blankIfNull) => {
+if (blankIfNull && (v === null || v === '')) return '';
+if (isActive(f)) return v === null || v === '' ? '' : String(v);
+return money(v ?? 0);
+};
 return `<tr>
 <td style="font-weight:700;">${showNo ? `S/N <input type="text" class="rf-sno-input" data-li-idx="${idx}" data-li-field="item_no" value="${escapeHtml(typeof li.item_no === 'number' ? String(li.item_no).padStart(2,'0') : String(li.item_no))}" oninput="updateReqLineItem(${idx},'item_no',this.value)"/>` : ''}</td>
 <td class="wrap"><textarea data-li-idx="${idx}" data-li-field="description" rows="1" placeholder="${li.isHeader ? 'Sub activity title, e.g. Field fuel' : 'Item description'}" oninput="updateReqLineItem(${idx},'description',this.value)">${escapeHtml(li.description)}</textarea></td>
 <td><input type="text" data-li-idx="${idx}" data-li-field="units" value="${escapeHtml(li.units||'')}" oninput="updateReqLineItem(${idx},'units',this.value)"/></td>
-<td><input type="number" data-li-idx="${idx}" data-li-field="qty" value="${li.qty ?? ''}" oninput="updateReqLineItem(${idx},'qty',this.value)"/></td>
-<td><input type="number" data-li-idx="${idx}" data-li-field="rate" value="${li.rate ?? ''}" oninput="updateReqLineItem(${idx},'rate',this.value)"/></td>
-<td><input type="number" data-li-idx="${idx}" data-li-field="amount" value="${li.amount ?? 0}" oninput="updateReqLineItem(${idx},'amount',this.value)"/></td>
+<td><input type="text" inputmode="decimal" data-li-idx="${idx}" data-li-field="qty" value="${escapeHtml(fmtNum('qty', li.qty, true))}" oninput="updateReqLineItem(${idx},'qty',this.value)" onblur="renderReqLineItems()"/></td>
+<td><input type="text" inputmode="decimal" data-li-idx="${idx}" data-li-field="rate" value="${escapeHtml(fmtNum('rate', li.rate, true))}" oninput="updateReqLineItem(${idx},'rate',this.value)" onblur="renderReqLineItems()"/></td>
+<td><input type="text" inputmode="decimal" data-li-idx="${idx}" data-li-field="amount" value="${escapeHtml(fmtNum('amount', li.amount ?? 0, false))}" oninput="updateReqLineItem(${idx},'amount',this.value)" onblur="renderReqLineItems()"/></td>
 <td class="no-print" style="white-space:nowrap;"><button type="button" class="rf-row-add" title="Add line" onclick="insertReqLineItemAfter(${idx})">＋</button><button type="button" class="rf-row-remove" title="Remove line" onclick="removeReqLineItem(${idx})">✕</button></td>
 </tr>`;
 }).join('');
