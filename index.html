@@ -686,7 +686,7 @@ table.req-form-table thead th{box-shadow:inset 0 -1px 0 #000;}
 .req-form-signatures .sig-name-fill input::placeholder{font-weight:400; color:var(--ink-500);}
 .req-form-signatures .sig-name-fill input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
 .req-form-signatures .sig-name{margin:0 0 3px; font-size:11px; font-weight:600; text-align:left; min-height:14px;}
-.req-form-signatures .sig-name.sig-name-empty{font-weight:400; font-style:italic; color:var(--ink-500);}
+.req-form-signatures .sig-name.sig-name-empty{font-weight:400; color:var(--ink-500);}
 /* Unscoped so every signature box — including the Payment Voucher's Vote
 Book / Verified by / Passed Payment / payee / witness / cashier boxes,
 which sit in a plain table rather than inside .req-form-signatures — gets
@@ -4239,8 +4239,8 @@ ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No lin
 <div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
 <div class="req-form-signatures">
 <div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-name${hodName ? '' : ' sig-name-empty'}">${hodName ? escapeHtml(hodName) : 'Name of first level approver'}</div><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-name${treasurerName ? '' : ' sig-name-empty'}">${treasurerName ? escapeHtml(treasurerName) : 'Name of second level approver'}</div><div class="sig-label">Senior Treasurer</div></div>
-<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-name${clerkName ? '' : ' sig-name-empty'}">${clerkName ? escapeHtml(clerkName) : 'Name of third level approver'}</div><div class="sig-label">Town Clerk</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-name${treasurerName ? '' : ' sig-name-empty'}">${treasurerName ? escapeHtml(treasurerName) : 'Name of Budget controller'}</div><div class="sig-label">Senior Treasurer</div></div>
+<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-name${clerkName ? '' : ' sig-name-empty'}">${clerkName ? escapeHtml(clerkName) : 'Name of Accounting Officer'}</div><div class="sig-label">Town Clerk</div></div>
 </div>
 </div>
 ${renderPvFormHtml(r, parts)}
@@ -4323,8 +4323,8 @@ ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No lin
 <div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
 <div class="req-form-signatures">
 ${stageSigBox('hod', hodSigUrl, hodName, 'Recommended by,', 'Head of Department', 'Name of first level approver')}
-${stageSigBox('treasurer', treasurerSigUrl, treasurerName, 'Checked and approved by,', 'Senior Treasurer', 'Name of second level approver')}
-${stageSigBox('clerk', clerkSigUrl, clerkName, 'Authorised by', 'Town Clerk', 'Name of third level approver')}
+${stageSigBox('treasurer', treasurerSigUrl, treasurerName, 'Checked and approved by,', 'Senior Treasurer', 'Name of Budget controller')}
+${stageSigBox('clerk', clerkSigUrl, clerkName, 'Authorised by', 'Town Clerk', 'Name of Accounting Officer')}
 </div>
 </div>
 ${renderPvFormHtml(r, parts)}
