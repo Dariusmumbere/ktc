@@ -651,6 +651,25 @@ table.req-form-table td.num, table.req-form-table th.num{text-align:right; font-
 table.req-form-table tr.rf-section-head td{font-weight:700; background:#fffaf3;}
 table.req-form-table tr.rf-subtotal td{font-weight:700; border-top:2px double #e2790f;}
 table.req-form-table tr.rf-grand td{font-weight:700; border-top:2px double #e2790f; background:#fdf1e2; font-size:10.75px; text-transform:uppercase;}
+/* Rate and Amount — left-aligned per Council request. Scoped to the
+ordinary line-item rows/header (5th & 6th column) so the Sub Total /
+Grand Total rows, which only have two cells each, are unaffected and
+stay right-aligned. */
+table.req-form-table thead tr:first-child th:nth-child(5),
+table.req-form-table thead tr:first-child th:nth-child(6),
+table.req-form-table tbody tr:not(.rf-grand):not(.rf-subtotal) td:nth-child(5),
+table.req-form-table tbody tr:not(.rf-grand):not(.rf-subtotal) td:nth-child(6){text-align:left;}
+/* Long item/activity descriptions read as justified paragraph text
+instead of ragged-right, both on screen (entry textarea) and in the
+saved/printed view (.wrap cells). */
+table.req-form-table td.wrap{text-align:justify;}
+table.req-form-table.entry textarea[data-li-field="description"]{text-align:justify;}
+/* The header row of the ledger tables is position:sticky (see the
+generic `thead th` rule above), and some browsers drop the collapsed
+border between a sticky header and the first body row while scrolling.
+An inset box-shadow isn't subject to border-collapse and always renders,
+so it reliably keeps the line that closes off the header column. */
+table.req-form-table thead th{box-shadow:inset 0 -2px 0 #e2790f;}
 .req-form-words{font-size:10.75px; margin-bottom:25.8px; line-height:2;}
 .req-form-words strong{white-space:nowrap; margin-right:3.44px;}
 .req-form-words .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
@@ -730,7 +749,12 @@ table.req-form-meta-table.entry .rf-field-desc textarea{width:100%; resize:none;
 table.req-form-table.entry td{padding:3px 4px;}
 table.req-form-table.entry input{width:100%; border:none; background:transparent; font:inherit; font-size:12px; padding:4px 4px; color:#181818;}
 table.req-form-table.entry input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
-table.req-form-table.entry input[data-li-field="qty"], table.req-form-table.entry input[data-li-field="rate"], table.req-form-table.entry input[data-li-field="amount"]{text-align:right; font-family:var(--font-mono);}
+table.req-form-table.entry input[data-li-field="qty"]{text-align:right; font-family:var(--font-mono);}
+table.req-form-table.entry input[data-li-field="rate"], table.req-form-table.entry input[data-li-field="amount"]{text-align:left; font-family:var(--font-mono);}
+/* S/No is now an editable field (so it can be clicked into and corrected)
+but stays compact and inline with its "S/N " label instead of stretching
+to the full width of the cell like the other line-item inputs. */
+.rf-sno-input{width:34px !important; flex:none !important; display:inline-block !important; text-align:left;}
 /* Description column is a textarea so long text wraps onto new lines and
 grows the row, instead of a single-line input that hides overflow text. */
 table.req-form-table.entry textarea[data-li-field="description"]{
@@ -1435,7 +1459,7 @@ Departments
 <td colspan="3"><div class="rf-field rf-field-desc"><strong>Budget Output Description:</strong><textarea id="req-form-budgetdesc" readonly rows="1" placeholder="—"></textarea></div></td>
 </tr>
 <tr>
-<td colspan="3"><div class="rf-field"><strong>Activity Description(Subject):</strong><input type="text" id="req-subject" placeholder="e.g. Monitoring roads for 3rd Qtr works"/></div></td>
+<td colspan="3"><div class="rf-field rf-field-desc"><strong>Activity Description(Subject):</strong><textarea id="req-subject" rows="1" placeholder="e.g. Monitoring roads for 3rd Qtr works" oninput="autoGrowTextarea(this)"></textarea></div></td>
 </tr>
 </table>
 <table class="req-form-table entry">
@@ -3344,7 +3368,9 @@ renderReqLineItems();
 function updateReqLineItem(idx, field, value) {
 const li = STATE.reqLineItems[idx];
 if (!li) return;
-if (field === 'qty' || field === 'rate') {
+if (field === 'item_no') {
+li.item_no = value;
+} else if (field === 'qty' || field === 'rate') {
 li[field] = value === '' ? null : Number(value);
 if (li.qty != null && li.rate != null && !Number.isNaN(li.qty) && !Number.isNaN(li.rate)) {
 li.amount = li.qty * li.rate;
@@ -3370,13 +3396,19 @@ const pvTbody = document.getElementById('pv-lineitems-body');
 const activeEl = document.activeElement;
 const activeIdx = activeEl && activeEl.dataset ? activeEl.dataset.liIdx : null;
 const activeField = activeEl && activeEl.dataset ? activeEl.dataset.liField : null;
+// Caret position within the active field, captured before the DOM is
+// rebuilt below, so it can be restored afterwards instead of the caret
+// always landing at the end of the value (which made correcting anything
+// other than the last character impossible).
+const activeSelStart = (activeEl && typeof activeEl.selectionStart === 'number') ? activeEl.selectionStart : null;
+const activeSelEnd = (activeEl && typeof activeEl.selectionEnd === 'number') ? activeEl.selectionEnd : null;
 const chargeDate = document.getElementById('req-form-date') ? document.getElementById('req-form-date').textContent : '';
 let lastNo = null;
 tbody.innerHTML = STATE.reqLineItems.map((li, idx) => {
 const showNo = li.item_no !== lastNo;
 lastNo = li.item_no;
 return `<tr>
-<td style="font-weight:700;">${showNo ? 'S/N ' + String(li.item_no).padStart(2,'0') : ''}</td>
+<td style="font-weight:700;">${showNo ? `S/N <input type="text" class="rf-sno-input" data-li-idx="${idx}" data-li-field="item_no" value="${escapeHtml(typeof li.item_no === 'number' ? String(li.item_no).padStart(2,'0') : String(li.item_no))}" oninput="updateReqLineItem(${idx},'item_no',this.value)"/>` : ''}</td>
 <td class="wrap"><textarea data-li-idx="${idx}" data-li-field="description" rows="1" placeholder="${li.isHeader ? 'Sub activity title, e.g. Field fuel' : 'Item description'}" oninput="updateReqLineItem(${idx},'description',this.value)">${escapeHtml(li.description)}</textarea></td>
 <td><input type="text" data-li-idx="${idx}" data-li-field="units" value="${escapeHtml(li.units||'')}" oninput="updateReqLineItem(${idx},'units',this.value)"/></td>
 <td><input type="number" data-li-idx="${idx}" data-li-field="qty" value="${li.qty ?? ''}" oninput="updateReqLineItem(${idx},'qty',this.value)"/></td>
@@ -3418,7 +3450,13 @@ document.getElementById('pv-words-line').value = grandTotal > 0 ? words : '';
 }
 if (activeIdx !== null && activeField) {
 const el = tbody.querySelector(`[data-li-idx="${activeIdx}"][data-li-field="${activeField}"]`);
-if (el) { el.focus(); const v = el.value; el.value = ''; el.value = v; }
+if (el) {
+el.focus();
+if (activeSelStart !== null && activeSelEnd !== null && typeof el.setSelectionRange === 'function') {
+const len = el.value.length;
+el.setSelectionRange(Math.min(activeSelStart, len), Math.min(activeSelEnd, len));
+}
+}
 }
 // Every description cell is a textarea (not a single-line input) so long
 // item descriptions wrap onto new lines instead of being hidden past the
@@ -3523,9 +3561,11 @@ document.getElementById('req-form-date').textContent = editReq ? fmtDate(editReq
 // stays editable in case it needs adjusting for this requisition).
 document.getElementById('req-form-position').value = editReq ? (editReq.requester_position || STATE.position || '') : (STATE.position || '');
 // Requisitioner (just the name, no "Full names" label suffix) is typed by the person filling the
-// form rather than being a read-only mirror of the account name — it's
-// pre-filled with the account's name as a starting point either way.
-document.getElementById('req-form-names').value = editReq ? (editReq.requester_name || STATE.name || '') : (STATE.name || '');
+// form rather than being a read-only mirror of the account name — it stays
+// blank on a fresh requisition (ready for the requisitioner to type their
+// own name), and only carries a value forward when editing an existing
+// requisition that already has one saved.
+document.getElementById('req-form-names').value = editReq ? (editReq.requester_name || '') : '';
 // Mob. No. — the requisitioner's own telephone, pre-filled from the
 // account's own number on file either way, same reasoning as above.
 document.getElementById('req-form-mobile').value = editReq ? (editReq.requester_mobile || STATE.telephone || '') : (STATE.telephone || '');
@@ -3590,6 +3630,7 @@ document.getElementById('pv-item').value = voucher.item || '';
 if (!editReq) { resetReqLineItems(); document.getElementById('req-subject').value = ''; }
 if (editReq) {
 document.getElementById('req-subject').value = editReq.subject || '';
+autoGrowTextarea(document.getElementById('req-subject'));
 if (editReq.line_items && editReq.line_items.length) {
 STATE.reqLineItems = editReq.line_items.map(li => ({ ...li, isHeader: li.qty == null && li.rate == null && !li.amount }));
 } else {
