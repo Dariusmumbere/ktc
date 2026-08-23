@@ -686,6 +686,7 @@ table.req-form-table thead th{box-shadow:inset 0 -1px 0 #000;}
 .req-form-signatures .sig-name-fill input::placeholder{font-weight:400; color:var(--ink-500);}
 .req-form-signatures .sig-name-fill input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
 .req-form-signatures .sig-name{margin:0 0 3px; font-size:11px; font-weight:600; text-align:left; min-height:14px;}
+.req-form-signatures .sig-name.sig-name-empty{font-weight:400; font-style:italic; color:var(--ink-500);}
 /* Unscoped so every signature box — including the Payment Voucher's Vote
 Book / Verified by / Passed Payment / payee / witness / cashier boxes,
 which sit in a plain table rather than inside .req-form-signatures — gets
@@ -1468,11 +1469,6 @@ Departments
 <tfoot><tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">UGX <span id="req-grand-total">0</span></td><td class="no-print"></td></tr></tfoot>
 </table>
 <div class="req-form-words entry"><strong>Amount in words:</strong> <span id="req-amount-words">—</span></div>
-<div class="req-form-signatures preview">
-<div><div class="sig-role">Recommended by,</div><div class="sig-line" id="req-sig-hod"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-hod-btn" data-sig-role="hod" onclick="attachSignature('req-sig-hod', this, 'hod')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="req-sig-hod-name" placeholder="Name of authorizer"/></div><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line" id="req-sig-treasurer"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-treasurer-btn" data-sig-role="treasurer" onclick="attachSignature('req-sig-treasurer', this, 'treasurer')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="req-sig-treasurer-name" placeholder="Name of authorizer"/></div><div class="sig-label">Senior Treasurer</div></div>
-<div><div class="sig-role">Authorised by</div><div class="sig-line" id="req-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('req-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="req-sig-clerk-name" placeholder="Name of authorizer"/></div><div class="sig-label">Town Clerk</div></div>
-</div>
 <div style="display:flex; gap:8px; margin:16px 0 0; justify-content:flex-end; flex-wrap:nowrap;" class="no-print foot-nowrap">
 <button class="btn btn-ghost" data-close="modal-req"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Cancel</button>
 <button type="button" class="btn btn-ghost" id="req-print-draft"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9V3H18V9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="4" y="9" width="16" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="7" y="14" width="10" height="6" stroke="currentColor" stroke-width="1.8"/></svg>Print</button>
@@ -3582,7 +3578,7 @@ document.getElementById('req-form-budgetcode-search').value = editReq.budget_out
 // Clear the Attach Signature boxes and voucher-only fields for a fresh form,
 // then re-show every "Attach Signature" button (a fresh form has nothing
 // signed yet) before role-gating and requester pre-fill run below.
-const allSigBoxIds = ['req-sig-requester','req-sig-hod','req-sig-treasurer','req-sig-clerk',
+const allSigBoxIds = ['req-sig-requester',
 'pv-sig-controller','pv-sig-clerk','pv-sig-vb','pv-sig-verified','pv-sig-passed',
 'pv-sig-payee','pv-sig-cashier','pv-sig-witness'];
 allSigBoxIds.forEach(id => {
@@ -4242,9 +4238,9 @@ ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No lin
 </table>
 <div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
 <div class="req-form-signatures">
-<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-name">${escapeHtml(hodName || '')}</div><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-name">${escapeHtml(treasurerName || '')}</div><div class="sig-label">Senior Treasurer</div></div>
-<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-name">${escapeHtml(clerkName || '')}</div><div class="sig-label">Town Clerk</div></div>
+<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-name${hodName ? '' : ' sig-name-empty'}">${hodName ? escapeHtml(hodName) : 'Name of first level approver'}</div><div class="sig-label">Head of Department</div></div>
+<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-name${treasurerName ? '' : ' sig-name-empty'}">${treasurerName ? escapeHtml(treasurerName) : 'Name of second level approver'}</div><div class="sig-label">Senior Treasurer</div></div>
+<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-name${clerkName ? '' : ' sig-name-empty'}">${clerkName ? escapeHtml(clerkName) : 'Name of third level approver'}</div><div class="sig-label">Town Clerk</div></div>
 </div>
 </div>
 ${renderPvFormHtml(r, parts)}
@@ -4269,13 +4265,14 @@ const roleLabel = r.requester_role ? statusLabel(r.requester_role) : '—';
 // that stage hasn't already been signed off. Clicking it fills the box
 // with a preview of the account's signature on file and unlocks the
 // Approve button in the footer via attachSignatureForApproval().
-const stageSigBox = (stage, sigUrl, name, roleLine, label) => {
+const stageSigBox = (stage, sigUrl, name, roleLine, label, namePlaceholder) => {
 const boxId = 'rd-sig-' + stage;
 const isPendingHere = (r.current_stage === stage) && (STATE.role === stage) && !sigUrl;
 const btnHtml = isPendingHere
 ? `<button type="button" class="sig-attach-btn no-print" id="${boxId}-btn" onclick="attachSignatureForApproval('${stage}', this)">🖊 Attach Signature</button>`
 : '';
-return `<div><div class="sig-role">${roleLine}</div><div class="sig-line" id="${boxId}">${sigImg(sigUrl)}</div>${btnHtml}<div class="sig-name">${escapeHtml(name || '')}</div><div class="sig-label">${label}</div></div>`;
+const nameHtml = name ? escapeHtml(name) : namePlaceholder;
+return `<div><div class="sig-role">${roleLine}</div><div class="sig-line" id="${boxId}">${sigImg(sigUrl)}</div>${btnHtml}<div class="sig-name${name ? '' : ' sig-name-empty'}">${nameHtml}</div><div class="sig-label">${label}</div></div>`;
 };
 return `
 <div class="req-form-paper">
@@ -4325,9 +4322,9 @@ ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No lin
 </table>
 <div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
 <div class="req-form-signatures">
-${stageSigBox('hod', hodSigUrl, hodName, 'Recommended by,', 'Head of Department')}
-${stageSigBox('treasurer', treasurerSigUrl, treasurerName, 'Checked and approved by,', 'Senior Treasurer')}
-${stageSigBox('clerk', clerkSigUrl, clerkName, 'Authorised by', 'Town Clerk')}
+${stageSigBox('hod', hodSigUrl, hodName, 'Recommended by,', 'Head of Department', 'Name of first level approver')}
+${stageSigBox('treasurer', treasurerSigUrl, treasurerName, 'Checked and approved by,', 'Senior Treasurer', 'Name of second level approver')}
+${stageSigBox('clerk', clerkSigUrl, clerkName, 'Authorised by', 'Town Clerk', 'Name of third level approver')}
 </div>
 </div>
 ${renderPvFormHtml(r, parts)}
