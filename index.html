@@ -1889,6 +1889,11 @@ editingRevenueSourceId: null,
 reqLineItems: [],
 reqBudgetCodesForDept: [],
 signatureUrl: null,
+// Whether the current authorizer has clicked "Attach Signature" on their
+// stage's box in the currently-open requisition detail view. Reset every
+// time viewRequisition() opens a record; gates the Approve button
+// independently of whether the account merely has a signature on file.
+stageSignatureAttached: false,
 };
 
 const REVENUE_SUMMARY_CATEGORIES = [
@@ -2010,7 +2015,13 @@ res = await fetchWithTimeout(API_BASE + path, { ...opts, headers }, 30000);
 throw new Error('Could not reach the server. Please check your connection and try again in a moment.');
 }
 }
-if (res.status === 401 && path !== '/api/auth/login') {
+if (res.status === 401 && STATE.token) {
+// Only an already-signed-in request (one that actually sent a token)
+// can have its session "expire". A 401 on a request made with no token
+// on file — most notably a login attempt itself — is a plain
+// authentication failure, not an expired session, so it falls through
+// to the normal error handling below and surfaces the backend's own
+// message (e.g. "Incorrect email or password").
 logout();
 throw new Error('Session expired. Please sign in again.');
 }
@@ -3450,6 +3461,32 @@ const requiredRole = btn.getAttribute('data-sig-role');
 btn.style.display = (STATE.role === requiredRole) ? '' : 'none';
 });
 }
+// ---- Attach Signature (requisition detail / review — authorizer stage) ----
+// Distinct from attachSignature() above (which fills preview boxes on the
+// entry form). This one lives on the read-only "View"/review modal that
+// authorizers use to act on a requisition: the authorizer must explicitly
+// click "Attach Signature" on their own stage's box before the Approve
+// button in the footer will unlock — having a signature on file is
+// necessary but no longer sufficient on its own.
+function attachSignatureForApproval(stage, btn) {
+if (STATE.role !== stage) {
+toast(`Only the ${SIG_ROLE_LABELS[stage] || stage} can attach a signature here`, 'error');
+return;
+}
+if (!STATE.signatureUrl) {
+toast('No signature on file yet — upload one in My Settings first', 'error');
+return;
+}
+const el = document.getElementById('rd-sig-' + stage);
+if (el) el.innerHTML = `<img src="${API_BASE}${STATE.signatureUrl}" alt="Signature"/>`;
+if (btn) btn.style.display = 'none';
+STATE.stageSignatureAttached = true;
+const approveBtn = document.getElementById('rd-approve-btn');
+if (approveBtn) { approveBtn.disabled = false; approveBtn.removeAttribute('title'); }
+const warn = document.getElementById('rd-approve-warn');
+if (warn) warn.style.display = 'none';
+toast('Signature attached — you can now approve', 'success');
+}
 async function openRequisitionModal(editReq) {
 STATE.editingRequisitionId = editReq ? editReq.id : null;
 document.getElementById('req-modal-title').textContent = editReq ? `Edit Requisition — ${editReq.ref_no}` : 'New Requisition';
@@ -3863,21 +3900,31 @@ footHtml += `<button class="btn btn-primary" onclick="submitExisting(${r.id})">S
 }
 const stageRole = { hod: 'hod', treasurer: 'treasurer', clerk: 'clerk' }[r.current_stage];
 if (stageRole && (STATE.role === stageRole || STATE.role === 'admin')) {
+// Reset per-view: this authorizer hasn't clicked "Attach Signature" on
+// their stage box yet for this particular record. Set to true by
+// attachSignatureForApproval() when they do.
+STATE.stageSignatureAttached = false;
+const isStageRoleHolder = STATE.role === stageRole;
+const hasSignature = !!STATE.signatureUrl;
 // An authorizer can't approve without a signature on file — it would leave
 // the printed/approved form with an empty signature box at their stage.
-// Reject/Return don't carry a signature, so they stay available either way.
-// Rather than dead-ending the approver on an admin (the account-level
-// signature used to be admin-only, via the Users screen), they can add
-// their own signature right here — the moment it's on file, Approve
-// unlocks with no page reload needed.
-const hasSignature = !!STATE.signatureUrl;
+// Beyond that, the actual role holder must also explicitly attach their
+// signature on the form above before Approve unlocks (admin retains its
+// existing bypass, since admin never gets a stage attach box — it never
+// signs on someone else's behalf). Reject/Return don't carry a
+// signature, so they stay available either way.
+let approveDisabledReason = null;
+if (!hasSignature) {
+approveDisabledReason = 'You need a signature on file before you can approve — ask an administrator to add one to your account.';
+} else if (isStageRoleHolder && !STATE.stageSignatureAttached) {
+approveDisabledReason = 'Attach your signature in the form above before you can approve.';
+}
 footHtml += `
 <button class="btn btn-danger" onclick="actOnRequisition(${r.id}, 'reject')">Reject</button>
 <button class="btn btn-ghost" onclick="actOnRequisition(${r.id}, 'return')">Return for Correction</button>
-${hasSignature ? '' : `<button class="btn btn-gold" id="rd-add-sig-btn" onclick="addMySignatureFromRequisition(${r.id})">🖊 Add Signature</button>`}
-<button class="btn btn-primary" id="rd-approve-btn" ${hasSignature ? '' : 'disabled title="Add your signature first — click \'Add Signature\' above."'} onclick="actOnRequisition(${r.id}, 'approve')">Approve</button>`;
-if (!hasSignature) {
-footHtml += `<div class="help-text" style="width:100%; margin-top:6px; color:var(--danger);">Click "Add Signature" to upload your signature. Once it's on file, Approve becomes available.</div>`;
+<button class="btn btn-primary" id="rd-approve-btn" ${approveDisabledReason ? `disabled title="${escapeHtml(approveDisabledReason)}"` : ''} onclick="actOnRequisition(${r.id}, 'approve')">Approve</button>`;
+if (approveDisabledReason) {
+footHtml += `<div class="help-text" id="rd-approve-warn" style="width:100%; margin-top:6px; color:var(--danger);">${escapeHtml(approveDisabledReason)}</div>`;
 }
 }
 const canUpload = r.accountability && r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin');
@@ -3896,7 +3943,11 @@ catch (e) { toast(e.message, 'error'); }
 }
 async function actOnRequisition(id, action) {
 if (action === 'approve' && !STATE.signatureUrl) {
-toast('You need a signature on file before you can approve — click "Add Signature" first.', 'error');
+toast('You need a signature on file before you can approve — ask an administrator to add one to your account.', 'error');
+return;
+}
+if (action === 'approve' && STATE.role !== 'admin' && !STATE.stageSignatureAttached) {
+toast('Attach your signature in the form above before you can approve.', 'error');
 return;
 }
 let comments = '';
@@ -3909,39 +3960,6 @@ toast(`Requisition ${action}d`, action === 'approve' ? 'success' : 'info');
 closeModal('modal-req-detail');
 loadApprovals(); loadRequisitions(); loadDashboard();
 } catch (e) { toast(e.message, 'error'); }
-}
-// Lets an approver (HOD / Senior Treasurer / Town Clerk) add their own
-// signature right from the requisition they're reviewing, instead of the
-// flow dead-ending on "ask an administrator". Uses the account's own
-// self-service signature endpoint, then re-renders the requisition detail
-// footer so "Approve" unlocks immediately — no page reload needed.
-async function addMySignatureFromRequisition(reqId) {
-const input = document.createElement('input');
-input.type = 'file';
-input.accept = 'image/png,image/jpeg';
-input.style.display = 'none';
-document.body.appendChild(input);
-input.addEventListener('change', async () => {
-const file = input.files && input.files[0];
-document.body.removeChild(input);
-if (!file) return;
-const btn = document.getElementById('rd-add-sig-btn');
-if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Uploading…'; }
-try {
-const fd = new FormData();
-fd.append('file', file);
-const me = await api('/api/users/me/signature', { method: 'POST', body: fd });
-STATE.signatureUrl = me.signature_url || null;
-toast('Signature added — you can now approve.', 'success');
-// Re-render the detail modal so the Approve button reflects the
-// signature that's now on file, and the Add Signature button drops off.
-viewRequisition(reqId);
-} catch (e) {
-toast(e.message, 'error');
-if (btn) { btn.disabled = false; btn.innerHTML = '🖊 Add Signature'; }
-}
-});
-input.click();
 }
 // ---- Printable Requisition Form (mirrors the Council's paper layout) -------
 async function openPrintForm(reqId) {
@@ -4187,6 +4205,21 @@ function renderFilledRequisitionFormHtml(r) {
 const parts = computeReqFormParts(r, { includeSubtotals: false });
 const { rowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, hodName, treasurerName, clerkName, sigImg, dots } = parts;
 const roleLabel = r.requester_role ? statusLabel(r.requester_role) : '—';
+// Interactive stage-signature box: the box for whichever stage this
+// requisition is currently sitting at gets an "Attach Signature" button,
+// but only when the person viewing it is signed in as that exact stage's
+// role (never on someone else's behalf, same rule as the entry form) and
+// that stage hasn't already been signed off. Clicking it fills the box
+// with a preview of the account's signature on file and unlocks the
+// Approve button in the footer via attachSignatureForApproval().
+const stageSigBox = (stage, sigUrl, name, roleLine, label) => {
+const boxId = 'rd-sig-' + stage;
+const isPendingHere = (r.current_stage === stage) && (STATE.role === stage) && !sigUrl;
+const btnHtml = isPendingHere
+? `<button type="button" class="sig-attach-btn no-print" id="${boxId}-btn" onclick="attachSignatureForApproval('${stage}', this)">🖊 Attach Signature</button>`
+: '';
+return `<div><div class="sig-role">${roleLine}</div><div class="sig-line" id="${boxId}">${sigImg(sigUrl)}</div>${btnHtml}<div class="sig-name">${escapeHtml(name || '')}</div><div class="sig-label">${label}</div></div>`;
+};
 return `
 <div class="req-form-paper">
 <img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
@@ -4235,9 +4268,9 @@ ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No lin
 </table>
 <div class="req-form-words"><strong>Amount in words:</strong>${dots(words)}</div>
 <div class="req-form-signatures">
-<div><div class="sig-role">Recommended by,</div><div class="sig-line">${sigImg(hodSigUrl)}</div><div class="sig-name">${escapeHtml(hodName || '')}</div><div class="sig-label">Head of Department</div></div>
-<div><div class="sig-role">Checked and approved by,</div><div class="sig-line">${sigImg(treasurerSigUrl)}</div><div class="sig-name">${escapeHtml(treasurerName || '')}</div><div class="sig-label">Senior Treasurer</div></div>
-<div><div class="sig-role">Authorised by</div><div class="sig-line">${sigImg(clerkSigUrl)}</div><div class="sig-name">${escapeHtml(clerkName || '')}</div><div class="sig-label">Town Clerk</div></div>
+${stageSigBox('hod', hodSigUrl, hodName, 'Recommended by,', 'Head of Department')}
+${stageSigBox('treasurer', treasurerSigUrl, treasurerName, 'Checked and approved by,', 'Senior Treasurer')}
+${stageSigBox('clerk', clerkSigUrl, clerkName, 'Authorised by', 'Town Clerk')}
 </div>
 </div>
 ${renderPvFormHtml(r, parts)}
