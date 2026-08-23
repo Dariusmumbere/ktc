@@ -378,9 +378,9 @@ and type, and single-line cells (except Subject, which still wraps) so
 noticeably more rows fit on screen without scrolling. The surrounding
 .table-wrap still scrolls horizontally on narrow screens if needed. */
 #req-list-table{min-width:700px;}
-#req-list-table th:nth-child(1), #req-list-table td:nth-child(1){min-width:60px;}
-#req-list-table th:nth-child(2), #req-list-table td:nth-child(2){min-width:70px;}
-#req-list-table th:nth-child(3), #req-list-table td:nth-child(3){min-width:65px;}
+#req-list-table th:nth-child(1), #req-list-table td:nth-child(1){width:60px; max-width:60px; min-width:60px;}
+#req-list-table th:nth-child(2), #req-list-table td:nth-child(2){width:70px; max-width:70px; min-width:70px;}
+#req-list-table th:nth-child(3), #req-list-table td:nth-child(3){width:65px; max-width:65px; min-width:65px;}
 #req-list-table th:nth-child(4), #req-list-table td:nth-child(4){min-width:180px; max-width:260px;}
 #req-list-table th:nth-child(6), #req-list-table td:nth-child(6){min-width:85px;}
 #req-list-table th:nth-child(7), #req-list-table td:nth-child(7){min-width:110px;}
