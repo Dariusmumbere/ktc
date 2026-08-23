@@ -3529,10 +3529,11 @@ const el = document.getElementById('rd-sig-' + stage);
 if (el) el.innerHTML = `<img src="${API_BASE}${STATE.signatureUrl}" alt="Signature"/>`;
 if (btn) btn.style.display = 'none';
 STATE.stageSignatureAttached = true;
-const approveBtn = document.getElementById('rd-approve-btn');
-if (approveBtn) { approveBtn.disabled = false; approveBtn.removeAttribute('title'); }
-const warn = document.getElementById('rd-approve-warn');
-if (warn) warn.style.display = 'none';
+// The forward/approve button (and its disabled-reason note) now appears
+// twice — once after the Requisition Form's signatures, once after the
+// Payment Voucher — so update every copy, not just one by id.
+document.querySelectorAll('.rd-approve-btn').forEach(b => { b.disabled = false; b.removeAttribute('title'); });
+document.querySelectorAll('.rd-approve-warn').forEach(w => { w.style.display = 'none'; });
 toast('Signature attached — you can now approve', 'success');
 }
 async function openRequisitionModal(editReq) {
@@ -3934,19 +3935,12 @@ toggleModalMaximize('modal-req-detail');
 try {
 const r = await api(`/api/requisitions/${id}`);
 document.getElementById('rd-title').textContent = r.ref_no;
-// Show the same filled-in paper-form view used on the Requisition tab
-// (Funds Requisition Form + Cheque Payment Voucher, read-only with the
-// saved data and signatures) rather than a separate summary layout, so
-// "View" always mirrors what was actually filled and submitted.
-body.innerHTML = `
-<div style="margin-bottom:4px;"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div>
-${renderFilledRequisitionFormHtml(r)}
-${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div>${(r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? '<div class="help-text" style="margin-top:6px;">Upload the Payment Voucher, Official Receipts, Signed Attendance Sheets and any other supporting documents for this requisition.</div>' : ''}</div>` : ''}
-`;
-let footHtml = `<button class="btn btn-ghost" onclick="openPrintForm(${r.id})"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9V3H18V9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="4" y="9" width="16" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="7" y="14" width="10" height="6" stroke="currentColor" stroke-width="1.8"/></svg>Print Requisition Form</button>`;
-if (r.status === 'draft' && (r.requester_id == STATE.userId || STATE.role === 'admin')) {
-footHtml += `<button class="btn btn-primary" onclick="submitExisting(${r.id})">Submit for Approval</button>`;
-}
+// Buttons that act on the requisition itself (Print / Reject / Return /
+// Forward) are built once here, then embedded twice inline in the form —
+// immediately after the Requisition Form's signatures, and again after
+// the Payment Voucher — instead of living only in the modal's sticky
+// footer, so the authorizer can act right where they finished reading.
+let actionsHtml = '';
 const stageRole = { hod: 'hod', treasurer: 'treasurer', clerk: 'clerk' }[r.current_stage];
 if (stageRole && (STATE.role === stageRole || STATE.role === 'admin')) {
 // Reset per-view: this authorizer hasn't clicked "Attach Signature" on
@@ -3972,13 +3966,32 @@ approveDisabledReason = 'Attach your signature in the form above before you can 
 // (mirroring the paper trail) instead of a generic "Approve", so the
 // authorizer sees exactly where it's being forwarded.
 const forwardLabel = { hod: 'Forward to Senior Treasurer', treasurer: 'Forward to Town Clerk', clerk: 'Forward to Internal Auditor' }[stageRole] || 'Approve';
-footHtml += `
+actionsHtml = `
+<div class="no-print foot-nowrap" style="display:flex; gap:8px; margin:16px 0 0; justify-content:flex-end; flex-wrap:nowrap;">
+<button class="btn btn-ghost" onclick="openPrintForm(${r.id})"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9V3H18V9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="4" y="9" width="16" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="7" y="14" width="10" height="6" stroke="currentColor" stroke-width="1.8"/></svg>Print Requisition Form</button>
 <button class="btn btn-danger" onclick="actOnRequisition(${r.id}, 'reject')">Reject</button>
 <button class="btn btn-ghost" onclick="actOnRequisition(${r.id}, 'return')">Return for Correction</button>
-<button class="btn btn-primary" id="rd-approve-btn" ${approveDisabledReason ? `disabled title="${escapeHtml(approveDisabledReason)}"` : ''} onclick="actOnRequisition(${r.id}, 'approve')">${forwardLabel}</button>`;
-if (approveDisabledReason) {
-footHtml += `<div class="help-text" id="rd-approve-warn" style="width:100%; margin-top:6px; color:var(--danger);">${escapeHtml(approveDisabledReason)}</div>`;
+<button class="btn btn-primary rd-approve-btn" ${approveDisabledReason ? `disabled title="${escapeHtml(approveDisabledReason)}"` : ''} onclick="actOnRequisition(${r.id}, 'approve')">${forwardLabel}</button>
+</div>
+${approveDisabledReason ? `<div class="help-text rd-approve-warn" style="width:100%; margin-top:6px; text-align:right; color:var(--danger);">${escapeHtml(approveDisabledReason)}</div>` : ''}`;
+} else {
+actionsHtml = `
+<div class="no-print foot-nowrap" style="display:flex; gap:8px; margin:16px 0 0; justify-content:flex-end; flex-wrap:nowrap;">
+<button class="btn btn-ghost" onclick="openPrintForm(${r.id})"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9V3H18V9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="4" y="9" width="16" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="7" y="14" width="10" height="6" stroke="currentColor" stroke-width="1.8"/></svg>Print Requisition Form</button>
+</div>`;
 }
+// Show the same filled-in paper-form view used on the Requisition tab
+// (Funds Requisition Form + Cheque Payment Voucher, read-only with the
+// saved data and signatures) rather than a separate summary layout, so
+// "View" always mirrors what was actually filled and submitted.
+body.innerHTML = `
+<div style="margin-bottom:4px;"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div>
+${renderFilledRequisitionFormHtml(r, actionsHtml)}
+${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div>${(r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? '<div class="help-text" style="margin-top:6px;">Upload the Payment Voucher, Official Receipts, Signed Attendance Sheets and any other supporting documents for this requisition.</div>' : ''}</div>` : ''}
+`;
+let footHtml = '';
+if (r.status === 'draft' && (r.requester_id == STATE.userId || STATE.role === 'admin')) {
+footHtml += `<button class="btn btn-primary" onclick="submitExisting(${r.id})">Submit for Approval</button>`;
 }
 const canUpload = r.accountability && r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin');
 if (canUpload) {
@@ -4111,7 +4124,7 @@ return null;
 // The Cheque Payment Voucher half of the form — identical markup whether
 // it's reached via "View" or via "Print", since both mirror the same
 // paper document filled in together with the Requisition Form.
-function renderPvFormHtml(r, parts) {
+function renderPvFormHtml(r, parts, actionsHtml) {
 const { voucher, pvRowsHtml, grandTotal, words, hodSigUrl, clerkSigUrl, hodName, clerkName, sigImg, dots } = parts;
 return `
 <div class="pv-form">
@@ -4198,6 +4211,7 @@ Date: ${dots(voucher.passed_payment_date)}<br/>
 </td>
 </tr>
 </table>
+${actionsHtml || ''}
 </div>
 `;
 }
@@ -4254,7 +4268,7 @@ ${renderPvFormHtml(r, parts)}
 // amount in words, approval signatures, and the same Payment Voucher
 // section — so "View" always shows exactly what was filled under the
 // Requisition tab, not a shortened summary.
-function renderFilledRequisitionFormHtml(r) {
+function renderFilledRequisitionFormHtml(r, actionsHtml) {
 const parts = computeReqFormParts(r, { includeSubtotals: false });
 const { rowsHtml, grandTotal, subject, words, submissionDate, requesterSigUrl, hodSigUrl, treasurerSigUrl, clerkSigUrl, hodName, treasurerName, clerkName, sigImg, dots } = parts;
 const roleLabel = r.requester_role ? statusLabel(r.requester_role) : '—';
@@ -4326,8 +4340,9 @@ ${stageSigBox('hod', hodSigUrl, hodName, 'Recommended by,', 'Head of Department'
 ${stageSigBox('treasurer', treasurerSigUrl, treasurerName, 'Checked and approved by,', 'Senior Treasurer', 'Name of Budget controller')}
 ${stageSigBox('clerk', clerkSigUrl, clerkName, 'Authorised by', 'Town Clerk', 'Name of Accounting Officer')}
 </div>
+${actionsHtml || ''}
 </div>
-${renderPvFormHtml(r, parts)}
+${renderPvFormHtml(r, parts, actionsHtml)}
 `;
 }
 // ---- Approvals ------------------------------------------------------------------
