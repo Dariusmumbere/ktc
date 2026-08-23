@@ -631,8 +631,8 @@ background:#fff; padding:8.6px 5.2px 5.2px; font-family:var(--font-body); color:
 .rf-header-img{display:block; width:91%; height:auto; margin:0 auto 8.6px; border-radius:4px;}
 .req-form-header{text-align:center; margin-bottom:1.7px;}
 .req-form-header .rf-title{font-family:var(--font-display); font-size:19.5px; font-weight:800; letter-spacing:.34px; text-transform:uppercase; margin-top:6px;}
-.rf-refno{text-align:right; font-size:10.75px; margin:1.7px 0 8.6px; font-weight:600;}
-.rf-refno .mono{color:#b8382a; font-weight:800;}
+.rf-refno{text-align:right; font-size:10.75px; margin:1.7px 0 8.6px; font-weight:400;}
+.rf-refno .mono{color:#b8382a; font-weight:600;}
 table.req-form-meta-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:border-box; border-collapse:collapse; margin:6.9px 0 12.04px; font-size:10.75px; border:1px solid #333;}
 table.req-form-meta-table td{border:1px solid #333; padding:4.3px 6.9px; vertical-align:bottom; overflow-wrap:break-word; word-break:break-word;}
 table.req-form-meta-table td strong{margin-right:5.2px;}
@@ -646,7 +646,7 @@ table.req-form-table{width:100%; max-width:100%; table-layout:fixed; box-sizing:
    white, thin single lines throughout (no bold/double rules), matching
    the rest of the paper form. */
 table.req-form-table th, table.req-form-table td{border:1px solid #000; padding:5.16px 6.9px; overflow-wrap:break-word; word-break:break-word;}
-table.req-form-table th{background:#fdf1e2; font-size:9.03px; text-transform:uppercase; text-align:left; color:#8a4a09;}
+table.req-form-table th{background:#fdf1e2; font-size:11px; text-transform:uppercase; text-align:left; color:#8a4a09;}
 table.req-form-table td.num, table.req-form-table th.num{text-align:right; font-family:var(--font-mono);}
 table.req-form-table tr.rf-section-head td{font-weight:700; background:#fffaf3;}
 table.req-form-table tr.rf-subtotal td{font-weight:700; border-top:1px solid #000;}
@@ -1463,25 +1463,20 @@ Departments
 </tr>
 </table>
 <table class="req-form-table entry">
-<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate</th><th class="num" style="width:13%;">Amount</th><th class="no-print" style="width:52px;">Line</th></tr></thead>
+<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate (UGX)</th><th class="num" style="width:13%;">Amount (UGX)</th><th class="no-print" style="width:52px;">Line</th></tr></thead>
 <tbody id="req-lineitems-body"></tbody>
 <tfoot><tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">UGX <span id="req-grand-total">0</span></td><td class="no-print"></td></tr></tfoot>
 </table>
-<div style="display:flex; gap:8px; margin:10px 0 16px; justify-content:flex-end;" class="no-print foot-nowrap">
-<button class="btn btn-ghost" data-close="modal-req"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Cancel</button>
-<button type="button" class="btn btn-ghost" id="req-print-draft"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9V3H18V9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="4" y="9" width="16" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="7" y="14" width="10" height="6" stroke="currentColor" stroke-width="1.8"/></svg>Print</button>
-<button class="btn btn-primary" id="req-route-hod-mid"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.5L10.5 15L16 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="req-route-hod-mid-label">Submit to Head of Department</span></button>
-</div>
 <div class="req-form-words entry"><strong>Amount in words:</strong> <span id="req-amount-words">—</span></div>
 <div class="req-form-signatures preview">
 <div><div class="sig-role">Recommended by,</div><div class="sig-line" id="req-sig-hod"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-hod-btn" data-sig-role="hod" onclick="attachSignature('req-sig-hod', this, 'hod')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="req-sig-hod-name" placeholder="Name of authorizer"/></div><div class="sig-label">Head of Department</div></div>
 <div><div class="sig-role">Checked and approved by,</div><div class="sig-line" id="req-sig-treasurer"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-treasurer-btn" data-sig-role="treasurer" onclick="attachSignature('req-sig-treasurer', this, 'treasurer')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="req-sig-treasurer-name" placeholder="Name of authorizer"/></div><div class="sig-label">Senior Treasurer</div></div>
 <div><div class="sig-role">Authorised by</div><div class="sig-line" id="req-sig-clerk"></div><button type="button" class="sig-attach-btn no-print" id="req-sig-clerk-btn" data-sig-role="clerk" onclick="attachSignature('req-sig-clerk', this, 'clerk')">🖊 Attach Signature</button><div class="sig-name-fill no-print"><input type="text" id="req-sig-clerk-name" placeholder="Name of authorizer"/></div><div class="sig-label">Town Clerk</div></div>
 </div>
-<div class="req-route-stack no-print" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0 0;">
-<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-treasurer" disabled title="Available once the Head of Department has approved this requisition"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12H16M16 12L12.5 8.5M16 12L12.5 15.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Forward to Senior Treasurer</button></div>
-<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-clerk" disabled title="Available once the Senior Treasurer has approved this requisition"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12H16M16 12L12.5 8.5M16 12L12.5 15.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Forward to Town Clerk</button></div>
-<div style="display:flex; justify-content:center;"><button type="button" class="btn btn-ghost" id="req-route-auditor" disabled title="Available once the Town Clerk has approved this requisition"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12H16M16 12L12.5 8.5M16 12L12.5 15.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Forward to Internal Auditor</button></div>
+<div style="display:flex; gap:8px; margin:16px 0 0; justify-content:flex-end; flex-wrap:nowrap;" class="no-print foot-nowrap">
+<button class="btn btn-ghost" data-close="modal-req"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Cancel</button>
+<button type="button" class="btn btn-ghost" id="req-print-draft"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9V3H18V9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="4" y="9" width="16" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="7" y="14" width="10" height="6" stroke="currentColor" stroke-width="1.8"/></svg>Print</button>
+<button class="btn btn-primary" id="req-route-hod"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.5L10.5 15L16 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="req-route-hod-label">Submit to Head of Department</span></button>
 </div>
 </div>
 <!-- ===== Cheque Payment Voucher — same header/council masthead as the Requisition Form above, filled in together with it in the same modal ===== -->
@@ -1575,10 +1570,6 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </tr>
 </table>
 </div>
-</div>
-<div class="modal-foot foot-nowrap">
-<button class="btn btn-ghost" data-close="modal-req"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Cancel</button>
-<button class="btn btn-primary" id="req-route-hod"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.5L10.5 15L16 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="req-route-hod-label">Submit to Head of Department</span></button>
 </div>
 </div>
 </div>
@@ -3552,7 +3543,6 @@ async function openRequisitionModal(editReq) {
 STATE.editingRequisitionId = editReq ? editReq.id : null;
 document.getElementById('req-modal-title').textContent = editReq ? `Edit Requisition — ${editReq.ref_no}` : 'New Requisition';
 document.getElementById('req-route-hod-label').textContent = editReq ? 'Save & Submit to Head of Department' : 'Submit to Head of Department';
-document.getElementById('req-route-hod-mid-label').textContent = editReq ? 'Save & Submit to Head of Department' : 'Submit to Head of Department';
 // Fill in the paper-form fields that mirror who's submitting this and when.
 const deptSel = document.getElementById('req-form-department');
 deptSel.value = String((editReq ? editReq.department_id : STATE.departmentId) || '');
@@ -3847,7 +3837,6 @@ loadRequisitions();
 } catch (e) { toast(e.message, 'error'); }
 }
 document.getElementById('req-route-hod').addEventListener('click', () => submitNewRequisition(true));
-document.getElementById('req-route-hod-mid').addEventListener('click', () => submitNewRequisition(true));
 // Print the form as currently filled in, without needing to save first —
 // builds a lightweight object shaped like the saved-requisition payload
 // that renderPrintFormHtml() already knows how to render.
@@ -3983,10 +3972,14 @@ approveDisabledReason = 'You need a signature on file before you can approve —
 } else if (isStageRoleHolder && !STATE.stageSignatureAttached) {
 approveDisabledReason = 'Attach your signature in the form above before you can approve.';
 }
+// The button is labelled after wherever this requisition heads next
+// (mirroring the paper trail) instead of a generic "Approve", so the
+// authorizer sees exactly where it's being forwarded.
+const forwardLabel = { hod: 'Forward to Senior Treasurer', treasurer: 'Forward to Town Clerk', clerk: 'Forward to Internal Auditor' }[stageRole] || 'Approve';
 footHtml += `
 <button class="btn btn-danger" onclick="actOnRequisition(${r.id}, 'reject')">Reject</button>
 <button class="btn btn-ghost" onclick="actOnRequisition(${r.id}, 'return')">Return for Correction</button>
-<button class="btn btn-primary" id="rd-approve-btn" ${approveDisabledReason ? `disabled title="${escapeHtml(approveDisabledReason)}"` : ''} onclick="actOnRequisition(${r.id}, 'approve')">Approve</button>`;
+<button class="btn btn-primary" id="rd-approve-btn" ${approveDisabledReason ? `disabled title="${escapeHtml(approveDisabledReason)}"` : ''} onclick="actOnRequisition(${r.id}, 'approve')">${forwardLabel}</button>`;
 if (approveDisabledReason) {
 footHtml += `<div class="help-text" id="rd-approve-warn" style="width:100%; margin-top:6px; color:var(--danger);">${escapeHtml(approveDisabledReason)}</div>`;
 }
@@ -4241,7 +4234,7 @@ ${budgetRow}
 </table>
 <div class="req-form-subject"><strong>Activity Description(Subject):</strong>${dots(subject)}</div>
 <table class="req-form-table">
-<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate</th><th class="num" style="width:13%;">Amount</th></tr></thead>
+<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate (UGX)</th><th class="num" style="width:13%;">Amount (UGX)</th></tr></thead>
 <tbody>
 ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No line items recorded</td></tr>'}
 <tr class="rf-grand"><td colspan="5" style="text-align:right;">GRAND TOTAL</td><td class="num">${money(grandTotal)}</td></tr>
@@ -4324,7 +4317,7 @@ return `
 </tr>
 </table>
 <table class="req-form-table">
-<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate</th><th class="num" style="width:13%;">Amount</th></tr></thead>
+<thead><tr><th style="width:13%;">Sub Activity<br>S/No.</th><th>Description</th><th style="width:8%;">Units</th><th style="width:8%;">Qty</th><th style="width:11%;">Rate (UGX)</th><th class="num" style="width:13%;">Amount (UGX)</th></tr></thead>
 <tbody>
 ${rowsHtml || '<tr><td colspan="6" style="text-align:center; color:#777;">No line items recorded</td></tr>'}
 <tr class="rf-grand"><td colspan="5" style="text-align:right;"><strong>GRAND TOTAL</strong></td><td class="num"><strong>${money(grandTotal)}</strong></td></tr>
