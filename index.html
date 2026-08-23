@@ -377,18 +377,20 @@ text-align:center;
 key columns (Ref No., Requester, Status/Stage, Date) have sufficient room
 instead of feeling cramped; the surrounding .table-wrap already scrolls
 horizontally if needed. */
-#req-list-table{min-width:1080px;}
+#req-list-table{min-width:1200px;}
 #req-list-table th:nth-child(1), #req-list-table td:nth-child(1){min-width:150px;}
 #req-list-table th:nth-child(2), #req-list-table td:nth-child(2){min-width:190px;}
 #req-list-table th:nth-child(3), #req-list-table td:nth-child(3){min-width:160px;}
+#req-list-table th:nth-child(4), #req-list-table td:nth-child(4){min-width:260px;}
 #req-list-table th:nth-child(6), #req-list-table td:nth-child(6){min-width:150px;}
-#req-list-table th:nth-child(7), #req-list-table td:nth-child(7){min-width:150px;}
+#req-list-table th:nth-child(7), #req-list-table td:nth-child(7){min-width:210px;}
 #req-list-table th:nth-child(8), #req-list-table td:nth-child(8){min-width:150px;}
-#approval-queue-table{min-width:1080px;}
+#approval-queue-table{min-width:1200px;}
 #approval-queue-table th:nth-child(1), #approval-queue-table td:nth-child(1){min-width:150px;}
 #approval-queue-table th:nth-child(2), #approval-queue-table td:nth-child(2){min-width:190px;}
 #approval-queue-table th:nth-child(3), #approval-queue-table td:nth-child(3){min-width:160px;}
-#approval-queue-table th:nth-child(7), #approval-queue-table td:nth-child(7){min-width:150px;}
+#approval-queue-table th:nth-child(4), #approval-queue-table td:nth-child(4){min-width:260px;}
+#approval-queue-table th:nth-child(7), #approval-queue-table td:nth-child(7){min-width:210px;}
 /* Users & Roles table — widened so the Name/Email/Role/Department columns
 each have sufficient room instead of feeling cramped; the surrounding
 .table-wrap already scrolls horizontally if needed. */
@@ -2114,6 +2116,11 @@ if (!name) return '?';
 return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
 }
 function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
+// Stage codes (hod/treasurer/clerk/done/closed) are internal role keys —
+// spell them out in full wherever shown to a user, instead of the raw
+// abbreviation (e.g. "hod").
+const STAGE_LABELS = { hod: 'Head of Department', treasurer: 'Senior Treasurer', clerk: 'Town Clerk', done: 'Completed', closed: 'Closed' };
+function stageLabel(s) { return STAGE_LABELS[s] || statusLabel(s); }
 // Role labels used ONLY in the admin "New/Edit User" modal and the Users
 // table — a display-only relabeling for that screen. Every other place in
 // the system (login screen, sidebar, requisition forms, notifications,
@@ -3893,7 +3900,7 @@ return `
 <td class="wrap">${escapeHtml(r.subject || r.activity_details || '—')}</td>
 <td class="num mono">${money(r.amount_requested)}</td>
 <td><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></td>
-<td>${escapeHtml(statusLabel(r.current_stage))}</td>
+<td>${escapeHtml(stageLabel(r.current_stage))}</td>
 <td>${fmtDate(r.created_at)}</td>
 <td style="white-space:nowrap;">
 <button class="btn btn-ghost" style="padding:6px 10px;" onclick="viewRequisition(${r.id})">View</button>
@@ -4362,7 +4369,7 @@ return `
 <td class="wrap">${escapeHtml(r.subject || r.activity_details || '—')}</td>
 <td class="num mono">${money(r.amount_requested)}</td>
 <td class="num mono">${bc ? money(bc.available_balance) : '—'}</td>
-<td>${escapeHtml(statusLabel(r.current_stage))}</td>
+<td>${escapeHtml(stageLabel(r.current_stage))}</td>
 <td><button class="btn btn-primary" style="padding:6px 10px;" onclick="viewRequisition(${r.id})">Review</button></td>
 </tr>`;
 }).join('');
@@ -4525,7 +4532,7 @@ result.innerHTML = `
 <div><div class="detail-label">Budget Code</div><div class="detail-value mono">${escapeHtml(r.budget_code||'—')}</div></div>
 <div><div class="detail-label">Amount</div><div class="detail-value mono">UGX ${money(r.amount_requested)}</div></div>
 <div><div class="detail-label">Status</div><div class="detail-value"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div></div>
-<div><div class="detail-label">Stage</div><div class="detail-value">${escapeHtml(statusLabel(r.current_stage))}</div></div>
+<div><div class="detail-label">Stage</div><div class="detail-value">${escapeHtml(stageLabel(r.current_stage))}</div></div>
 </div>
 <div class="divider"></div>
 <div class="kicker">Approval History</div>
