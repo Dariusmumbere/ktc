@@ -706,11 +706,29 @@ the same enlarged, clearly-visible signature image once one is attached. */
 .req-form-signatures .sig-label{font-size:11.5px; font-weight:800;}
 @media print{
 @page{ size:A4; margin:12mm; }
-body *{visibility:hidden;}
-#print-form-container, #print-form-container *{visibility:visible;}
-.overlay#modal-print-form{position:absolute; inset:auto; background:none; padding:0;}
-#print-form-container{position:absolute; top:0; left:0; width:100%; max-width:none; box-shadow:none; border:none; max-height:none;}
+/* Print only the Funds Requisition Form. Previous approach only set
+visibility:hidden on the rest of the page, which leaves every hidden
+element still occupying its normal layout space (sidebar, dashboard
+cards, every other modal, etc.) — since the print target was then
+positioned absolute relative to that still-huge invisible layout, it
+could land several pages down, so the print preview's first page (the
+only one most people check) looked completely blank. Removing every
+other top-level element from the layout with display:none instead of
+just hiding it fixes that: only #modal-print-form remains, so the
+printed content starts at the very top of page 1 regardless of how much
+other content exists elsewhere in the app. */
+body > *:not(#modal-print-form){display:none !important;}
+#modal-print-form{
+display:block !important; position:static !important; inset:auto !important;
+background:none !important; padding:0 !important; backdrop-filter:none !important;
+}
+#print-form-container{position:static; width:100%; max-width:none; box-shadow:none; border:none; max-height:none; overflow:visible; margin:0;}
 .no-print{display:none !important;}
+/* The Cheque Payment Voucher is filled in alongside the Requisition Form
+on screen, but "Print Requisition Form" prints only the Requisition Form
+itself, per the Council's paper process — the voucher is a separate
+document handled on its own. */
+#print-form-container .pv-form{display:none !important;}
 /* The 86% on-screen sizing above is a screen-only default — restore the
    original full-size dimensions for the physical printed page. */
 #print-form-container .req-form-paper{padding:10px 6px 6px;}
