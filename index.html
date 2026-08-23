@@ -3928,6 +3928,34 @@ toast('Requisition deleted', 'success');
 loadRequisitions();
 } catch (e) { toast(e.message, 'error'); }
 }
+// Rejection reasons table — only appears once a requisition has actually
+// been rejected outright (not merely returned for correction). One
+// column per authorizer stage so it's immediately clear which of the
+// three stopped the requisition and why, even though only one of them
+// can ever have rejected it (rejection closes the requisition, so no
+// later stage gets the chance).
+const REJECTION_STAGES = [
+{ key: 'hod', label: 'Head of Department' },
+{ key: 'treasurer', label: 'Senior Treasurer' },
+{ key: 'clerk', label: 'Town Clerk' },
+];
+function renderRejectionReasonsTableHtml(r) {
+if (r.status !== 'rejected') return '';
+const approvals = r.approvals || [];
+const cells = REJECTION_STAGES.map(s => {
+const entry = approvals.find(a => a.stage === s.key && a.action === 'reject');
+if (!entry) return '<td class="wrap">—</td>';
+const meta = `${escapeHtml(entry.actor || '—')} • ${fmtDate(entry.created_at)}`;
+return `<td class="wrap">${escapeHtml(entry.comments || '—')}<div class="tl-meta" style="margin-top:6px;">${meta}</div></td>`;
+});
+return `
+<div class="divider"></div>
+<div class="kicker" style="color:var(--danger);">Reason for Rejection</div>
+<table class="req-form-table" style="margin-top:8px;">
+<thead><tr>${REJECTION_STAGES.map(s => `<th>${escapeHtml(s.label)}</th>`).join('')}</tr></thead>
+<tbody><tr>${cells.join('')}</tr></tbody>
+</table>`;
+}
 async function viewRequisition(id) {
 STATE.currentReqId = id;
 const body = document.getElementById('rd-body');
@@ -3994,11 +4022,20 @@ actionsHtml = `
 body.innerHTML = `
 <div style="margin-bottom:4px;"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div>
 ${renderFilledRequisitionFormHtml(r, actionsHtml)}
+${renderRejectionReasonsTableHtml(r)}
 ${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div>${(r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? '<div class="help-text" style="margin-top:6px;">Upload the Payment Voucher, Official Receipts, Signed Attendance Sheets and any other supporting documents for this requisition.</div>' : ''}</div>` : ''}
 `;
 let footHtml = '';
 if (r.status === 'draft' && (r.requester_id == STATE.userId || STATE.role === 'admin')) {
 footHtml += `<button class="btn btn-primary" onclick="submitExisting(${r.id})">Submit for Approval</button>`;
+}
+// A requisition sent back for correction only makes sense to the
+// Requisitioner (or an admin standing in for them) once they can see
+// why it bounced — the rejection/return reasons are rendered just above
+// in the timeline/table — so the Edit mode button lives right here in
+// the footer alongside that context, not buried back on the list.
+if (r.status === 'returned' && (r.requester_id == STATE.userId || STATE.role === 'admin')) {
+footHtml += `<button class="btn btn-primary" onclick="closeModal('modal-req-detail'); editRequisition(${r.id});">Edit Requisition</button>`;
 }
 const canUpload = r.accountability && r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin');
 if (canUpload) {
@@ -4025,7 +4062,12 @@ return;
 }
 let comments = '';
 if (action !== 'approve') {
-comments = prompt(`Please provide comments for this ${action === 'reject' ? 'rejection' : 'return'}:`) || '';
+// Reject/Return both require a reason — it's what populates the
+// Reason for Rejection table (or tells the Requisitioner what to fix
+// before they use Edit mode), so an empty submission is rejected here
+// before it ever reaches the server.
+comments = prompt(`Please provide the reason for this ${action === 'reject' ? 'rejection' : 'return for correction'}:`) || '';
+if (!comments.trim()) { toast('A reason is required before you can ' + (action === 'reject' ? 'reject' : 'return') + ' this requisition.', 'error'); return; }
 }
 try {
 await api(`/api/requisitions/${id}/approve-action`, { method: 'POST', body: JSON.stringify({ action, comments }) });
