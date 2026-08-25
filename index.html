@@ -843,6 +843,16 @@ max-height:220px; overflow-y:auto; text-align:left;
 .pv-plain-line.entry input:focus{outline:none; border-bottom:1px dotted var(--gold-600); background:#fffdf2;}
 table.pv-block-table{width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px;}
 table.pv-block-table td{border:1px solid #333; padding:6px 8px; vertical-align:top;}
+/* The generic `tbody tr:last-child td{border-bottom:none;}` rule used for
+   plain dashboard tables outranks the base `table.pv-block-table td` border
+   (more class-level selectors), which was silently stripping the bottom
+   rule off every one of these single/last-row voucher blocks — Entered In
+   Vote Book / Verified by / Passed Payment, Signature of payee / witness /
+   cashier, and Inter-departmental Clearance — leaving them open along the
+   bottom. Re-closed the same way the requisition ledger tables already are
+   above, plus the right edge for consistency. */
+table.pv-block-table td:last-child{border-right:1px solid #333;}
+table.pv-block-table tr:last-child td{border-bottom:1px solid #333;}
 table.pv-block-table td strong{display:block; font-size:11px; margin-bottom:4px;}
 table.pv-block-table input{width:100%; border:none; background:transparent; font:inherit; font-size:12.5px; color:#181818; padding:2px 2px;}
 table.pv-block-table input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
