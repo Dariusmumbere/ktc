@@ -829,6 +829,21 @@ max-height:220px; overflow-y:auto; text-align:left;
 .rf-sig-slot .sig-attach-btn{flex-basis:100%;}
 .pv-form{margin-top:26px; padding-top:18px; border-top:2px dashed var(--line);}
 .pv-form .rf-title{margin-top:2px;}
+/* Voucher No. box — top-right bordered red box, matching the Council's
+   printed Cheque Payment Voucher exactly ("VOUCHER NO: 3478"), instead of
+   the plain left-aligned "Voucher No. ..." line used on the Requisition
+   Form above it. */
+.pv-header-wrap{position:relative;}
+.pv-voucher-no-box{
+position:absolute; top:10px; right:10px; border:2px solid #b8382a; border-radius:6px;
+padding:4px 14px; font-weight:800; font-size:12px; letter-spacing:.3px; color:#181818;
+background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.15); white-space:nowrap;
+}
+.pv-voucher-no-box .mono{color:#b8382a; font-weight:800; font-size:16px; margin-left:5px;}
+@media print{
+#print-form-container .pv-voucher-no-box{top:6px; right:6px; font-size:13px;}
+#print-form-container .pv-voucher-no-box .mono{font-size:18px;}
+}
 .pv-certify{font-size:11.5px; line-height:1.7; border:1px solid #333; padding:10px 12px; margin:10px 0 14px;}
 .pv-certify p{margin:0 0 8px;}
 .pv-certify p:last-child{margin-bottom:0;}
@@ -1526,23 +1541,27 @@ until each stage actually acts, since none of them have signed yet. -->
 </div>
 <!-- ===== Cheque Payment Voucher — same header/council masthead as the Requisition Form above, filled in together with it in the same modal ===== -->
 <div class="pv-form" id="pv-form-entry">
+<div class="pv-header-wrap">
 <img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
+<div class="pv-voucher-no-box">VOUCHER NO: <span class="mono" id="pv-form-refno-preview">—</span></div>
+</div>
 <div class="req-form-header"><div class="rf-title">Cheque Payment Voucher</div></div>
-<div class="rf-refno">Voucher No. <span class="mono" id="pv-form-refno-preview">(assigned on save)</span></div>
 <table class="req-form-meta-table entry">
 <tr>
 <td style="width:50%;"><div class="rf-field"><strong>Department:</strong><input type="text" id="pv-form-department" readonly/></div></td>
 <td style="width:50%;"><div class="rf-field"><strong>Cheque No:</strong><input type="text" id="pv-cheque-no" placeholder="e.g. 004521"/></div></td>
 </tr>
 <tr>
-<td><div class="rf-field"><strong>Budget Output Code:</strong><input type="text" id="pv-form-budgetcode" placeholder="e.g. 000123"/></div></td>
-<td><div class="rf-field"><strong>Payment Voucher Reference No:</strong><input type="text" id="pv-form-pvref" placeholder="e.g. PV/2026/001"/></div></td>
-</tr>
-<tr>
 <td><div class="rf-field"><strong>Dr. To:</strong><input type="text" id="pv-dr-to" placeholder="Payee name"/></div></td>
 <td><div class="rf-field"><strong>Address:</strong><input type="text" id="pv-address" placeholder="Payee address"/></div></td>
 </tr>
 </table>
+<!-- Budget Output Code / Payment Voucher Reference No aren't shown on the
+     Council's printed voucher — kept as hidden fields so the data is still
+     captured and saved with the requisition, without altering the on-screen
+     layout that now mirrors the paper form exactly. -->
+<input type="hidden" id="pv-form-budgetcode" />
+<input type="hidden" id="pv-form-pvref" />
 <table class="req-form-table entry">
 <thead><tr><th style="width:10%;">Date</th><th>Detailed description of service or article</th><th colspan="2" style="width:20%; text-align:center;">Taken on charge expenditure</th><th class="num" style="width:14%;">Amount (Shs)</th></tr>
 <tr><th></th><th></th><th style="width:10%;">Ledger Folio</th><th style="width:10%;">Date</th><th class="num"></th></tr>
@@ -1551,7 +1570,7 @@ until each stage actually acts, since none of them have signed yet. -->
 <tfoot><tr class="rf-grand"><td colspan="4" style="text-align:right;">TOTAL</td><td class="num">UGX <span id="pv-grand-total">0</span></td></tr></tfoot>
 </table>
 <div class="pv-certify">
-<div class="pv-plain-line entry"><strong>Authority</strong><input type="text" id="pv-authority" placeholder="e.g. Approved work plan / Council minute ref."/><strong>Total</strong><input type="text" id="pv-total-shs" readonly/></div>
+<div class="pv-plain-line entry"><strong>Authority:</strong><input type="text" id="pv-authority" placeholder="e.g. Approved work plan / Council minute ref."/><strong>Total</strong><input type="text" id="pv-total-shs" readonly/></div>
 <div class="pv-plain-line entry"><strong>Approved vote</strong><input type="text" id="pv-approved-vote"/><strong>Account No.</strong><input type="text" id="pv-account-no"/></div>
 <div class="pv-plain-line entry"><strong>approved Estimate</strong><input type="text" id="pv-approved-estimate"/><strong>Cheque payment instruction No</strong><input type="text" id="pv-instruction-no"/></div>
 <p style="margin-top:10px;"><strong>I HEREBY CERTIFY</strong> that the above amount is correct and was incurred under the authority quoted, that the above services has been duly and properly performed / supplies have been received in good condition: that the payment price charge is in accordance with regulations the terms of contract or agreement which are fair and reasonable and that the above expenditure of Shs (in words) <span id="pv-amount-words">—</span> will not cause an excess over the provision made under the authority quoted on this voucher or under programme/sub-programme shown below:</p>
@@ -1604,9 +1623,9 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <table class="pv-block-table">
 <tr>
 <td style="width:60%;">
-<strong>Inter-departmental Clearance</strong><input type="text" id="pv-inter-clearance"/>
-<strong style="margin-top:8px;">Program of Estimate</strong><input type="text" id="pv-program-estimate"/>
-<strong style="margin-top:8px;">Sub Program</strong><input type="text" id="pv-sub-program"/>
+<strong>Inter-departmental clearance</strong><input type="text" id="pv-inter-clearance"/>
+<strong style="margin-top:8px;">Program of estimate</strong><input type="text" id="pv-program-estimate"/>
+<strong style="margin-top:8px;">Sub program</strong><input type="text" id="pv-sub-program"/>
 <strong style="margin-top:8px;">Item</strong><input type="text" id="pv-item"/>
 </td>
 <td style="width:40%; text-align:right; vertical-align:bottom;">
@@ -4234,17 +4253,15 @@ function renderPvFormHtml(r, parts, actionsHtml) {
 const { voucher, pvRowsHtml, grandTotal, words, hodSigUrl, clerkSigUrl, hodName, clerkName, sigImg, dots } = parts;
 return `
 <div class="pv-form">
+<div class="pv-header-wrap">
 <img src="header.jpg" alt="Ntoroko District Local Government — Karugutu Town Council" class="rf-header-img"/>
+<div class="pv-voucher-no-box">VOUCHER NO: <span class="mono">${escapeHtml(r.ref_no)}</span></div>
+</div>
 <div class="req-form-header"><div class="rf-title">Cheque Payment Voucher</div></div>
-<div class="rf-refno">Voucher No. <span class="mono">${escapeHtml(r.ref_no)}</span></div>
 <table class="req-form-meta-table">
 <tr>
 <td style="width:50%;"><strong>Department:</strong><span class="rf-fill">${escapeHtml(r.department_name || '—')}</span></td>
 <td style="width:50%;"><strong>Cheque No:</strong><span class="rf-fill">${escapeHtml(voucher.cheque_no || '—')}</span></td>
-</tr>
-<tr>
-<td><strong>Budget Output Code:</strong><span class="rf-fill">${escapeHtml(voucher.budget_output_code || '—')}</span></td>
-<td><strong>Payment Voucher Reference No:</strong><span class="rf-fill">${escapeHtml(voucher.pv_reference_no || '—')}</span></td>
 </tr>
 <tr>
 <td><strong>Dr. To:</strong><span class="rf-fill">${escapeHtml(voucher.dr_to || '—')}</span></td>
@@ -4306,9 +4323,9 @@ Date: ${dots(voucher.passed_payment_date)}<br/>
 <table class="pv-block-table">
 <tr>
 <td style="width:60%;">
-<strong>Inter-departmental Clearance:</strong> ${escapeHtml(voucher.inter_dept_clearance || '—')}<br/>
-<strong>Program of Estimate:</strong> ${escapeHtml(voucher.program_of_estimate || '—')}<br/>
-<strong>Sub Program:</strong> ${escapeHtml(voucher.sub_program || '—')}<br/>
+<strong>Inter-departmental clearance:</strong> ${escapeHtml(voucher.inter_dept_clearance || '—')}<br/>
+<strong>Program of estimate:</strong> ${escapeHtml(voucher.program_of_estimate || '—')}<br/>
+<strong>Sub program:</strong> ${escapeHtml(voucher.sub_program || '—')}<br/>
 <strong>Item:</strong> ${escapeHtml(voucher.item || '—')}
 </td>
 <td style="width:40%; text-align:right; vertical-align:bottom;">
