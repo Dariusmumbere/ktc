@@ -682,6 +682,13 @@ An inset box-shadow isn't subject to border-collapse and always renders,
 so it reliably keeps the line that closes off the header column. */
 table.req-form-table thead th{box-shadow:inset 0 -1px 0 #000;}
 .req-form-words{font-size:10.75px; margin-bottom:25.8px; line-height:2;}
+/* Base fallback so any .sig-line / .rf-dots renders its dotted fill line
+   even outside the specific parent contexts styled below (Entered In Vote
+   Book, Verified by, Passed Payment, Signature of payee/witness/cashier,
+   and the dots() helper used for Date / Inter-departmental Clearance
+   fields) — without this, those signature and fill lines are invisible. */
+.sig-line{border-bottom:1px dotted #666; min-height:20px; display:flex; align-items:flex-end;}
+.rf-dots{border-bottom:1px dotted #666; display:inline-block; min-width:40px;}
 .req-form-words strong{white-space:nowrap; margin-right:3.44px;}
 .req-form-words .rf-dots{border-bottom:1px dotted #666; display:inline-block;}
 .req-form-signatures{display:grid; grid-template-columns:repeat(3,1fr); border:1px solid #333; margin-top:15.48px;}
@@ -841,10 +848,17 @@ max-height:220px; overflow-y:auto; text-align:left;
 .pv-plain-line .rf-dots{flex:1; min-width:80px;}
 .pv-plain-line.entry input{flex:1; min-width:80px; border:none; border-bottom:1px dotted #888; background:transparent; font:inherit; font-size:12.5px; padding:2px 4px;}
 .pv-plain-line.entry input:focus{outline:none; border-bottom:1px dotted var(--gold-600); background:#fffdf2;}
-table.pv-block-table{width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px;}
+table.pv-block-table{width:100%; border-collapse:collapse; font-size:12px; margin-bottom:0;}
+table.pv-block-table + table.pv-block-table{margin-top:-1px;}
+.pv-form table.pv-block-table:last-of-type{margin-bottom:14px;}
 table.pv-block-table td{border:1px solid #333; padding:6px 8px; vertical-align:top;}
 table.pv-block-table td strong{display:block; font-size:11px; margin-bottom:4px;}
-table.pv-block-table input{width:100%; border:none; background:transparent; font:inherit; font-size:12.5px; color:#181818; padding:2px 2px;}
+table.pv-block-table .pv-block-line{margin-bottom:5px; display:flex; align-items:baseline; gap:4px;}
+table.pv-block-table .pv-block-line strong{display:inline; margin-bottom:0; margin-right:0; white-space:nowrap;}
+table.pv-block-table .pv-block-line input{flex:1; width:auto;}
+table.pv-block-table .pv-block-line:last-child{margin-bottom:0;}
+table.pv-block-table input{width:100%; border:none; border-bottom:1px dotted #888; background:transparent; font:inherit; font-size:12.5px; color:#181818; padding:2px 2px;}
+table.pv-block-table input[readonly]{border-bottom-style:dotted;}
 table.pv-block-table input:focus{outline:1px dashed var(--gold-600); background:#fffdf2; border-radius:3px;}
 /* Vote Controller / Town Clerk signature line — sits inside the same
    bordered .pv-certify box as the certify paragraphs (matching the paper
@@ -1605,10 +1619,10 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <table class="pv-block-table">
 <tr>
 <td style="width:60%;">
-<strong>Inter-departmental Clearance</strong><input type="text" id="pv-inter-clearance"/>
-<strong style="margin-top:8px;">Program of Estimate</strong><input type="text" id="pv-program-estimate"/>
-<strong style="margin-top:8px;">Sub Program</strong><input type="text" id="pv-sub-program"/>
-<strong style="margin-top:8px;">Item</strong><input type="text" id="pv-item"/>
+<div class="pv-block-line"><strong>Inter-departmental Clearance</strong><input type="text" id="pv-inter-clearance"/></div>
+<div class="pv-block-line"><strong>Program of Estimate</strong><input type="text" id="pv-program-estimate"/></div>
+<div class="pv-block-line"><strong>Sub Program</strong><input type="text" id="pv-sub-program"/></div>
+<div class="pv-block-line"><strong>Item</strong><input type="text" id="pv-item"/></div>
 </td>
 <td style="width:40%; text-align:right; vertical-align:bottom;">
 <strong>Total Shs</strong><input type="text" id="pv-total-shs-2" readonly style="text-align:right; font-weight:700; font-size:15px;"/>
@@ -4280,37 +4294,37 @@ Received / paid this Day ${dots(voucher.payment_day)} ................. 20${dots
 <td style="width:34%;">
 <strong>Entered In Vote Book</strong>
 Date: ${dots(voucher.entered_vote_book_date)}<br/>
-<div style="margin-top:16px;">Signature: __________________</div>
+<div style="margin-top:10px;">Signature: <div class="sig-line" style="display:inline-flex; width:60%;">${sigImg(null)}</div></div>
 </td>
 <td style="width:33%;">
 <strong>Verified by</strong>
 Date: ${dots(voucher.verified_by_date)}<br/>
-<div style="margin-top:16px;">Signature: __________________</div>
+<div style="margin-top:10px;">Signature: <div class="sig-line" style="display:inline-flex; width:60%;">${sigImg(null)}</div></div>
 </td>
 <td style="width:33%;">
 <strong>Passed Payment for (HoF)</strong>
 Shs: UGX ${money(grandTotal)}<br/>
 Date: ${dots(voucher.passed_payment_date)}<br/>
-<div style="margin-top:6px;">Signature: __________________</div>
+<div style="margin-top:6px;">Signature: <div class="sig-line" style="display:inline-flex; width:55%;">${sigImg(null)}</div></div>
 </td>
 </tr>
 </table>
 <table class="pv-block-table">
 <tr>
-<td colspan="2"><strong>Signature of payee</strong><div style="margin-top:16px;">__________________</div></td>
+<td colspan="2"><strong>Signature of payee</strong><div class="sig-line" style="width:45%; margin-top:6px;">${sigImg(null)}</div></td>
 </tr>
 <tr>
-<td><strong>Signature of witness to payment</strong><div style="margin-top:16px;">__________________</div></td>
-<td><strong>Signature of paying officer (cashier)</strong><div style="margin-top:16px;">__________________</div></td>
+<td><strong>Signature of witness to payment</strong><div class="sig-line" style="width:90%; margin-top:6px;">${sigImg(null)}</div></td>
+<td><strong>Signature of paying officer (cashier)</strong><div class="sig-line" style="width:90%; margin-top:6px;">${sigImg(null)}</div></td>
 </tr>
 </table>
 <table class="pv-block-table">
 <tr>
 <td style="width:60%;">
-<strong>Inter-departmental Clearance:</strong> ${escapeHtml(voucher.inter_dept_clearance || '—')}<br/>
-<strong>Program of Estimate:</strong> ${escapeHtml(voucher.program_of_estimate || '—')}<br/>
-<strong>Sub Program:</strong> ${escapeHtml(voucher.sub_program || '—')}<br/>
-<strong>Item:</strong> ${escapeHtml(voucher.item || '—')}
+<div class="pv-block-line"><strong>Inter-departmental Clearance</strong>${dots(voucher.inter_dept_clearance)}</div>
+<div class="pv-block-line"><strong>Program of Estimate</strong>${dots(voucher.program_of_estimate)}</div>
+<div class="pv-block-line"><strong>Sub Program</strong>${dots(voucher.sub_program)}</div>
+<div class="pv-block-line"><strong>Item</strong>${dots(voucher.item)}</div>
 </td>
 <td style="width:40%; text-align:right; vertical-align:bottom;">
 <strong>Total Shs</strong>
