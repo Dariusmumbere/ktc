@@ -205,6 +205,21 @@ border:none; background:none; width:100%; text-align:left;
 .nav-item:hover svg{opacity:1;}
 .nav-item.active{background:linear-gradient(90deg, var(--teal-700), rgba(15,92,82,.75)); color:#fff; box-shadow:inset 3px 0 0 var(--gold-500);}
 .nav-item.active svg{opacity:1;}
+.nav-parent{
+display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; cursor:pointer;
+font-size:13px; font-weight:500; color:rgba(220,231,229,.82); margin-bottom:2px; transition:background .15s var(--ease), color .15s var(--ease);
+border:none; background:none; width:100%; text-align:left;
+}
+.nav-parent svg{width:17px;height:17px; flex-shrink:0; opacity:.85; transition:opacity .15s var(--ease);}
+.nav-parent:hover{background:rgba(255,255,255,.07); color:#fff;}
+.nav-parent:hover svg{opacity:1;}
+.nav-parent.has-active{color:#fff;}
+.nav-parent.has-active svg{opacity:1;}
+.nav-parent .nav-caret{margin-left:auto; width:14px !important; height:14px !important; opacity:.65; transition:transform .18s var(--ease);}
+.nav-parent.open .nav-caret{transform:rotate(180deg);}
+.nav-submenu{max-height:0; overflow:hidden; transition:max-height .22s var(--ease);}
+.nav-submenu.open{max-height:260px;}
+.nav-subitem{padding-left:38px !important; font-size:12.5px !important;}
 .sidebar-footer{margin-top:auto; padding:10px 8px 4px; border-top:1px solid rgba(255,255,255,.08);}
 .user-chip{display:flex; align-items:center; gap:9px; padding:8px; border-radius:8px; transition:background .15s var(--ease); cursor:pointer; border:none; background:none; width:100%; text-align:left;}
 .user-chip:hover{background:rgba(255,255,255,.05);}
@@ -1006,22 +1021,28 @@ Dashboard
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 5v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5M9 9h6M9 13h6M9 17h3"/></svg>
 Programme-Based Budgeting System (PBS)
 </button>
-<button class="nav-item" data-view="requisitions" style="font-size:12px; line-height:1.25;">
+<button type="button" class="nav-parent" id="nav-ifms-toggle">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6l1 3H8l1-3z"/><path d="M6 6h12v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V6z"/><path d="M9 11h6M9 15h4"/></svg>
 Integrated Financial Management System (IFMS)
+<svg class="nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
 </button>
-<button class="nav-item" data-view="approvals">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+<div class="nav-submenu" id="nav-ifms-submenu">
+<button class="nav-item nav-subitem" data-view="requisitions">
+Requisitions and Payment Vouchers
+</button>
+<button class="nav-item nav-subitem" data-view="approvals">
 Approvals
 </button>
-<button class="nav-item" data-view="accountability">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5V6a2 2 0 0 1 2-2h9l5 5v10.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M14 4v5h5"/></svg>
-Accountability
+<button class="nav-item nav-subitem" data-view="accountability">
+Accountability Documents
 </button>
-<button class="nav-item" data-view="reports">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5a1 1 0 0 1 1-1h9l6 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 12h6M9 16h4"/></svg>
-Audit &amp; Reports
+<button class="nav-item nav-subitem" data-view="reports" data-subtab="audit-log">
+Audit
 </button>
+<button class="nav-item nav-subitem" data-view="reports" data-subtab="audit-view">
+Reports
+</button>
+</div>
 </div>
 <div class="nav-group" id="admin-nav-group" style="display:none;">
 <div class="nav-label">Administration</div>
@@ -1939,12 +1960,15 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <div class="modal">
 <div class="modal-head"><h3>Upload Accountability Documents</h3><button class="modal-close" data-close="modal-upload">&times;</button></div>
 <div class="modal-body">
-<div class="field"><label>Document Type</label>
+<div class="field"><label>List of Accountability Documents to Upload</label>
 <select id="up-type">
 <option value="cheque">Upload Disbursed Activity Cheque</option>
 <option value="receipt">Upload Official Purchase Receipt</option>
 <option value="photos">Upload Supporting Photos</option>
 <option value="attendance">Upload Completed Activity Attendance Sheet</option>
+<option value="payment_sheet">Upload Activity Payment Sheet</option>
+<option value="acknowledgement">Upload Acknowledgement of Receipt (Handwritten)</option>
+<option value="expense_report">Upload Expense Report (Accountability Form)</option>
 <option value="report">Upload Final Activity Report</option>
 </select>
 </div>
@@ -2198,6 +2222,9 @@ cheque: 'Disbursed Activity Cheque',
 receipt: 'Official Purchase Receipt',
 photos: 'Supporting Photos',
 attendance: 'Completed Activity Attendance Sheet',
+payment_sheet: 'Activity Payment Sheet',
+acknowledgement: 'Acknowledgement of Receipt (Handwritten)',
+expense_report: 'Expense Report (Accountability Form)',
 report: 'Final Activity Report',
 voucher: 'Payment Voucher',
 supporting: 'Supporting Document',
@@ -2447,8 +2474,17 @@ reports: ['Audit & Reports', 'System-wide activity and audit trail'],
 users: ['Users & Roles', 'Account and access management'],
 departments: ['Departments', 'Organisational structure'],
 };
-function switchView(view) {
-document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+function switchView(view, subtab) {
+if (view === 'reports' && !subtab) subtab = 'audit-log';
+document.querySelectorAll('.nav-item[data-view]').forEach(b => {
+const matches = b.dataset.view === view && (b.dataset.subtab || null) === (subtab || null);
+b.classList.toggle('active', matches);
+});
+const ifmsToggle = document.getElementById('nav-ifms-toggle');
+const ifmsSubmenu = document.getElementById('nav-ifms-submenu');
+const isIfmsView = ['requisitions', 'approvals', 'accountability', 'reports'].includes(view);
+ifmsToggle.classList.toggle('has-active', isIfmsView);
+if (isIfmsView) { ifmsToggle.classList.add('open'); ifmsSubmenu.classList.add('open'); }
 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 document.getElementById('view-' + view).classList.add('active');
 document.getElementById('topbar-title').textContent = VIEW_TITLES[view][0];
@@ -2467,12 +2503,22 @@ if (view === 'workplan') loadWorkplanView();
 if (view === 'requisitions') loadRequisitions();
 if (view === 'approvals') loadApprovals();
 if (view === 'accountability') loadAccountability();
-if (view === 'reports') loadAuditLog();
+if (view === 'reports') {
+loadAuditLog();
+const subBtn = document.querySelector(`.tabs-sub button[data-subtab="${subtab}"]`);
+if (subBtn) subBtn.click();
+}
 if (view === 'users') loadUsers();
 if (view === 'departments') loadDepartmentsView();
 }
+document.getElementById('nav-ifms-toggle').addEventListener('click', () => {
+const submenu = document.getElementById('nav-ifms-submenu');
+const willOpen = !submenu.classList.contains('open');
+submenu.classList.toggle('open', willOpen);
+document.getElementById('nav-ifms-toggle').classList.toggle('open', willOpen);
+});
 document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
-btn.addEventListener('click', () => { switchView(btn.dataset.view); closeSidebar(); });
+btn.addEventListener('click', () => { switchView(btn.dataset.view, btn.dataset.subtab); closeSidebar(); });
 });
 document.querySelectorAll('[data-view-link]').forEach(btn => {
 btn.addEventListener('click', () => { switchView(btn.dataset.viewLink); closeSidebar(); });
