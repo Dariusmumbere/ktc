@@ -941,7 +941,7 @@ vertical-align:middle; flex-shrink:0;
 <div class="login-band login-band-header">
 <div class="brand-header">
 <img class="header-logo" src="header.jpg" alt="Karugutu Town Council" />
-<p class="header-tagline">Integrated Public Financial Management System</p>
+<p class="header-tagline">Integrated Financial Management System (IFMS) &amp; Programme-Based Budgeting System (PBS)</p>
 </div>
 </div>
 <script>
@@ -996,8 +996,6 @@ window.addEventListener('resize', syncLineWidth);
 <aside class="sidebar">
 <div class="brand">
 <div class="crest"><img src="header.jpg" alt="Karugutu Town Council" /></div>
-<div class="brand-name">Integrated Public Financial Management System
-</div>
 </div>
 <div class="nav-group">
 <button class="nav-item active" data-view="dashboard">
@@ -1006,11 +1004,11 @@ Dashboard
 </button>
 <button class="nav-item" data-view="workplan">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 5v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5M9 9h6M9 13h6M9 17h3"/></svg>
-Work Plan &amp; Budget
+Programme-Based Budgeting System (PBS)
 </button>
 <button class="nav-item" data-view="requisitions" style="font-size:12px; line-height:1.25;">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6l1 3H8l1-3z"/><path d="M6 6h12v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V6z"/><path d="M9 11h6M9 15h4"/></svg>
-Requisition Voucher, Payment Voucher and Accountability documents
+Integrated Financial Management System (IFMS)
 </button>
 <button class="nav-item" data-view="approvals">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
@@ -1939,15 +1937,15 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <!-- ===== MODAL: Upload document ===== -->
 <div class="overlay" id="modal-upload">
 <div class="modal">
-<div class="modal-head"><h3>Upload Accountability Document</h3><button class="modal-close" data-close="modal-upload">&times;</button></div>
+<div class="modal-head"><h3>Upload Accountability Documents</h3><button class="modal-close" data-close="modal-upload">&times;</button></div>
 <div class="modal-body">
 <div class="field"><label>Document Type</label>
 <select id="up-type">
-<option value="receipt">Receipt</option>
-<option value="attendance">Attendance Sheet</option>
-<option value="voucher">Payment Voucher</option>
-<option value="supporting">Supporting Document</option>
-<option value="other">Other</option>
+<option value="cheque">Upload Disbursed Activity Cheque</option>
+<option value="receipt">Upload Official Purchase Receipt</option>
+<option value="photos">Upload Supporting Photos</option>
+<option value="attendance">Upload Completed Activity Attendance Sheet</option>
+<option value="report">Upload Final Activity Report</option>
 </select>
 </div>
 <div class="field"><label>File (PDF, DOCX, JPG, PNG)</label><input type="file" id="up-file" accept=".pdf,.docx,.jpg,.jpeg,.png"/></div>
@@ -2191,6 +2189,21 @@ function statusLabel(s) { return (s || '').replace(/_/g, ' '); }
 // abbreviation (e.g. "hod").
 const STAGE_LABELS = { hod: 'Head of Department', treasurer: 'Senior Treasurer', clerk: 'Town Clerk', done: 'Completed', closed: 'Closed' };
 function stageLabel(s) { return STAGE_LABELS[s] || statusLabel(s); }
+// Accountability document type codes -> the friendly label shown on the
+// Upload modal, the doc pill in the viewer, and the thumbnail cards below
+// the Payment Voucher. Older records may still carry the previous type
+// codes (voucher/supporting/other), so those stay mapped for display.
+const DOC_TYPE_LABELS = {
+cheque: 'Disbursed Activity Cheque',
+receipt: 'Official Purchase Receipt',
+photos: 'Supporting Photos',
+attendance: 'Completed Activity Attendance Sheet',
+report: 'Final Activity Report',
+voucher: 'Payment Voucher',
+supporting: 'Supporting Document',
+other: 'Other',
+};
+function docTypeLabel(t) { return DOC_TYPE_LABELS[t] || statusLabel(t); }
 // Role labels used ONLY in the admin "New/Edit User" modal and the Users
 // table — a display-only relabeling for that screen. Every other place in
 // the system (login screen, sidebar, requisition forms, notifications,
@@ -4100,7 +4113,7 @@ body.innerHTML = `
 <div style="margin-bottom:4px;"><span class="pill pill-${r.status}">${statusLabel(r.status)}</span></div>
 ${renderFilledRequisitionFormHtml(r, actionsHtml)}
 ${renderRejectionReasonsTableHtml(r)}
-${r.accountability ? `<div class="divider"></div><div class="kicker">Accountability</div><div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'No remarks yet')}</div>${(r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin')) ? '<div class="help-text" style="margin-top:6px;">Upload the Payment Voucher, Official Receipts, Signed Attendance Sheets and any other supporting documents for this requisition.</div>' : ''}</div>` : ''}
+${renderAccountabilityDocsHtml(r)}
 `;
 let footHtml = '';
 if (r.status === 'draft' && (r.requester_id == STATE.userId || STATE.role === 'admin')) {
@@ -4114,10 +4127,9 @@ footHtml += `<button class="btn btn-primary" onclick="submitExisting(${r.id})">S
 if (r.status === 'returned' && (r.requester_id == STATE.userId || STATE.role === 'admin')) {
 footHtml += `<button class="btn btn-primary" onclick="closeModal('modal-req-detail'); editRequisition(${r.id});">Edit Requisition</button>`;
 }
-const canUpload = r.accountability && r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin');
-if (canUpload) {
-footHtml += `<button class="btn btn-gold" onclick="openUploadModal(${r.id})">Upload Accountability Document</button>`;
-}
+// The Upload Accountability Documents button now lives inline, right after
+// the Payment Voucher (see renderAccountabilityDocsHtml), instead of the
+// sticky footer — so it's no longer built here.
 if (r.accountability && (STATE.role === 'auditor' || STATE.role === 'admin')) {
 footHtml += `<button class="btn btn-primary" onclick="closeModal('modal-req-detail'); openDocumentViewer(${r.id});">Review Documents &amp; Verify</button>`;
 }
@@ -4434,6 +4446,47 @@ ${actionsHtml || ''}
 ${renderPvFormHtml(r, parts, actionsHtml)}
 `;
 }
+// ---- Accountability documents display (shown directly below the Payment
+// Voucher on the "View" screen) -----------------------------------------
+// Renders the Accountability status pill/remarks, an "Upload Accountability
+// Documents" button (only for the requester/admin while not yet verified),
+// and a visual card grid of whatever has been uploaded so far — image
+// documents show a thumbnail, everything else shows a document icon. Sits
+// right after renderFilledRequisitionFormHtml(...) in the "View" body, i.e.
+// immediately after the Payment Voucher.
+function renderAccountabilityDocsHtml(r) {
+if (!r.accountability) return '';
+const canUpload = r.accountability.status !== 'verified' && (r.requester_id == STATE.userId || STATE.role === 'admin');
+const docs = r.documents || [];
+const docsHtml = docs.length ? `
+<div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;">
+${docs.map(d => {
+const url = `${API_BASE}${d.url}`;
+const lower = (d.filename || '').toLowerCase();
+const isImage = /\.(jpg|jpeg|png)$/.test(lower);
+const thumb = isImage
+? `<img src="${url}" alt="${escapeHtml(d.filename)}" style="width:100%; height:86px; object-fit:cover; border-radius:8px 8px 0 0; display:block;"/>`
+: `<div style="width:100%; height:86px; display:flex; align-items:center; justify-content:center; font-size:26px; background:#f1f3f2; border-radius:8px 8px 0 0;">📄</div>`;
+return `
+<a href="${url}" target="_blank" class="no-print" style="display:block; width:128px; border:1px solid var(--line); border-radius:8px; overflow:hidden; text-decoration:none; color:inherit; background:#fff;">
+${thumb}
+<div style="padding:6px 8px;">
+<div style="font-size:10.5px; font-weight:700; color:var(--ink-700); line-height:1.3;">${escapeHtml(docTypeLabel(d.doc_type))}</div>
+<div style="font-size:10px; color:var(--ink-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">${escapeHtml(d.filename)}</div>
+</div>
+</a>`;
+}).join('')}
+</div>` : '<div class="tl-meta" style="margin-top:8px;">No accountability documents have been uploaded yet.</div>';
+return `
+<div class="divider"></div>
+<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+<div class="kicker">Accountability Documents</div>
+${canUpload ? `<button type="button" class="btn btn-gold no-print" style="padding:7px 14px;" onclick="openUploadModal(${r.id})">Upload Accountability Documents</button>` : ''}
+</div>
+<div style="margin-top:8px;"><span class="pill pill-${r.accountability.status}">${statusLabel(r.accountability.status)}</span><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks || 'No remarks yet')}</div></div>
+${docsHtml}
+`;
+}
 // ---- Approvals ------------------------------------------------------------------
 async function loadApprovals() {
 const tbody = document.getElementById('approval-table-body');
@@ -4486,7 +4539,7 @@ openModal('modal-doc-view');
 try {
 const r = await api(`/api/requisitions/${reqId}`);
 document.getElementById('dv-title').textContent = `${r.ref_no} — Accountability Documents`;
-const hasVoucher = r.documents.some(d => d.doc_type === 'voucher');
+const hasCheque = r.documents.some(d => d.doc_type === 'cheque');
 const hasAnyDoc = r.documents.length > 0;
 const alreadyVerified = r.accountability && r.accountability.status === 'verified';
 let html = `
@@ -4500,9 +4553,9 @@ let html = `
 `;
 if (!alreadyVerified) {
 if (!hasAnyDoc) {
-html += `<div class="login-error" style="display:block; margin-bottom:14px;">No accountability documents have been uploaded yet. This requisition will remain on the Accountability wall until documents — including the Payment Voucher — are uploaded.</div>`;
-} else if (!hasVoucher) {
-html += `<div class="login-error" style="display:block; margin-bottom:14px;">A Payment Voucher has not been uploaded for this requisition yet. Verification cannot proceed until it is attached.</div>`;
+html += `<div class="login-error" style="display:block; margin-bottom:14px;">No accountability documents have been uploaded yet. This requisition will remain on the Accountability wall until documents — including the Disbursed Activity Cheque — are uploaded.</div>`;
+} else if (!hasCheque) {
+html += `<div class="login-error" style="display:block; margin-bottom:14px;">The Disbursed Activity Cheque has not been uploaded for this requisition yet. Verification cannot proceed until it is attached.</div>`;
 }
 }
 if (r.documents.length === 0) {
@@ -4524,7 +4577,7 @@ return `
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px; flex-wrap:wrap;">
 <div>
 <div style="font-weight:600; font-size:13px;">${escapeHtml(d.filename)}</div>
-<span class="pill pill-draft">${escapeHtml(statusLabel(d.doc_type))}</span>
+<span class="pill pill-draft">${escapeHtml(docTypeLabel(d.doc_type))}</span>
 </div>
 <a class="btn btn-ghost" href="${url}" target="_blank" style="padding:6px 10px;">Open in new tab</a>
 </div>
@@ -4535,9 +4588,9 @@ ${preview}
 body.innerHTML = html;
 let footHtml = '';
 if (r.accountability && (STATE.role === 'auditor' || STATE.role === 'admin')) {
-const canVerify = hasVoucher && hasAnyDoc && !alreadyVerified;
+const canVerify = hasCheque && hasAnyDoc && !alreadyVerified;
 const disabledAttrs = canVerify ? '' : 'disabled';
-const disabledTitle = canVerify ? '' : 'title="A Payment Voucher and at least one accountability document must be uploaded before this requisition can be verified."';
+const disabledTitle = canVerify ? '' : 'title="A Disbursed Activity Cheque and at least one accountability document must be uploaded before this requisition can be verified."';
 if (!alreadyVerified) {
 footHtml += `<button class="btn btn-danger" onclick="flagAccountability(${r.id}); closeModal('modal-doc-view');">Flag Issue</button>`;
 footHtml += `<button class="btn btn-primary" ${disabledAttrs} ${disabledTitle} onclick="verifyAccountability(${r.id}); closeModal('modal-doc-view');">Mark Verified</button>`;
@@ -4623,7 +4676,7 @@ ${r.approvals.map(a => `<li><div class="tl-stamp">${a.action==='approve'?'✓':a
 </ul>
 <div class="divider"></div>
 <div class="kicker">Uploaded Documents</div>
-<div style="margin-top:8px;">${r.documents.map(d => `<div style="font-size:12.5px; padding:4px 0;"><a href="${API_BASE}${d.url}" target="_blank">${escapeHtml(d.filename)}</a></div>`).join('') || '<div class="tl-meta">None uploaded.</div>'}</div>
+<div style="margin-top:8px;">${r.documents.map(d => `<div style="font-size:12.5px; padding:4px 0;"><a href="${API_BASE}${d.url}" target="_blank">${escapeHtml(docTypeLabel(d.doc_type))} — ${escapeHtml(d.filename)}</a></div>`).join('') || '<div class="tl-meta">None uploaded.</div>'}</div>
 ${r.accountability ? `<div class="divider"></div><div class="kicker">Auditor Remarks</div><div class="tl-meta" style="margin-top:6px;">${escapeHtml(r.accountability.remarks||'—')}</div>` : ''}
 </div>`;
 } catch (e) { result.innerHTML = `<div class="empty-state">${escapeHtml(e.message)}</div>`; }
