@@ -1052,9 +1052,6 @@ Programme-Based Budgeting System (PBS)
 <button class="nav-item nav-subitem" data-view="rev-monthly">
 Approved Monthly Revenue Budget Estimates and Actual LG Revenue &amp; Transfers Realized
 </button>
-<button class="nav-item nav-subitem" data-view="rev-quarterly">
-Approved Quarterly Revenue Budget Estimates and Quarterly Revenue Performance Gap
-</button>
 <button class="nav-item nav-subitem" data-view="rev-summary">
 Summary of the LG Annual and Quarterly Revenue Performance
 </button>
@@ -1239,60 +1236,6 @@ Departments
 </thead>
 <tbody id="rlm-table-body">
 <tr><td colspan="29" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<!-- ===== PBS: Approved Quarterly Revenue Budget Estimates and Quarterly Revenue Performance Gap ===== -->
-<div class="view" id="view-rev-quarterly">
-<div class="card" style="background:#fff; border:none; padding:16px 20px; margin:0 0 16px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:none; width:100%; box-sizing:border-box;">
-<select class="filter-select" id="rlq-wp-select" style="flex:1 1 auto; width:100%; min-width:260px; max-width:none; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
-</div>
-<input type="file" id="rlq-import-file" accept=".xlsx,.xls" style="display:none;" />
-<div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
-<div style="padding:14px 18px 4px;">
-<div class="table-title-row">
-<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP — <span id="rlq-fy-label">FY —</span></div>
-<div class="table-title-actions">
-<button type="button" class="icon-btn icon-btn-sm" id="rlq-new-btn" style="display:none;" title="Add Revenue Row">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
-</button>
-<button type="button" class="icon-btn icon-btn-sm" id="rlq-import-btn" style="display:none;" title="Import From Excel">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
-</button>
-</div>
-</div>
-</div>
-<div class="rli-table-wrap" id="rlq-table-wrap" style="margin:10px 16px 16px;">
-<table id="rlq-table">
-<thead>
-<tr>
-<th rowspan="2">Code</th>
-<th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
-<th colspan="4">Approved Quarterly Revenue Budget Estimates (UGX)</th>
-<th rowspan="2">Approved Annual<br>Revenue Budget Estimates (UGX)</th>
-<th colspan="4">Quarterly Actual Inflow (UGX)</th>
-<th rowspan="2">Actual LG Revenue &amp;<br>Transfers Realized (UGX)</th>
-<th colspan="4">Quarterly Revenue Performance Gap (UGX)</th>
-<th rowspan="2">Annual Revenue<br>Performance Gap (UGX)</th>
-<th rowspan="2">
-<span class="th-with-clear">
-<span></span>
-<button type="button" class="th-clear-btn" id="rlq-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-</button>
-</span>
-</th>
-</tr>
-<tr>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-</tr>
-</thead>
-<tbody id="rlq-table-body">
-<tr><td colspan="18" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
 </div>
@@ -2718,7 +2661,7 @@ document.getElementById('wp-import-btn').style.display = (STATE.role === 'admin'
 document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
 document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
-['rlm', 'rlq', 'rls'].forEach(prefix => {
+['rlm', 'rls'].forEach(prefix => {
 const newBtn = document.getElementById(prefix + '-new-btn');
 const importBtn = document.getElementById(prefix + '-import-btn');
 const clearBtn = document.getElementById(prefix + '-clear-btn');
@@ -2731,7 +2674,6 @@ if (clearBtn) clearBtn.style.display = (STATE.role === 'admin') ? 'inline-flex' 
 const VIEW_TITLES = {
 dashboard: ['Dashboard', 'Overview of financial activity'],
 'rev-monthly': ['Approved Monthly Revenue Budget Estimates and Actual LG Revenue & Transfers Realized', 'Programme-Based Budgeting System (PBS)'],
-'rev-quarterly': ['Approved Quarterly Revenue Budget Estimates and Quarterly Revenue Performance Gap', 'Programme-Based Budgeting System (PBS)'],
 'rev-summary': ['Summary of the LG Annual and Quarterly Revenue Performance', 'Programme-Based Budgeting System (PBS)'],
 workplan: ['Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)', ''],
 requisitions: ['Requisitions', 'Requisition tracking and submission'],
@@ -2754,7 +2696,7 @@ ifmsToggle.classList.toggle('has-active', isIfmsView);
 if (isIfmsView) { ifmsToggle.classList.add('open'); ifmsSubmenu.classList.add('open'); }
 const pbsToggle = document.getElementById('nav-pbs-toggle');
 const pbsSubmenu = document.getElementById('nav-pbs-submenu');
-const isPbsView = ['rev-monthly', 'rev-quarterly', 'rev-summary', 'workplan'].includes(view);
+const isPbsView = ['rev-monthly', 'rev-summary', 'workplan'].includes(view);
 pbsToggle.classList.toggle('has-active', isPbsView);
 if (isPbsView) { pbsToggle.classList.add('open'); pbsSubmenu.classList.add('open'); }
 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -2772,7 +2714,6 @@ document.querySelector('.topbar').classList.toggle('topbar-workplan', isWorkplan
 closeNotifPanel();
 if (view === 'dashboard') loadDashboard();
 if (view === 'rev-monthly') loadRevLinePage('monthly');
-if (view === 'rev-quarterly') loadRevLinePage('quarterly');
 if (view === 'rev-summary') loadRevLinePage('summary');
 if (view === 'workplan') {
 STATE.workplanSubtab = subtab || 'expenditure';
@@ -2926,13 +2867,12 @@ const wpSel = document.getElementById('wp-select');
 const bcSel = document.getElementById('bc-workplan');
 const revSel = document.getElementById('rev-workplan');
 const rlmSel = document.getElementById('rlm-wp-select');
-const rlqSel = document.getElementById('rlq-wp-select');
 const rlsSel = document.getElementById('rls-wp-select');
 const opts = STATE.workplans.map(w => `<option value="${w.id}" style="text-align:center;">${escapeHtml(w.title)} — FY ${escapeHtml(w.financial_year)}</option>`).join('');
 if (wpSel) wpSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (bcSel) bcSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (revSel) revSel.innerHTML = opts || '<option value="">No work plans yet</option>';
-[rlmSel, rlqSel, rlsSel].forEach(sel => {
+[rlmSel, rlsSel].forEach(sel => {
 if (!sel) return;
 const prevVal = sel.value;
 sel.innerHTML = opts || '<option value="">No work plans yet</option>';
@@ -3260,7 +3200,7 @@ return `
 }).join('');
 }
 // ---- Work Plan & Budget view -----------------------------------------------------
-// The PBS "Programme-Based Budgeting System" menu has 5 sub items. The last
+// The PBS "Programme-Based Budgeting System" menu has 4 sub items. The last
 // two ("Approved Local Government Expenditure Estimates" / subtab
 // "expenditure", and "Approved Local Government Annual Work Plan and Budget
 // Estimates" / subtab "annual") both open this same #view-workplan, and
@@ -3269,12 +3209,18 @@ return `
 //   - "expenditure": the summary framework-paper table and its matching
 //     detail table are removed entirely — only the departmental summary and
 //     the main activity/budget table (both unaffected by this) are shown.
-//   - "annual": those two tables are replaced by live mirrors of the tables
-//     from "Summary of the LG Annual and Quarterly Revenue Performance"
-//     (sub item 3) and "Approved Quarterly Revenue Budget Estimates and
-//     Quarterly Revenue Performance Gap" (sub item 2), for the work plan
-//     currently selected above. They're read-only here — edit the rows from
-//     those two pages directly.
+//   - "annual": those two tables are replaced by live mirrors of "Summary
+//     of the LG Annual and Quarterly Revenue Performance" (sub item 2) and
+//     of the quarterly revenue budget/performance-gap data (formerly its
+//     own standalone "Approved Quarterly Revenue Budget Estimates and
+//     Quarterly Revenue Performance Gap" sub item, now removed — this is
+//     the only place that data is shown), for the work plan currently
+//     selected above. The summary mirror is read-only here — edit those
+//     rows from the "Summary" page directly. The quarterly revenue mirror
+//     has no editable source page anymore; rows must be edited directly via
+//     the API/import, since its own CRUD page (sub item 2, "rlq-*") was
+//     removed and this table (table 3 on this page) is its only remaining
+//     display.
 async function renderWorkplanMirrorTable(periodType, bodyId, colCount) {
 const tbody = document.getElementById(bodyId);
 const wpId = document.getElementById('wp-select').value;
