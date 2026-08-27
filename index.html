@@ -2290,7 +2290,7 @@ try {
 await new Promise(r => setTimeout(r, 1500));
 res = await fetchWithTimeout(API_BASE + path, { ...opts, headers }, 30000);
 } catch (retryErr) {
-throw new Error('Could not reach the server. Please check your connection and try again in a moment.');
+throw new Error('Could not reach the database. Please check your connection and try again in a moment.');
 }
 }
 if (res.status === 401 && STATE.token) {
