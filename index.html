@@ -1385,10 +1385,10 @@ Departments
 <div class="table-title-row">
 <div class="kicker" id="wp-title-revenue-detail" style="font-size:13px; color:var(--navy-950);">APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP</div>
 <div class="table-title-actions">
-<button type="button" class="icon-btn icon-btn-sm" id="wp-new-revenue-btn" style="display:none;" title="Add Revenue Sources">
+<button type="button" class="icon-btn icon-btn-sm" id="wp-new-revenue-btn" style="display:none;" title="Add Revenue Row">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
 </button>
-<button type="button" class="icon-btn icon-btn-sm" id="wp-import-revenue-btn" style="display:none;" title="Import Revenue Sources From Excel">
+<button type="button" class="icon-btn icon-btn-sm" id="wp-import-revenue-btn" style="display:none;" title="Import From Excel">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
 </button>
 </div>
@@ -1409,7 +1409,7 @@ Departments
 <th rowspan="2">
 <span class="th-with-clear">
 <span></span>
-<button type="button" class="th-clear-btn" id="wp-revenue-clear-btn" style="display:none;" title="Clear all revenue sources — deletes every revenue source and sub row in this table for the selected work plan">
+<button type="button" class="th-clear-btn" id="wp-revenue-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
 </button>
 </span>
@@ -2653,14 +2653,12 @@ document.getElementById('wp-new-btn').style.display = (STATE.role === 'admin') ?
 document.getElementById('wp-new-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-edit-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-import-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
-// wp-new-revenue-btn / wp-import-revenue-btn / wp-revenue-clear-btn stay
-// permanently hidden — the two tables they used to belong to (the "framework
-// paper" summary and detail tables) are no longer shown anywhere in the PBS
-// section (see applyWorkplanSubtabDisplay), so there is nothing left for
-// them to add/import/clear into.
 document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
 document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-new-revenue-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-import-revenue-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-revenue-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 ['rlm', 'rls'].forEach(prefix => {
 const newBtn = document.getElementById(prefix + '-new-btn');
 const importBtn = document.getElementById(prefix + '-import-btn');
@@ -2917,9 +2915,9 @@ actualKicker: 'Monthly Actual Inflow Realized (UGX)',
 quarterly: {
 periodType: 'quarterly', periodCount: 4, hasGap: true,
 periodLabels: ['Q1','Q2','Q3','Q4'],
-wpSelectId: 'rlq-wp-select', bodyId: 'rlq-table-body', newBtnId: 'rlq-new-btn',
-importBtnId: 'rlq-import-btn', importFileId: 'rlq-import-file', clearBtnId: 'rlq-clear-btn',
-fyLabelId: 'rlq-fy-label', colCount: 18,
+wpSelectId: 'wp-select', bodyId: 'wp-revenue-detail-body', newBtnId: 'wp-new-revenue-btn',
+importBtnId: 'wp-import-revenue-btn', importFileId: 'wp-import-revenue-file', clearBtnId: 'wp-revenue-clear-btn',
+colCount: 18,
 approvedKicker: 'Approved Quarterly Revenue Budget Estimates (UGX)',
 actualKicker: 'Quarterly Actual Inflow — Actual LG Revenue & Transfers Realized (UGX)',
 },
@@ -3139,7 +3137,10 @@ finally { e.target.value = ''; }
 });
 if (newBtn) newBtn.addEventListener('click', () => openAddRevLineItem(periodType));
 if (clearBtn) clearBtn.addEventListener('click', () => clearRevLineItems(periodType));
-if (wpSel) wpSel.addEventListener('change', () => { applyRevLineFyLabel(periodType); renderRevLineTable(periodType); });
+// wp-select (shared with the rest of the Work Plan & Budget view) already
+// triggers a re-render of this table via applyWorkplanSubtabDisplay, so
+// skip attaching a second change listener to it here.
+if (wpSel && cfg.wpSelectId !== 'wp-select') wpSel.addEventListener('change', () => { applyRevLineFyLabel(periodType); renderRevLineTable(periodType); });
 });
 // ---- Dashboard -----------------------------------------------------------------
 async function loadDashboard() {
@@ -3200,7 +3201,7 @@ return `
 }).join('');
 }
 // ---- Work Plan & Budget view -----------------------------------------------------
-// The PBS "Programme-Based Budgeting System" menu has 4 sub items. The last
+// The PBS "Programme-Based Budgeting System" menu has 5 sub items. The last
 // two ("Approved Local Government Expenditure Estimates" / subtab
 // "expenditure", and "Approved Local Government Annual Work Plan and Budget
 // Estimates" / subtab "annual") both open this same #view-workplan, and
@@ -3209,18 +3210,14 @@ return `
 //   - "expenditure": the summary framework-paper table and its matching
 //     detail table are removed entirely — only the departmental summary and
 //     the main activity/budget table (both unaffected by this) are shown.
-//   - "annual": those two tables are replaced by live mirrors of "Summary
-//     of the LG Annual and Quarterly Revenue Performance" (sub item 2) and
-//     of the quarterly revenue budget/performance-gap data (formerly its
-//     own standalone "Approved Quarterly Revenue Budget Estimates and
-//     Quarterly Revenue Performance Gap" sub item, now removed — this is
-//     the only place that data is shown), for the work plan currently
-//     selected above. The summary mirror is read-only here — edit those
-//     rows from the "Summary" page directly. The quarterly revenue mirror
-//     has no editable source page anymore; rows must be edited directly via
-//     the API/import, since its own CRUD page (sub item 2, "rlq-*") was
-//     removed and this table (table 3 on this page) is its only remaining
-//     display.
+//   - "annual": the summary framework-paper table is replaced by a live,
+//     read-only mirror of "Summary of the LG Annual and Quarterly Revenue
+//     Performance" (sub item 3) for the work plan currently selected above
+//     — edit its rows from that page directly. The detail table below it is
+//     the actual "Approved Quarterly Revenue Budget Estimates and Quarterly
+//     Revenue Performance Gap" table (this used to be its own sub item 2 —
+//     it now lives only here, as table 3 on this page, fully editable via
+//     the buttons on its title bar).
 async function renderWorkplanMirrorTable(periodType, bodyId, colCount) {
 const tbody = document.getElementById(bodyId);
 const wpId = document.getElementById('wp-select').value;
@@ -3256,7 +3253,7 @@ if (summaryTitleEl) summaryTitleEl.innerHTML = `SUMMARY OF THE LG ANNUAL AND QUA
 const detailTitleEl = document.getElementById('wp-title-revenue-detail');
 if (detailTitleEl) detailTitleEl.innerHTML = `APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP — ${fy}`;
 renderWorkplanMirrorTable('summary', 'wp-revenue-summary-body', 18);
-renderWorkplanMirrorTable('quarterly', 'wp-revenue-detail-body', 18);
+renderRevLineTable('quarterly');
 }
 async function loadWorkplanView() {
 await loadWorkplans();
@@ -3424,22 +3421,6 @@ toast('Sub row removed', 'success');
 renderRevenueSources();
 } catch (e) { toast(e.message, 'error'); }
 }
-// ---- Clear all: Revenue Sources (source of revenue table) --------------------
-document.getElementById('wp-revenue-clear-btn').addEventListener('click', async () => {
-const wpId = document.getElementById('wp-select').value;
-if (!wpId) { toast('Please select a work plan first', 'error'); return; }
-if (!confirm('Clear ALL revenue sources (and their sub rows) for this work plan? This cannot be undone.')) return;
-// Empty the tables on screen immediately so the clear feels instant, rather
-// than waiting on the network round trip before anything visibly changes.
-document.getElementById('wp-revenue-detail-body').innerHTML = '<tr><td colspan="6"><div class="empty-state" style="padding:16px;">Clearing…</div></td></tr>';
-document.getElementById('wp-revenue-summary-body').innerHTML = '<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
-try {
-const result = await api(`/api/revenue-sources/clear?work_plan_id=${wpId}`, { method: 'DELETE' });
-toast(`Cleared ${result.deleted} revenue source(s)`, 'success');
-} catch (e) { toast(e.message, 'error'); } finally {
-renderRevenueSources();
-}
-});
 // ---- Clear all: Annual Work Plan / Budget Estimates ---------------------------
 document.getElementById('wp-clear-btn').addEventListener('click', async () => {
 const wpId = document.getElementById('wp-select').value;
@@ -3885,13 +3866,6 @@ renderRevItems();
 for (const selectId of Object.keys(REV_FIELD_MAP)) {
 document.getElementById(selectId).addEventListener('change', () => onRevCategorySelect(selectId));
 }
-document.getElementById('wp-new-revenue-btn').addEventListener('click', () => {
-const wpVal = document.getElementById('wp-select').value;
-document.getElementById('rev-workplan').innerHTML = document.getElementById('wp-select').innerHTML;
-resetRevenueSourceForm();
-if (wpVal) document.getElementById('rev-workplan').value = wpVal;
-openModal('modal-rev');
-});
 function openEditRevenueSource(id) {
 const r = STATE.revenueSources.find(x => x.id === id);
 if (!r) { toast('Could not find that revenue source — try refreshing.', 'error'); return; }
@@ -3957,29 +3931,6 @@ toast('Revenue source created', 'success');
 closeModal('modal-rev');
 renderRevenueSources();
 } catch (e) { toast(e.message, 'error'); }
-});
-// ---- Import Revenue Sources from Excel ---------------------------------------
-document.getElementById('wp-import-revenue-btn').addEventListener('click', () => {
-const wpVal = document.getElementById('wp-select').value;
-if (!wpVal) { toast('Please select a work plan to import into first', 'error'); return; }
-document.getElementById('wp-import-revenue-file').click();
-});
-document.getElementById('wp-import-revenue-file').addEventListener('change', async (e) => {
-const file = e.target.files[0];
-if (!file) return;
-const wpVal = document.getElementById('wp-select').value;
-const fd = new FormData();
-fd.append('file', file);
-try {
-toast('Importing revenue sources from Excel…', 'info');
-const result = await api(`/api/revenue-sources/import?work_plan_id=${wpVal}`, { method: 'POST', body: fd });
-toast(`Imported ${result.created} revenue source row(s)${result.skipped ? `, skipped ${result.skipped}` : ''}`, 'success');
-if (result.errors && result.errors.length) {
-toast(`${result.errors.length} row warning(s) — first: ${result.errors[0]}`, 'error');
-}
-renderRevenueSources();
-} catch (err) { toast(err.message, 'error'); }
-finally { e.target.value = ''; }
 });
 // ---- Import Budget Estimates from Excel ------------------------------------
 document.getElementById('wp-import-btn').addEventListener('click', () => {
