@@ -219,7 +219,9 @@ border:none; background:none; width:100%; text-align:left;
 .nav-parent.open .nav-caret{transform:rotate(180deg);}
 .nav-submenu{max-height:0; overflow:hidden; transition:max-height .22s var(--ease);}
 .nav-submenu.open{max-height:260px;}
+#nav-pbs-submenu.open{max-height:420px;}
 .nav-subitem{padding-left:38px !important; font-size:12.5px !important;}
+#nav-pbs-submenu .nav-subitem{line-height:1.3; padding-top:8px !important; padding-bottom:8px !important;}
 .sidebar-footer{margin-top:auto; padding:10px 8px 4px; border-top:1px solid rgba(255,255,255,.08);}
 .user-chip{display:flex; align-items:center; gap:9px; padding:8px; border-radius:8px; transition:background .15s var(--ease); cursor:pointer; border:none; background:none; width:100%; text-align:left;}
 .user-chip:hover{background:rgba(255,255,255,.05);}
@@ -492,6 +494,30 @@ point begins on its own line rather than running together as one line. */
 #wp-revenue-detail-body td.rev-func-def{white-space:normal; line-height:1.5;}
 .rev-auto-chip{display:inline-flex; align-items:center; gap:4px; background:var(--success-bg); color:var(--success); border-radius:10px; padding:1.5px 8px; font-size:9.5px; font-weight:700; margin-left:6px; vertical-align:middle;}
 .rev-auto-chip::before{content:""; width:6px; height:6px; border-radius:2px; background:var(--success);}
+/* ---------------- PBS Revenue Performance pages (Monthly / Quarterly /
+Summary) — generic hierarchical table styling, shared by all three ------- */
+.rli-table-wrap{max-height:520px; overflow:auto; border-radius:var(--radius); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
+.rli-table-wrap table{border-collapse:separate; border-spacing:0;}
+.rli-table-wrap thead th{
+position:sticky; top:0; z-index:3;
+background:var(--teal-700); color:#FFFFFF;
+box-shadow:0 1px 0 rgba(201,154,62,.35); text-align:center;
+padding:7px 8px; font-size:9.5px; line-height:1.25; white-space:nowrap;
+}
+.rli-table-wrap thead tr:first-child th{top:0;}
+.rli-table-wrap thead tr:nth-child(2) th{top:29px;}
+.rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:right; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line);}
+.rli-table-wrap td:first-child, .rli-table-wrap td:nth-child(2){text-align:left;}
+.rli-table-wrap td.wrap{white-space:normal;}
+.rli-table-wrap tbody tr.rev-cat-head td{background:var(--gold-100); font-weight:700; color:var(--navy-950); border-bottom:1px solid var(--line-strong);}
+.rli-table-wrap tbody tr.rev-cat-head:hover td{background:var(--gold-100);}
+.rli-table-wrap tbody tr.rev-item-row td{background:#FFFFFF;}
+.rli-table-wrap tbody tr.rev-item-row:hover td{background:#FAFCFB;}
+.rli-table-wrap tbody tr.rev-total-row td{background:#D6EEE6; font-weight:700; color:var(--navy-950); border-bottom:1px solid var(--line-strong);}
+.rli-table-wrap tbody tr.rev-total-row:hover td{background:#D6EEE6;}
+.rli-table-wrap tbody tr.rev-grand-row td{background:var(--navy-900); font-weight:700; color:#fff; border-bottom:1px solid var(--line-strong);}
+.rli-table-wrap tbody tr.rev-grand-row:hover td{background:var(--navy-900);}
+.rli-gap-negative{color:var(--danger); font-weight:700;}
 /* ---------------- Work Plan & Budget: compact, height-constrained,
 dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-dept-summary-wrap{overflow-x:auto;}
@@ -1017,10 +1043,28 @@ window.addEventListener('resize', syncLineWidth);
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
 Dashboard
 </button>
-<button class="nav-item" data-view="workplan">
+<button type="button" class="nav-parent" id="nav-pbs-toggle">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 5v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5M9 9h6M9 13h6M9 17h3"/></svg>
 Programme-Based Budgeting System (PBS)
+<svg class="nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
 </button>
+<div class="nav-submenu" id="nav-pbs-submenu">
+<button class="nav-item nav-subitem" data-view="rev-monthly">
+Approved Monthly Revenue Budget Estimates and Actual LG Revenue &amp; Transfers Realized
+</button>
+<button class="nav-item nav-subitem" data-view="rev-quarterly">
+Approved Quarterly Revenue Budget Estimates and Quarterly Revenue Performance Gap
+</button>
+<button class="nav-item nav-subitem" data-view="rev-summary">
+Summary of the LG Annual and Quarterly Revenue Performance
+</button>
+<button class="nav-item nav-subitem" data-view="workplan" data-subtab="expenditure">
+Approved Local Government Expenditure Estimates
+</button>
+<button class="nav-item nav-subitem" data-view="workplan" data-subtab="annual">
+Approved Local Government Annual Work Plan and Budget Estimates
+</button>
+</div>
 <button type="button" class="nav-parent" id="nav-ifms-toggle">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6l1 3H8l1-3z"/><path d="M6 6h12v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V6z"/><path d="M9 11h6M9 15h4"/></svg>
 Integrated Financial Management System (IFMS)
@@ -1146,6 +1190,165 @@ Departments
 <div class="help-text" style="margin-top:2px;">Total allocated budget (UGX) across all work plans, by department</div>
 <div id="dept-chart" style="margin-top:16px;">
 <div class="loading-row"><span class="spinner spinner-dark"></span></div>
+</div>
+</div>
+</div>
+<!-- ===== PBS: Approved Monthly Revenue Budget Estimates and Actual LG Revenue & Transfers Realized ===== -->
+<div class="view" id="view-rev-monthly">
+<div class="card" style="background:#fff; border:none; padding:16px 20px; margin:0 0 16px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:none; width:100%; box-sizing:border-box;">
+<select class="filter-select" id="rlm-wp-select" style="flex:1 1 auto; width:100%; min-width:260px; max-width:none; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
+</div>
+<input type="file" id="rlm-import-file" accept=".xlsx,.xls" style="display:none;" />
+<div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
+<div style="padding:14px 18px 4px;">
+<div class="table-title-row">
+<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED MONTHLY REVENUE BUDGET ESTIMATES AND ACTUAL LG REVENUE &amp; TRANSFERS REALIZED — <span id="rlm-fy-label">FY —</span></div>
+<div class="table-title-actions">
+<button type="button" class="icon-btn icon-btn-sm" id="rlm-new-btn" style="display:none;" title="Add Revenue Row">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="rlm-import-btn" style="display:none;" title="Import From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+</button>
+</div>
+</div>
+</div>
+<div class="rli-table-wrap" id="rlm-table-wrap" style="margin:10px 16px 16px;">
+<table id="rlm-table">
+<thead>
+<tr>
+<th rowspan="2">Code</th>
+<th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
+<th colspan="12">Monthly Approved Revenue Budget Estimates (UGX)</th>
+<th rowspan="2">Annual Approved<br>Budget Estimates (UGX)</th>
+<th colspan="12">Monthly Actual Inflow Realized (UGX)</th>
+<th rowspan="2">Annual Actual<br>Cash Inflow Realized (UGX)</th>
+<th rowspan="2">
+<span class="th-with-clear">
+<span></span>
+<button type="button" class="th-clear-btn" id="rlm-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</button>
+</span>
+</th>
+</tr>
+<tr>
+<th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
+<th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
+</tr>
+</thead>
+<tbody id="rlm-table-body">
+<tr><td colspan="29" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ===== PBS: Approved Quarterly Revenue Budget Estimates and Quarterly Revenue Performance Gap ===== -->
+<div class="view" id="view-rev-quarterly">
+<div class="card" style="background:#fff; border:none; padding:16px 20px; margin:0 0 16px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:none; width:100%; box-sizing:border-box;">
+<select class="filter-select" id="rlq-wp-select" style="flex:1 1 auto; width:100%; min-width:260px; max-width:none; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
+</div>
+<input type="file" id="rlq-import-file" accept=".xlsx,.xls" style="display:none;" />
+<div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
+<div style="padding:14px 18px 4px;">
+<div class="table-title-row">
+<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP — <span id="rlq-fy-label">FY —</span></div>
+<div class="table-title-actions">
+<button type="button" class="icon-btn icon-btn-sm" id="rlq-new-btn" style="display:none;" title="Add Revenue Row">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="rlq-import-btn" style="display:none;" title="Import From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+</button>
+</div>
+</div>
+</div>
+<div class="rli-table-wrap" id="rlq-table-wrap" style="margin:10px 16px 16px;">
+<table id="rlq-table">
+<thead>
+<tr>
+<th rowspan="2">Code</th>
+<th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
+<th colspan="4">Approved Quarterly Revenue Budget Estimates (UGX)</th>
+<th rowspan="2">Approved Annual<br>Revenue Budget Estimates (UGX)</th>
+<th colspan="4">Quarterly Actual Inflow (UGX)</th>
+<th rowspan="2">Actual LG Revenue &amp;<br>Transfers Realized (UGX)</th>
+<th colspan="4">Quarterly Revenue Performance Gap (UGX)</th>
+<th rowspan="2">Annual Revenue<br>Performance Gap (UGX)</th>
+<th rowspan="2">
+<span class="th-with-clear">
+<span></span>
+<button type="button" class="th-clear-btn" id="rlq-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</button>
+</span>
+</th>
+</tr>
+<tr>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+</tr>
+</thead>
+<tbody id="rlq-table-body">
+<tr><td colspan="18" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ===== PBS: Summary of the LG Annual and Quarterly Revenue Performance ===== -->
+<div class="view" id="view-rev-summary">
+<div class="card" style="background:#fff; border:none; padding:16px 20px; margin:0 0 16px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:none; width:100%; box-sizing:border-box;">
+<select class="filter-select" id="rls-wp-select" style="flex:1 1 auto; width:100%; min-width:260px; max-width:none; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
+</div>
+<input type="file" id="rls-import-file" accept=".xlsx,.xls" style="display:none;" />
+<div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
+<div style="padding:14px 18px 4px;">
+<div class="table-title-row">
+<div class="kicker" style="font-size:13px; color:var(--navy-950);">SUMMARY OF THE LG ANNUAL AND QUARTERLY REVENUE PERFORMANCE — <span id="rls-fy-label">FY —</span></div>
+<div class="table-title-actions">
+<button type="button" class="icon-btn icon-btn-sm" id="rls-new-btn" style="display:none;" title="Add Revenue Row">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="rls-import-btn" style="display:none;" title="Import From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+</button>
+</div>
+</div>
+</div>
+<div class="rli-table-wrap" id="rls-table-wrap" style="margin:10px 16px 16px;">
+<table id="rls-table">
+<thead>
+<tr>
+<th rowspan="2">PBS Code</th>
+<th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
+<th colspan="4">Summary of the Approved Quarterly Budget Estimates (UGX)</th>
+<th rowspan="2">Annual Approved<br>Budget Estimates (UGX)</th>
+<th colspan="4">Summary of the Quarterly Actual Inflow (UGX)</th>
+<th rowspan="2">Annual Actual<br>Cash Inflow Realized (UGX)</th>
+<th colspan="4">Summary of the Quarterly Revenue Performance Gap (UGX)</th>
+<th rowspan="2">Annual Revenue<br>Performance Gap (UGX)</th>
+<th rowspan="2">
+<span class="th-with-clear">
+<span></span>
+<button type="button" class="th-clear-btn" id="rls-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</button>
+</span>
+</th>
+</tr>
+<tr>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+</tr>
+</thead>
+<tbody id="rls-table-body">
+<tr><td colspan="18" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -1947,6 +2150,41 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
+<!-- ===== MODAL: Add / Edit PBS Revenue Row (shared by Monthly / Quarterly / Summary pages) ===== -->
+<div class="overlay" id="modal-rli">
+<div class="modal modal-lg">
+<div class="modal-head"><h3 id="rli-modal-title">Add Revenue Row</h3><button class="modal-close" data-close="modal-rli">&times;</button></div>
+<div class="modal-body">
+<div class="field"><label>Work Plan</label><select id="rli-workplan"></select></div>
+<div class="form-grid">
+<div class="field"><label>Code</label><input type="text" id="rli-code" placeholder="e.g. 26330"/></div>
+<div class="field">
+<label>Row Type</label>
+<select id="rli-row-type">
+<option value="category">Category Header (no figures — e.g. "263  Central Government Transfers")</option>
+<option value="item" selected>Revenue Item</option>
+<option value="subtotal">Sub Total</option>
+<option value="grand_total">Grand Total</option>
+</select>
+</div>
+</div>
+<div class="field"><label>Fund Category and Source of Financing</label><input type="text" id="rli-label" placeholder="e.g. Urban Unconditional Grant (Non-Wage)"/></div>
+<div class="field-section">
+<span class="kicker" id="rli-approved-kicker">Approved Budget Estimates (UGX)</span>
+<div id="rli-approved-periods" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;"></div>
+</div>
+<div class="field-section" style="margin-top:12px;">
+<span class="kicker" id="rli-actual-kicker">Actual Inflow Realized (UGX)</span>
+<div id="rli-actual-periods" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;"></div>
+</div>
+<div class="help-text">Annual Approved and Annual Actual totals — and, on the Quarterly and Summary pages, the Performance Gap — are calculated automatically as the sum of the period figures above.</div>
+</div>
+<div class="modal-foot">
+<button class="btn btn-ghost" data-close="modal-rli">Cancel</button>
+<button class="btn btn-primary" id="rli-save-btn">Save Row</button>
+</div>
+</div>
+</div>
 <!-- ===== MODAL: Single-page Document Viewer (Auditor review) ===== -->
 <div class="overlay" id="modal-doc-view">
 <div class="modal modal-lg" style="max-width:940px;">
@@ -2006,6 +2244,9 @@ editingDepartmentId: null,
 editingUserId: null,
 editingRequisitionId: null,
 editingRevenueSourceId: null,
+editingRevLineItemId: null,
+rliPeriodType: null,
+revLineItems: {},
 reqLineItems: [],
 reqBudgetCodesForDept: [],
 signatureUrl: null,
@@ -2462,10 +2703,21 @@ document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].
 document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 document.getElementById('wp-revenue-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+['rlm', 'rlq', 'rls'].forEach(prefix => {
+const newBtn = document.getElementById(prefix + '-new-btn');
+const importBtn = document.getElementById(prefix + '-import-btn');
+const clearBtn = document.getElementById(prefix + '-clear-btn');
+if (newBtn) newBtn.style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+if (importBtn) importBtn.style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+if (clearBtn) clearBtn.style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+});
 }
 // ---- Navigation -----------------------------------------------------------
 const VIEW_TITLES = {
 dashboard: ['Dashboard', 'Overview of financial activity'],
+'rev-monthly': ['Approved Monthly Revenue Budget Estimates and Actual LG Revenue & Transfers Realized', 'Programme-Based Budgeting System (PBS)'],
+'rev-quarterly': ['Approved Quarterly Revenue Budget Estimates and Quarterly Revenue Performance Gap', 'Programme-Based Budgeting System (PBS)'],
+'rev-summary': ['Summary of the LG Annual and Quarterly Revenue Performance', 'Programme-Based Budgeting System (PBS)'],
 workplan: ['Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)', ''],
 requisitions: ['Requisitions', 'Requisition tracking and submission'],
 approvals: ['Approvals', 'Three-stage approval workflow'],
@@ -2485,6 +2737,11 @@ const ifmsSubmenu = document.getElementById('nav-ifms-submenu');
 const isIfmsView = ['requisitions', 'approvals', 'accountability', 'reports'].includes(view);
 ifmsToggle.classList.toggle('has-active', isIfmsView);
 if (isIfmsView) { ifmsToggle.classList.add('open'); ifmsSubmenu.classList.add('open'); }
+const pbsToggle = document.getElementById('nav-pbs-toggle');
+const pbsSubmenu = document.getElementById('nav-pbs-submenu');
+const isPbsView = ['rev-monthly', 'rev-quarterly', 'rev-summary', 'workplan'].includes(view);
+pbsToggle.classList.toggle('has-active', isPbsView);
+if (isPbsView) { pbsToggle.classList.add('open'); pbsSubmenu.classList.add('open'); }
 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 document.getElementById('view-' + view).classList.add('active');
 document.getElementById('topbar-title').textContent = VIEW_TITLES[view][0];
@@ -2499,7 +2756,20 @@ topbarSubEl.style.display = isWorkplanView ? 'none' : '';
 document.querySelector('.topbar').classList.toggle('topbar-workplan', isWorkplanView);
 closeNotifPanel();
 if (view === 'dashboard') loadDashboard();
-if (view === 'workplan') loadWorkplanView();
+if (view === 'rev-monthly') loadRevLinePage('monthly');
+if (view === 'rev-quarterly') loadRevLinePage('quarterly');
+if (view === 'rev-summary') loadRevLinePage('summary');
+if (view === 'workplan') {
+loadWorkplanView();
+setTimeout(() => {
+if (subtab === 'expenditure') {
+const el = document.getElementById('wp-main-table-wrap');
+if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+} else {
+document.getElementById('view-workplan').scrollTo({ top: 0, behavior: 'smooth' });
+}
+}, 250);
+}
 if (view === 'requisitions') loadRequisitions();
 if (view === 'approvals') loadApprovals();
 if (view === 'accountability') loadAccountability();
@@ -2511,6 +2781,12 @@ if (subBtn) subBtn.click();
 if (view === 'users') loadUsers();
 if (view === 'departments') loadDepartmentsView();
 }
+document.getElementById('nav-pbs-toggle').addEventListener('click', () => {
+const submenu = document.getElementById('nav-pbs-submenu');
+const willOpen = !submenu.classList.contains('open');
+submenu.classList.toggle('open', willOpen);
+document.getElementById('nav-pbs-toggle').classList.toggle('open', willOpen);
+});
 document.getElementById('nav-ifms-toggle').addEventListener('click', () => {
 const submenu = document.getElementById('nav-ifms-submenu');
 const willOpen = !submenu.classList.contains('open');
@@ -2633,10 +2909,19 @@ STATE.workplans = await api('/api/workplans');
 const wpSel = document.getElementById('wp-select');
 const bcSel = document.getElementById('bc-workplan');
 const revSel = document.getElementById('rev-workplan');
+const rlmSel = document.getElementById('rlm-wp-select');
+const rlqSel = document.getElementById('rlq-wp-select');
+const rlsSel = document.getElementById('rls-wp-select');
 const opts = STATE.workplans.map(w => `<option value="${w.id}" style="text-align:center;">${escapeHtml(w.title)} — FY ${escapeHtml(w.financial_year)}</option>`).join('');
 if (wpSel) wpSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (bcSel) bcSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (revSel) revSel.innerHTML = opts || '<option value="">No work plans yet</option>';
+[rlmSel, rlqSel, rlsSel].forEach(sel => {
+if (!sel) return;
+const prevVal = sel.value;
+sel.innerHTML = opts || '<option value="">No work plans yet</option>';
+if (prevVal && STATE.workplans.some(w => String(w.id) === String(prevVal))) sel.value = prevVal;
+});
 applyWorkplanTableTitles();
 }
 // ---- Work-plan table headings (the 4 Work Plan & Budget table titles) --------------
@@ -2657,6 +2942,249 @@ const el = document.getElementById(elId);
 if (el && wp && wp[field]) el.textContent = wp[field];
 }
 }
+// ---- PBS Revenue Performance pages (Monthly / Quarterly / Summary) --------
+// One generic engine drives all three pages — they differ only in period
+// count (12 months vs 4 quarters) and whether a Performance Gap section is
+// shown (quarterly & summary only; the monthly page's menu title has no
+// "Gap" in it, matching the workbook, which only carries Approved/Actual
+// for that sheet).
+const REV_LINE_PAGES = {
+monthly: {
+periodType: 'monthly', periodCount: 12, hasGap: false,
+periodLabels: ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'],
+wpSelectId: 'rlm-wp-select', bodyId: 'rlm-table-body', newBtnId: 'rlm-new-btn',
+importBtnId: 'rlm-import-btn', importFileId: 'rlm-import-file', clearBtnId: 'rlm-clear-btn',
+fyLabelId: 'rlm-fy-label', colCount: 29,
+approvedKicker: 'Approved Monthly Revenue Budget Estimates (UGX)',
+actualKicker: 'Monthly Actual Inflow Realized (UGX)',
+},
+quarterly: {
+periodType: 'quarterly', periodCount: 4, hasGap: true,
+periodLabels: ['Q1','Q2','Q3','Q4'],
+wpSelectId: 'rlq-wp-select', bodyId: 'rlq-table-body', newBtnId: 'rlq-new-btn',
+importBtnId: 'rlq-import-btn', importFileId: 'rlq-import-file', clearBtnId: 'rlq-clear-btn',
+fyLabelId: 'rlq-fy-label', colCount: 18,
+approvedKicker: 'Approved Quarterly Revenue Budget Estimates (UGX)',
+actualKicker: 'Quarterly Actual Inflow — Actual LG Revenue & Transfers Realized (UGX)',
+},
+summary: {
+periodType: 'summary', periodCount: 4, hasGap: true,
+periodLabels: ['Q1','Q2','Q3','Q4'],
+wpSelectId: 'rls-wp-select', bodyId: 'rls-table-body', newBtnId: 'rls-new-btn',
+importBtnId: 'rls-import-btn', importFileId: 'rls-import-file', clearBtnId: 'rls-clear-btn',
+fyLabelId: 'rls-fy-label', colCount: 18,
+approvedKicker: 'Summary of the Approved Quarterly Budget Estimates (UGX)',
+actualKicker: 'Summary of the Quarterly Actual Inflow Realized (UGX)',
+},
+};
+
+function applyRevLineFyLabel(periodType) {
+const cfg = REV_LINE_PAGES[periodType];
+const wpVal = document.getElementById(cfg.wpSelectId).value;
+const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+const el = document.getElementById(cfg.fyLabelId);
+if (el) el.textContent = wp ? `FY ${wp.financial_year}` : 'FY —';
+}
+
+function revLineRowClass(rowType) {
+if (rowType === 'category') return 'rev-cat-head';
+if (rowType === 'subtotal') return 'rev-total-row';
+if (rowType === 'grand_total') return 'rev-grand-row';
+return 'rev-item-row';
+}
+
+function moneyOrBlank(v, blank) {
+if (blank) return '';
+return money(v);
+}
+
+function moneyGapCell(v) {
+const n = Number(v || 0);
+const cls = n < 0 ? ' class="rli-gap-negative"' : '';
+return `<td class="num mono"${cls}>${money(n)}</td>`;
+}
+
+function renderRevLineRow(r, cfg, canEdit) {
+const cls = revLineRowClass(r.row_type);
+const blank = r.row_type === 'category';
+const labelPad = 14 + (r.indent || 0) * 18;
+const approvedCells = r.approved_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
+const actualCells = r.actual_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
+let gapCells = '';
+if (cfg.hasGap) {
+gapCells = blank
+? r.gap_periods.map(() => `<td class="num mono"></td>`).join('') + `<td class="num mono"></td>`
+: r.gap_periods.map(v => moneyGapCell(v)).join('') + moneyGapCell(r.gap_annual);
+}
+const actions = canEdit ? `
+<button type="button" class="btn btn-ghost" style="padding:3px 7px; font-size:10.5px;" onclick="openEditRevLineItem('${cfg.periodType}', ${r.id})">Edit</button>
+<button type="button" class="btn btn-danger" style="padding:3px 7px; font-size:10.5px; margin-left:4px;" onclick="deleteRevLineItem('${cfg.periodType}', ${r.id})">✕</button>` : '';
+return `
+<tr class="${cls}">
+<td class="mono">${escapeHtml(r.code || '')}</td>
+<td class="wrap" style="padding-left:${labelPad}px;">${escapeHtml(r.label)}</td>
+${approvedCells}
+<td class="num mono">${moneyOrBlank(r.approved_annual, blank)}</td>
+${actualCells}
+<td class="num mono">${moneyOrBlank(r.actual_annual, blank)}</td>
+${gapCells}
+<td style="white-space:nowrap; text-align:right;">${actions}</td>
+</tr>`;
+}
+
+async function renderRevLineTable(periodType) {
+const cfg = REV_LINE_PAGES[periodType];
+const tbody = document.getElementById(cfg.bodyId);
+const wpId = document.getElementById(cfg.wpSelectId).value;
+if (!wpId) {
+tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
+return;
+}
+tbody.innerHTML = `<tr><td colspan="${cfg.colCount}" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
+try {
+const rows = await api(`/api/revenue-line-items?work_plan_id=${wpId}&period_type=${periodType}`);
+STATE.revLineItems[periodType] = rows;
+if (!rows.length) {
+tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">No rows recorded for this work plan yet. Use "Import From Excel" or "+ Add Row" above to get started.</div></td></tr>`;
+return;
+}
+const canEdit = STATE.role === 'admin';
+tbody.innerHTML = rows.map(r => renderRevLineRow(r, cfg, canEdit)).join('');
+} catch (e) {
+tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">Could not load this table.</div></td></tr>`;
+toast(e.message, 'error');
+}
+}
+
+async function loadRevLinePage(periodType) {
+applyRevLineFyLabel(periodType);
+await renderRevLineTable(periodType);
+}
+
+function buildRliPeriodInputs(cfg, approved, actual) {
+document.getElementById('rli-approved-kicker').textContent = cfg.approvedKicker;
+document.getElementById('rli-actual-kicker').textContent = cfg.actualKicker;
+const aWrap = document.getElementById('rli-approved-periods');
+const uWrap = document.getElementById('rli-actual-periods');
+aWrap.innerHTML = cfg.periodLabels.map((lbl, i) => `
+<div class="field" style="min-width:100px; flex:1 1 100px;"><label>${lbl}</label><input type="number" class="rli-approved-input" value="${approved && approved[i] != null ? approved[i] : 0}"/></div>`).join('');
+uWrap.innerHTML = cfg.periodLabels.map((lbl, i) => `
+<div class="field" style="min-width:100px; flex:1 1 100px;"><label>${lbl}</label><input type="number" class="rli-actual-input" value="${actual && actual[i] != null ? actual[i] : 0}"/></div>`).join('');
+}
+
+function openAddRevLineItem(periodType) {
+const cfg = REV_LINE_PAGES[periodType];
+STATE.rliPeriodType = periodType;
+STATE.editingRevLineItemId = null;
+document.getElementById('rli-modal-title').textContent = 'Add Revenue Row';
+document.getElementById('rli-save-btn').textContent = 'Save Row';
+document.getElementById('rli-workplan').innerHTML = document.getElementById(cfg.wpSelectId).innerHTML;
+document.getElementById('rli-workplan').value = document.getElementById(cfg.wpSelectId).value;
+document.getElementById('rli-code').value = '';
+document.getElementById('rli-label').value = '';
+document.getElementById('rli-row-type').value = 'item';
+buildRliPeriodInputs(cfg, [], []);
+openModal('modal-rli');
+}
+
+function openEditRevLineItem(periodType, id) {
+const rows = STATE.revLineItems[periodType] || [];
+const r = rows.find(x => x.id === id);
+if (!r) { toast('Could not find that row — try refreshing.', 'error'); return; }
+const cfg = REV_LINE_PAGES[periodType];
+STATE.rliPeriodType = periodType;
+STATE.editingRevLineItemId = id;
+document.getElementById('rli-modal-title').textContent = 'Edit Revenue Row';
+document.getElementById('rli-save-btn').textContent = 'Save Changes';
+document.getElementById('rli-workplan').innerHTML = document.getElementById(cfg.wpSelectId).innerHTML;
+document.getElementById('rli-workplan').value = r.work_plan_id;
+document.getElementById('rli-code').value = r.code || '';
+document.getElementById('rli-label').value = r.label || '';
+document.getElementById('rli-row-type').value = r.row_type || 'item';
+buildRliPeriodInputs(cfg, r.approved_periods, r.actual_periods);
+openModal('modal-rli');
+}
+
+async function deleteRevLineItem(periodType, id) {
+if (!confirm('Delete this row? This cannot be undone.')) return;
+try {
+await api(`/api/revenue-line-items/${id}`, { method: 'DELETE' });
+toast('Row deleted', 'success');
+renderRevLineTable(periodType);
+} catch (e) { toast(e.message, 'error'); }
+}
+
+async function clearRevLineItems(periodType) {
+const cfg = REV_LINE_PAGES[periodType];
+const wpId = document.getElementById(cfg.wpSelectId).value;
+if (!wpId) { toast('Select a work plan first', 'error'); return; }
+if (!confirm('Clear ALL rows in this table for the selected work plan? This cannot be undone.')) return;
+try {
+const result = await api(`/api/revenue-line-items/clear?work_plan_id=${wpId}&period_type=${periodType}`, { method: 'DELETE' });
+toast(`Cleared ${result.deleted} row(s)`, 'success');
+renderRevLineTable(periodType);
+} catch (e) { toast(e.message, 'error'); }
+}
+
+document.getElementById('rli-save-btn').addEventListener('click', async () => {
+const periodType = STATE.rliPeriodType;
+const cfg = REV_LINE_PAGES[periodType];
+const approved = Array.from(document.querySelectorAll('.rli-approved-input')).map(el => Number(el.value || 0));
+const actual = Array.from(document.querySelectorAll('.rli-actual-input')).map(el => Number(el.value || 0));
+const workPlanId = Number(document.getElementById('rli-workplan').value);
+const label = document.getElementById('rli-label').value.trim();
+if (!workPlanId || !label) { toast('Please select a work plan and enter a label', 'error'); return; }
+const payload = {
+work_plan_id: workPlanId,
+period_type: periodType,
+code: document.getElementById('rli-code').value.trim(),
+label: label,
+row_type: document.getElementById('rli-row-type').value,
+approved_periods: approved,
+actual_periods: actual,
+};
+try {
+if (STATE.editingRevLineItemId) {
+await api(`/api/revenue-line-items/${STATE.editingRevLineItemId}`, { method: 'PATCH', body: JSON.stringify(payload) });
+toast('Row updated', 'success');
+} else {
+await api('/api/revenue-line-items', { method: 'POST', body: JSON.stringify(payload) });
+toast('Row added', 'success');
+}
+closeModal('modal-rli');
+renderRevLineTable(periodType);
+} catch (e) { toast(e.message, 'error'); }
+});
+
+Object.keys(REV_LINE_PAGES).forEach(periodType => {
+const cfg = REV_LINE_PAGES[periodType];
+const importBtn = document.getElementById(cfg.importBtnId);
+const importFile = document.getElementById(cfg.importFileId);
+const newBtn = document.getElementById(cfg.newBtnId);
+const clearBtn = document.getElementById(cfg.clearBtnId);
+const wpSel = document.getElementById(cfg.wpSelectId);
+if (importBtn) importBtn.addEventListener('click', () => {
+if (!wpSel.value) { toast('Please select a work plan to import into first', 'error'); return; }
+importFile.click();
+});
+if (importFile) importFile.addEventListener('change', async (e) => {
+const file = e.target.files[0];
+if (!file) return;
+const wpVal = wpSel.value;
+const fd = new FormData();
+fd.append('file', file);
+try {
+toast('Importing from Excel…', 'info');
+const result = await api(`/api/revenue-line-items/import?work_plan_id=${wpVal}&period_type=${periodType}`, { method: 'POST', body: fd });
+toast(`Imported ${result.created} row(s)`, 'success');
+renderRevLineTable(periodType);
+} catch (err) { toast(err.message, 'error'); }
+finally { e.target.value = ''; }
+});
+if (newBtn) newBtn.addEventListener('click', () => openAddRevLineItem(periodType));
+if (clearBtn) clearBtn.addEventListener('click', () => clearRevLineItems(periodType));
+if (wpSel) wpSel.addEventListener('change', () => { applyRevLineFyLabel(periodType); renderRevLineTable(periodType); });
+});
 // ---- Dashboard -----------------------------------------------------------------
 async function loadDashboard() {
 try {
