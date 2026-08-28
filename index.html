@@ -498,11 +498,16 @@ point begins on its own line rather than running together as one line. */
 Summary) — generic hierarchical table styling, shared by all three ------- */
 .rli-table-wrap{max-height:520px; overflow:auto; border-radius:var(--radius); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
 .rli-table-wrap table{border-collapse:separate; border-spacing:0;}
+.rli-table-wrap thead{isolation:isolate;}
 .rli-table-wrap thead th{
 position:sticky; top:0; z-index:3;
 background:var(--teal-700); color:#FFFFFF;
 box-shadow:none; text-align:center; vertical-align:middle;
 padding:7px 8px; font-size:9.5px; line-height:1.25; white-space:nowrap;
+/* Chrome/Android can fail to repaint sticky table-header cells cleanly
+   on scroll, letting scrolled-past body rows show through the header
+   for a frame. Forcing the sticky cell onto its own GPU layer fixes it. */
+transform:translateZ(0); will-change:transform; backface-visibility:hidden;
 }
 .rli-table-wrap thead tr:first-child th{top:0;}
 .rli-table-wrap thead tr:nth-child(2) th{top:29px;}
