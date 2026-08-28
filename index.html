@@ -501,13 +501,20 @@ Summary) — generic hierarchical table styling, shared by all three ------- */
 .rli-table-wrap thead th{
 position:sticky; top:0; z-index:3;
 background:var(--teal-700); color:#FFFFFF;
-box-shadow:0 1px 0 rgba(201,154,62,.35); text-align:center;
+box-shadow:none; text-align:center; vertical-align:middle;
 padding:7px 8px; font-size:9.5px; line-height:1.25; white-space:nowrap;
 }
 .rli-table-wrap thead tr:first-child th{top:0;}
 .rli-table-wrap thead tr:nth-child(2) th{top:29px;}
-.rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:right; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line);}
-.rli-table-wrap td:first-child, .rli-table-wrap td:nth-child(2){text-align:left;}
+/* Only the true bottom edge of the (possibly two-row) header gets the
+   divider line — rowspan cells (which already reach the full header
+   height) and the cells in the last header row. This keeps the line
+   from cutting across column headers that sit mid-header. */
+.rli-table-wrap thead th[rowspan],
+.rli-table-wrap thead tr:last-child th{
+box-shadow:0 1px 0 rgba(201,154,62,1);
+}
+.rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:left; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line);}
 .rli-table-wrap td.wrap{white-space:normal;}
 .rli-table-wrap tbody tr.rev-cat-head td{background:var(--gold-100); font-weight:700; color:var(--navy-950); border-bottom:1px solid var(--line-strong);}
 .rli-table-wrap tbody tr.rev-cat-head:hover td{background:var(--gold-100);}
