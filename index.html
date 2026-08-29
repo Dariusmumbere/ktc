@@ -252,14 +252,17 @@ display:flex; align-items:center; justify-content:space-between; padding:0 22px;
 .topbar-heading-center .topbar-sub{order:-1;}
 }
 .topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
-.topbar.topbar-workplan{border-bottom:none !important; box-shadow:none !important;}
-.topbar.topbar-workplan .topbar-title-wrap{display:none !important;}
-#view-workplan > .card:first-of-type{flex-wrap:nowrap !important;}
-#view-workplan > .card:first-of-type #wp-select{width:auto !important; min-width:0 !important; flex:1 1 auto !important;}
-#view-workplan > .card:first-of-type > div[style*="display:flex"]{flex-shrink:0 !important;}
+/* ---------------- PBS work-plan selector, relocated to the top-most bar ---------------- */
+.topbar-pbs-bar{display:none; align-items:center; gap:10px; flex-wrap:wrap; flex:1 1 auto; min-width:0; padding:10px 0;}
+.topbar-pbs-bar.show{display:flex;}
+.topbar-pbs-bar #wp-select{
+flex:1 1 auto; min-width:200px; max-width:420px; text-align:center; text-align-last:center;
+font-family:var(--font-display); font-weight:600; font-size:14px; color:var(--navy-950);
+padding:8px 12px; border-radius:var(--radius-sm);
+}
 @media (max-width:640px){
-#view-workplan > .card:first-of-type{flex-wrap:wrap !important;}
-#view-workplan > .card:first-of-type #wp-select{width:100% !important;}
+.topbar-pbs-bar{width:100%; order:3;}
+.topbar-pbs-bar #wp-select{max-width:none;}
 }
 #wp-main-table-wrap{max-height:600px !important;}
 .icon-btn{
@@ -275,11 +278,11 @@ transition:background .15s var(--ease), border-color .15s var(--ease), transform
 /* ---------------- Table titles + their icon actions (Add / Import etc) ---------------- */
 .table-title-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .table-title-actions{display:flex; align-items:center; gap:6px; flex-shrink:0;}
-/* Pull the Annual Work Plan title (dropdown container) right up to the top
-   of the view, removing the large empty band that used to sit above it. */
+/* The work-plan dropdown now lives in the top-most bar, so pull the view's
+   content right up to the top, removing the empty band that used to sit
+   above the (now-removed) in-page dropdown card. */
 .content:has(> #view-workplan.active){padding-top:0;}
 #view-workplan{margin:0;}
-#view-workplan > .card:first-of-type{margin:0 !important; padding-top:8px !important; padding-bottom:10px !important;}
 .badge-dot{
 position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:9px;
 background:var(--danger); color:#fff; font-size:9.5px; font-weight:700; display:flex; align-items:center; justify-content:center;
@@ -986,7 +989,6 @@ display:inline-flex; align-items:center; justify-content:center;
 color:inherit; opacity:.85; transition:background .15s var(--ease), color .15s var(--ease), opacity .15s var(--ease);
 vertical-align:middle; flex-shrink:0;
 }
-.topbar.topbar-workplan .topbar-title-wrap{display:flex !important;}
 .th-clear-btn:hover{background:rgba(184,56,42,.9); color:#fff; opacity:1;}
 .th-clear-btn svg{width:14px;height:14px; display:block; pointer-events:none;}
 .th-with-clear{display:flex; align-items:center; justify-content:space-between; gap:6px; white-space:nowrap;}
@@ -1067,7 +1069,7 @@ Programme-Based Budgeting System (PBS)
 </button>
 <div class="nav-submenu" id="nav-pbs-submenu">
 <button class="nav-item nav-subitem" data-view="rev-monthly">
-Approved Monthly Revenue Budget Estimates and Actual LG Revenue &amp; Transfers Realized
+Monthly Local Revenue/GoU Transfers Estimates vs. Actual Realized
 </button>
 <button class="nav-item nav-subitem" data-view="workplan" data-subtab="expenditure">
 Approved LG Expenditure Estimates
@@ -1129,6 +1131,21 @@ Departments
 <div class="topbar-title-wrap" id="topbar-title-wrap">
 <div class="topbar-title" id="topbar-title">Dashboard</div>
 <div class="topbar-sub" id="topbar-sub">Overview of financial activity</div>
+</div>
+<div class="topbar-pbs-bar" id="topbar-pbs-bar">
+<select class="filter-select" id="wp-select"></select>
+<div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+<button class="icon-btn icon-btn-sm" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button class="icon-btn icon-btn-sm" id="wp-edit-workplan-btn" title="Edit Annual Work Plan &amp; Budget Estimates" style="display:none;">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+</button>
+<!-- Downloads the full Annual Work Plan & Budget PDF (all sections + revenue/workplan tables) -->
+<button class="icon-btn icon-btn-sm" id="wp-download-pdf-btn" title="Download Annual Work Plan &amp; Budget as PDF">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+</button>
+</div>
 </div>
 <div class="topbar-right">
 <span id="wp-fy-title" style="display:none;">—</span>
@@ -1204,16 +1221,17 @@ Departments
 </div>
 </div>
 </div>
-<!-- ===== PBS: Approved Monthly Revenue Budget Estimates and Actual LG Revenue & Transfers Realized ===== -->
+<!-- ===== PBS: Monthly Local Revenue/GoU Transfers Estimates vs. Actual Realized ===== -->
 <div class="view" id="view-rev-monthly">
-<div class="card" style="background:#fff; border:none; padding:16px 20px; margin:0 0 16px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:none; width:100%; box-sizing:border-box;">
-<select class="filter-select" id="rlm-wp-select" style="flex:1 1 auto; width:100%; min-width:260px; max-width:none; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
+<div class="card" style="background:#fff; border:none; padding:16px 20px; margin:0 0 16px; box-shadow:none; width:100%; box-sizing:border-box; text-align:center;">
+<div class="kicker" style="font-size:12px; color:var(--teal-700); letter-spacing:.6px;">Programme-Based Budgeting System (PBS)</div>
+<div style="font-family:var(--font-display); font-weight:600; font-size:20px; color:var(--navy-950); margin-top:4px;">Monthly Local Revenue/GoU Transfers Estimates vs. Actual Realized</div>
 </div>
 <input type="file" id="rlm-import-file" accept=".xlsx,.xls" style="display:none;" />
 <div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
 <div class="table-title-row">
-<div class="kicker" style="font-size:13px; color:var(--navy-950);">APPROVED MONTHLY REVENUE BUDGET ESTIMATES AND ACTUAL LG REVENUE &amp; TRANSFERS REALIZED — <span id="rlm-fy-label">FY —</span></div>
+<div class="kicker" style="font-size:13px; color:var(--navy-950);">MONTHLY LOCAL REVENUE/GOU TRANSFERS ESTIMATES VS. ACTUAL REALIZED — <span id="rlm-fy-label">FY —</span></div>
 <div class="table-title-actions">
 <button type="button" class="icon-btn icon-btn-sm" id="rlm-new-btn" style="display:none;" title="Add Revenue Row">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
@@ -1257,21 +1275,6 @@ Departments
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
-<div class="card" style="background:#fff; border:none; padding:16px 20px; margin:0; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; box-shadow:none; width:100%; box-sizing:border-box;">
-<select class="filter-select" id="wp-select" style="flex:1 1 auto; width:100%; min-width:260px; max-width:none; text-align:center; text-align-last:center; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--navy-950); padding:12px 14px; border-radius:var(--radius-sm);"></select>
-<div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-<button class="icon-btn" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
-</button>
-<button class="icon-btn" id="wp-edit-workplan-btn" title="Edit Annual Work Plan &amp; Budget Estimates" style="display:none;">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-</button>
-<!-- Downloads the full Annual Work Plan & Budget PDF (all sections + revenue/workplan tables) -->
-<button class="icon-btn" id="wp-download-pdf-btn" title="Download Annual Work Plan &amp; Budget as PDF">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-</button>
-</div>
-</div>
 <input type="file" id="wp-import-summary-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
@@ -2651,7 +2654,7 @@ if (clearBtn) clearBtn.style.display = (STATE.role === 'admin') ? 'inline-flex' 
 // ---- Navigation -----------------------------------------------------------
 const VIEW_TITLES = {
 dashboard: ['Dashboard', 'Overview of financial activity'],
-'rev-monthly': ['Approved Monthly Revenue Budget Estimates and Actual LG Revenue & Transfers Realized', 'Programme-Based Budgeting System (PBS)'],
+'rev-monthly': ['Monthly Local Revenue/GoU Transfers Estimates vs. Actual Realized', 'Programme-Based Budgeting System (PBS)'],
 workplan: ['Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)', ''],
 requisitions: ['Requisitions', 'Requisition tracking and submission'],
 approvals: ['Approvals', 'Three-stage approval workflow'],
@@ -2680,15 +2683,14 @@ document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 document.getElementById('view-' + view).classList.add('active');
 document.getElementById('topbar-title').textContent = VIEW_TITLES[view][0];
 document.getElementById('topbar-sub').textContent = VIEW_TITLES[view][1];
-const topbarTitleEl = document.getElementById('topbar-title');
 const topbarTitleWrap = document.getElementById('topbar-title-wrap');
-const topbarSubEl = document.getElementById('topbar-sub');
-const isWorkplanView = (view === 'workplan');
-topbarTitleEl.classList.toggle('topbar-title-lg', isWorkplanView);
-topbarTitleWrap.classList.toggle('topbar-title-wrap-center', isWorkplanView);
-topbarTitleWrap.classList.toggle('topbar-heading-center', view === 'rev-monthly');
-topbarSubEl.style.display = isWorkplanView ? 'none' : '';
-document.querySelector('.topbar').classList.toggle('topbar-workplan', isWorkplanView);
+const topbarPbsBar = document.getElementById('topbar-pbs-bar');
+// The work-plan dropdown (with its Add/Edit/Download-PDF buttons) lives in
+// the top-most bar and drives every PBS sub item (Monthly Local Revenue,
+// LG Expenditure Estimates, Annual Work Plan & Budget) — so it replaces the
+// ordinary topbar title for all of them.
+topbarTitleWrap.style.display = isPbsView ? 'none' : '';
+topbarPbsBar.classList.toggle('show', isPbsView);
 closeNotifPanel();
 if (view === 'dashboard') loadDashboard();
 if (view === 'rev-monthly') loadRevLinePage('monthly');
@@ -2843,17 +2845,14 @@ STATE.workplans = await api('/api/workplans');
 const wpSel = document.getElementById('wp-select');
 const bcSel = document.getElementById('bc-workplan');
 const revSel = document.getElementById('rev-workplan');
-const rlmSel = document.getElementById('rlm-wp-select');
 const opts = STATE.workplans.map(w => `<option value="${w.id}" style="text-align:center;">${escapeHtml(w.title)} — FY ${escapeHtml(w.financial_year)}</option>`).join('');
-if (wpSel) wpSel.innerHTML = opts || '<option value="">No work plans yet</option>';
+if (wpSel) {
+const prevVal = wpSel.value;
+wpSel.innerHTML = opts || '<option value="">No work plans yet</option>';
+if (prevVal && STATE.workplans.some(w => String(w.id) === String(prevVal))) wpSel.value = prevVal;
+}
 if (bcSel) bcSel.innerHTML = opts || '<option value="">No work plans yet</option>';
 if (revSel) revSel.innerHTML = opts || '<option value="">No work plans yet</option>';
-[rlmSel].forEach(sel => {
-if (!sel) return;
-const prevVal = sel.value;
-sel.innerHTML = opts || '<option value="">No work plans yet</option>';
-if (prevVal && STATE.workplans.some(w => String(w.id) === String(prevVal))) sel.value = prevVal;
-});
 applyWorkplanTableTitles();
 }
 // ---- Work-plan table headings (the 4 Work Plan & Budget table titles) --------------
@@ -2884,7 +2883,7 @@ const REV_LINE_PAGES = {
 monthly: {
 periodType: 'monthly', periodCount: 12, hasGap: false,
 periodLabels: ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'],
-wpSelectId: 'rlm-wp-select', bodyId: 'rlm-table-body', newBtnId: 'rlm-new-btn',
+wpSelectId: 'wp-select', bodyId: 'rlm-table-body', newBtnId: 'rlm-new-btn',
 importBtnId: 'rlm-import-btn', importFileId: 'rlm-import-file', clearBtnId: 'rlm-clear-btn',
 fyLabelId: 'rlm-fy-label', colCount: 29,
 approvedKicker: 'Approved Monthly Revenue Budget Estimates (UGX)',
@@ -3115,10 +3114,11 @@ finally { e.target.value = ''; }
 });
 if (newBtn) newBtn.addEventListener('click', () => openAddRevLineItem(periodType));
 if (clearBtn) clearBtn.addEventListener('click', () => clearRevLineItems(periodType));
-// wp-select (shared with the rest of the Work Plan & Budget view) already
-// triggers a re-render of this table via applyWorkplanSubtabDisplay, so
-// skip attaching a second change listener to it here.
-if (wpSel && cfg.wpSelectId !== 'wp-select') wpSel.addEventListener('change', () => { applyRevLineFyLabel(periodType); renderRevLineTable(periodType); });
+// wp-select is shared by all three PBS revenue pages now that its dropdown
+// lives in the top-most bar. Quarterly & summary already get re-rendered
+// via applyWorkplanSubtabDisplay() on the wp-select change handler below,
+// so only monthly needs its own listener attached here.
+if (wpSel && periodType === 'monthly') wpSel.addEventListener('change', () => { applyRevLineFyLabel(periodType); renderRevLineTable(periodType); });
 });
 // ---- Dashboard -----------------------------------------------------------------
 async function loadDashboard() {
