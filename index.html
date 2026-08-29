@@ -502,23 +502,19 @@ Summary) — generic hierarchical table styling, shared by all three ------- */
 .rli-table-wrap thead th{
 position:sticky; top:0; z-index:3;
 background:var(--teal-700); color:#FFFFFF;
-box-shadow:none; text-align:center; vertical-align:middle;
+text-align:center; vertical-align:middle;
 padding:7px 8px; font-size:9.5px; line-height:1.25; white-space:nowrap;
 /* Chrome/Android can fail to repaint sticky table-header cells cleanly
    on scroll, letting scrolled-past body rows show through the header
    for a frame. Forcing the sticky cell onto its own GPU layer fixes it. */
 transform:translateZ(0); will-change:transform; backface-visibility:hidden;
+/* Same hairline on every header cell (not just some) so the header
+   bottom is one flat edge with no step between columns. Inset keeps
+   it fully inside the cell's own opaque background. */
+box-shadow:inset 0 -1px 0 rgba(255,255,255,.35) !important;
 }
 .rli-table-wrap thead tr:first-child th{top:0;}
 .rli-table-wrap thead tr:nth-child(2) th{top:29px;}
-/* Only the true bottom edge of the (possibly two-row) header gets the
-   divider line — rowspan cells (which already reach the full header
-   height) and the cells in the last header row. This keeps the line
-   from cutting across column headers that sit mid-header. */
-.rli-table-wrap thead th[rowspan],
-.rli-table-wrap thead tr:last-child th{
-box-shadow:inset 0 -1px 0 #000000;
-}
 .rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:left; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line);}
 .rli-table-wrap td.wrap{white-space:normal;}
 .rli-table-wrap tbody tr.rev-cat-head td{background:var(--gold-100); font-weight:700; color:var(--navy-950); border-bottom:1px solid var(--line-strong);}
@@ -1065,10 +1061,10 @@ Programme-Based Budgeting System (PBS)
 Approved Monthly Revenue Budget Estimates and Actual LG Revenue &amp; Transfers Realized
 </button>
 <button class="nav-item nav-subitem" data-view="workplan" data-subtab="expenditure">
-Approved Local Government Expenditure Estimates
+Approved LG Expenditure Estimates
 </button>
 <button class="nav-item nav-subitem" data-view="workplan" data-subtab="annual">
-Approved Local Government Annual Work Plan and Budget Estimates
+Approved LG Annual Work Plan and Budget Estimates
 </button>
 </div>
 <button type="button" class="nav-parent" id="nav-ifms-toggle">
