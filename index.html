@@ -512,13 +512,16 @@ padding:7px 8px; font-size:9.5px; line-height:1.25; white-space:nowrap;
    edge with no step between columns. Inset keeps it fully inside the
    cell's own opaque background. */
 box-shadow:inset 0 -1px 0 rgba(255,255,255,.35) !important;
-border-right:1px solid rgba(255,255,255,.25);
 }
 .rli-table-wrap thead th.col-annual-approved{width:76px; max-width:76px; white-space:normal;}
-.rli-table-wrap thead th:last-child{border-right:none;}
-.rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:left; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line); border-right:1px solid var(--line);}
-.rli-table-wrap td:last-child{border-right:none;}
+.rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:left; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line);}
 .rli-table-wrap td.wrap{white-space:normal;}
+/* Vertical column dividers — scoped to just the Approved Monthly Revenue
+   Budget Estimates table, not the other tables that share .rli-table-wrap. */
+#rlm-table-wrap thead th{border-right:1px solid rgba(255,255,255,.25);}
+#rlm-table-wrap thead th:last-child{border-right:none;}
+#rlm-table-wrap td{border-right:1px solid var(--line);}
+#rlm-table-wrap td:last-child{border-right:none;}
 .rli-table-wrap tbody tr.rev-cat-head td{background:var(--gold-100); font-weight:700; color:var(--navy-950); border-bottom:1px solid var(--line-strong);}
 .rli-table-wrap tbody tr.rev-cat-head:hover td{background:var(--gold-100);}
 .rli-table-wrap tbody tr.rev-item-row td{background:#FFFFFF;}
@@ -1463,8 +1466,7 @@ Departments
 </div>
 </div>
 <div class="card card-pad" style="margin-top:18px;">
-<div class="kicker">🥧 Budget Share by Department</div>
-<div class="help-text" style="margin-top:2px;">Proportion of total allocated budget contributed by each department (reflects the department filter and search currently applied above)</div>
+<div class="kicker">🥧 Proportion of the Allocated Budget Share by Department</div>
 <div id="wp-pie-chart" style="margin-top:16px; display:flex; gap:28px; flex-wrap:wrap; align-items:center;">
 <div class="loading-row"><span class="spinner spinner-dark"></span></div>
 </div>
@@ -3544,11 +3546,11 @@ return `${palette[i % palette.length]} ${start.toFixed(2)}% ${acc.toFixed(2)}%`;
 const legend = rows.map(([name, v], i) => {
 const pct = ((v / total) * 100).toFixed(1);
 return `
-<div style="display:flex; align-items:center; gap:10px; font-size:12.5px; margin-bottom:8px;">
-<span style="width:12px;height:12px;border-radius:3px; background:${palette[i % palette.length]}; flex-shrink:0;"></span>
-<span style="font-weight:600; flex:0 1 auto; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(name)}</span>
-<span class="mono" style="color:var(--ink-500); flex-shrink:0;">UGX ${money(v)}</span>
-<span class="mono" style="color:var(--gold-600); font-weight:700; flex-shrink:0;">${pct}%</span>
+<div style="display:flex; align-items:baseline; gap:14px; font-size:12.5px; margin-bottom:10px;">
+<span style="width:12px;height:12px;border-radius:3px; background:${palette[i % palette.length]}; flex-shrink:0; align-self:center;"></span>
+<span style="font-weight:600; flex:1 1 auto; min-width:0; white-space:normal;">${escapeHtml(name)}</span>
+<span class="mono" style="color:var(--ink-500); flex-shrink:0; min-width:112px; text-align:right;">UGX ${money(v)}</span>
+<span class="mono" style="color:var(--gold-600); font-weight:700; flex-shrink:0; min-width:46px; text-align:right;">${pct}%</span>
 </div>`;
 }).join('');
 el.innerHTML = `
