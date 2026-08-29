@@ -512,8 +512,12 @@ padding:7px 8px; font-size:9.5px; line-height:1.25; white-space:nowrap;
    edge with no step between columns. Inset keeps it fully inside the
    cell's own opaque background. */
 box-shadow:inset 0 -1px 0 rgba(255,255,255,.35) !important;
+border-right:1px solid rgba(255,255,255,.25);
 }
-.rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:left; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line);}
+.rli-table-wrap thead th.col-annual-approved{width:76px; max-width:76px; white-space:normal;}
+.rli-table-wrap thead th:last-child{border-right:none;}
+.rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:left; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line); border-right:1px solid var(--line);}
+.rli-table-wrap td:last-child{border-right:none;}
 .rli-table-wrap td.wrap{white-space:normal;}
 .rli-table-wrap tbody tr.rev-cat-head td{background:var(--gold-100); font-weight:700; color:var(--navy-950); border-bottom:1px solid var(--line-strong);}
 .rli-table-wrap tbody tr.rev-cat-head:hover td{background:var(--gold-100);}
@@ -1220,7 +1224,7 @@ Departments
 <th rowspan="2">Code</th>
 <th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
 <th colspan="12">Monthly Approved Revenue Budget Estimates (UGX)</th>
-<th rowspan="2">Annual Approved<br>Budget Estimates (UGX)</th>
+<th rowspan="2" class="col-annual-approved">Annual Approved Budget Estimates (UGX)</th>
 <th colspan="12">Monthly Actual Inflow Realized (UGX)</th>
 <th rowspan="2">Annual Actual<br>Cash Inflow Realized (UGX)</th>
 <th rowspan="2">
@@ -1286,7 +1290,7 @@ Departments
 <th rowspan="2">PBS Code</th>
 <th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
 <th colspan="4">Summary of the Approved Quarterly Budget Estimates (UGX)</th>
-<th rowspan="2">Annual Approved<br>Budget Estimates (UGX)</th>
+<th rowspan="2" class="col-annual-approved">Annual Approved Budget Estimates (UGX)</th>
 <th colspan="4">Summary of the Quarterly Actual Inflow (UGX)</th>
 <th rowspan="2">Annual Actual<br>Cash Inflow Realized (UGX)</th>
 <th colspan="4">Summary of the Quarterly Revenue Performance Gap (UGX)</th>
@@ -3540,7 +3544,7 @@ return `${palette[i % palette.length]} ${start.toFixed(2)}% ${acc.toFixed(2)}%`;
 const legend = rows.map(([name, v], i) => {
 const pct = ((v / total) * 100).toFixed(1);
 return `
-<div style="display:flex; align-items:center; gap:9px; font-size:12.5px; margin-bottom:8px;">
+<div style="display:flex; align-items:center; gap:10px; font-size:12.5px; margin-bottom:8px;">
 <span style="width:12px;height:12px;border-radius:3px; background:${palette[i % palette.length]}; flex-shrink:0;"></span>
 <span style="font-weight:600; flex:0 1 auto; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(name)}</span>
 <span class="mono" style="color:var(--ink-500); flex-shrink:0;">UGX ${money(v)}</span>
