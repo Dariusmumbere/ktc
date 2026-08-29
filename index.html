@@ -248,7 +248,8 @@ display:flex; align-items:center; justify-content:space-between; padding:0 22px;
 @media (min-width:901px){
 .topbar-title-wrap-center{display:flex; justify-content:center;}
 .topbar-title-lg{white-space:nowrap; max-width:none; font-size:clamp(13px,1.5vw,22px);}
-.topbar-heading-center{text-align:center;}
+.topbar-heading-center{text-align:center; display:flex; flex-direction:column;}
+.topbar-heading-center .topbar-sub{order:-1;}
 }
 .topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
 .topbar.topbar-workplan{border-bottom:none !important; box-shadow:none !important;}
@@ -2650,7 +2651,7 @@ if (clearBtn) clearBtn.style.display = (STATE.role === 'admin') ? 'inline-flex' 
 // ---- Navigation -----------------------------------------------------------
 const VIEW_TITLES = {
 dashboard: ['Dashboard', 'Overview of financial activity'],
-'rev-monthly': ['Programme-Based Budgeting System (PBS)', 'Approved Monthly Revenue Budget Estimates and Actual LG Revenue & Transfers Realized'],
+'rev-monthly': ['Approved Monthly Revenue Budget Estimates and Actual LG Revenue & Transfers Realized', 'Programme-Based Budgeting System (PBS)'],
 workplan: ['Programme-Based Budgeting System (PBS) and Integrated Financial Management System (IFMS)', ''],
 requisitions: ['Requisitions', 'Requisition tracking and submission'],
 approvals: ['Approvals', 'Three-stage approval workflow'],
