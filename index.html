@@ -253,16 +253,18 @@ display:flex; align-items:center; justify-content:space-between; padding:0 22px;
 }
 .topbar-right{display:flex; align-items:center; gap:14px; padding:10px 0;}
 /* ---------------- PBS work-plan selector, relocated to the top-most bar ---------------- */
-.topbar-pbs-bar{display:none; align-items:center; gap:10px; flex-wrap:wrap; flex:1 1 auto; min-width:0; padding:10px 0;}
+.topbar-pbs-bar{display:none; flex-direction:column; align-items:center; gap:3px; flex:1 1 auto; min-width:0; max-width:800px; margin:0 auto; padding:8px 0;}
 .topbar-pbs-bar.show{display:flex;}
-.topbar-pbs-bar #wp-select{
-flex:1 1 auto; min-width:200px; max-width:420px; text-align:center; text-align-last:center;
+.topbar-pbs-label{font-size:10.5px; font-weight:600; color:var(--ink-500); letter-spacing:.5px; text-transform:uppercase; text-align:center;}
+.topbar-pbs-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center; width:100%;}
+.topbar-pbs-row #wp-select{
+flex:1 1 auto; min-width:320px; max-width:640px; text-align:center; text-align-last:center;
 font-family:var(--font-display); font-weight:600; font-size:14px; color:var(--navy-950);
 padding:8px 12px; border-radius:var(--radius-sm);
 }
 @media (max-width:640px){
-.topbar-pbs-bar{width:100%; order:3;}
-.topbar-pbs-bar #wp-select{max-width:none;}
+.topbar-pbs-bar{width:100%; order:3; max-width:none;}
+.topbar-pbs-row #wp-select{max-width:none; min-width:0;}
 }
 #wp-main-table-wrap{max-height:600px !important;}
 .icon-btn{
@@ -1133,6 +1135,8 @@ Departments
 <div class="topbar-sub" id="topbar-sub">Overview of financial activity</div>
 </div>
 <div class="topbar-pbs-bar" id="topbar-pbs-bar">
+<div class="topbar-pbs-label">Programme-Based Budgeting System (PBS)</div>
+<div class="topbar-pbs-row">
 <select class="filter-select" id="wp-select"></select>
 <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
 <button class="icon-btn icon-btn-sm" id="wp-new-workplan-btn" title="Add Annual Work Plan &amp; Budget Estimates" style="display:none;">
@@ -1145,6 +1149,7 @@ Departments
 <button class="icon-btn icon-btn-sm" id="wp-download-pdf-btn" title="Download Annual Work Plan &amp; Budget as PDF">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
 </button>
+</div>
 </div>
 </div>
 <div class="topbar-right">
