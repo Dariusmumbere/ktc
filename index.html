@@ -292,7 +292,12 @@ transition:background .15s var(--ease), border-color .15s var(--ease), transform
 .content:has(> #view-rev-monthly.active){padding-bottom:20px;}
 #rlm-table-wrap{margin-bottom:0 !important;}
 @media (min-width:901px){
-#rlm-table-wrap{max-height:calc(100vh - 260px);}
+/* Fills the same vertical span as the sidebar — the table grows to use
+   all remaining height in the content column instead of stopping at a
+   fixed box height and leaving blank space beneath it. */
+#view-rev-monthly.active{display:flex; flex-direction:column; height:100%;}
+#view-rev-monthly.active > .card{display:flex; flex-direction:column; flex:1; min-height:0;}
+#rlm-table-wrap{flex:1; min-height:0; max-height:none;}
 }
 .badge-dot{
 position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:9px;
