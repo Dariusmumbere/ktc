@@ -389,7 +389,8 @@ text-align:center;
 #wp-dept-summary-body td.mono, #wp-dept-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
 #wp-dept-summary-wrap tfoot td{text-align:left;}
 #view-workplan .table-wrap tfoot tr{background:#EAF0EF !important;}
-#view-workplan .table-wrap tfoot td{color:var(--navy-950); font-weight:700;}
+#view-workplan .table-wrap tfoot td{color:var(--ink-900); font-weight:700;}
+#view-workplan .table-wrap tfoot td.mono, #view-workplan .table-wrap tfoot td.num{color:var(--navy-950); font-weight:700;}
 /* Requisitions list — compressed: tighter column widths, smaller padding
 and type, and single-line cells (except Subject, which still wraps) so
 noticeably more rows fit on screen without scrolling. The surrounding
@@ -539,15 +540,16 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-dept-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3;}
 #wp-dept-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-dept-summary-body td{padding:7px 9px; font-size:11.5px;}
-#wp-main-table{min-width:1810px;}
+#wp-main-table{min-width:1914px;}
 #wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
 #wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:400; line-height:1.3;}
 #wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px;}
 /* Funding Source (18th column): give it noticeably less room than before */
 #wp-main-table th:nth-child(18), #wp-main-table td:nth-child(18){white-space:normal; max-width:78px; width:78px;}
-/* Department (1st column): wrap the name across two lines to use the
-narrower column width efficiently rather than forcing extra scroll */
-#wp-main-table th:nth-child(1), #wp-main-table td:nth-child(1){white-space:normal; max-width:104px; width:104px;}
+/* Department (1st column): widened by half (104px -> 156px) per request. */
+#wp-main-table th:nth-child(1), #wp-main-table td:nth-child(1){white-space:normal; max-width:156px; width:156px;}
+/* Service Area (2nd column): matched to Department's new width. */
+#wp-main-table th:nth-child(2), #wp-main-table td:nth-child(2){white-space:normal; max-width:156px; width:156px;}
 /* Budget Output Description (6th column): holds long narrative text, so
 give it noticeably more room than the other wrapped columns. Widened by
 half its original width (260px -> 390px) for extra room. */
