@@ -520,7 +520,12 @@ point begins on its own line rather than running together as one line. */
    Town Clerk's message + Executive Summary), shown above the tables on the
    "Approved LG Annual Work Plan and Budget Estimates" page — mirrors the
    first few pages of the downloaded PDF. ---------------- */
-.wp-frontmatter{max-width:900px; margin:0 auto;}
+.wp-frontmatter{max-width:none; margin:0;}
+.wp-fm-body{transition:background .15s var(--ease), outline-color .15s var(--ease);}
+.wp-fm-body[contenteditable="true"]{outline:2px dashed var(--teal-500); outline-offset:8px; border-radius:8px; background:#FFFDF5; cursor:text;}
+.wp-fm-body[contenteditable="true"]:focus{outline-style:solid; outline-color:var(--teal-700);}
+.wp-fm-edit-hint{display:none; font-size:11px; color:var(--teal-700); font-weight:600; margin:-4px 0 16px; text-align:right;}
+.wp-fm-edit-hint.show{display:block;}
 .wp-fm-cover{text-align:center; padding:6px 0 22px;}
 .wp-fm-logo{display:block; max-width:420px; width:100%; height:auto; margin:0 auto 14px; border-radius:4px; box-shadow:0 3px 10px rgba(10,31,43,.2);}
 .wp-fm-cover-line{font-size:12px; color:var(--ink-500); margin-top:2px;}
@@ -1315,6 +1320,21 @@ Departments
 <input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
 <div class="card card-pad wp-frontmatter" id="wp-annual-frontmatter" style="display:none; margin-bottom:20px;">
+<div class="table-title-row">
+<div class="kicker">REPORT FRONT MATTER</div>
+<div class="table-title-actions">
+<button type="button" class="icon-btn icon-btn-sm" id="wp-fm-edit-btn" style="display:none;" title="Edit Report Front Matter">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="wp-fm-save-btn" style="display:none;" title="Save Changes">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 6L9 17l-5-5"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="wp-fm-cancel-btn" style="display:none;" title="Cancel Editing">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
+</button>
+</div>
+</div>
+<div class="wp-fm-edit-hint" id="wp-fm-edit-hint">Click into a section below and edit the text, then press the checkmark to save.</div>
 <div class="wp-fm-cover">
   <img src="header.jpg" alt="Karugutu Town Council" class="wp-fm-logo" />
   <div class="wp-fm-cover-line">Ntoroko District Local Government</div>
@@ -1326,6 +1346,7 @@ Departments
 </div>
 <div class="wp-fm-section" style="border-top:none; padding-top:0; margin-top:0;">
   <div class="wp-fm-heading">FORWARD BY CHAIRPERSON LC III KARUGUTU TOWN COUNCIL</div>
+  <div class="wp-fm-body" id="wp-fm-forward-body" contenteditable="false">
   <p>It is my pleasure to present the Karugutu Town Council Annual Work Plan and Budget for the Financial Year 2026/2027, which provides the Council's implementation roadmap for delivering quality public services and advancing sustainable socio-economic transformation within our municipality. This Work Plan and Budget operationalizes the Karugutu Town Council Five-Year Strategic Development Plan (2025–2030) by translating its strategic priorities into annual programmes, budget outputs, measurable performance targets, and resource allocations that respond to the aspirations and needs of our people.</p>
   <p>The FY 2026/27 Work Plan has been prepared in accordance with the Constitution of the Republic of Uganda, the Local Governments Act, the Public Finance Management Act, the Programme-Based Budgeting Framework, the Fourth National Development Plan (NDP IV), and other relevant Government policies and guidelines. It reflects our commitment to prudent financial management, transparency, accountability, citizen participation, and results-oriented service delivery.</p>
   <p>During the financial year, the Council will prioritize investments in road infrastructure maintenance, engineering services, physical planning, environmental management, local revenue enhancement, financial accountability, institutional capacity building, agricultural production, community empowerment, and improved governance. These interventions are intended to create an enabling environment for economic growth, improve public service delivery, promote orderly urban development, and enhance the quality of life of the residents of Karugutu Town Council.</p>
@@ -1339,9 +1360,11 @@ Departments
     <div>Karugutu Town Council</div>
     <div>Ntoroko District Local Government</div>
   </div>
+  </div>
 </div>
 <div class="wp-fm-section">
   <div class="wp-fm-heading">MESSAGE FROM THE TOWN CLERK, KARUGUTU TOWN COUNCIL</div>
+  <div class="wp-fm-body" id="wp-fm-clerk-body" contenteditable="false">
   <p>It is my privilege to present the Karugutu Town Council Annual Work Plan and Budget for the 2026/2027 Financial Year. This document serves as our operational blueprint. It translates our overarching Five-Year Strategic Development Plan (2025–2030) into actionable projects, clear performance targets, and firm financial commitments.</p>
   <p>We developed this work plan in strict compliance with Uganda’s legal frameworks. These include the Constitution, the Local Governments Act, the Public Finance Management Act, and the Fourth National Development Plan (NDP IV). It anchors our operations in Programme-Based Budgeting to guarantee transparency, strict accountability, and high-quality service delivery.</p>
   <p>For FY 2026/2027, we link every single shilling allocated directly to measurable targets, timelines, and specific oversight officers. This results-oriented setup ensures straightforward monitoring and guarantees maximum value for public funds.</p>
@@ -1361,9 +1384,11 @@ Departments
     <div>Karugutu Town Council</div>
     <div>Ntoroko District Local Government</div>
   </div>
+  </div>
 </div>
 <div class="wp-fm-section">
   <div class="wp-fm-heading">EXECUTIVE SUMMARY</div>
+  <div class="wp-fm-body" id="wp-fm-exec-body" contenteditable="false">
   <h3>Karugutu Town Council Revenue Analysis for FY 2026/27</h3>
   <p>The Council’s approved revenue framework for FY 2026/27 amounts to UGX 327,113,640, reflecting a balanced financing strategy that combines Central Government Transfers, Locally Raised Revenue (LRR), and limited development partner support. Central Government Transfers constitute the largest share of the resource envelope at UGX 175,991,640 (53.8%), primarily comprising Urban Unconditional Grant (Non-Wage), Urban Discretionary Development Equalization Grant (DDEG), and the Uganda Road Fund, thereby providing the financial foundation for recurrent service delivery and infrastructure maintenance.</p>
   <p>Locally Raised Revenue is projected at UGX 151,120,000 (46.2%), demonstrating the Council's commitment to strengthening fiscal autonomy through enhanced revenue mobilization. The principal local revenue streams include Market Revenue (UGX 80.0 million), Council Property and Asset Revenues (UGX 19.4 million), Business Licensing and Trade Regulation (UGX 12.1 million), and Physical Planning and Development Control (UGX 12.47 million). Additional revenues are expected from property rates, public health services, transport and parking fees, environmental charges, advertising, enforcement penalties, and other administrative fees, thereby diversifying the local revenue base and reducing dependence on intergovernmental transfers.</p>
@@ -1410,6 +1435,7 @@ Departments
     <li>Verifiable Statutory Accountability: The planned targets establish a strict compliance baseline for ex-post audits, used during Annual Local Government Performance Assessment (LGPA) cycles.</li>
   </ul>
   <p>Ultimately, the detailed document hereunder stands as Karugutu Town Council's binding operational commitment to transparency, evidence-based public financial management, and equitable development.</p>
+  </div>
 </div>
 </div>
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
@@ -2325,6 +2351,7 @@ signatureUrl: null,
 // time viewRequisition() opens a record; gates the Approve button
 // independently of whether the account merely has a signature on file.
 stageSignatureAttached: false,
+fmOriginal: null,
 };
 
 const REVENUE_SUMMARY_CATEGORIES = [
@@ -2766,6 +2793,7 @@ else btn.style.display = 'flex';
 document.getElementById('wp-new-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-new-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-edit-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-fm-edit-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-import-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
 document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
@@ -3370,7 +3398,51 @@ async function loadWorkplanView() {
 await loadWorkplans();
 await renderBudgetCodes();
 applyWorkplanSubtabDisplay();
+loadReportFrontmatter();
 }
+// ---- Report Front Matter (Forward / Town Clerk / Executive Summary) ------
+// Loads any saved overrides from the backend; a section with no saved
+// override yet simply keeps showing its built-in default text already
+// present in the DOM, so a fresh deployment needs no seeding.
+async function loadReportFrontmatter() {
+try {
+const data = await api('/api/annual-report-content');
+if (data.forward_html) document.getElementById('wp-fm-forward-body').innerHTML = data.forward_html;
+if (data.town_clerk_html) document.getElementById('wp-fm-clerk-body').innerHTML = data.town_clerk_html;
+if (data.executive_summary_html) document.getElementById('wp-fm-exec-body').innerHTML = data.executive_summary_html;
+} catch (e) { /* keep the default text shown if this fails */ }
+}
+const WP_FM_BODY_IDS = ['wp-fm-forward-body', 'wp-fm-clerk-body', 'wp-fm-exec-body'];
+function setFrontmatterEditing(on) {
+WP_FM_BODY_IDS.forEach(id => document.getElementById(id).setAttribute('contenteditable', on ? 'true' : 'false'));
+document.getElementById('wp-fm-edit-btn').style.display = on ? 'none' : 'inline-flex';
+document.getElementById('wp-fm-save-btn').style.display = on ? 'inline-flex' : 'none';
+document.getElementById('wp-fm-cancel-btn').style.display = on ? 'inline-flex' : 'none';
+document.getElementById('wp-fm-edit-hint').classList.toggle('show', on);
+}
+document.getElementById('wp-fm-edit-btn').addEventListener('click', () => {
+STATE.fmOriginal = {};
+WP_FM_BODY_IDS.forEach(id => { STATE.fmOriginal[id] = document.getElementById(id).innerHTML; });
+setFrontmatterEditing(true);
+});
+document.getElementById('wp-fm-cancel-btn').addEventListener('click', () => {
+if (STATE.fmOriginal) WP_FM_BODY_IDS.forEach(id => { if (STATE.fmOriginal[id] !== undefined) document.getElementById(id).innerHTML = STATE.fmOriginal[id]; });
+setFrontmatterEditing(false);
+});
+document.getElementById('wp-fm-save-btn').addEventListener('click', async () => {
+const btn = document.getElementById('wp-fm-save-btn');
+btn.disabled = true;
+try {
+const payload = {
+forward_html: document.getElementById('wp-fm-forward-body').innerHTML,
+town_clerk_html: document.getElementById('wp-fm-clerk-body').innerHTML,
+executive_summary_html: document.getElementById('wp-fm-exec-body').innerHTML,
+};
+await api('/api/annual-report-content', { method: 'PATCH', body: JSON.stringify(payload) });
+toast('Report front matter updated', 'success');
+setFrontmatterEditing(false);
+} catch (e) { toast(e.message, 'error'); } finally { btn.disabled = false; }
+});
 document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); renderBudgetCodes(); applyWorkplanSubtabDisplay(); });
 document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
 // Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
