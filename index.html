@@ -2711,6 +2711,8 @@ const downloadPdfBtn = document.getElementById('wp-download-pdf-btn');
 if (downloadPdfBtn) {
 downloadPdfBtn.title = (view === 'rev-monthly')
 ? 'Download Monthly Local Revenue/GoU Transfers Estimates vs. Actual Realized'
+: (subtab === 'expenditure')
+? 'Download Approved LG Expenditure Estimates as PDF'
 : 'Download Annual Work Plan & Budget as PDF';
 }
 closeNotifPanel();
@@ -3244,23 +3246,31 @@ applyWorkplanSubtabDisplay();
 document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); renderBudgetCodes(); applyWorkplanSubtabDisplay(); });
 document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
 // Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
+// `page` tells the backend which PBS page's content to include (the cover/
+// forward/clerk-message/executive-summary front matter is always the same;
+// only the tables that follow reflect the page currently open here) — it
+// mirrors STATE.workplanSubtab / the active view exactly.
 async function downloadWorkPlanPdf() {
 const wpId = document.getElementById('wp-select').value;
 if (!wpId) { toast('Select a work plan first', 'error'); return; }
 const btn = document.getElementById('wp-download-pdf-btn');
 btn.disabled = true;
 try {
-const res = await fetch(`${API_BASE}/api/work-plans/${wpId}/report-pdf`, { headers: { Authorization: 'Bearer ' + STATE.token } });
+const isRevMonthly = document.getElementById('view-rev-monthly').classList.contains('active');
+const page = isRevMonthly ? 'rev-monthly' : (STATE.workplanSubtab === 'expenditure' ? 'expenditure' : 'annual');
+const res = await fetch(`${API_BASE}/api/work-plans/${wpId}/report-pdf?page=${page}`, { headers: { Authorization: 'Bearer ' + STATE.token } });
 if (!res.ok) throw new Error('Could not generate the PDF');
 const blob = await res.blob();
 const url = URL.createObjectURL(blob);
 const a = document.createElement('a');
 a.href = url;
 const fy = document.getElementById('wp-fy-title').textContent.replace('/', '-');
-const isRevMonthly = document.getElementById('view-rev-monthly').classList.contains('active');
-a.download = isRevMonthly
-? `Monthly_Local_Revenue_GoU_Transfers_FY_${fy}.pdf`
-: `Annual_Work_Plan_FY_${fy}.pdf`;
+const pageFilenames = {
+'rev-monthly': `Monthly_Local_Revenue_GoU_Transfers_FY_${fy}.pdf`,
+'expenditure': `Approved_LG_Expenditure_Estimates_FY_${fy}.pdf`,
+'annual': `Annual_Work_Plan_FY_${fy}.pdf`,
+};
+a.download = pageFilenames[page];
 document.body.appendChild(a); a.click(); a.remove();
 URL.revokeObjectURL(url);
 } catch (e) { toast(e.message, 'error'); }
