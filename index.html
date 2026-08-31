@@ -483,7 +483,7 @@ text-align:center;
 #wp-revenue-summary-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
 #wp-revenue-summary-body td.mono, #wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
 #wp-revenue-summary-wrap tfoot td{text-align:left;}
-#wp-revenue-summary-wrap{max-height:260px; overflow-x:auto; overflow-y:auto;}
+#wp-revenue-summary-wrap{overflow-x:auto;}
 #wp-revenue-summary-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-revenue-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
 #wp-revenue-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
@@ -526,13 +526,29 @@ point begins on its own line rather than running together as one line. */
 .wp-fm-body[contenteditable="true"]:focus{outline-style:solid; outline-color:var(--teal-700);}
 .wp-fm-edit-hint{display:none; font-size:11px; color:var(--teal-700); font-weight:600; margin:-4px 0 16px; text-align:right;}
 .wp-fm-edit-hint.show{display:block;}
+/* Each front-matter page (cover / Forward / Town Clerk / Executive Summary)
+   is sized to the same height as the sidebar (100vh) so it reads as one
+   discrete page; content taller than that scrolls inside its own page
+   instead of stretching the page. */
+.wp-fm-pages{scroll-snap-type:y proximity;}
+.wp-fm-page{
+height:100vh; max-height:100vh; box-sizing:border-box; overflow-y:auto;
+padding:28px 4px; scroll-snap-align:start; display:flex; flex-direction:column;
+}
+.wp-fm-page + .wp-fm-page{border-top:1px solid var(--line-strong);}
+.wp-fm-page-num{font-size:10.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-500); margin-bottom:14px; text-align:center; flex-shrink:0;}
+.wp-fm-cover-page{justify-content:center; align-items:center;}
+.wp-fm-cover-page .wp-fm-cover{width:100%;}
+@media print{
+.wp-fm-page{height:auto; max-height:none; overflow:visible; page-break-after:always;}
+}
 .wp-fm-cover{text-align:center; padding:6px 0 22px;}
 .wp-fm-logo{display:block; max-width:420px; width:100%; height:auto; margin:0 auto 14px; border-radius:4px; box-shadow:0 3px 10px rgba(10,31,43,.2);}
 .wp-fm-cover-line{font-size:12px; color:var(--ink-500); margin-top:2px;}
 .wp-fm-cover-title{font-size:22px; font-weight:700; color:var(--teal-700); margin-top:18px; letter-spacing:.3px;}
 .wp-fm-cover-sub{font-size:15px; color:var(--teal-700); margin-top:4px;}
-.wp-fm-section{border-top:1px solid var(--line-strong); padding-top:22px; margin-top:22px;}
-.wp-fm-heading{font-size:14px; font-weight:700; color:var(--teal-700); margin-bottom:12px; letter-spacing:.3px;}
+.wp-fm-section{flex:1; min-height:0;}
+.wp-fm-heading{font-size:14px; font-weight:700; color:var(--teal-700); margin-bottom:12px; letter-spacing:.3px; flex-shrink:0;}
 .wp-frontmatter h3{font-size:12.5px; font-weight:700; color:var(--teal-700); margin:16px 0 8px;}
 .wp-frontmatter h4{font-size:12px; font-weight:700; color:var(--navy-950); margin:14px 0 6px;}
 .wp-frontmatter p{margin:0 0 10px; font-size:12px; line-height:1.7; color:var(--ink-900); text-align:justify;}
@@ -540,6 +556,7 @@ point begins on its own line rather than running together as one line. */
 .wp-frontmatter li{font-size:12px; line-height:1.6; color:var(--ink-900); margin-bottom:4px;}
 .wp-fm-quote{text-align:center !important; font-style:italic; font-size:13px; color:var(--navy-950); margin:16px 0 !important;}
 .wp-fm-signoff{text-align:center; margin-top:14px; font-size:12px; color:var(--ink-900); line-height:1.6;}
+
 
 
 Summary) — generic hierarchical table styling, shared by all three ------- */
@@ -1335,6 +1352,8 @@ Departments
 </div>
 </div>
 <div class="wp-fm-edit-hint" id="wp-fm-edit-hint">Click into a section below and edit the text, then press the checkmark to save.</div>
+<div class="wp-fm-pages">
+<div class="wp-fm-page wp-fm-cover-page">
 <div class="wp-fm-cover">
   <img src="header.jpg" alt="Karugutu Town Council" class="wp-fm-logo" />
   <div class="wp-fm-cover-line">Ntoroko District Local Government</div>
@@ -1344,7 +1363,10 @@ Departments
   <div class="wp-fm-cover-line" style="margin-top:14px;">Prepared by: Karugutu Town Council Technical Planning Committee</div>
   <div class="wp-fm-cover-line" id="wp-fm-generated">Generated on —</div>
 </div>
-<div class="wp-fm-section" style="border-top:none; padding-top:0; margin-top:0;">
+</div>
+<div class="wp-fm-page">
+<div class="wp-fm-page-num">Page 2</div>
+<div class="wp-fm-section">
   <div class="wp-fm-heading">FORWARD BY CHAIRPERSON LC III KARUGUTU TOWN COUNCIL</div>
   <div class="wp-fm-body" id="wp-fm-forward-body" contenteditable="false">
   <p>It is my pleasure to present the Karugutu Town Council Annual Work Plan and Budget for the Financial Year 2026/2027, which provides the Council's implementation roadmap for delivering quality public services and advancing sustainable socio-economic transformation within our municipality. This Work Plan and Budget operationalizes the Karugutu Town Council Five-Year Strategic Development Plan (2025–2030) by translating its strategic priorities into annual programmes, budget outputs, measurable performance targets, and resource allocations that respond to the aspirations and needs of our people.</p>
@@ -1362,6 +1384,9 @@ Departments
   </div>
   </div>
 </div>
+</div>
+<div class="wp-fm-page">
+<div class="wp-fm-page-num">Page 3</div>
 <div class="wp-fm-section">
   <div class="wp-fm-heading">MESSAGE FROM THE TOWN CLERK, KARUGUTU TOWN COUNCIL</div>
   <div class="wp-fm-body" id="wp-fm-clerk-body" contenteditable="false">
@@ -1386,6 +1411,9 @@ Departments
   </div>
   </div>
 </div>
+</div>
+<div class="wp-fm-page">
+<div class="wp-fm-page-num">Page 4</div>
 <div class="wp-fm-section">
   <div class="wp-fm-heading">EXECUTIVE SUMMARY</div>
   <div class="wp-fm-body" id="wp-fm-exec-body" contenteditable="false">
@@ -1436,6 +1464,8 @@ Departments
   </ul>
   <p>Ultimately, the detailed document hereunder stands as Karugutu Town Council's binding operational commitment to transparency, evidence-based public financial management, and equitable development.</p>
   </div>
+</div>
+</div>
 </div>
 </div>
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
