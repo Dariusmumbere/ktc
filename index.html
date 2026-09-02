@@ -291,14 +291,14 @@ transition:background .15s var(--ease), border-color .15s var(--ease), transform
 /* Trims the leftover empty space below the Monthly Local Revenue table. */
 .content:has(> #view-rev-monthly.active){padding-bottom:20px;}
 #rlm-table-wrap{margin-bottom:0 !important;}
-@media (min-width:901px){
-/* Fills the same vertical span as the sidebar — the table grows to use
-   all remaining height in the content column instead of stopping at a
-   fixed box height and leaving blank space beneath it. */
-#view-rev-monthly.active{display:flex; flex-direction:column; height:100%;}
-#view-rev-monthly.active > .card{display:flex; flex-direction:column; flex:1; min-height:0;}
-#rlm-table-wrap{flex:1; min-height:0; max-height:none;}
-}
+/* NOTE: this view previously forced height:100% + overflow:hidden on its
+   card (via a min-width:901px rule) so the table would fill the remaining
+   sidebar-height space instead of leaving blank space beneath a short
+   table. That pinned the whole view to exactly the content area's height
+   and clipped anything that didn't fit, which made the page unscrollable
+   once a work plan had enough monthly revenue rows to overflow it. Removed
+   so this view scrolls like every other page — the table still gets its
+   own internal scrollbar from .rli-table-wrap's max-height/overflow below. */
 .badge-dot{
 position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:9px;
 background:var(--danger); color:#fff; font-size:9.5px; font-weight:700; display:flex; align-items:center; justify-content:center;
@@ -1606,6 +1606,7 @@ Departments
 <input type="text" id="wp-search" placeholder="Search budget outputs, codes…" />
 </div>
 <select class="filter-select" id="wp-dept-filter"><option value="">All Departments</option></select>
+<select class="filter-select" id="wp-programme-filter"><option value="">All Programmes</option></select>
 </div>
 <div class="table-title-row" id="wp-main-table-heading" style="margin-bottom:10px;">
 <div class="kicker" id="wp-title-main-table" style="font-size:13px; color:var(--navy-950);">APPROVED COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
@@ -3427,9 +3428,28 @@ renderRevLineTable('quarterly');
 }
 async function loadWorkplanView() {
 await loadWorkplans();
+await loadProgrammeFilterOptions();
 await renderBudgetCodes();
 applyWorkplanSubtabDisplay();
 loadReportFrontmatter();
+}
+// Populates the Programme filter (next to the search bar / department
+// filter on the Annual Work Plan & Budget table) with the distinct
+// Programme values in use on the currently selected work plan. Programme
+// is free text on each budget code rather than a lookup table, so the
+// option list is read from the backend's distinct-values endpoint instead
+// of a static reference list like Departments.
+async function loadProgrammeFilterOptions() {
+const sel = document.getElementById('wp-programme-filter');
+if (!sel) return;
+const wpId = document.getElementById('wp-select').value;
+const prevVal = sel.value;
+try {
+const programmes = await api(`/api/budget-codes/programmes${wpId ? `?work_plan_id=${wpId}` : ''}`);
+sel.innerHTML = '<option value="">All Programmes</option>' +
+programmes.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+if (prevVal && programmes.includes(prevVal)) sel.value = prevVal;
+} catch (e) { /* keep whatever options were already there */ }
 }
 // ---- Report Front Matter (Forward / Town Clerk / Executive Summary) ------
 // Loads any saved overrides from the backend; a section with no saved
@@ -3474,7 +3494,7 @@ toast('Report front matter updated', 'success');
 setFrontmatterEditing(false);
 } catch (e) { toast(e.message, 'error'); } finally { btn.disabled = false; }
 });
-document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); renderBudgetCodes(); applyWorkplanSubtabDisplay(); });
+document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); loadProgrammeFilterOptions().then(renderBudgetCodes); applyWorkplanSubtabDisplay(); });
 document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
 // Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
 // `page` tells the backend which PBS page's content to include (the cover/
@@ -3508,6 +3528,7 @@ URL.revokeObjectURL(url);
 finally { btn.disabled = false; }
 }
 document.getElementById('wp-dept-filter').addEventListener('change', renderBudgetCodes);
+document.getElementById('wp-programme-filter').addEventListener('change', renderBudgetCodes);
 document.getElementById('wp-search').addEventListener('input', debounce(renderBudgetCodes, 300));
 // Renders the "Revenue Sources Summary" table (unchanged, per Council request)
 // AND the new "Revenue Source by Category for the FY 2026/27" detail (categories with sub rows) that
@@ -3837,6 +3858,7 @@ const tbody = document.getElementById('wp-table-body');
 tbody.innerHTML = '<tr><td colspan="20" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
 const wpId = document.getElementById('wp-select').value;
 const deptId = document.getElementById('wp-dept-filter').value;
+const programme = document.getElementById('wp-programme-filter').value;
 const search = document.getElementById('wp-search').value.trim();
 const wp = STATE.workplans.find(w => String(w.id) === String(wpId));
 document.getElementById('wp-fy-title').textContent = wp ? wp.financial_year : '—';
@@ -3844,6 +3866,7 @@ try {
 let path = '/api/budget-codes?';
 if (wpId) path += `work_plan_id=${wpId}&`;
 if (deptId) path += `department_id=${deptId}&`;
+if (programme) path += `programme=${encodeURIComponent(programme)}&`;
 if (search) path += `search=${encodeURIComponent(search)}&`;
 const codes = await api(path);
 STATE.budgetCodes = codes;
