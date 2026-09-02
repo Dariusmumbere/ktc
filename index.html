@@ -564,6 +564,20 @@ padding:28px 4px; scroll-snap-align:start; display:flex; flex-direction:column;
 Summary) — generic hierarchical table styling, shared by all three ------- */
 .rli-table-wrap{max-height:520px; overflow:auto; border-radius:var(--radius); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
 .rli-table-wrap table{border-collapse:separate; border-spacing:0;}
+/* Sub item 1 (Monthly Local Revenue/GoU Transfers) has 29 columns, so it
+   needs both a vertical scrollbar (already provided by .rli-table-wrap's
+   max-height/overflow above) and a guaranteed horizontal scrollbar — the
+   table is given a min-width wider than any reasonable viewport so it
+   always overflows its wrapper horizontally instead of squeezing columns
+   down to fit. A visible, styled scrollbar (rather than a hidden/overlay
+   one) makes it obvious the table scrolls in both directions. */
+#rlm-table-wrap{overflow-x:auto; overflow-y:auto; scrollbar-width:thin; scrollbar-color: var(--teal-700) var(--surface-100, #eef2f1);}
+#rlm-table{min-width:1700px;}
+#rlm-table-wrap::-webkit-scrollbar{width:11px; height:11px;}
+#rlm-table-wrap::-webkit-scrollbar-track{background:var(--surface-100, #eef2f1);}
+#rlm-table-wrap::-webkit-scrollbar-thumb{background:var(--teal-700); border-radius:6px; border:2px solid transparent; background-clip:padding-box;}
+#rlm-table-wrap::-webkit-scrollbar-thumb:hover{background:var(--navy-900);}
+#rlm-table-wrap::-webkit-scrollbar-corner{background:var(--surface-100, #eef2f1);}
 /* Stick the WHOLE header as one unit (not each row separately with a
    guessed pixel offset). Two independently-positioned sticky rows can
    never line up pixel-perfectly with the real (variable) height of row
@@ -1097,12 +1111,19 @@ window.addEventListener('resize', syncLineWidth);
 <label>Sign in as</label>
 <select id="login-role" required>
 <option value="">Select your role</option>
-<option value="staff">Requisitioner</option>
-<option value="hod">First Level Approver</option>
-<option value="treasurer">Budget Controller</option>
-<option value="clerk">Accounting Officer</option>
-<option value="auditor">IFMS Auditor</option>
-<option value="admin">Local System Administrator</option>
+<option value="staff">LLG Requisitioner</option>
+<option value="cashier">LLG Paying Officer (Cashier)</option>
+<option value="hod">LLG First Level Approver (HOD)</option>
+<option value="treasurer">LLG Budget Controller (Senior Treasurer)</option>
+<option value="clerk">LLG Accounting Officer (Town Clerk)</option>
+<option value="auditor">LLG Internal Auditor (Senior Internal Auditor)</option>
+<option value="district_internal_auditor">LLG IFMS/PBS District Internal Auditor</option>
+<option value="district_external_auditor">LLG IFMS/PBS District External Auditor</option>
+<option value="district_planner">District Planner</option>
+<option value="cfo">Chief Finance Officer (CFO)</option>
+<option value="cao">Chief Administrative Officer (CAO)</option>
+<option value="national_admin">National System Administrator</option>
+<option value="admin">LLG System Administrator</option>
 </select>
 </div>
 <div class="field">
@@ -1318,7 +1339,7 @@ Departments
 </div>
 <div class="rli-table-wrap" id="rlm-table-wrap" style="margin:10px 16px 16px;">
 <table id="rlm-table">
-<thead>
+<thead id="rlm-table-thead" style="display:none;">
 <tr>
 <th rowspan="2">Code</th>
 <th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
@@ -2136,12 +2157,19 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <div class="field"><label>Telephone</label><input type="text" id="u-telephone" placeholder="e.g. 0700 000 000"/></div>
 <div class="field"><label>Role</label>
 <select id="u-role">
-<option value="staff">Requisitioner</option>
-<option value="hod">First Level Approver</option>
-<option value="treasurer">Budget Controller</option>
-<option value="clerk">Accounting Officer</option>
-<option value="auditor">IFMS Auditor</option>
-<option value="admin">Local System Administrator</option>
+<option value="staff">LLG Requisitioner</option>
+<option value="cashier">LLG Paying Officer (Cashier)</option>
+<option value="hod">LLG First Level Approver (HOD)</option>
+<option value="treasurer">LLG Budget Controller (Senior Treasurer)</option>
+<option value="clerk">LLG Accounting Officer (Town Clerk)</option>
+<option value="auditor">LLG Internal Auditor (Senior Internal Auditor)</option>
+<option value="district_internal_auditor">LLG IFMS/PBS District Internal Auditor</option>
+<option value="district_external_auditor">LLG IFMS/PBS District External Auditor</option>
+<option value="district_planner">District Planner</option>
+<option value="cfo">Chief Finance Officer (CFO)</option>
+<option value="cao">Chief Administrative Officer (CAO)</option>
+<option value="national_admin">National System Administrator</option>
+<option value="admin">LLG System Administrator</option>
 </select>
 </div>
 <div class="field span2"><label id="u-department-label">Department</label><select id="u-department"></select><div class="help-text" id="u-department-hint" style="display:none; margin-top:4px;">Required for Head of Department accounts — a Head of Department without a Department assigned will not see any requisitions awaiting their approval.</div></div>
@@ -2365,6 +2393,13 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <option value="acknowledgement">Upload Acknowledgement of Receipt (Handwritten)</option>
 <option value="expense_report">Upload Expense Report (Accountability Form)</option>
 <option value="report">Upload Final Activity Report</option>
+<option value="activity_implementation_report">Upload the Activity Implementation Report</option>
+<option value="goods_received_note">Upload Goods Received Note</option>
+<option value="stores_issue_voucher">Upload Stores Issue Voucher</option>
+<option value="bill_of_quantities">Upload Bill of Quantities / Cost Estimates</option>
+<option value="activity_launch_report">Upload Activity Launch Report (Esp. for construction activities)</option>
+<option value="project_closeout_report">Upload Project Closeout Report (Esp. for construction activities)</option>
+<option value="commissioning_report">Upload the Post-Activity Commissioning Report</option>
 </select>
 </div>
 <div class="field"><label>File (PDF, DOCX, JPG, PNG)</label><input type="file" id="up-file" accept=".pdf,.docx,.jpg,.jpeg,.png"/></div>
@@ -2626,6 +2661,13 @@ payment_sheet: 'Activity Payment Sheet',
 acknowledgement: 'Acknowledgement of Receipt (Handwritten)',
 expense_report: 'Expense Report (Accountability Form)',
 report: 'Final Activity Report',
+activity_implementation_report: 'Activity Implementation Report',
+goods_received_note: 'Goods Received Note',
+stores_issue_voucher: 'Stores Issue Voucher',
+bill_of_quantities: 'Bill of Quantities / Cost Estimates',
+activity_launch_report: 'Activity Launch Report',
+project_closeout_report: 'Project Closeout Report',
+commissioning_report: 'Post-Activity Commissioning Report',
 voucher: 'Payment Voucher',
 supporting: 'Supporting Document',
 other: 'Other',
@@ -2638,12 +2680,19 @@ function docTypeLabel(t) { return DOC_TYPE_LABELS[t] || statusLabel(t); }
 // statusLabel(), and the underlying role codes stored in the database are
 // unchanged.
 const ADMIN_USER_ROLE_LABELS = {
-staff: 'Requisitioner',
-hod: 'First Level Approver',
-treasurer: 'Budget Controller',
-clerk: 'Accounting Officer',
-auditor: 'IFMS Auditor',
-admin: 'Local System Administrator',
+staff: 'LLG Requisitioner',
+cashier: 'LLG Paying Officer (Cashier)',
+hod: 'LLG First Level Approver (HOD)',
+treasurer: 'LLG Budget Controller (Senior Treasurer)',
+clerk: 'LLG Accounting Officer (Town Clerk)',
+auditor: 'LLG Internal Auditor (Senior Internal Auditor)',
+district_internal_auditor: 'LLG IFMS/PBS District Internal Auditor',
+district_external_auditor: 'LLG IFMS/PBS District External Auditor',
+district_planner: 'District Planner',
+cfo: 'Chief Finance Officer (CFO)',
+cao: 'Chief Administrative Officer (CAO)',
+national_admin: 'National System Administrator',
+admin: 'LLG System Administrator',
 };
 function adminRoleLabel(role) { return ADMIN_USER_ROLE_LABELS[role] || statusLabel(role); }
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
@@ -3200,6 +3249,13 @@ async function renderRevLineTable(periodType) {
 const cfg = REV_LINE_PAGES[periodType];
 const tbody = document.getElementById(cfg.bodyId);
 const wpId = document.getElementById(cfg.wpSelectId).value;
+// Sub item 1 (Monthly Local Revenue/GoU Transfers) keeps its column
+// headers hidden for as long as the table body is loading/empty/errored,
+// so the header row never flashes into view before the actual data (or a
+// definitive "nothing to show" state) is ready — it's only revealed once
+// real rows have been rendered into the table.
+const thead = periodType === 'monthly' ? document.getElementById('rlm-table-thead') : null;
+if (thead) thead.style.display = 'none';
 if (!wpId) {
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
 return;
@@ -3214,6 +3270,7 @@ return;
 }
 const canEdit = STATE.role === 'admin';
 tbody.innerHTML = rows.map(r => renderRevLineRow(r, cfg, canEdit)).join('');
+if (thead) thead.style.display = '';
 } catch (e) {
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">Could not load this table.</div></td></tr>`;
 toast(e.message, 'error');
