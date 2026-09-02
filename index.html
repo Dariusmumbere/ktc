@@ -607,6 +607,20 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-dept-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-dept-summary-body td{padding:7px 9px; font-size:11.5px;}
 #wp-main-table{min-width:1914px;}
+/* ---------------- Work Plan & Budget: PIAP / "Part 2" transposed table
+   (one column per activity output, one row per field, blocked per
+   department to mirror the LLG's own Sheet2-style workbook layout) ------- */
+#wp-piap-wrap table{min-width:640px; border-collapse:collapse;}
+#wp-piap-wrap table + table{margin-top:22px;}
+#wp-piap-wrap td, #wp-piap-wrap th{border:1px solid var(--line); padding:6px 9px; font-size:11px; vertical-align:top; text-align:left; color:var(--ink-900);}
+#wp-piap-wrap tr.piap-vote-row td{background:var(--navy-950); color:#fff; font-weight:700; font-size:11.5px;}
+#wp-piap-wrap tr.piap-part-row td{background:var(--gold-100); color:var(--navy-950); font-weight:600; font-style:italic;}
+#wp-piap-wrap tr.piap-meta-row td:first-child{background:#EAF0EF; font-weight:700; width:150px; white-space:nowrap;}
+#wp-piap-wrap tr.piap-activity-num-row td{background:var(--teal-700); color:#fff; font-weight:700; text-align:center;}
+#wp-piap-wrap tr.piap-field-row td:first-child{background:#EAF0EF; font-weight:700; white-space:nowrap; width:190px;}
+#wp-piap-wrap tr.piap-field-row td:not(:first-child){white-space:normal; max-width:220px; min-width:150px;}
+#wp-piap-wrap tr.piap-field-row.piap-num-row td:not(:first-child){text-align:right; font-family:var(--font-mono, monospace); white-space:nowrap;}
+#wp-piap-wrap .piap-empty{padding:20px 16px; color:var(--ink-500); font-size:12.5px;}
 #wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
 #wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:400; line-height:1.3;}
 #wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px;}
@@ -1338,6 +1352,7 @@ Departments
 <input type="file" id="wp-import-summary-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
+<input type="file" id="wp-import-piap-file" accept=".xlsx,.xls" style="display:none;" />
 <div class="card card-pad wp-frontmatter" id="wp-annual-frontmatter" style="display:none; margin-bottom:20px;">
 <div class="table-title-row">
 <div class="kicker">REPORT FRONT MATTER</div>
@@ -1656,6 +1671,22 @@ Departments
 <tr><td colspan="20" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
+</div>
+<div class="card" id="wp-piap-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:18px; display:none;">
+<div style="padding:14px 18px 4px;">
+<div class="table-title-row">
+<div class="kicker" style="font-size:13px; color:var(--navy-950);">PART 2: PROPOSED LLG DEPARTMENTAL ACTIVITY OUTPUTS AND EXPENDITURE ESTIMATES</div>
+<div class="table-title-actions">
+<button type="button" class="icon-btn icon-btn-sm" id="wp-import-piap-btn" style="display:none;" title="Import From Excel (Sheet2 / Part 2 layout)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+</button>
+</div>
+</div>
+<div class="help-text" style="margin:2px 0 10px;">Same departmental activity outputs as the table above, shown in the LLG's "Part 2" layout — one column per activity output, grouped by department. Use Import to bring in a workbook already laid out this way (e.g. a "Sheet2" tab), rather than the flat one-row-per-activity layout used above.</div>
+</div>
+<div id="wp-piap-wrap" style="margin:0 16px 16px; overflow-x:auto;">
+<div class="loading-row"><span class="spinner spinner-dark"></span></div>
+</div>
 </div>
 <div class="card card-pad" style="margin-top:18px;">
 <div class="kicker">📊 Baseline vs. Planned Target vs. Actual Output — by Department</div>
@@ -2827,6 +2858,7 @@ document.getElementById('wp-new-workplan-btn').style.display = (STATE.role === '
 document.getElementById('wp-edit-workplan-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-fm-edit-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-import-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-import-piap-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
 document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
@@ -3403,10 +3435,13 @@ function applyWorkplanSubtabDisplay() {
 const summaryCard = document.getElementById('wp-revenue-summary-card');
 const detailCard = document.getElementById('wp-revenue-detail-card');
 const frontmatterEl = document.getElementById('wp-annual-frontmatter');
+const piapCard = document.getElementById('wp-piap-card');
 const isAnnual = STATE.workplanSubtab === 'annual';
 if (summaryCard) summaryCard.style.display = isAnnual ? '' : 'none';
 if (detailCard) detailCard.style.display = isAnnual ? '' : 'none';
 if (frontmatterEl) frontmatterEl.style.display = isAnnual ? '' : 'none';
+if (piapCard) piapCard.style.display = isAnnual ? '' : 'none';
+if (isAnnual) renderPiapTable();
 if (!isAnnual) return;
 const wpVal = document.getElementById('wp-select').value;
 const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
@@ -3909,6 +3944,102 @@ renderDeptOutputChart([]);
 renderDeptPieChart([]);
 }
 }
+// LLG identity shown on the header rows of the PIAP / "Part 2" table below —
+// mirrors the "LLG Vote" block that repeats above every department in the
+// LLG's own Sheet2-style workbook. Static because this deployment only ever
+// serves this one Council.
+const PIAP_LLG_VOTE_CODE = '001';
+const PIAP_LLG_VOTE_NAME = 'Karugutu Town Council';
+const PIAP_LLG_VOTE_DISTRICT = 'Ntoroko District';
+const PIAP_BLOCK_SIZE = 5; // activity outputs per block, matching the source template
+
+// Renders the "Part 2: Proposed LLG Departmental Activity Outputs and
+// Expenditure Estimates" table — the same budget_codes data as the main
+// Annual Work Plan table above, transposed into the LLG's own Sheet2-style
+// layout (one column per activity output, one row per field, blocked in
+// groups of 5 activities per department). Always fetched unfiltered by
+// department/search/programme so every activity output for the selected
+// work plan is shown here, independent of the filters applied to the main
+// table above it.
+async function renderPiapTable() {
+const wrap = document.getElementById('wp-piap-wrap');
+if (!wrap) return;
+const wpId = document.getElementById('wp-select').value;
+if (!wpId) {
+wrap.innerHTML = '<div class="piap-empty">Select a work plan above to view its departmental activity outputs.</div>';
+return;
+}
+wrap.innerHTML = '<div class="loading-row"><span class="spinner spinner-dark"></span></div>';
+let codes;
+try {
+codes = await api(`/api/budget-codes?work_plan_id=${wpId}`);
+} catch (e) {
+wrap.innerHTML = `<div class="piap-empty">${escapeHtml(e.message)}</div>`;
+return;
+}
+if (!codes.length) {
+wrap.innerHTML = '<div class="piap-empty">No activity outputs recorded for this work plan yet. Use "Import From Excel" above (Sheet2 / Part 2 layout) or add rows via the main table above to get started.</div>';
+return;
+}
+const wp = STATE.workplans.find(w => String(w.id) === String(wpId));
+const fy = wp ? wp.financial_year : '—';
+
+// Group activity outputs by department, preserving the order they were
+// first encountered (import order / id order), then split each
+// department's outputs into blocks of PIAP_BLOCK_SIZE to mirror the
+// source template's repeating "LLG Vote" header per block.
+const byDept = new Map();
+codes.forEach(c => {
+const key = c.department_name || '—';
+if (!byDept.has(key)) byDept.set(key, { code: (c.department_code_and_name && c.department_code_and_name.includes(':')) ? c.department_code_and_name.split(':')[0].trim() : '', items: [] });
+byDept.get(key).items.push(c);
+});
+
+const FIELD_ROWS = [
+{ label: 'Service Area', get: c => c.service_area },
+{ label: 'Programme', get: c => c.programme },
+{ label: 'Sub-Programme', get: c => c.sub_programme },
+{ label: 'Budget Output Code', get: c => c.code },
+{ label: 'Activity Output Description', get: c => c.output_description },
+{ label: 'PIAP Output Description', get: c => c.piap_output_description },
+{ label: 'PIAP Output Indicator', get: c => c.piap_output_indicator },
+{ label: 'Unit of Measure', get: c => c.unit_of_measure },
+{ label: 'Baseline Value', get: c => c.baseline_note || money(c.baseline_value) },
+{ label: 'Planned Target', get: c => c.target_note || money(c.planned_target) },
+{ label: 'Actual Output', get: c => c.actual_output },
+{ label: 'Q1', get: c => money(c.q1_amount), num: true },
+{ label: 'Q2', get: c => money(c.q2_amount), num: true },
+{ label: 'Q3', get: c => money(c.q3_amount), num: true },
+{ label: 'Q4', get: c => money(c.q4_amount), num: true },
+{ label: 'Annual Budget (UGX)', get: c => money(c.allocated_amount), num: true },
+{ label: 'Funding Source', get: c => c.funding_source },
+{ label: 'Responsible Party', get: c => c.responsible_party },
+];
+
+let html = '';
+byDept.forEach((dept, deptName) => {
+for (let i = 0; i < dept.items.length; i += PIAP_BLOCK_SIZE) {
+const block = dept.items.slice(i, i + PIAP_BLOCK_SIZE);
+const colCount = block.length + 1;
+html += `<table>
+<tbody>
+<tr class="piap-vote-row"><td colspan="${colCount}">LLG Vote &nbsp; ${escapeHtml(PIAP_LLG_VOTE_CODE)} &nbsp;—&nbsp; ${escapeHtml(PIAP_LLG_VOTE_NAME)} &nbsp;—&nbsp; ${escapeHtml(PIAP_LLG_VOTE_DISTRICT)}</td></tr>
+<tr class="piap-part-row"><td colspan="${colCount}">Part 2: Proposed LLG Departmental Activity Outputs and Expenditure Estimates</td></tr>
+<tr class="piap-meta-row"><td>Financial Year</td><td colspan="${colCount - 1}">${escapeHtml(fy)}</td></tr>
+<tr class="piap-meta-row"><td>Department:</td><td colspan="${colCount - 1}">${escapeHtml(deptName)}</td></tr>
+<tr class="piap-meta-row"><td>Department Code:</td><td colspan="${colCount - 1}">${escapeHtml(dept.code || '—')}</td></tr>
+<tr class="piap-activity-num-row"><td>Activity Output Number</td>${block.map((c, j) => `<td>Activity Output – ${i + j + 1}</td>`).join('')}</tr>
+${FIELD_ROWS.map(f => `<tr class="piap-field-row${f.num ? ' piap-num-row' : ''}"><td>${escapeHtml(f.label)}</td>${block.map(c => {
+const v = f.get(c);
+return `<td>${v === null || v === undefined || v === '' ? '—' : escapeHtml(String(v))}</td>`;
+}).join('')}</tr>`).join('')}
+</tbody>
+</table>`;
+}
+});
+wrap.innerHTML = html;
+}
+
 async function deleteBudgetCode(id) {
 const c = STATE.budgetCodes.find(x => x.id === id);
 if (!confirm(`Delete budget code ${c ? c.code : id}? This cannot be undone.`)) return;
@@ -4205,6 +4336,32 @@ const shownNote = total > result.errors.length ? ` (showing first ${result.error
 toast(`${total} row warning(s)${shownNote} — first: ${result.errors[0]}`, 'error');
 }
 renderBudgetCodes();
+} catch (err) { toast(err.message, 'error'); }
+finally { e.target.value = ''; }
+});
+// ---- Import Departmental Activity Outputs from Excel (Sheet2 / "Part 2" layout) --------
+document.getElementById('wp-import-piap-btn').addEventListener('click', () => {
+const wpVal = document.getElementById('wp-select').value;
+if (!wpVal) { toast('Please select a work plan to import into first', 'error'); return; }
+document.getElementById('wp-import-piap-file').click();
+});
+document.getElementById('wp-import-piap-file').addEventListener('change', async (e) => {
+const file = e.target.files[0];
+if (!file) return;
+const wpVal = document.getElementById('wp-select').value;
+const fd = new FormData();
+fd.append('file', file);
+try {
+toast('Importing departmental activity outputs from Excel…', 'info');
+const result = await api(`/api/budget-codes/import-piap?work_plan_id=${wpVal}`, { method: 'POST', body: fd });
+toast(`Imported ${result.created} activity output(s)${result.skipped ? `, skipped ${result.skipped}` : ''}`, 'success');
+if (result.errors && result.errors.length) {
+const total = result.total_warnings || result.errors.length;
+const shownNote = total > result.errors.length ? ` (showing first ${result.errors.length} of ${total})` : '';
+toast(`${total} warning(s)${shownNote} — first: ${result.errors[0]}`, 'error');
+}
+renderBudgetCodes();
+renderPiapTable();
 } catch (err) { toast(err.message, 'error'); }
 finally { e.target.value = ''; }
 });
