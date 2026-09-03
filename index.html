@@ -1118,7 +1118,7 @@ window.addEventListener('resize', syncLineWidth);
 <option value="clerk">LLG Accounting Officer (Town Clerk)</option>
 <option value="auditor">LLG Internal Auditor (Senior Internal Auditor)</option>
 <option value="district_internal_auditor">LLG IFMS/PBS District Internal Auditor</option>
-<option value="district_external_auditor">LLG IFMS/PBS District External Auditor</option>
+<option value="district_external_auditor">LLG IFMS/PBS External Auditor</option>
 <option value="district_planner">District Planner</option>
 <option value="cfo">Chief Finance Officer (CFO)</option>
 <option value="cao">Chief Administrative Officer (CAO)</option>
@@ -1505,7 +1505,7 @@ Departments
 </div>
 </div>
 </div>
-<div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
+<div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" id="wp-revenue-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; display:none;">
 <div style="padding:14px 18px 4px;">
 <div class="table-title-row">
@@ -2164,7 +2164,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <option value="clerk">LLG Accounting Officer (Town Clerk)</option>
 <option value="auditor">LLG Internal Auditor (Senior Internal Auditor)</option>
 <option value="district_internal_auditor">LLG IFMS/PBS District Internal Auditor</option>
-<option value="district_external_auditor">LLG IFMS/PBS District External Auditor</option>
+<option value="district_external_auditor">LLG IFMS/PBS External Auditor</option>
 <option value="district_planner">District Planner</option>
 <option value="cfo">Chief Finance Officer (CFO)</option>
 <option value="cao">Chief Administrative Officer (CAO)</option>
@@ -2439,6 +2439,14 @@ editingRevenueSourceId: null,
 editingRevLineItemId: null,
 rliPeriodType: null,
 revLineItems: {},
+// Sub item 1 (Monthly Local Revenue/GoU Transfers) cache — keyed by work
+// plan id, holding the last-fetched rows for that plan. Switching between
+// work plans (or navigating away and back to this sub item) re-renders
+// instantly from here instead of re-hitting the network every time; the
+// entry for a plan is dropped whenever its rows are actually changed
+// (added/edited/deleted/cleared/imported) so the next render re-fetches
+// fresh data for it.
+revLineMonthlyCache: {},
 workplanSubtab: 'expenditure',
 reqLineItems: [],
 reqBudgetCodesForDept: [],
@@ -2583,7 +2591,20 @@ throw new Error('Session expired. Please sign in again.');
 let data = null;
 try { data = await res.json(); } catch (e) { /* no body */ }
 if (!res.ok) {
-const msg = (data && data.detail) ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Something went wrong';
+let msg = 'Something went wrong. Please try again.';
+if (data && data.detail) {
+if (typeof data.detail === 'string') {
+msg = data.detail;
+} else if (Array.isArray(data.detail) && data.detail.length) {
+// FastAPI/pydantic validation errors come back as an array of
+// {loc, msg, type, input} objects — that raw shape is a backend
+// implementation detail, never something to show a user directly.
+const first = data.detail[0];
+msg = (first && typeof first.msg === 'string' && first.msg) ? first.msg : 'Please check the information you entered and try again.';
+} else {
+msg = 'Please check the information you entered and try again.';
+}
+}
 throw new Error(msg);
 }
 return data;
@@ -2687,7 +2708,7 @@ treasurer: 'LLG Budget Controller (Senior Treasurer)',
 clerk: 'LLG Accounting Officer (Town Clerk)',
 auditor: 'LLG Internal Auditor (Senior Internal Auditor)',
 district_internal_auditor: 'LLG IFMS/PBS District Internal Auditor',
-district_external_auditor: 'LLG IFMS/PBS District External Auditor',
+district_external_auditor: 'LLG IFMS/PBS External Auditor',
 district_planner: 'District Planner',
 cfo: 'Chief Finance Officer (CFO)',
 cao: 'Chief Administrative Officer (CAO)',
@@ -2797,14 +2818,29 @@ localStorage.setItem('ktc_name', STATE.name);
 localStorage.setItem('ktc_user_id', STATE.userId);
 enterApp();
 } catch (err) {
-errEl.textContent = err.message || 'Unable to sign in. Please check your credentials.';
+// Whatever went wrong server-side (wrong credentials, a malformed email
+// address tripping backend validation, an unexpected 500, etc.), the
+// person signing in should only ever see plain, friendly wording here —
+// never a raw backend error payload. A short allow-list of messages that
+// are already written for end users passes through unchanged; anything
+// else collapses to a single generic, friendly line.
+const FRIENDLY_LOGIN_MESSAGES = [
+'Could not reach the database. Please check your connection and try again in a moment.',
+'This account has been deactivated',
+'The role you selected does not match this account. Please choose the correct role and try again.',
+'Session expired. Please sign in again.',
+'Incorrect email or password',
+];
+errEl.textContent = FRIENDLY_LOGIN_MESSAGES.includes(err.message)
+? err.message
+: 'Incorrect email or password. Please check your credentials and try again.';
 errEl.style.display = 'block';
 } finally {
 btn.disabled = false; btn.innerHTML = 'Sign in to your account';
 }
 });
 function logout() {
-STATE = { ...STATE, token: null, role: null, name: null, userId: null, signatureUrl: null, email: null, position: null };
+STATE = { ...STATE, token: null, role: null, name: null, userId: null, signatureUrl: null, email: null, position: null, revLineMonthlyCache: {} };
 localStorage.removeItem('ktc_token'); localStorage.removeItem('ktc_role');
 localStorage.removeItem('ktc_name'); localStorage.removeItem('ktc_user_id');
 document.getElementById('app-screen').style.display = 'none';
@@ -3061,7 +3097,10 @@ overlay.classList.toggle('overlay-maximized', maximized);
 const btn = document.getElementById(modalId + '-max-btn');
 if (btn) { btn.textContent = maximized ? '⧉' : '⛶'; btn.title = maximized ? 'Minimize' : 'Maximize'; }
 }
-document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', (e) => { if (e.target === ov && ov.id !== 'modal-req' && ov.id !== 'modal-session-timeout') ov.classList.remove('show'); }));
+// Modals are intentionally NOT dismissed by clicking their backdrop —
+// people can lose in-progress form input by misclicking outside a modal,
+// so every modal in the system must be closed explicitly via its own
+// close/cancel button (the [data-close] handler above) instead.
 // ---- My Settings (profile only — signature now lives on the New/Edit User modal) --------
 document.getElementById('user-chip-btn').addEventListener('click', openSettingsModal);
 async function openSettingsModal() {
@@ -3245,6 +3284,27 @@ ${gapCells}
 </tr>`;
 }
 
+function paintRevLineTable(tbody, cfg, thead, rows) {
+STATE.revLineItems[cfg.periodType] = rows;
+if (!rows.length) {
+tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">No rows recorded for this work plan yet. Use "Import From Excel" or "+ Add Row" above to get started.</div></td></tr>`;
+if (thead) thead.style.display = '';
+return;
+}
+const canEdit = STATE.role === 'admin';
+tbody.innerHTML = rows.map(r => renderRevLineRow(r, cfg, canEdit)).join('');
+if (thead) thead.style.display = '';
+}
+
+// Drops the cached rows for one work plan (or, with no id, every work
+// plan) from the sub item 1 (Monthly Local Revenue/GoU Transfers) cache —
+// called right after any add/edit/delete/clear/import so the next render
+// is forced to fetch fresh data instead of repainting stale cached rows.
+function invalidateMonthlyRevCache(wpId) {
+if (wpId == null) { STATE.revLineMonthlyCache = {}; return; }
+delete STATE.revLineMonthlyCache[wpId];
+}
+
 async function renderRevLineTable(periodType) {
 const cfg = REV_LINE_PAGES[periodType];
 const tbody = document.getElementById(cfg.bodyId);
@@ -3260,17 +3320,20 @@ if (!wpId) {
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
 return;
 }
+// Cache hit: paint straight from memory, no network call and no loading
+// spinner. This is the caching layer for sub item 1 specifically — the
+// cache is keyed by work plan id and is invalidated the instant its rows
+// actually change (see invalidateMonthlyRevCache calls below), so a cache
+// hit can never show stale data.
+if (periodType === 'monthly' && STATE.revLineMonthlyCache.hasOwnProperty(wpId)) {
+paintRevLineTable(tbody, cfg, thead, STATE.revLineMonthlyCache[wpId]);
+return;
+}
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
 try {
 const rows = await api(`/api/revenue-line-items?work_plan_id=${wpId}&period_type=${periodType}`);
-STATE.revLineItems[periodType] = rows;
-if (!rows.length) {
-tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">No rows recorded for this work plan yet. Use "Import From Excel" or "+ Add Row" above to get started.</div></td></tr>`;
-return;
-}
-const canEdit = STATE.role === 'admin';
-tbody.innerHTML = rows.map(r => renderRevLineRow(r, cfg, canEdit)).join('');
-if (thead) thead.style.display = '';
+if (periodType === 'monthly') STATE.revLineMonthlyCache[wpId] = rows;
+paintRevLineTable(tbody, cfg, thead, rows);
 } catch (e) {
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">Could not load this table.</div></td></tr>`;
 toast(e.message, 'error');
@@ -3331,6 +3394,7 @@ if (!confirm('Delete this row? This cannot be undone.')) return;
 try {
 await api(`/api/revenue-line-items/${id}`, { method: 'DELETE' });
 toast('Row deleted', 'success');
+if (periodType === 'monthly') invalidateMonthlyRevCache(document.getElementById(REV_LINE_PAGES.monthly.wpSelectId).value);
 renderRevLineTable(periodType);
 } catch (e) { toast(e.message, 'error'); }
 }
@@ -3343,6 +3407,7 @@ if (!confirm('Clear ALL rows in this table for the selected work plan? This cann
 try {
 const result = await api(`/api/revenue-line-items/clear?work_plan_id=${wpId}&period_type=${periodType}`, { method: 'DELETE' });
 toast(`Cleared ${result.deleted} row(s)`, 'success');
+if (periodType === 'monthly') invalidateMonthlyRevCache(wpId);
 renderRevLineTable(periodType);
 } catch (e) { toast(e.message, 'error'); }
 }
@@ -3372,6 +3437,7 @@ toast('Row updated', 'success');
 await api('/api/revenue-line-items', { method: 'POST', body: JSON.stringify(payload) });
 toast('Row added', 'success');
 }
+if (periodType === 'monthly') invalidateMonthlyRevCache(workPlanId);
 closeModal('modal-rli');
 renderRevLineTable(periodType);
 } catch (e) { toast(e.message, 'error'); }
@@ -3398,6 +3464,7 @@ try {
 toast('Importing from Excel…', 'info');
 const result = await api(`/api/revenue-line-items/import?work_plan_id=${wpVal}&period_type=${periodType}`, { method: 'POST', body: fd });
 toast(`Imported ${result.created} row(s)`, 'success');
+if (periodType === 'monthly') invalidateMonthlyRevCache(wpVal);
 renderRevLineTable(periodType);
 } catch (err) { toast(err.message, 'error'); }
 finally { e.target.value = ''; }
