@@ -620,7 +620,7 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-dept-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3;}
 #wp-dept-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-dept-summary-body td{padding:7px 9px; font-size:11.5px;}
-#wp-main-table{min-width:1914px;}
+#wp-main-table{min-width:2010px;}
 /* ---------------- Work Plan & Budget: PIAP / "Part 2" transposed table
    (one column per activity output, one row per field, blocked per
    department to mirror the LLG's own Sheet2-style workbook layout) ------- */
@@ -1677,6 +1677,7 @@ Departments
 <th class="wrap">Q4<br>(UGX)</th>
 <th class="wrap">Total Budget<br>(UGX)</th>
 <th class="wrap">Funding<br>Source</th>
+<th class="wrap">Expenditure<br>Category</th>
 <th class="wrap">Responsible<br>Party</th>
 <th>
 <span class="th-with-clear">
@@ -1689,7 +1690,7 @@ Departments
 </tr>
 </thead>
 <tbody id="wp-table-body">
-<tr><td colspan="20" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+<tr><td colspan="21" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
 </div>
@@ -2254,6 +2255,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <div class="field"><label>Q4 (UGX)</label><input type="number" id="bc-q4" value="0"/></div>
 <div class="field"><label>Total Budget (UGX)</label><input type="text" id="bc-total" value="0" readonly style="background:var(--paper); font-family:var(--font-mono);"/></div>
 <div class="field"><label>Funding Source</label><input type="text" id="bc-funding" value="Local Revenue"/></div>
+<div class="field"><label>Expenditure Category</label><select id="bc-expenditure-category"><option value="Wage">Wage</option><option value="Non wage">Non wage</option><option value="Development">Development</option></select></div>
 <div class="field span2"><label>Responsible Party</label><input type="text" id="bc-responsible" placeholder="e.g. Head of Department, Officer name"/></div>
 </div>
 <div class="help-text">Total Budget is the sum of Q1–Q4 and is calculated automatically.</div>
@@ -3833,7 +3835,7 @@ if (!wpId) { toast('Please select a work plan first', 'error'); return; }
 if (!confirm('Clear ALL activity & budget estimate rows for this work plan? This cannot be undone.')) return;
 // Empty the main table and the dependent Department Budget Summary table
 // on screen immediately, before the request even resolves.
-document.getElementById('wp-table-body').innerHTML = '<tr><td colspan="20"><div class="empty-state" style="padding:16px;">Clearing…</div></td></tr>';
+document.getElementById('wp-table-body').innerHTML = '<tr><td colspan="21"><div class="empty-state" style="padding:16px;">Clearing…</div></td></tr>';
 renderDeptSummaryTable([]);
 try {
 const result = await api(`/api/budget-codes/clear?work_plan_id=${wpId}`, { method: 'DELETE' });
@@ -4013,7 +4015,7 @@ el.innerHTML = `
 }
 async function renderBudgetCodes() {
 const tbody = document.getElementById('wp-table-body');
-tbody.innerHTML = '<tr><td colspan="20" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+tbody.innerHTML = '<tr><td colspan="21" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
 const wpId = document.getElementById('wp-select').value;
 const deptId = document.getElementById('wp-dept-filter').value;
 const programme = document.getElementById('wp-programme-filter').value;
@@ -4030,7 +4032,7 @@ const codes = await api(path);
 STATE.budgetCodes = codes;
 renderDeptSummaryTable(codes);
 if (codes.length === 0) {
-tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
+tbody.innerHTML = `<tr><td colspan="21"><div class="empty-state">No budget codes found. ${STATE.role === 'admin' ? 'Create one to get started.' : 'Ask your Administrator to set up the work plan.'}</div></td></tr>`;
 renderDeptOutputChart([]);
 renderDeptPieChart([]);
 return;
@@ -4055,13 +4057,14 @@ tbody.innerHTML = codes.map(c => `
 <td class="num mono">${money(c.q4_amount)}</td>
 <td class="num mono">${money(c.allocated_amount)}</td>
 <td class="wrap">${escapeHtml(c.funding_source)}</td>
+<td class="wrap">${escapeHtml(c.expenditure_category || '—')}</td>
 <td class="wrap">${escapeHtml(c.responsible_party || '—')}</td>
 <td style="white-space:nowrap;">${STATE.role === 'admin' ? `<button class="btn btn-ghost" style="padding:6px 10px;" onclick="openEditBudgetCode(${c.id})">Edit</button> <button class="btn btn-danger" style="padding:6px 10px; margin-left:4px;" onclick="deleteBudgetCode(${c.id})">Delete</button>` : ''}</td>
 </tr>`).join('');
 renderDeptOutputChart(codes);
 renderDeptPieChart(codes);
 } catch (e) {
-tbody.innerHTML = `<tr><td colspan="20"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
+tbody.innerHTML = `<tr><td colspan="21"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`;
 renderDeptSummaryTable([]);
 renderDeptOutputChart([]);
 renderDeptPieChart([]);
@@ -4136,6 +4139,7 @@ const FIELD_ROWS = [
 { label: 'Q4', get: c => money(c.q4_amount), num: true },
 { label: 'Annual Budget (UGX)', get: c => money(c.allocated_amount), num: true },
 { label: 'Funding Source', get: c => c.funding_source },
+{ label: 'Expenditure Category', get: c => c.expenditure_category },
 { label: 'Responsible Party', get: c => c.responsible_party },
 ];
 
@@ -4180,6 +4184,7 @@ document.getElementById('bc-create-btn').textContent = 'Create Budget Estimate';
 ['bc-baseline','bc-target','bc-q1','bc-q2','bc-q3','bc-q4'].forEach(id => document.getElementById(id).value = 0);
 document.getElementById('bc-total').value = '0';
 document.getElementById('bc-funding').value = 'Local Revenue';
+document.getElementById('bc-expenditure-category').value = 'Wage';
 }
 document.getElementById('wp-new-btn').addEventListener('click', () => {
 const wpVal = document.getElementById('wp-select').value;
@@ -4217,6 +4222,7 @@ document.getElementById('bc-q2').value = c.q2_amount || 0;
 document.getElementById('bc-q3').value = c.q3_amount || 0;
 document.getElementById('bc-q4').value = c.q4_amount || 0;
 document.getElementById('bc-funding').value = c.funding_source || 'Local Revenue';
+document.getElementById('bc-expenditure-category').value = c.expenditure_category || 'Wage';
 document.getElementById('bc-responsible').value = c.responsible_party || '';
 recalcBcTotal();
 openModal('modal-bc');
@@ -4251,6 +4257,7 @@ q2_amount: Number(document.getElementById('bc-q2').value || 0),
 q3_amount: Number(document.getElementById('bc-q3').value || 0),
 q4_amount: Number(document.getElementById('bc-q4').value || 0),
 funding_source: document.getElementById('bc-funding').value.trim() || 'Local Revenue',
+expenditure_category: document.getElementById('bc-expenditure-category').value,
 responsible_party: document.getElementById('bc-responsible').value.trim(),
 };
 if (!payload.work_plan_id || !payload.department_id || !payload.code || !payload.output_description) {
