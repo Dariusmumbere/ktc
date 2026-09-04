@@ -494,8 +494,8 @@ text-align:center;
 sit on its own line (line breaks are inserted when the data is rendered)
 rather than running on as one continuous line of text. */
 #wp-revenue-summary-body td.rev-func-def{white-space:normal; line-height:1.5;}
-/* ---------------- A2: Revenue Performance Plan by Category & Source table -
-Same treatment as the A1 Summary table directly above it. */
+/* ---------------- Revenue Performance Plan by Category & Source table -----
+Same treatment as the Summary table directly above it. */
 #wp-rev-category-table thead th{
 background:var(--teal-700) !important;
 color:#FFFFFF !important;
@@ -1187,7 +1187,7 @@ Programme-Based Budgeting System (PBS)
 </button>
 <div class="nav-submenu" id="nav-pbs-submenu">
 <button class="nav-item nav-subitem" data-view="rev-monthly">
-Monthly Local Revenue/GoU Transfers Estimates vs. Actual Realized
+Local Revenue/GoU Transfers Estimates vs. Actual Realized
 </button>
 <button class="nav-item nav-subitem" data-view="workplan" data-subtab="expenditure">
 Approved LG Expenditure Estimates
@@ -1389,6 +1389,53 @@ Departments
 </table>
 </div>
 </div>
+<div class="card" id="wp-revenue-detail-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
+<div style="padding:14px 18px 4px;">
+<div class="table-title-row">
+<div class="kicker" id="wp-title-revenue-detail" style="font-size:13px; color:var(--navy-950);">APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP</div>
+<div class="table-title-actions">
+<button type="button" class="icon-btn icon-btn-sm" id="wp-new-revenue-btn" style="display:none;" title="Add Revenue Row">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="wp-import-revenue-btn" style="display:none;" title="Import From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+</button>
+</div>
+</div>
+</div>
+<div class="rli-table-wrap" id="wp-revenue-detail-wrap" style="margin:10px 16px 16px;">
+<table id="wp-revenue-detail-table">
+<thead>
+<tr>
+<th rowspan="2">Code</th>
+<th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
+<th colspan="4">Approved Quarterly Revenue Budget Estimates (UGX)</th>
+<th rowspan="2">Approved Annual<br>Revenue Budget Estimates (UGX)</th>
+<th colspan="4">Quarterly Actual Inflow (UGX)</th>
+<th rowspan="2">Actual LG Revenue &amp;<br>Transfers Realized (UGX)</th>
+<th colspan="4">Quarterly Revenue Performance Gap (UGX)</th>
+<th rowspan="2">Annual Revenue<br>Performance Gap (UGX)</th>
+<th rowspan="2">
+<span class="th-with-clear">
+<span></span>
+<button type="button" class="th-clear-btn" id="wp-revenue-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</button>
+</span>
+</th>
+</tr>
+<tr>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+</tr>
+</thead>
+<tbody id="wp-revenue-detail-body">
+<tr><td colspan="18" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
@@ -1532,7 +1579,7 @@ Departments
 <div class="card" id="wp-revenue-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; display:none;">
 <div style="padding:14px 18px 4px;">
 <div class="table-title-row">
-<div class="kicker" id="wp-title-revenue-summary" style="font-size:13px; color:var(--navy-950);">A1: SUMMARY OF THE REVENUE PERFORMANCE PLAN BY SOURCE</div>
+<div class="kicker" id="wp-title-revenue-summary" style="font-size:13px; color:var(--navy-950);">SUMMARY OF THE REVENUE PERFORMANCE PLAN BY SOURCE</div>
 <div class="table-title-actions">
 <button type="button" class="icon-btn icon-btn-sm" id="wp-new-summary-btn" style="display:none;" title="Add Revenue Row">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
@@ -1579,7 +1626,7 @@ Departments
 <div class="card" id="wp-rev-category-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
 <div style="padding:14px 18px 4px;">
 <div class="table-title-row">
-<div class="kicker" id="wp-title-rev-category" style="font-size:13px; color:var(--navy-950);">A2: REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
+<div class="kicker" id="wp-title-rev-category" style="font-size:13px; color:var(--navy-950);">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
 <div class="table-title-actions">
 <button type="button" class="icon-btn icon-btn-sm" id="wp-new-category-btn" style="display:none;" title="Add Revenue Row">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
@@ -1656,53 +1703,6 @@ Departments
 </tfoot>
 </table>
 </div>
-</div>
-</div>
-<div class="card" id="wp-revenue-detail-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
-<div style="padding:14px 18px 4px;">
-<div class="table-title-row">
-<div class="kicker" id="wp-title-revenue-detail" style="font-size:13px; color:var(--navy-950);">APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP</div>
-<div class="table-title-actions">
-<button type="button" class="icon-btn icon-btn-sm" id="wp-new-revenue-btn" style="display:none;" title="Add Revenue Row">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
-</button>
-<button type="button" class="icon-btn icon-btn-sm" id="wp-import-revenue-btn" style="display:none;" title="Import From Excel">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
-</button>
-</div>
-</div>
-</div>
-<div class="rli-table-wrap" id="wp-revenue-detail-wrap" style="margin:10px 16px 16px;">
-<table id="wp-revenue-detail-table">
-<thead>
-<tr>
-<th rowspan="2">Code</th>
-<th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
-<th colspan="4">Approved Quarterly Revenue Budget Estimates (UGX)</th>
-<th rowspan="2">Approved Annual<br>Revenue Budget Estimates (UGX)</th>
-<th colspan="4">Quarterly Actual Inflow (UGX)</th>
-<th rowspan="2">Actual LG Revenue &amp;<br>Transfers Realized (UGX)</th>
-<th colspan="4">Quarterly Revenue Performance Gap (UGX)</th>
-<th rowspan="2">Annual Revenue<br>Performance Gap (UGX)</th>
-<th rowspan="2">
-<span class="th-with-clear">
-<span></span>
-<button type="button" class="th-clear-btn" id="wp-revenue-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-</button>
-</span>
-</th>
-</tr>
-<tr>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-</tr>
-</thead>
-<tbody id="wp-revenue-detail-body">
-<tr><td colspan="18" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
-</tbody>
-</table>
 </div>
 </div>
 <br>
@@ -2407,7 +2407,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- ===== MODAL: Add / Edit PBS Revenue Row (shared by Monthly / Quarterly / A1 By Source / A2 By Category pages) ===== -->
+<!-- ===== MODAL: Add / Edit PBS Revenue Row (shared by Monthly / Quarterly / By Source / By Category pages) ===== -->
 <div class="overlay" id="modal-rli">
 <div class="modal modal-lg" style="max-width:920px;">
 <div class="modal-head"><h3 id="rli-modal-title">Add Revenue Row</h3><button class="modal-close" data-close="modal-rli">&times;</button></div>
@@ -3086,7 +3086,7 @@ downloadPdfBtn.title = (view === 'rev-monthly')
 }
 closeNotifPanel();
 if (view === 'dashboard') loadDashboard();
-if (view === 'rev-monthly') loadRevLinePage('monthly');
+if (view === 'rev-monthly') { loadRevLinePage('monthly'); applyRevenueDetailTitle(); loadRevLinePage('quarterly'); }
 if (view === 'workplan') {
 STATE.workplanSubtab = subtab || 'expenditure';
 loadWorkplanView();
@@ -3556,11 +3556,12 @@ finally { e.target.value = ''; }
 });
 if (newBtn) newBtn.addEventListener('click', () => openAddRevLineItem(periodType));
 if (clearBtn) clearBtn.addEventListener('click', () => clearRevLineItems(periodType));
-// wp-select is shared by all three PBS revenue pages now that its dropdown
-// lives in the top-most bar. Quarterly & summary already get re-rendered
+// wp-select is shared by all PBS revenue pages now that its dropdown
+// lives in the top-most bar. Summary & category already get re-rendered
 // via applyWorkplanSubtabDisplay() on the wp-select change handler below,
-// so only monthly needs its own listener attached here.
+// so only monthly and quarterly need their own listeners attached here.
 if (wpSel && periodType === 'monthly') wpSel.addEventListener('change', () => { applyRevLineFyLabel(periodType); renderRevLineTable(periodType); });
+if (wpSel && periodType === 'quarterly') wpSel.addEventListener('change', () => { applyRevenueDetailTitle(); renderRevLineTable(periodType); });
 });
 // ---- Dashboard -----------------------------------------------------------------
 async function loadDashboard() {
@@ -3634,16 +3635,16 @@ return `
 //     "Summary of the LG Annual and Quarterly Revenue Performance" table
 //     (this used to be its own sub item 3 — it now lives only here, as
 //     table 1 on this page, fully editable via the buttons on its title
-//     bar). The detail table below it is the actual "Approved Quarterly
-//     Revenue Budget Estimates and Quarterly Revenue Performance Gap" table
-//     (this used to be its own sub item 2 — it now lives only here, as
-//     table 3 on this page, fully editable via the buttons on its title
-//     bar).
+//     bar). The "Approved Quarterly Revenue Budget Estimates and Quarterly
+//     Revenue Performance Gap" table used to sit below it on this page —
+//     it now lives on sub item 1 (Local Revenue/GoU Transfers Estimates
+//     vs. Actual Realized), stacked under the monthly table there, driven
+//     by applyRevenueDetailTitle() and loadRevLinePage('quarterly') instead
+//     of this function.
 function applyWorkplanSubtabDisplay() {
 const summaryCard = document.getElementById('wp-revenue-summary-card');
 const categoryCard = document.getElementById('wp-rev-category-card');
 const deptSummaryCard = document.getElementById('wp-dept-summary-card');
-const detailCard = document.getElementById('wp-revenue-detail-card');
 const frontmatterEl = document.getElementById('wp-annual-frontmatter');
 const piapCard = document.getElementById('wp-piap-card');
 const isAnnual = STATE.workplanSubtab === 'annual';
@@ -3653,10 +3654,9 @@ if (categoryCard) categoryCard.style.display = isAnnual ? '' : 'none';
 // Expenditure Estimates" sub item (sub item 2) and stays exactly as it
 // was there — it's only hidden here, on the Annual Work Plan and Budget
 // Estimates sub item (sub item 3), where it has been replaced by the two
-// PBS revenue tables above (A1: Summary of the Revenue Performance Plan
-// by Source, A2: Revenue Performance Plan by Category & Source).
+// PBS revenue tables above (Summary of the Revenue Performance Plan
+// by Source, Revenue Performance Plan by Category & Source).
 if (deptSummaryCard) deptSummaryCard.style.display = isAnnual ? 'none' : '';
-if (detailCard) detailCard.style.display = isAnnual ? '' : 'none';
 if (frontmatterEl) frontmatterEl.style.display = isAnnual ? '' : 'none';
 if (piapCard) piapCard.style.display = isAnnual ? '' : 'none';
 if (isAnnual) renderPiapTable();
@@ -3665,11 +3665,9 @@ const wpVal = document.getElementById('wp-select').value;
 const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
 const fy = wp ? `FY ${escapeHtml(wp.financial_year)}` : 'FY —';
 const summaryTitleEl = document.getElementById('wp-title-revenue-summary');
-if (summaryTitleEl) summaryTitleEl.innerHTML = `A1: SUMMARY OF THE REVENUE PERFORMANCE PLAN BY SOURCE`;
+if (summaryTitleEl) summaryTitleEl.innerHTML = `SUMMARY OF THE REVENUE PERFORMANCE PLAN BY SOURCE`;
 const categoryTitleEl = document.getElementById('wp-title-rev-category');
-if (categoryTitleEl) categoryTitleEl.innerHTML = `A2: REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE`;
-const detailTitleEl = document.getElementById('wp-title-revenue-detail');
-if (detailTitleEl) detailTitleEl.innerHTML = `APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP — ${fy}`;
+if (categoryTitleEl) categoryTitleEl.innerHTML = `REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE`;
 const fmFyEl = document.getElementById('wp-fm-fy');
 if (fmFyEl) fmFyEl.textContent = fy;
 const fmGeneratedEl = document.getElementById('wp-fm-generated');
@@ -3680,7 +3678,18 @@ fmGeneratedEl.textContent = `Generated on ${generatedStr}`;
 }
 renderRevLineTable('rev_by_source');
 renderRevLineTable('rev_by_category');
-renderRevLineTable('quarterly');
+}
+// Sets the fy-stamped title on the "Approved Quarterly Revenue Budget
+// Estimates and Quarterly Revenue Performance Gap" card, which now lives
+// on sub item 1 (Local Revenue/GoU Transfers Estimates vs. Actual
+// Realized) stacked under the monthly table, driven by the same shared
+// wp-select dropdown as every other PBS sub item.
+function applyRevenueDetailTitle() {
+const wpVal = document.getElementById('wp-select').value;
+const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+const fy = wp ? `FY ${escapeHtml(wp.financial_year)}` : 'FY —';
+const detailTitleEl = document.getElementById('wp-title-revenue-detail');
+if (detailTitleEl) detailTitleEl.innerHTML = `APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP — ${fy}`;
 }
 async function loadWorkplanView() {
 await loadWorkplans();
