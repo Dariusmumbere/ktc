@@ -494,6 +494,28 @@ text-align:center;
 sit on its own line (line breaks are inserted when the data is rendered)
 rather than running on as one continuous line of text. */
 #wp-revenue-summary-body td.rev-func-def{white-space:normal; line-height:1.5;}
+/* ---------------- A2: Revenue Performance Plan by Category & Source table -
+Same treatment as the A1 Summary table directly above it. */
+#wp-rev-category-table thead th{
+background:var(--teal-700) !important;
+color:#FFFFFF !important;
+box-shadow:0 1px 0 rgba(201,154,62,.35) !important;
+text-align:center;
+}
+#wp-rev-category-body tr:nth-child(odd){background:#D6EEE6;}
+#wp-rev-category-body tr:nth-child(even){background:#FFFFFF;}
+#wp-rev-category-body tr{border-bottom:1px solid var(--line-strong);}
+#wp-rev-category-body tr:hover{background:var(--gold-100);}
+#wp-rev-category-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
+#wp-rev-category-body td.mono, #wp-rev-category-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-rev-category-wrap tfoot td{text-align:left;}
+#wp-rev-category-wrap{overflow-x:auto;}
+#wp-rev-category-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950);}
+#wp-rev-category-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
+#wp-rev-category-wrap thead th{position:sticky; top:0; z-index:3;}
+#wp-rev-category-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
+#wp-rev-category-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
+#wp-rev-category-body td{padding:7px 9px; font-size:11.5px;}
 #wp-revenue-detail-wrap{max-height:420px; overflow-x:auto; overflow-y:auto;}
 #wp-revenue-detail-wrap thead th{
 position:sticky; top:0; z-index:3;
@@ -1371,6 +1393,7 @@ Departments
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
 <input type="file" id="wp-import-summary-file" accept=".xlsx,.xls" style="display:none;" />
+<input type="file" id="wp-import-category-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-piap-file" accept=".xlsx,.xls" style="display:none;" />
@@ -1509,7 +1532,7 @@ Departments
 <div class="card" id="wp-revenue-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; display:none;">
 <div style="padding:14px 18px 4px;">
 <div class="table-title-row">
-<div class="kicker" id="wp-title-revenue-summary" style="font-size:13px; color:var(--navy-950);">SUMMARY OF THE LG ANNUAL AND QUARTERLY REVENUE ESTIMATES</div>
+<div class="kicker" id="wp-title-revenue-summary" style="font-size:13px; color:var(--navy-950);">A1: SUMMARY OF THE REVENUE PERFORMANCE PLAN BY SOURCE</div>
 <div class="table-title-actions">
 <button type="button" class="icon-btn icon-btn-sm" id="wp-new-summary-btn" style="display:none;" title="Add Revenue Row">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
@@ -1525,7 +1548,7 @@ Departments
 <thead>
 <tr>
 <th rowspan="2">PBS Code</th>
-<th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
+<th rowspan="2" class="wrap">Revenue Performance Plans by Source</th>
 <th colspan="4">Summary of the Approved Quarterly Budget Estimates (UGX)</th>
 <th rowspan="2" class="col-annual-approved">Annual Approved Budget Estimates (UGX)</th>
 <th colspan="4">Summary of the Quarterly Actual Inflow (UGX)</th>
@@ -1553,7 +1576,54 @@ Departments
 </table>
 </div>
 </div>
-<div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
+<div class="card" id="wp-rev-category-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
+<div style="padding:14px 18px 4px;">
+<div class="table-title-row">
+<div class="kicker" id="wp-title-rev-category" style="font-size:13px; color:var(--navy-950);">A2: REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
+<div class="table-title-actions">
+<button type="button" class="icon-btn icon-btn-sm" id="wp-new-category-btn" style="display:none;" title="Add Revenue Row">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="wp-import-category-btn" style="display:none;" title="Import From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+</button>
+</div>
+</div>
+</div>
+<div class="rli-table-wrap" id="wp-rev-category-wrap" style="margin:10px 16px 16px;">
+<table id="wp-rev-category-table">
+<thead>
+<tr>
+<th rowspan="2">PBS Code</th>
+<th rowspan="2" class="wrap">Revenue Performance Plans by Category &amp; Source</th>
+<th colspan="4">Summary of the Approved Quarterly Budget Estimates (UGX)</th>
+<th rowspan="2" class="col-annual-approved">Annual Approved Budget Estimates (UGX)</th>
+<th colspan="4">Summary of the Quarterly Actual Inflow (UGX)</th>
+<th rowspan="2">Annual Actual<br>Cash Inflow Realized (UGX)</th>
+<th colspan="4">Summary of the Quarterly Revenue Performance Gap (UGX)</th>
+<th rowspan="2">Annual Revenue<br>Performance Gap (UGX)</th>
+<th rowspan="2">
+<span class="th-with-clear">
+<span></span>
+<button type="button" class="th-clear-btn" id="wp-category-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</button>
+</span>
+</th>
+</tr>
+<tr>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+</tr>
+</thead>
+<tbody id="wp-rev-category-body">
+<tr><td colspan="18" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card" id="wp-dept-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
 <div class="kicker" id="wp-title-dept-summary" style="font-size:13px; color:var(--navy-950);">APPROVED DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
 </div>
@@ -2337,7 +2407,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 </div>
 </div>
 </div>
-<!-- ===== MODAL: Add / Edit PBS Revenue Row (shared by Monthly / Quarterly / Summary pages) ===== -->
+<!-- ===== MODAL: Add / Edit PBS Revenue Row (shared by Monthly / Quarterly / A1 By Source / A2 By Category pages) ===== -->
 <div class="overlay" id="modal-rli">
 <div class="modal modal-lg" style="max-width:920px;">
 <div class="modal-head"><h3 id="rli-modal-title">Add Revenue Row</h3><button class="modal-close" data-close="modal-rli">&times;</button></div>
@@ -2364,7 +2434,7 @@ Date: <input type="text" id="pv-passed-date"/><br/>
 <span class="kicker" id="rli-actual-kicker">Actual Inflow Realized (UGX)</span>
 <div id="rli-actual-periods" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;"></div>
 </div>
-<div class="help-text">Annual Approved and Annual Actual totals — and, on the Quarterly and Summary pages, the Performance Gap — are calculated automatically as the sum of the period figures above.</div>
+<div class="help-text">Annual Approved and Annual Actual totals — and, where this table shows one, the Performance Gap — are calculated automatically as the sum of the period figures above.</div>
 </div>
 <div class="modal-foot">
 <button class="btn btn-ghost" data-close="modal-rli">Cancel</button>
@@ -2954,6 +3024,9 @@ document.getElementById('wp-revenue-clear-btn').style.display = (STATE.role === 
 document.getElementById('wp-new-summary-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-import-summary-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-summary-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-new-category-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-import-category-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-category-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 ['rlm'].forEach(prefix => {
 const newBtn = document.getElementById(prefix + '-new-btn');
 const importBtn = document.getElementById(prefix + '-import-btn');
@@ -3196,12 +3269,13 @@ const el = document.getElementById(elId);
 if (el && wp && wp[field]) el.textContent = wp[field];
 }
 }
-// ---- PBS Revenue Performance pages (Monthly / Quarterly / Summary) --------
-// One generic engine drives all three pages — they differ only in period
+// ---- PBS Revenue Performance pages (Monthly / Quarterly / By Source / By --
+// ---- Category) -------------------------------------------------------------
+// One generic engine drives all four pages — they differ only in period
 // count (12 months vs 4 quarters) and whether a Performance Gap section is
-// shown (quarterly & summary only; the monthly page's menu title has no
-// "Gap" in it, matching the workbook, which only carries Approved/Actual
-// for that sheet).
+// shown (quarterly, by-source & by-category only; the monthly page's menu
+// title has no "Gap" in it, matching the workbook, which only carries
+// Approved/Actual for that sheet).
 const REV_LINE_PAGES = {
 monthly: {
 periodType: 'monthly', periodCount: 12, hasGap: false,
@@ -3221,11 +3295,20 @@ colCount: 18,
 approvedKicker: 'Approved Quarterly Revenue Budget Estimates (UGX)',
 actualKicker: 'Quarterly Actual Inflow — Actual LG Revenue & Transfers Realized (UGX)',
 },
-summary: {
-periodType: 'summary', periodCount: 4, hasGap: true,
+rev_by_source: {
+periodType: 'rev_by_source', periodCount: 4, hasGap: true,
 periodLabels: ['Q1','Q2','Q3','Q4'],
 wpSelectId: 'wp-select', bodyId: 'wp-revenue-summary-body', newBtnId: 'wp-new-summary-btn',
 importBtnId: 'wp-import-summary-btn', importFileId: 'wp-import-summary-file', clearBtnId: 'wp-summary-clear-btn',
+colCount: 18,
+approvedKicker: 'Summary of the Approved Quarterly Budget Estimates (UGX)',
+actualKicker: 'Summary of the Quarterly Actual Inflow Realized (UGX)',
+},
+rev_by_category: {
+periodType: 'rev_by_category', periodCount: 4, hasGap: true,
+periodLabels: ['Q1','Q2','Q3','Q4'],
+wpSelectId: 'wp-select', bodyId: 'wp-rev-category-body', newBtnId: 'wp-new-category-btn',
+importBtnId: 'wp-import-category-btn', importFileId: 'wp-import-category-file', clearBtnId: 'wp-category-clear-btn',
 colCount: 18,
 approvedKicker: 'Summary of the Approved Quarterly Budget Estimates (UGX)',
 actualKicker: 'Summary of the Quarterly Actual Inflow Realized (UGX)',
@@ -3558,11 +3641,21 @@ return `
 //     bar).
 function applyWorkplanSubtabDisplay() {
 const summaryCard = document.getElementById('wp-revenue-summary-card');
+const categoryCard = document.getElementById('wp-rev-category-card');
+const deptSummaryCard = document.getElementById('wp-dept-summary-card');
 const detailCard = document.getElementById('wp-revenue-detail-card');
 const frontmatterEl = document.getElementById('wp-annual-frontmatter');
 const piapCard = document.getElementById('wp-piap-card');
 const isAnnual = STATE.workplanSubtab === 'annual';
 if (summaryCard) summaryCard.style.display = isAnnual ? '' : 'none';
+if (categoryCard) categoryCard.style.display = isAnnual ? '' : 'none';
+// The Department Budget Summary table is shared with the "Approved LG
+// Expenditure Estimates" sub item (sub item 2) and stays exactly as it
+// was there — it's only hidden here, on the Annual Work Plan and Budget
+// Estimates sub item (sub item 3), where it has been replaced by the two
+// PBS revenue tables above (A1: Summary of the Revenue Performance Plan
+// by Source, A2: Revenue Performance Plan by Category & Source).
+if (deptSummaryCard) deptSummaryCard.style.display = isAnnual ? 'none' : '';
 if (detailCard) detailCard.style.display = isAnnual ? '' : 'none';
 if (frontmatterEl) frontmatterEl.style.display = isAnnual ? '' : 'none';
 if (piapCard) piapCard.style.display = isAnnual ? '' : 'none';
@@ -3572,7 +3665,9 @@ const wpVal = document.getElementById('wp-select').value;
 const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
 const fy = wp ? `FY ${escapeHtml(wp.financial_year)}` : 'FY —';
 const summaryTitleEl = document.getElementById('wp-title-revenue-summary');
-if (summaryTitleEl) summaryTitleEl.innerHTML = `SUMMARY OF THE LG ANNUAL AND QUARTERLY REVENUE ESTIMATES`;
+if (summaryTitleEl) summaryTitleEl.innerHTML = `A1: SUMMARY OF THE REVENUE PERFORMANCE PLAN BY SOURCE`;
+const categoryTitleEl = document.getElementById('wp-title-rev-category');
+if (categoryTitleEl) categoryTitleEl.innerHTML = `A2: REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE`;
 const detailTitleEl = document.getElementById('wp-title-revenue-detail');
 if (detailTitleEl) detailTitleEl.innerHTML = `APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP — ${fy}`;
 const fmFyEl = document.getElementById('wp-fm-fy');
@@ -3583,7 +3678,8 @@ const today = new Date();
 const generatedStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
 fmGeneratedEl.textContent = `Generated on ${generatedStr}`;
 }
-renderRevLineTable('summary');
+renderRevLineTable('rev_by_source');
+renderRevLineTable('rev_by_category');
 renderRevLineTable('quarterly');
 }
 async function loadWorkplanView() {
