@@ -481,9 +481,18 @@ text-align:center;
 #wp-revenue-summary-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-revenue-summary-body tr:hover{background:var(--gold-100);}
 #wp-revenue-summary-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
-#wp-revenue-summary-body td.mono, #wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-revenue-summary-body td.mono{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:right;}
 #wp-revenue-summary-wrap tfoot td{text-align:left;}
 #wp-revenue-summary-wrap{overflow-x:auto;}
+/* Full grid — vertical lines between every column, matching the Excel
+   sheet's bordered-cell layout (in addition to the row border-bottom
+   already set above). */
+#wp-revenue-summary-table{border-collapse:collapse;}
+#wp-revenue-summary-table thead th{border-right:1px solid rgba(255,255,255,.35);}
+#wp-revenue-summary-table thead th:last-child{border-right:none;}
+#wp-revenue-summary-body td{border-right:1px solid var(--line-strong);}
+#wp-revenue-summary-body td:last-child{border-right:none;}
 #wp-revenue-summary-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950);}
 #wp-revenue-summary-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
 #wp-revenue-summary-wrap thead th{position:sticky; top:0; z-index:3;}
@@ -507,15 +516,39 @@ text-align:center;
 #wp-rev-category-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-rev-category-body tr:hover{background:var(--gold-100);}
 #wp-rev-category-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
-#wp-rev-category-body td.mono, #wp-rev-category-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-rev-category-body td.mono{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-rev-category-body td.num{color:var(--navy-950); font-weight:700; text-align:right;}
 #wp-rev-category-wrap tfoot td{text-align:left;}
 #wp-rev-category-wrap{overflow-x:auto;}
+/* Full grid — vertical lines between every column, matching the Excel
+   sheet's bordered-cell layout. */
+#wp-rev-category-table{border-collapse:collapse;}
+#wp-rev-category-table thead th{border-right:1px solid rgba(255,255,255,.35);}
+#wp-rev-category-table thead th:last-child{border-right:none;}
+#wp-rev-category-body td{border-right:1px solid var(--line-strong);}
+#wp-rev-category-body td:last-child{border-right:none;}
 #wp-rev-category-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950);}
 #wp-rev-category-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
 #wp-rev-category-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-rev-category-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
 #wp-rev-category-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-rev-category-body td{padding:7px 9px; font-size:11.5px;}
+/* ---------------- Table 3 (Monthly Local Revenue/GoU Transfers) on sub
+   item 3 — sits directly under tables 1 & 2 above and mirrors the "Monthly
+   Revenue Projections" sheet: full bordered grid, right-aligned amounts,
+   no row indentation (see REV_LINE_PAGES.monthly_annual, noIndent:true). */
+#wp-am-table-wrap{overflow-x:auto; overflow-y:auto; scrollbar-width:thin; scrollbar-color: var(--teal-700) var(--surface-100, #eef2f1);}
+#wp-am-table{min-width:1700px; border-collapse:collapse;}
+#wp-am-table-wrap::-webkit-scrollbar{width:11px; height:11px;}
+#wp-am-table-wrap::-webkit-scrollbar-track{background:var(--surface-100, #eef2f1);}
+#wp-am-table-wrap::-webkit-scrollbar-thumb{background:var(--teal-700); border-radius:6px; border:2px solid transparent; background-clip:padding-box;}
+#wp-am-table-wrap::-webkit-scrollbar-thumb:hover{background:var(--navy-900);}
+#wp-am-table thead th{border-right:1px solid rgba(255,255,255,.35);}
+#wp-am-table thead th:last-child{border-right:none;}
+#wp-am-table-body td{border-right:1px solid var(--line-strong); font-size:10px;}
+#wp-am-table-body td:last-child{border-right:none;}
+#wp-am-table-body td.num{text-align:right;}
+#wp-am-table-body td.mono{text-align:left;}
 #wp-revenue-detail-wrap{max-height:420px; overflow-x:auto; overflow-y:auto;}
 #wp-revenue-detail-wrap thead th{
 position:sticky; top:0; z-index:3;
@@ -1666,6 +1699,55 @@ Departments
 </thead>
 <tbody id="wp-rev-category-body">
 <tr><td colspan="18" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Table 3 on sub item 3: mirrors the "Monthly Revenue Projections" sheet
+     of the Excel budget framework — placed directly after the two summary
+     tables above. Reads/writes the same underlying monthly revenue rows as
+     sub item 1's monthly table (see REV_LINE_PAGES.monthly_annual). -->
+<div class="card" id="wp-am-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
+<div style="padding:14px 18px 4px;">
+<div class="table-title-row">
+<div class="kicker" id="wp-title-am" style="font-size:13px; color:var(--navy-950);">MONTHLY LOCAL REVENUE/GOU TRANSFERS ESTIMATES VS. ACTUAL REALIZED</div>
+<div class="table-title-actions">
+<button type="button" class="icon-btn icon-btn-sm" id="wp-am-new-btn" style="display:none;" title="Add Revenue Row">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="wp-am-import-btn" style="display:none;" title="Import From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+</button>
+</div>
+</div>
+</div>
+<input type="file" id="wp-am-import-file" accept=".xlsx,.xls" style="display:none;" />
+<div class="rli-table-wrap" id="wp-am-table-wrap" style="margin:10px 16px 16px;">
+<table id="wp-am-table">
+<thead>
+<tr>
+<th rowspan="2">Code</th>
+<th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
+<th colspan="12">Monthly Approved Revenue Budget Estimates (UGX)</th>
+<th rowspan="2" class="col-annual-approved">Annual Approved Budget Estimates (UGX)</th>
+<th colspan="12">Monthly Actual Inflow Realized (UGX)</th>
+<th rowspan="2">Annual Actual<br>Cash Inflow Realized (UGX)</th>
+<th rowspan="2">
+<span class="th-with-clear">
+<span></span>
+<button type="button" class="th-clear-btn" id="wp-am-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</button>
+</span>
+</th>
+</tr>
+<tr>
+<th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
+<th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
+</tr>
+</thead>
+<tbody id="wp-am-table-body">
+<tr><td colspan="29" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
 </div>
@@ -3027,7 +3109,7 @@ document.getElementById('wp-summary-clear-btn').style.display = (STATE.role === 
 document.getElementById('wp-new-category-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-import-category-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-category-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
-['rlm'].forEach(prefix => {
+['rlm', 'wp-am'].forEach(prefix => {
 const newBtn = document.getElementById(prefix + '-new-btn');
 const importBtn = document.getElementById(prefix + '-import-btn');
 const clearBtn = document.getElementById(prefix + '-clear-btn');
@@ -3300,7 +3382,7 @@ periodType: 'rev_by_source', periodCount: 4, hasGap: true,
 periodLabels: ['Q1','Q2','Q3','Q4'],
 wpSelectId: 'wp-select', bodyId: 'wp-revenue-summary-body', newBtnId: 'wp-new-summary-btn',
 importBtnId: 'wp-import-summary-btn', importFileId: 'wp-import-summary-file', clearBtnId: 'wp-summary-clear-btn',
-colCount: 18,
+colCount: 18, noIndent: true,
 approvedKicker: 'Summary of the Approved Quarterly Budget Estimates (UGX)',
 actualKicker: 'Summary of the Quarterly Actual Inflow Realized (UGX)',
 },
@@ -3309,9 +3391,24 @@ periodType: 'rev_by_category', periodCount: 4, hasGap: true,
 periodLabels: ['Q1','Q2','Q3','Q4'],
 wpSelectId: 'wp-select', bodyId: 'wp-rev-category-body', newBtnId: 'wp-new-category-btn',
 importBtnId: 'wp-import-category-btn', importFileId: 'wp-import-category-file', clearBtnId: 'wp-category-clear-btn',
-colCount: 18,
+colCount: 18, noIndent: true,
 approvedKicker: 'Summary of the Approved Quarterly Budget Estimates (UGX)',
 actualKicker: 'Summary of the Quarterly Actual Inflow Realized (UGX)',
+},
+// Table 3 on sub item 3 (Annual Work Plan and Budget Estimates): mirrors
+// the "Monthly Revenue Projections" sheet of the Excel budget framework,
+// placed directly under the two summary tables above. Shares the same
+// underlying data/API as sub item 1's monthly table (periodType:
+// 'monthly') — only the DOM target (bodyId etc.) and page key differ, so
+// this reads/writes the exact same rows as sub item 1's monthly table.
+monthly_annual: {
+periodType: 'monthly', periodCount: 12, hasGap: false,
+periodLabels: ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'],
+wpSelectId: 'wp-select', bodyId: 'wp-am-table-body', newBtnId: 'wp-am-new-btn',
+importBtnId: 'wp-am-import-btn', importFileId: 'wp-am-import-file', clearBtnId: 'wp-am-clear-btn',
+colCount: 29, noIndent: true,
+approvedKicker: 'Approved Monthly Revenue Budget Estimates (UGX)',
+actualKicker: 'Monthly Actual Inflow Realized (UGX)',
 },
 };
 
@@ -3341,10 +3438,10 @@ const cls = n < 0 ? ' class="rli-gap-negative"' : '';
 return `<td class="num mono"${cls}>${money(n)}</td>`;
 }
 
-function renderRevLineRow(r, cfg, canEdit) {
+function renderRevLineRow(r, cfg, canEdit, pageKey) {
 const cls = revLineRowClass(r.row_type);
 const blank = r.row_type === 'category';
-const labelPad = 14 + (r.indent || 0) * 18;
+const labelPad = cfg.noIndent ? 14 : 14 + (r.indent || 0) * 18;
 const approvedCells = r.approved_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
 const actualCells = r.actual_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
 let gapCells = '';
@@ -3354,8 +3451,8 @@ gapCells = blank
 : r.gap_periods.map(v => moneyGapCell(v)).join('') + moneyGapCell(r.gap_annual);
 }
 const actions = canEdit ? `
-<button type="button" class="btn btn-ghost" style="padding:3px 7px; font-size:10.5px;" onclick="openEditRevLineItem('${cfg.periodType}', ${r.id})">Edit</button>
-<button type="button" class="btn btn-danger" style="padding:3px 7px; font-size:10.5px; margin-left:4px;" onclick="deleteRevLineItem('${cfg.periodType}', ${r.id})">✕</button>` : '';
+<button type="button" class="btn btn-ghost" style="padding:3px 7px; font-size:10.5px;" onclick="openEditRevLineItem('${pageKey}', ${r.id})">Edit</button>
+<button type="button" class="btn btn-danger" style="padding:3px 7px; font-size:10.5px; margin-left:4px;" onclick="deleteRevLineItem('${pageKey}', ${r.id})">✕</button>` : '';
 return `
 <tr class="${cls}">
 <td class="mono">${escapeHtml(r.code || '')}</td>
@@ -3369,7 +3466,7 @@ ${gapCells}
 </tr>`;
 }
 
-function paintRevLineTable(tbody, cfg, thead, rows) {
+function paintRevLineTable(tbody, cfg, thead, rows, pageKey) {
 STATE.revLineItems[cfg.periodType] = rows;
 if (!rows.length) {
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">No rows recorded for this work plan yet. Use "Import From Excel" or "+ Add Row" above to get started.</div></td></tr>`;
@@ -3377,7 +3474,7 @@ if (thead) thead.style.display = '';
 return;
 }
 const canEdit = STATE.role === 'admin';
-tbody.innerHTML = rows.map(r => renderRevLineRow(r, cfg, canEdit)).join('');
+tbody.innerHTML = rows.map(r => renderRevLineRow(r, cfg, canEdit, pageKey)).join('');
 if (thead) thead.style.display = '';
 }
 
@@ -3390,8 +3487,8 @@ if (wpId == null) { STATE.revLineMonthlyCache = {}; return; }
 delete STATE.revLineMonthlyCache[wpId];
 }
 
-async function renderRevLineTable(periodType) {
-const cfg = REV_LINE_PAGES[periodType];
+async function renderRevLineTable(pageKey) {
+const cfg = REV_LINE_PAGES[pageKey];
 const tbody = document.getElementById(cfg.bodyId);
 const wpId = document.getElementById(cfg.wpSelectId).value;
 // Sub item 1 (Monthly Local Revenue/GoU Transfers) keeps its column
@@ -3399,7 +3496,7 @@ const wpId = document.getElementById(cfg.wpSelectId).value;
 // so the header row never flashes into view before the actual data (or a
 // definitive "nothing to show" state) is ready — it's only revealed once
 // real rows have been rendered into the table.
-const thead = periodType === 'monthly' ? document.getElementById('rlm-table-thead') : null;
+const thead = pageKey === 'monthly' ? document.getElementById('rlm-table-thead') : null;
 if (thead) thead.style.display = 'none';
 if (!wpId) {
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
@@ -3410,15 +3507,15 @@ return;
 // cache is keyed by work plan id and is invalidated the instant its rows
 // actually change (see invalidateMonthlyRevCache calls below), so a cache
 // hit can never show stale data.
-if (periodType === 'monthly' && STATE.revLineMonthlyCache.hasOwnProperty(wpId)) {
-paintRevLineTable(tbody, cfg, thead, STATE.revLineMonthlyCache[wpId]);
+if (pageKey === 'monthly' && STATE.revLineMonthlyCache.hasOwnProperty(wpId)) {
+paintRevLineTable(tbody, cfg, thead, STATE.revLineMonthlyCache[wpId], pageKey);
 return;
 }
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
 try {
-const rows = await api(`/api/revenue-line-items?work_plan_id=${wpId}&period_type=${periodType}`);
-if (periodType === 'monthly') STATE.revLineMonthlyCache[wpId] = rows;
-paintRevLineTable(tbody, cfg, thead, rows);
+const rows = await api(`/api/revenue-line-items?work_plan_id=${wpId}&period_type=${cfg.periodType}`);
+if (pageKey === 'monthly') STATE.revLineMonthlyCache[wpId] = rows;
+paintRevLineTable(tbody, cfg, thead, rows, pageKey);
 } catch (e) {
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">Could not load this table.</div></td></tr>`;
 toast(e.message, 'error');
@@ -3456,12 +3553,12 @@ buildRliPeriodInputs(cfg, [], []);
 openModal('modal-rli');
 }
 
-function openEditRevLineItem(periodType, id) {
-const rows = STATE.revLineItems[periodType] || [];
+function openEditRevLineItem(pageKey, id) {
+const cfg = REV_LINE_PAGES[pageKey];
+const rows = STATE.revLineItems[cfg.periodType] || [];
 const r = rows.find(x => x.id === id);
 if (!r) { toast('Could not find that row — try refreshing.', 'error'); return; }
-const cfg = REV_LINE_PAGES[periodType];
-STATE.rliPeriodType = periodType;
+STATE.rliPeriodType = pageKey;
 STATE.editingRevLineItemId = id;
 document.getElementById('rli-modal-title').textContent = 'Edit Revenue Row';
 document.getElementById('rli-save-btn').textContent = 'Save Changes';
@@ -3474,32 +3571,33 @@ buildRliPeriodInputs(cfg, r.approved_periods, r.actual_periods);
 openModal('modal-rli');
 }
 
-async function deleteRevLineItem(periodType, id) {
+async function deleteRevLineItem(pageKey, id) {
 if (!confirm('Delete this row? This cannot be undone.')) return;
+const cfg = REV_LINE_PAGES[pageKey];
 try {
 await api(`/api/revenue-line-items/${id}`, { method: 'DELETE' });
 toast('Row deleted', 'success');
-if (periodType === 'monthly') invalidateMonthlyRevCache(document.getElementById(REV_LINE_PAGES.monthly.wpSelectId).value);
-renderRevLineTable(periodType);
+if (cfg.periodType === 'monthly') invalidateMonthlyRevCache(document.getElementById(REV_LINE_PAGES.monthly.wpSelectId).value);
+renderRevLineTable(pageKey);
 } catch (e) { toast(e.message, 'error'); }
 }
 
-async function clearRevLineItems(periodType) {
-const cfg = REV_LINE_PAGES[periodType];
+async function clearRevLineItems(pageKey) {
+const cfg = REV_LINE_PAGES[pageKey];
 const wpId = document.getElementById(cfg.wpSelectId).value;
 if (!wpId) { toast('Select a work plan first', 'error'); return; }
 if (!confirm('Clear ALL rows in this table for the selected work plan? This cannot be undone.')) return;
 try {
-const result = await api(`/api/revenue-line-items/clear?work_plan_id=${wpId}&period_type=${periodType}`, { method: 'DELETE' });
+const result = await api(`/api/revenue-line-items/clear?work_plan_id=${wpId}&period_type=${cfg.periodType}`, { method: 'DELETE' });
 toast(`Cleared ${result.deleted} row(s)`, 'success');
-if (periodType === 'monthly') invalidateMonthlyRevCache(wpId);
-renderRevLineTable(periodType);
+if (cfg.periodType === 'monthly') invalidateMonthlyRevCache(wpId);
+renderRevLineTable(pageKey);
 } catch (e) { toast(e.message, 'error'); }
 }
 
 document.getElementById('rli-save-btn').addEventListener('click', async () => {
-const periodType = STATE.rliPeriodType;
-const cfg = REV_LINE_PAGES[periodType];
+const pageKey = STATE.rliPeriodType;
+const cfg = REV_LINE_PAGES[pageKey];
 const approved = Array.from(document.querySelectorAll('.rli-approved-input')).map(el => Number(el.value || 0));
 const actual = Array.from(document.querySelectorAll('.rli-actual-input')).map(el => Number(el.value || 0));
 const workPlanId = Number(document.getElementById('rli-workplan').value);
@@ -3507,7 +3605,7 @@ const label = document.getElementById('rli-label').value.trim();
 if (!workPlanId || !label) { toast('Please select a work plan and enter a label', 'error'); return; }
 const payload = {
 work_plan_id: workPlanId,
-period_type: periodType,
+period_type: cfg.periodType,
 code: document.getElementById('rli-code').value.trim(),
 label: label,
 row_type: document.getElementById('rli-row-type').value,
@@ -3522,14 +3620,14 @@ toast('Row updated', 'success');
 await api('/api/revenue-line-items', { method: 'POST', body: JSON.stringify(payload) });
 toast('Row added', 'success');
 }
-if (periodType === 'monthly') invalidateMonthlyRevCache(workPlanId);
+if (cfg.periodType === 'monthly') invalidateMonthlyRevCache(workPlanId);
 closeModal('modal-rli');
-renderRevLineTable(periodType);
+renderRevLineTable(pageKey);
 } catch (e) { toast(e.message, 'error'); }
 });
 
-Object.keys(REV_LINE_PAGES).forEach(periodType => {
-const cfg = REV_LINE_PAGES[periodType];
+Object.keys(REV_LINE_PAGES).forEach(pageKey => {
+const cfg = REV_LINE_PAGES[pageKey];
 const importBtn = document.getElementById(cfg.importBtnId);
 const importFile = document.getElementById(cfg.importFileId);
 const newBtn = document.getElementById(cfg.newBtnId);
@@ -3547,21 +3645,21 @@ const fd = new FormData();
 fd.append('file', file);
 try {
 toast('Importing from Excel…', 'info');
-const result = await api(`/api/revenue-line-items/import?work_plan_id=${wpVal}&period_type=${periodType}`, { method: 'POST', body: fd });
+const result = await api(`/api/revenue-line-items/import?work_plan_id=${wpVal}&period_type=${cfg.periodType}`, { method: 'POST', body: fd });
 toast(`Imported ${result.created} row(s)`, 'success');
-if (periodType === 'monthly') invalidateMonthlyRevCache(wpVal);
-renderRevLineTable(periodType);
+if (cfg.periodType === 'monthly') invalidateMonthlyRevCache(wpVal);
+renderRevLineTable(pageKey);
 } catch (err) { toast(err.message, 'error'); }
 finally { e.target.value = ''; }
 });
-if (newBtn) newBtn.addEventListener('click', () => openAddRevLineItem(periodType));
-if (clearBtn) clearBtn.addEventListener('click', () => clearRevLineItems(periodType));
+if (newBtn) newBtn.addEventListener('click', () => openAddRevLineItem(pageKey));
+if (clearBtn) clearBtn.addEventListener('click', () => clearRevLineItems(pageKey));
 // wp-select is shared by all PBS revenue pages now that its dropdown
 // lives in the top-most bar. Summary & category already get re-rendered
 // via applyWorkplanSubtabDisplay() on the wp-select change handler below,
 // so only monthly and quarterly need their own listeners attached here.
-if (wpSel && periodType === 'monthly') wpSel.addEventListener('change', () => { applyRevLineFyLabel(periodType); renderRevLineTable(periodType); });
-if (wpSel && periodType === 'quarterly') wpSel.addEventListener('change', () => { applyRevenueDetailTitle(); renderRevLineTable(periodType); });
+if (wpSel && pageKey === 'monthly') wpSel.addEventListener('change', () => { applyRevLineFyLabel(pageKey); renderRevLineTable(pageKey); });
+if (wpSel && pageKey === 'quarterly') wpSel.addEventListener('change', () => { applyRevenueDetailTitle(); renderRevLineTable(pageKey); });
 });
 // ---- Dashboard -----------------------------------------------------------------
 async function loadDashboard() {
@@ -3644,12 +3742,14 @@ return `
 function applyWorkplanSubtabDisplay() {
 const summaryCard = document.getElementById('wp-revenue-summary-card');
 const categoryCard = document.getElementById('wp-rev-category-card');
+const monthlyAnnualCard = document.getElementById('wp-am-card');
 const deptSummaryCard = document.getElementById('wp-dept-summary-card');
 const frontmatterEl = document.getElementById('wp-annual-frontmatter');
 const piapCard = document.getElementById('wp-piap-card');
 const isAnnual = STATE.workplanSubtab === 'annual';
 if (summaryCard) summaryCard.style.display = isAnnual ? '' : 'none';
 if (categoryCard) categoryCard.style.display = isAnnual ? '' : 'none';
+if (monthlyAnnualCard) monthlyAnnualCard.style.display = isAnnual ? '' : 'none';
 // The Department Budget Summary table is shared with the "Approved LG
 // Expenditure Estimates" sub item (sub item 2) and stays exactly as it
 // was there — it's only hidden here, on the Annual Work Plan and Budget
@@ -3668,6 +3768,8 @@ const summaryTitleEl = document.getElementById('wp-title-revenue-summary');
 if (summaryTitleEl) summaryTitleEl.innerHTML = `SUMMARY OF THE REVENUE PERFORMANCE PLAN BY SOURCE`;
 const categoryTitleEl = document.getElementById('wp-title-rev-category');
 if (categoryTitleEl) categoryTitleEl.innerHTML = `REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE`;
+const monthlyAnnualTitleEl = document.getElementById('wp-title-am');
+if (monthlyAnnualTitleEl) monthlyAnnualTitleEl.innerHTML = `MONTHLY LOCAL REVENUE/GOU TRANSFERS ESTIMATES VS. ACTUAL REALIZED`;
 const fmFyEl = document.getElementById('wp-fm-fy');
 if (fmFyEl) fmFyEl.textContent = fy;
 const fmGeneratedEl = document.getElementById('wp-fm-generated');
@@ -3678,6 +3780,7 @@ fmGeneratedEl.textContent = `Generated on ${generatedStr}`;
 }
 renderRevLineTable('rev_by_source');
 renderRevLineTable('rev_by_category');
+renderRevLineTable('monthly_annual');
 }
 // Sets the fy-stamped title on the "Approved Quarterly Revenue Budget
 // Estimates and Quarterly Revenue Performance Gap" card, which now lives
