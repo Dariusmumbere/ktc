@@ -551,20 +551,31 @@ point begins on its own line rather than running together as one line. */
 .wp-fm-edit-hint{display:none; font-size:11px; color:var(--teal-700); font-weight:600; margin:-4px 0 16px; text-align:right;}
 .wp-fm-edit-hint.show{display:block;}
 /* Each front-matter page (cover / Forward / Town Clerk / Executive Summary)
-   is sized to the same height as the sidebar (100vh) so it reads as one
-   discrete page; content taller than that scrolls inside its own page
-   instead of stretching the page. */
-.wp-fm-pages{scroll-snap-type:y proximity;}
-.wp-fm-page{
-height:100vh; max-height:100vh; box-sizing:border-box; overflow-y:auto;
-padding:28px 4px; scroll-snap-align:start; display:flex; flex-direction:column;
+   is rendered as a true A4 sheet (210mm x 297mm) laid out on a neutral
+   backdrop, like a document editor's page view — a discrete, physically
+   page-shaped canvas rather than a viewport-height panel. Content taller
+   than the sheet scrolls inside its own page instead of stretching it. */
+.wp-fm-pages{
+scroll-snap-type:y proximity; background:#DDE5E3; border-radius:12px;
+padding:32px 16px; margin:0 -4px; display:flex; flex-direction:column;
+align-items:center; gap:28px;
 }
-.wp-fm-page + .wp-fm-page{border-top:1px solid var(--line-strong);}
+.wp-fm-page{
+width:210mm; aspect-ratio:210/297; max-width:100%; flex-shrink:0;
+box-sizing:border-box; background:var(--paper-raised); box-shadow:var(--shadow-lg);
+border-radius:2px; overflow-y:auto; scroll-snap-align:start;
+padding:20mm 18mm; display:flex; flex-direction:column;
+}
 .wp-fm-page-num{font-size:10.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-500); margin-bottom:14px; text-align:center; flex-shrink:0;}
 .wp-fm-cover-page{justify-content:center; align-items:center;}
 .wp-fm-cover-page .wp-fm-cover{width:100%;}
+@media (max-width:900px){
+.wp-fm-pages{padding:20px 8px;}
+.wp-fm-page{padding:14mm 10mm;}
+}
 @media print{
-.wp-fm-page{height:auto; max-height:none; overflow:visible; page-break-after:always;}
+.wp-fm-pages{background:none; padding:0; margin:0; gap:0;}
+.wp-fm-page{width:auto; aspect-ratio:auto; height:auto; max-height:none; overflow:visible; box-shadow:none; border-radius:0; padding:0; page-break-after:always;}
 }
 .wp-fm-cover{text-align:center; padding:6px 0 22px;}
 .wp-fm-logo{display:block; max-width:420px; width:100%; height:auto; margin:0 auto 14px; border-radius:4px; box-shadow:0 3px 10px rgba(10,31,43,.2);}
