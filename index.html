@@ -525,10 +525,10 @@ text-align:center;
 but a very wide screen they were all squeezed thin. Size each group
 sensibly and force a min-width so the table scrolls horizontally
 instead of compressing. */
-#wp-revenue-summary-table{min-width:1900px;}
+#wp-revenue-summary-table{width:1780px; min-width:1780px; max-width:1780px; table-layout:fixed;}
 #wp-revenue-summary-table th:nth-child(1), #wp-revenue-summary-body td:nth-child(1){width:90px; max-width:90px;}
-#wp-revenue-summary-table th:nth-child(2), #wp-revenue-summary-body td:nth-child(2){width:260px; max-width:260px; white-space:normal;}
-#wp-revenue-summary-table thead tr:nth-child(2) th{width:75px; max-width:75px;}
+#wp-revenue-summary-table th:nth-child(2), #wp-revenue-summary-body td:nth-child(2){width:240px; max-width:240px; white-space:normal;}
+#wp-revenue-summary-table thead tr:nth-child(2) th{width:90px; max-width:90px;}
 /* Functional Definition column in the summary table: allow each point to
 sit on its own line (line breaks are inserted when the data is rendered)
 rather than running on as one continuous line of text. */
@@ -566,19 +566,19 @@ text-align:center;
 /* Same fix as the Revenue Summary table above: 18 columns with no
 explicit widths were being squeezed thin — size them and force a
 min-width so the table scrolls instead of compressing. */
-#wp-rev-category-table{min-width:1900px;}
+#wp-rev-category-table{width:1780px; min-width:1780px; max-width:1780px; table-layout:fixed;}
 #wp-rev-category-table th:nth-child(1), #wp-rev-category-body td:nth-child(1){width:90px; max-width:90px;}
-#wp-rev-category-table th:nth-child(2), #wp-rev-category-body td:nth-child(2){width:260px; max-width:260px; white-space:normal;}
-#wp-rev-category-table thead tr:nth-child(2) th{width:75px; max-width:75px;}
+#wp-rev-category-table th:nth-child(2), #wp-rev-category-body td:nth-child(2){width:240px; max-width:240px; white-space:normal;}
+#wp-rev-category-table thead tr:nth-child(2) th{width:90px; max-width:90px;}
 /* ---------------- Table 3 (Monthly Local Revenue/GoU Transfers) on sub
    item 3 — sits directly under tables 1 & 2 above and mirrors the "Monthly
    Revenue Projections" sheet: full bordered grid, right-aligned amounts,
    no row indentation (see REV_LINE_PAGES.monthly_annual, noIndent:true). */
 #wp-am-table-wrap{overflow-x:auto; overflow-y:auto; scrollbar-width:thin; scrollbar-color: var(--teal-700) var(--surface-100, #eef2f1);}
-#wp-am-table{min-width:1950px; border-collapse:collapse;}
+#wp-am-table{width:2210px; min-width:2210px; max-width:2210px; table-layout:fixed; border-collapse:collapse;}
 #wp-am-table th:nth-child(1), #wp-am-table-body td:nth-child(1){width:70px; max-width:70px;}
 #wp-am-table th:nth-child(2), #wp-am-table-body td:nth-child(2){width:220px; max-width:220px; white-space:normal;}
-#wp-am-table thead tr:nth-child(2) th{width:60px; max-width:60px;}
+#wp-am-table thead tr:nth-child(2) th{width:70px; max-width:70px;}
 #wp-am-table-wrap::-webkit-scrollbar{width:11px; height:11px;}
 #wp-am-table-wrap::-webkit-scrollbar-track{background:var(--surface-100, #eef2f1);}
 #wp-am-table-wrap::-webkit-scrollbar-thumb{background:var(--teal-700); border-radius:6px; border:2px solid transparent; background-clip:padding-box;}
@@ -705,7 +705,7 @@ too (previously only two specific tables had this styling). */
    down to fit. A visible, styled scrollbar (rather than a hidden/overlay
    one) makes it obvious the table scrolls in both directions. */
 #rlm-table-wrap{overflow-x:auto; overflow-y:auto; scrollbar-width:thin; scrollbar-color: var(--teal-700) var(--surface-100, #eef2f1);}
-#rlm-table{min-width:1700px;}
+#rlm-table{width:2210px; min-width:2210px; max-width:2210px; table-layout:fixed;}
 #rlm-table-wrap::-webkit-scrollbar{width:11px; height:11px;}
 #rlm-table-wrap::-webkit-scrollbar-track{background:var(--surface-100, #eef2f1);}
 #rlm-table-wrap::-webkit-scrollbar-thumb{background:var(--teal-700); border-radius:6px; border:2px solid transparent; background-clip:padding-box;}
@@ -726,8 +726,9 @@ padding:7px 8px; font-size:9.5px; line-height:1.25; white-space:nowrap;
    cell's own opaque background. */
 box-shadow:inset 0 -1px 0 rgba(255,255,255,.35) !important;
 }
-.rli-table-wrap thead th.col-annual-approved{width:100px; max-width:100px; white-space:normal;}
-.rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:left; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line);}
+.rli-table-wrap thead th.col-annual-approved{white-space:normal;}
+.rli-table-wrap thead th[colspan]{white-space:normal; line-height:1.3;}
+.rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:left; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line); overflow:hidden; text-overflow:ellipsis;}
 .rli-table-wrap td.wrap{white-space:normal;}
 /* Vertical column dividers — scoped to just the Approved Monthly Revenue
    Budget Estimates table, not the other tables that share .rli-table-wrap. */
@@ -736,6 +737,7 @@ box-shadow:inset 0 -1px 0 rgba(255,255,255,.35) !important;
 #rlm-table-wrap td{border-right:1px solid var(--line);}
 #rlm-table-wrap td:last-child{border-right:none;}
 #rlm-table-wrap td{font-size:10px;}
+#rlm-table-body td:nth-child(2){white-space:normal;}
 .rli-table-wrap tbody tr.rev-cat-head td{background:var(--gold-100); font-weight:700; color:var(--navy-950); border-bottom:1px solid var(--line-strong);}
 .rli-table-wrap tbody tr.rev-cat-head:hover td{background:var(--gold-100);}
 .rli-table-wrap tbody tr.rev-item-row td{background:#FFFFFF;}
@@ -1552,6 +1554,15 @@ view-switch code below, alongside downloadPdfBtn.title). -->
 </div>
 <div class="rli-table-wrap" id="rlm-table-wrap" style="margin:10px 16px 16px;">
 <table id="rlm-table">
+<colgroup>
+<col style="width:70px">
+<col style="width:220px">
+<col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px">
+<col style="width:100px">
+<col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px">
+<col style="width:100px">
+<col style="width:40px">
+</colgroup>
 <thead id="rlm-table-thead" style="display:none;">
 <tr>
 <th rowspan="2">Code</th>
@@ -1798,6 +1809,17 @@ changes. -->
 </div>
 <div class="rli-table-wrap" id="wp-revenue-summary-wrap" style="margin:10px 16px 16px;">
 <table id="wp-revenue-summary-table">
+<colgroup>
+<col style="width:90px">
+<col style="width:240px">
+<col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:90px">
+<col style="width:110px">
+<col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:90px">
+<col style="width:110px">
+<col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:90px">
+<col style="width:110px">
+<col style="width:40px">
+</colgroup>
 <thead>
 <tr>
 <th rowspan="2">PBS Code</th>
@@ -1845,6 +1867,17 @@ changes. -->
 </div>
 <div class="rli-table-wrap" id="wp-rev-category-wrap" style="margin:10px 16px 16px;">
 <table id="wp-rev-category-table">
+<colgroup>
+<col style="width:90px">
+<col style="width:240px">
+<col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:90px">
+<col style="width:110px">
+<col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:90px">
+<col style="width:110px">
+<col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:90px">
+<col style="width:110px">
+<col style="width:40px">
+</colgroup>
 <thead>
 <tr>
 <th rowspan="2">PBS Code</th>
@@ -1897,6 +1930,15 @@ changes. -->
 <input type="file" id="wp-am-import-file" accept=".xlsx,.xls" style="display:none;" />
 <div class="rli-table-wrap" id="wp-am-table-wrap" style="margin:10px 16px 16px;">
 <table id="wp-am-table">
+<colgroup>
+<col style="width:70px">
+<col style="width:220px">
+<col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px">
+<col style="width:100px">
+<col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:70px">
+<col style="width:100px">
+<col style="width:40px">
+</colgroup>
 <thead>
 <tr>
 <th rowspan="2">Code</th>
