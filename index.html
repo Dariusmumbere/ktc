@@ -584,20 +584,25 @@ point begins on its own line rather than running together as one line. */
 .wp-fm-edit-hint{display:none; font-size:11px; color:var(--teal-700); font-weight:600; margin:-4px 0 16px; text-align:right;}
 .wp-fm-edit-hint.show{display:block;}
 /* Each front-matter page (cover / Forward / Town Clerk / Executive Summary)
-   is sized to the same height as the sidebar (100vh) so it reads as one
-   discrete page; content taller than that scrolls inside its own page
-   instead of stretching the page. */
-.wp-fm-pages{scroll-snap-type:y proximity;}
+   is exhibited as a real A4 sheet on screen at all times — not only when
+   printing — so sub item 3 always reads as a paginated document rather
+   than a scrolling web page. Height is a minimum (not fixed): free-flowing
+   prose that runs long simply makes its own sheet a little taller rather
+   than being cut off, while still starting from — and reading as — one
+   A4 page per section. */
+.wp-fm-pages{scroll-snap-type:y proximity; background:#DCE3E1; margin:0 -18px; padding:24px 18px;}
 .wp-fm-page{
-height:100vh; max-height:100vh; box-sizing:border-box; overflow-y:auto;
-padding:28px 4px; scroll-snap-align:start; display:flex; flex-direction:column;
+width:210mm; min-height:297mm; max-width:100%; box-sizing:border-box; overflow-y:visible;
+padding:16mm 14mm; margin:0 auto 22px; scroll-snap-align:start; display:flex; flex-direction:column;
+background:#fff; box-shadow:var(--shadow-md); border-radius:2px;
 }
-.wp-fm-page + .wp-fm-page{border-top:1px solid var(--line-strong);}
+.wp-fm-page + .wp-fm-page{border-top:none;}
 .wp-fm-page-num{font-size:10.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-500); margin-bottom:14px; text-align:center; flex-shrink:0;}
 .wp-fm-cover-page{justify-content:center; align-items:center;}
 .wp-fm-cover-page .wp-fm-cover{width:100%;}
 @media print{
-.wp-fm-page{height:auto; max-height:none; overflow:visible; page-break-after:always;}
+.wp-fm-page{height:auto; max-height:none; overflow:visible; page-break-after:always; width:auto; min-height:0; box-shadow:none; margin:0; padding:0;}
+.wp-fm-pages{background:none; margin:0; padding:0;}
 }
 .wp-fm-cover{text-align:center; padding:6px 0 22px;}
 .wp-fm-logo{display:block; max-width:420px; width:100%; height:auto; margin:0 auto 14px; border-radius:4px; box-shadow:0 3px 10px rgba(10,31,43,.2);}
@@ -611,6 +616,29 @@ padding:28px 4px; scroll-snap-align:start; display:flex; flex-direction:column;
 .wp-frontmatter p{margin:0 0 10px; font-size:12px; line-height:1.7; color:var(--ink-900); text-align:justify;}
 .wp-frontmatter ul{margin:0 0 10px 18px; padding:0;}
 .wp-frontmatter li{font-size:12px; line-height:1.6; color:var(--ink-900); margin-bottom:4px;}
+/* ==========================================================================
+Sub item 3 — A4 Exhibition (live, always on screen, not just at print time).
+Every table on this sub item is rendered a second time — read-only — inside
+a series of real A4 sheets stacked on a grey "desk" background, exactly the
+way a printed/PDF version of the report would paginate: rows are grouped
+into pages by actual measured height (see renderWorkplanA4Exhibition() /
+paginateTableToA4()) and each page gets its own copy of the table's header
+row at the top. The editable working tables further down the view are
+untouched — this exhibition is a live mirror of them and re-renders itself
+whenever their data changes.
+========================================================================== */
+.a4-canvas{background:#DCE3E1; margin:12px -18px 0; padding:24px 18px; border-radius:10px;}
+.a4-page{
+background:#fff; width:210mm; height:297mm; margin:0 auto 22px; padding:14mm 12mm;
+box-sizing:border-box; box-shadow:var(--shadow-md); border-radius:2px; overflow:hidden; position:relative;
+}
+.a4-page.landscape{width:297mm; height:210mm;}
+.a4-page-body{width:100%; height:100%; overflow:hidden; display:flex; flex-direction:column;}
+.a4-page-title{font-family:var(--font-display); font-weight:700; font-size:11.5px; color:var(--teal-700); text-transform:uppercase; letter-spacing:.3px; margin-bottom:8px; text-align:center; flex-shrink:0;}
+.a4-page table{width:100%; border-collapse:collapse; font-size:8px; table-layout:auto;}
+.a4-page table th, .a4-page table td{padding:3px 4px; border:1px solid var(--line-strong); word-break:break-word; text-align:left;}
+.a4-page table thead th{background:var(--teal-700); color:#fff; font-size:7.5px; text-transform:uppercase;}
+.a4-page table td.num, .a4-page table th.num{text-align:right;}
 .wp-fm-quote{text-align:center !important; font-style:italic; font-size:13px; color:var(--navy-950); margin:16px 0 !important;}
 .wp-fm-signoff{text-align:center; margin-top:14px; font-size:12px; color:var(--ink-900); line-height:1.6;}
 
@@ -928,8 +956,11 @@ only one most people check) looked completely blank. Removing every
 other top-level element from the layout with display:none instead of
 just hiding it fixes that: only #modal-print-form remains, so the
 printed content starts at the very top of page 1 regardless of how much
-other content exists elsewhere in the app. */
-body > *:not(#modal-print-form){display:none !important;}
+other content exists elsewhere in the app. Scoped to :not(.print-workplan-a4)
+so it doesn't fight with the separate sub-item-3 A4 print mode below, which
+has its own exclusive print rules for the workplan view instead of this
+modal. */
+body:not(.print-workplan-a4) > *:not(#modal-print-form){display:none !important;}
 #modal-print-form{
 display:block !important; position:static !important; inset:auto !important;
 background:none !important; padding:0 !important; backdrop-filter:none !important;
@@ -968,6 +999,47 @@ document handled on its own. */
 #print-form-container .sig-line img{max-height:44px;}
 #print-form-container .req-form-signatures .sig-name-fill, #print-form-container .req-form-signatures .sig-name{margin:0 0 4px; font-size:13px;}
 #print-form-container .req-form-signatures .sig-label{font-size:13px;}
+}
+/* ==========================================================================
+Sub item 3 (Approved LG Annual Work Plan and Budget Estimates) — print.
+Triggered by the "Print (A4)" button (adds body.print-workplan-a4, calls
+window.print(), removes the class again on 'afterprint').
+
+Both the front-matter pages (.wp-fm-page) and the tables below them are
+already exhibited on screen as real, correctly-paginated A4 sheets (see
+.wp-fm-page / .a4-page and renderWorkplanA4Exhibition() above) — so
+printing is now just: hide everything else (sidebar, topbar, the editable
+working tables, on-screen chrome) and let those two already-paginated
+sections print as-is. What prints matches what's on screen exactly.
+========================================================================== */
+@media print{
+body.print-workplan-a4 > *:not(#app-screen){display:none !important;}
+body.print-workplan-a4 #app-screen{position:static !important; display:block !important;}
+body.print-workplan-a4 .sidebar-backdrop{display:none !important;}
+body.print-workplan-a4 .shell{display:block !important;}
+body.print-workplan-a4 .sidebar,
+body.print-workplan-a4 .hamburger-btn{display:none !important;}
+body.print-workplan-a4 .main{display:block !important; overflow:visible !important;}
+body.print-workplan-a4 .topbar,
+body.print-workplan-a4 .notif-panel{display:none !important;}
+body.print-workplan-a4 .content{overflow:visible !important; padding:0 !important;}
+body.print-workplan-a4 .view:not(#view-workplan){display:none !important;}
+body.print-workplan-a4 #view-workplan{display:block !important;}
+/* Only the front matter and the A4 Exhibition print — the editable working
+tables/toolbar/filters that sit below the Exhibition on screen (they're
+what the Exhibition mirrors) are left out of the printed output. */
+body.print-workplan-a4 #view-workplan > *:not(#wp-annual-frontmatter):not(#wp-a4-exhibition-card){display:none !important;}
+body.print-workplan-a4 #view-workplan [contenteditable]{outline:none !important; background:none !important;}
+body.print-workplan-a4 #wp-fm-edit-hint{display:none !important;}
+@page{ size:A4; margin:0; }
+@page a4-landscape{ size:A4 landscape; margin:0; }
+body.print-workplan-a4 .wp-fm-pages,
+body.print-workplan-a4 .a4-canvas{background:none !important; margin:0 !important; padding:0 !important;}
+body.print-workplan-a4 .wp-fm-page,
+body.print-workplan-a4 .a4-page{
+box-shadow:none !important; margin:0 auto !important; page-break-after:always !important; break-after:page !important;
+}
+body.print-workplan-a4 .a4-page.landscape{page:a4-landscape;}
 }
 /* ---------------- Requisition data-entry form (styled as the paper form itself) ---------------- */
 .req-digital-controls{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px 14px; margin-bottom:16px;}
@@ -1298,6 +1370,14 @@ Departments
 <button class="icon-btn icon-btn-sm" id="wp-download-pdf-btn" title="Download Annual Work Plan &amp; Budget as PDF">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
 </button>
+<!-- Browser print of sub item 3 (Approved LG Annual Work Plan and Budget
+Estimates) laid out across A4 pages — front matter one page per section,
+every table's header row repeating at the top of each printed page as its
+rows carry on across the page break. Only shown on that sub item (see the
+view-switch code below, alongside downloadPdfBtn.title). -->
+<button class="icon-btn icon-btn-sm" id="wp-print-a4-btn" title="Print Annual Work Plan &amp; Budget (A4)" style="display:none;">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9V3H18V9"/><rect x="4" y="9" width="16" height="8" rx="1.5"/><rect x="7" y="14" width="10" height="6"/></svg>
+</button>
 </div>
 </div>
 </div>
@@ -1607,6 +1687,21 @@ Departments
 </div>
 </div>
 </div>
+</div>
+<!-- A4 Exhibition: sub item 3's tables (Table 1/2/3 above the main table,
+plus the main Activity/Budget table and the PIAP Part 2 blocks) rendered a
+second time as real, paginated A4 sheets — always visible here, not only
+when printing — so this sub item reads as a bound document rather than a
+set of scrolling web tables. Populated/refreshed by
+renderWorkplanA4Exhibition(), which watches the tables below via a
+MutationObserver and re-paginates automatically whenever their data
+changes. -->
+<div class="card card-pad" id="wp-a4-exhibition-card" style="margin-bottom:20px; display:none;">
+<div class="table-title-row">
+<div class="kicker">A4 PAPER EXHIBITION — LIVE PREVIEW</div>
+</div>
+<div class="help-text" style="margin:2px 0 4px;">Every table below is laid out here on real A4 sheets, exactly as it will print — each table's header row repeats at the top of every page its rows continue onto. This updates automatically as you edit the working tables further down the page.</div>
+<div class="a4-canvas" id="wp-a4-canvas"></div>
 </div>
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" id="wp-revenue-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; display:none;">
@@ -3166,6 +3261,14 @@ downloadPdfBtn.title = (view === 'rev-monthly')
 ? 'Download Approved LG Expenditure Estimates as PDF'
 : 'Download Annual Work Plan & Budget as PDF';
 }
+// A4 print button: only sub item 3 (Approved LG Annual Work Plan and Budget
+// Estimates, i.e. view-workplan with subtab "annual") gets the paginated
+// A4 print layout — every other PBS sub item keeps its normal on-screen
+// scrolling tables, so the button stays hidden there.
+const printA4Btn = document.getElementById('wp-print-a4-btn');
+if (printA4Btn) {
+printA4Btn.style.display = (view === 'workplan' && (subtab || 'expenditure') !== 'expenditure') ? '' : 'none';
+}
 closeNotifPanel();
 if (view === 'dashboard') loadDashboard();
 if (view === 'rev-monthly') { loadRevLinePage('monthly'); applyRevenueDetailTitle(); loadRevLinePage('quarterly'); }
@@ -3746,10 +3849,12 @@ const monthlyAnnualCard = document.getElementById('wp-am-card');
 const deptSummaryCard = document.getElementById('wp-dept-summary-card');
 const frontmatterEl = document.getElementById('wp-annual-frontmatter');
 const piapCard = document.getElementById('wp-piap-card');
+const a4ExhibitionCard = document.getElementById('wp-a4-exhibition-card');
 const isAnnual = STATE.workplanSubtab === 'annual';
 if (summaryCard) summaryCard.style.display = isAnnual ? '' : 'none';
 if (categoryCard) categoryCard.style.display = isAnnual ? '' : 'none';
 if (monthlyAnnualCard) monthlyAnnualCard.style.display = isAnnual ? '' : 'none';
+if (a4ExhibitionCard) a4ExhibitionCard.style.display = isAnnual ? '' : 'none';
 // The Department Budget Summary table is shared with the "Approved LG
 // Expenditure Estimates" sub item (sub item 2) and stays exactly as it
 // was there — it's only hidden here, on the Annual Work Plan and Budget
@@ -3781,7 +3886,114 @@ fmGeneratedEl.textContent = `Generated on ${generatedStr}`;
 renderRevLineTable('rev_by_source');
 renderRevLineTable('rev_by_category');
 renderRevLineTable('monthly_annual');
+scheduleWorkplanA4Exhibition();
 }
+// ---- A4 Exhibition (sub item 3) ----------------------------------------
+// Clones a table (or table section) for the read-only exhibition, dropping
+// anything interactive — action buttons, the "+ Sub Row"/clear-all
+// controls, inline inputs — since the exhibition is a display-only mirror
+// of the editable tables further down the page.
+function cleanCloneForExhibition(node) {
+const clone = node.cloneNode(true);
+clone.querySelectorAll('button, input, .th-clear-btn, svg').forEach(el => el.remove());
+return clone;
+}
+// Splits one source table's body rows across as many real A4 pages as it
+// takes, by actually measuring each page's rendered height in the DOM as
+// rows are added — the same approach a word processor's page view uses —
+// rather than guessing a fixed row count. Every page gets its own cloned
+// copy of the header (and footer, if present) so it repeats at the top
+// (and bottom) of each page the table's rows spill onto.
+function paginateTableToA4(sourceTable, container, opts) {
+opts = opts || {};
+if (!sourceTable || !container) return;
+const theadSrc = sourceTable.querySelector('thead');
+const tfootSrc = sourceTable.querySelector('tfoot');
+const bodyRows = Array.from(sourceTable.querySelectorAll('tbody tr'));
+const theadClone = theadSrc ? cleanCloneForExhibition(theadSrc) : null;
+const tfootClone = tfootSrc ? cleanCloneForExhibition(tfootSrc) : null;
+let page, body, tbl, tbody;
+function startPage() {
+page = document.createElement('div');
+page.className = 'a4-page' + (opts.landscape ? ' landscape' : '');
+body = document.createElement('div');
+body.className = 'a4-page-body';
+if (opts.title) {
+const h = document.createElement('div');
+h.className = 'a4-page-title';
+h.textContent = opts.title;
+body.appendChild(h);
+}
+tbl = document.createElement('table');
+tbl.className = sourceTable.className;
+if (theadClone) tbl.appendChild(theadClone.cloneNode(true));
+tbody = document.createElement('tbody');
+tbl.appendChild(tbody);
+body.appendChild(tbl);
+page.appendChild(body);
+container.appendChild(page);
+}
+startPage();
+bodyRows.forEach(row => {
+const rowClone = cleanCloneForExhibition(row);
+tbody.appendChild(rowClone);
+// If this row pushed the page past its real A4 height, it belongs on
+// the next page instead — move it there (always keeping at least one
+// row per page so an unusually tall single row can't loop forever).
+if (body.scrollHeight > body.clientHeight && tbody.children.length > 1) {
+tbody.removeChild(rowClone);
+startPage();
+tbody.appendChild(rowClone);
+}
+});
+if (tfootClone) tbl.appendChild(tfootClone.cloneNode(true));
+}
+// Rebuilds the whole A4 Exhibition from the current state of sub item 3's
+// tables. Read-only — this never touches the editable tables it mirrors.
+function renderWorkplanA4Exhibition() {
+const canvas = document.getElementById('wp-a4-canvas');
+if (!canvas || document.getElementById('wp-a4-exhibition-card').style.display === 'none') return;
+canvas.innerHTML = '';
+const specs = [
+{ id: 'wp-revenue-summary-table', title: 'Summary of the Revenue Performance Plan by Source', landscape: false },
+{ id: 'wp-rev-category-table', title: 'Revenue Performance Plan by Category & Source', landscape: true },
+{ id: 'wp-am-table', title: 'Monthly Local Revenue/GoU Transfers Estimates vs. Actual Realized', landscape: true },
+{ id: 'wp-main-table', title: 'Approved Council Annual Work Plan and Expenditure Estimates', landscape: true },
+];
+specs.forEach(spec => {
+const table = document.getElementById(spec.id);
+if (!table || !table.querySelector('tbody tr')) return;
+paginateTableToA4(table, canvas, { title: spec.title, landscape: spec.landscape });
+});
+// PIAP Part 2: already rendered as one self-contained block per
+// department/activity-block (see renderPiapTable) — each one is exhibited
+// as its own landscape A4 page rather than being row-paginated again.
+document.querySelectorAll('#wp-piap-wrap > table').forEach(t => {
+const page = document.createElement('div');
+page.className = 'a4-page landscape';
+const body = document.createElement('div');
+body.className = 'a4-page-body';
+body.appendChild(cleanCloneForExhibition(t));
+page.appendChild(body);
+canvas.appendChild(page);
+});
+}
+let workplanA4RenderTimer = null;
+function scheduleWorkplanA4Exhibition() {
+clearTimeout(workplanA4RenderTimer);
+workplanA4RenderTimer = setTimeout(renderWorkplanA4Exhibition, 200);
+}
+// The tables above are populated asynchronously (API calls) and edited in
+// place by many different actions across the file, so rather than hook
+// every single call site, watch the tables themselves and re-paginate
+// automatically whenever their rendered rows change.
+(function observeWorkplanA4Sources() {
+const observer = new MutationObserver(scheduleWorkplanA4Exhibition);
+['wp-revenue-summary-body', 'wp-rev-category-body', 'wp-am-table-body', 'wp-table-body', 'wp-piap-wrap'].forEach(id => {
+const el = document.getElementById(id);
+if (el) observer.observe(el, { childList: true, subtree: true, characterData: true });
+});
+})();
 // Sets the fy-stamped title on the "Approved Quarterly Revenue Budget
 // Estimates and Quarterly Revenue Performance Gap" card, which now lives
 // on sub item 1 (Local Revenue/GoU Transfers Estimates vs. Actual
@@ -3864,6 +4076,26 @@ setFrontmatterEditing(false);
 });
 document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); loadProgrammeFilterOptions().then(renderBudgetCodes); applyWorkplanSubtabDisplay(); });
 document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
+// Print sub item 3 (Approved LG Annual Work Plan and Budget Estimates)
+// straight from the browser, laid out on A4 paper. The front matter and
+// the A4 Exhibition below it are already real, correctly-paginated A4
+// sheets on screen (see .wp-fm-page / .a4-page and
+// renderWorkplanA4Exhibition() above) — printing just hides everything
+// else and prints those two sections as-is, so the printout matches the
+// screen exactly. Re-pagination runs once synchronously first (bypassing
+// its usual debounce) in case an edit just landed and the observer hasn't
+// caught up yet. The print-workplan-a4 class is removed again once the
+// print dialog closes (or is cancelled) so the normal on-screen view
+// returns.
+document.getElementById('wp-print-a4-btn').addEventListener('click', () => {
+clearTimeout(workplanA4RenderTimer);
+renderWorkplanA4Exhibition();
+document.body.classList.add('print-workplan-a4');
+window.print();
+});
+window.addEventListener('afterprint', () => {
+document.body.classList.remove('print-workplan-a4');
+});
 // Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
 // `page` tells the backend which PBS page's content to include (the cover/
 // forward/clerk-message/executive-summary front matter is always the same;
