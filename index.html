@@ -374,6 +374,16 @@ background:#F7FBFA; box-shadow:0 1px 3px rgba(10,31,43,.08);
 .tl-meta{font-size:11px; color:var(--ink-500); margin-top:1px;}
 /* ---------------- Table styling (echoes the reference work-plan grid) ---------------- */
 .table-wrap{overflow-x:auto; border-radius:var(--radius); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
+/* Every table on every page sits in a .table-wrap, so give it one
+consistent, always-visible scrollbar (rather than a hidden/overlay one
+some OSes use) — this is what puts a clear horizontal scroll bar at the
+bottom edge of any table wide enough to need it, on every page. */
+.table-wrap{scrollbar-width:thin; scrollbar-color: var(--teal-700) var(--surface-100, #eef2f1);}
+.table-wrap::-webkit-scrollbar{width:11px; height:11px;}
+.table-wrap::-webkit-scrollbar-track{background:var(--surface-100, #eef2f1);}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--teal-700); border-radius:6px; border:2px solid transparent; background-clip:padding-box;}
+.table-wrap::-webkit-scrollbar-thumb:hover{background:var(--navy-900);}
+.table-wrap::-webkit-scrollbar-corner{background:var(--surface-100, #eef2f1);}
 table{width:100%; border-collapse:collapse; min-width:720px; background:#fff;}
 thead th{
 background:var(--navy-950); color:#fff; font-size:10.5px; text-transform:uppercase; letter-spacing:.5px;
@@ -499,6 +509,15 @@ text-align:center;
 #wp-revenue-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
 #wp-revenue-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-revenue-summary-body td{padding:7px 9px; font-size:11.5px;}
+/* This table has 18 columns (code, description, 3x4 quarterly groups,
+3 annual totals, clear button) with no explicit widths, so on anything
+but a very wide screen they were all squeezed thin. Size each group
+sensibly and force a min-width so the table scrolls horizontally
+instead of compressing. */
+#wp-revenue-summary-table{min-width:1900px;}
+#wp-revenue-summary-table th:nth-child(1), #wp-revenue-summary-body td:nth-child(1){width:90px; max-width:90px;}
+#wp-revenue-summary-table th:nth-child(2), #wp-revenue-summary-body td:nth-child(2){width:260px; max-width:260px; white-space:normal;}
+#wp-revenue-summary-table thead tr:nth-child(2) th{width:75px; max-width:75px;}
 /* Functional Definition column in the summary table: allow each point to
 sit on its own line (line breaks are inserted when the data is rendered)
 rather than running on as one continuous line of text. */
@@ -533,12 +552,22 @@ text-align:center;
 #wp-rev-category-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
 #wp-rev-category-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-rev-category-body td{padding:7px 9px; font-size:11.5px;}
+/* Same fix as the Revenue Summary table above: 18 columns with no
+explicit widths were being squeezed thin — size them and force a
+min-width so the table scrolls instead of compressing. */
+#wp-rev-category-table{min-width:1900px;}
+#wp-rev-category-table th:nth-child(1), #wp-rev-category-body td:nth-child(1){width:90px; max-width:90px;}
+#wp-rev-category-table th:nth-child(2), #wp-rev-category-body td:nth-child(2){width:260px; max-width:260px; white-space:normal;}
+#wp-rev-category-table thead tr:nth-child(2) th{width:75px; max-width:75px;}
 /* ---------------- Table 3 (Monthly Local Revenue/GoU Transfers) on sub
    item 3 — sits directly under tables 1 & 2 above and mirrors the "Monthly
    Revenue Projections" sheet: full bordered grid, right-aligned amounts,
    no row indentation (see REV_LINE_PAGES.monthly_annual, noIndent:true). */
 #wp-am-table-wrap{overflow-x:auto; overflow-y:auto; scrollbar-width:thin; scrollbar-color: var(--teal-700) var(--surface-100, #eef2f1);}
-#wp-am-table{min-width:1700px; border-collapse:collapse;}
+#wp-am-table{min-width:1950px; border-collapse:collapse;}
+#wp-am-table th:nth-child(1), #wp-am-table-body td:nth-child(1){width:70px; max-width:70px;}
+#wp-am-table th:nth-child(2), #wp-am-table-body td:nth-child(2){width:220px; max-width:220px; white-space:normal;}
+#wp-am-table thead tr:nth-child(2) th{width:60px; max-width:60px;}
 #wp-am-table-wrap::-webkit-scrollbar{width:11px; height:11px;}
 #wp-am-table-wrap::-webkit-scrollbar-track{background:var(--surface-100, #eef2f1);}
 #wp-am-table-wrap::-webkit-scrollbar-thumb{background:var(--teal-700); border-radius:6px; border:2px solid transparent; background-clip:padding-box;}
@@ -646,6 +675,16 @@ box-sizing:border-box; box-shadow:var(--shadow-md); border-radius:2px; overflow:
 
 Summary) — generic hierarchical table styling, shared by all three ------- */
 .rli-table-wrap{max-height:520px; overflow:auto; border-radius:var(--radius); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
+/* Same always-visible scrollbar treatment as .table-wrap, applied to
+every wide revenue/work-plan grid that uses this wrapper class, so the
+horizontal scroll bar is obvious at the bottom of each of these tables
+too (previously only two specific tables had this styling). */
+.rli-table-wrap{scrollbar-width:thin; scrollbar-color: var(--teal-700) var(--surface-100, #eef2f1);}
+.rli-table-wrap::-webkit-scrollbar{width:11px; height:11px;}
+.rli-table-wrap::-webkit-scrollbar-track{background:var(--surface-100, #eef2f1);}
+.rli-table-wrap::-webkit-scrollbar-thumb{background:var(--teal-700); border-radius:6px; border:2px solid transparent; background-clip:padding-box;}
+.rli-table-wrap::-webkit-scrollbar-thumb:hover{background:var(--navy-900);}
+.rli-table-wrap::-webkit-scrollbar-corner{background:var(--surface-100, #eef2f1);}
 .rli-table-wrap table{border-collapse:separate; border-spacing:0;}
 /* Sub item 1 (Monthly Local Revenue/GoU Transfers) has 29 columns, so it
    needs both a vertical scrollbar (already provided by .rli-table-wrap's
@@ -676,7 +715,7 @@ padding:7px 8px; font-size:9.5px; line-height:1.25; white-space:nowrap;
    cell's own opaque background. */
 box-shadow:inset 0 -1px 0 rgba(255,255,255,.35) !important;
 }
-.rli-table-wrap thead th.col-annual-approved{width:76px; max-width:76px; white-space:normal;}
+.rli-table-wrap thead th.col-annual-approved{width:100px; max-width:100px; white-space:normal;}
 .rli-table-wrap td{padding:6px 8px; font-size:11px; color:var(--ink-900); text-align:left; vertical-align:middle; white-space:nowrap; border-bottom:1px solid var(--line);}
 .rli-table-wrap td.wrap{white-space:normal;}
 /* Vertical column dividers — scoped to just the Approved Monthly Revenue
@@ -703,7 +742,19 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-dept-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3;}
 #wp-dept-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-dept-summary-body td{padding:7px 9px; font-size:11.5px;}
-#wp-main-table{min-width:2010px;}
+/* 7 columns with no explicit widths, including two long headers
+(Total Budget, Uncommitted Departmental Balance) — give each column
+room and force the table to scroll on narrow viewports rather than
+squeeze every header down. */
+#wp-dept-summary-table{min-width:980px;}
+#wp-dept-summary-table th:nth-child(1), #wp-dept-summary-body td:nth-child(1){width:220px; max-width:220px; white-space:normal;}
+#wp-dept-summary-table th:nth-child(2), #wp-dept-summary-body td:nth-child(2),
+#wp-dept-summary-table th:nth-child(3), #wp-dept-summary-body td:nth-child(3),
+#wp-dept-summary-table th:nth-child(4), #wp-dept-summary-body td:nth-child(4),
+#wp-dept-summary-table th:nth-child(5), #wp-dept-summary-body td:nth-child(5){width:110px; max-width:110px;}
+#wp-dept-summary-table th:nth-child(6), #wp-dept-summary-body td:nth-child(6){width:130px; max-width:130px;}
+#wp-dept-summary-table th:nth-child(7), #wp-dept-summary-body td:nth-child(7){width:160px; max-width:160px; white-space:normal;}
+#wp-main-table{min-width:2940px; table-layout:fixed;}
 /* ---------------- Work Plan & Budget: PIAP / "Part 2" transposed table
    (one column per activity output, one row per field, blocked per
    department to mirror the LLG's own Sheet2-style workbook layout) ------- */
@@ -744,6 +795,22 @@ original width (220px -> 330px) for extra room. */
 #wp-main-table th:nth-child(15), #wp-main-table td:nth-child(15),
 #wp-main-table th:nth-child(16), #wp-main-table td:nth-child(16),
 #wp-main-table th:nth-child(17), #wp-main-table td:nth-child(17){max-width:92px; width:92px;}
+/* Remaining columns (Programme, Sub Programme, Budget Output Code, Unit
+of Measure, Baseline Value, Planned Target, Actual Output, Expenditure
+Category, Responsible Party, and the trailing clear-button column) had
+no explicit width before, so with table-layout now fixed they'd all be
+squeezed to a sliver — give each a sensible width based on how much text
+it typically holds. */
+#wp-main-table th:nth-child(3), #wp-main-table td:nth-child(3){white-space:normal; max-width:160px; width:160px;}
+#wp-main-table th:nth-child(4), #wp-main-table td:nth-child(4){white-space:normal; max-width:160px; width:160px;}
+#wp-main-table th:nth-child(5), #wp-main-table td:nth-child(5){white-space:normal; max-width:110px; width:110px;}
+#wp-main-table th:nth-child(9), #wp-main-table td:nth-child(9){white-space:normal; max-width:100px; width:100px;}
+#wp-main-table th:nth-child(10), #wp-main-table td:nth-child(10){white-space:normal; max-width:90px; width:90px;}
+#wp-main-table th:nth-child(11), #wp-main-table td:nth-child(11){white-space:normal; max-width:100px; width:100px;}
+#wp-main-table th:nth-child(12), #wp-main-table td:nth-child(12){white-space:normal; max-width:100px; width:100px;}
+#wp-main-table th:nth-child(19), #wp-main-table td:nth-child(19){white-space:normal; max-width:130px; width:130px;}
+#wp-main-table th:nth-child(20), #wp-main-table td:nth-child(20){white-space:normal; max-width:150px; width:150px;}
+#wp-main-table th:nth-child(21), #wp-main-table td:nth-child(21){max-width:50px; width:50px;}
 .toolbar{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
 .search-box{position:relative; flex:1; min-width:220px;}
 .search-box svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); width:15px;height:15px; color:var(--ink-500); pointer-events:none;}
