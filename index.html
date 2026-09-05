@@ -384,6 +384,17 @@ bottom edge of any table wide enough to need it, on every page. */
 .table-wrap::-webkit-scrollbar-thumb{background:var(--teal-700); border-radius:6px; border:2px solid transparent; background-clip:padding-box;}
 .table-wrap::-webkit-scrollbar-thumb:hover{background:var(--navy-900);}
 .table-wrap::-webkit-scrollbar-corner{background:var(--surface-100, #eef2f1);}
+/* Custom scroll indicator: mobile browsers (Android Chrome, iOS Safari)
+generally use overlay scrollbars that are invisible except while a
+finger is actively touching them, and ignore ::-webkit-scrollbar
+styling entirely — so on a phone/tablet none of the scrollbar CSS above
+ever shows up statically. This bar is plain DOM/CSS, always visible
+once a table overflows (regardless of device or browser), and can be
+dragged to scroll like a real scrollbar. Injected after every
+.table-wrap / .rli-table-wrap by the script near the end of the page. */
+.scrollbar-indicator{height:7px; margin:6px 2px 2px; border-radius:4px; background:#E4EAE9; position:relative; overflow:hidden; display:none; cursor:pointer;}
+.scrollbar-indicator .thumb{position:absolute; top:0; left:0; height:100%; width:40px; background:var(--teal-700); border-radius:4px; cursor:grab;}
+.scrollbar-indicator .thumb:active{cursor:grabbing; background:var(--navy-900);}
 table{width:100%; border-collapse:collapse; min-width:720px; background:#fff;}
 thead th{
 background:var(--navy-950); color:#fff; font-size:10.5px; text-transform:uppercase; letter-spacing:.5px;
@@ -6539,6 +6550,100 @@ tbody.innerHTML = deps.map(d => `<tr>
 function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); }; }
 // ---- Boot -----------------------------------------------------------------------------
 if (STATE.token) { enterApp().catch(() => logout()); }
+// ---- Table horizontal-scroll indicator --------------------------------------------------
+// Every wide table sits inside a .table-wrap or .rli-table-wrap that already scrolls via
+// overflow-x:auto, but on mobile browsers the native scrollbar for that is an invisible
+// overlay (only shown mid-touch, and unstyleable), so people had no visual cue a table
+// could scroll sideways. This adds a small always-visible bar under each such table that
+// fills in proportion to scroll position, and can itself be dragged to scroll — working the
+// same on every device since it's plain DOM/CSS, not a native scrollbar.
+(function () {
+  function ensureIndicator(wrap) {
+    var track = wrap.nextElementSibling;
+    if (!track || !track.classList || !track.classList.contains('scrollbar-indicator')) {
+      track = document.createElement('div');
+      track.className = 'scrollbar-indicator';
+      var thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      track.appendChild(thumb);
+      wrap.insertAdjacentElement('afterend', track);
+      makeDraggable(thumb, wrap, track);
+    }
+    return track;
+  }
+  function makeDraggable(thumb, wrap, track) {
+    var dragging = false, startX = 0, startScrollLeft = 0;
+    function pos(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
+    function down(e) {
+      dragging = true; startX = pos(e); startScrollLeft = wrap.scrollLeft;
+      e.preventDefault();
+    }
+    function move(e) {
+      if (!dragging) return;
+      var trackWidth = track.clientWidth, thumbWidth = thumb.offsetWidth;
+      var maxThumbLeft = trackWidth - thumbWidth;
+      if (maxThumbLeft <= 0) return;
+      var scrollableDist = wrap.scrollWidth - wrap.clientWidth;
+      var dx = pos(e) - startX;
+      wrap.scrollLeft = startScrollLeft + (dx / maxThumbLeft) * scrollableDist;
+      e.preventDefault();
+    }
+    function up() { dragging = false; }
+    thumb.addEventListener('mousedown', down);
+    thumb.addEventListener('touchstart', down, { passive: false });
+    window.addEventListener('mousemove', move, { passive: false });
+    window.addEventListener('touchmove', move, { passive: false });
+    window.addEventListener('mouseup', up);
+    window.addEventListener('touchend', up);
+    track.addEventListener('click', function (e) {
+      if (e.target === thumb) return;
+      var rect = track.getBoundingClientRect();
+      var clickRatio = (e.clientX - rect.left) / rect.width;
+      wrap.scrollLeft = clickRatio * (wrap.scrollWidth - wrap.clientWidth);
+    });
+  }
+  function updateIndicator(wrap) {
+    var track = ensureIndicator(wrap);
+    var thumb = track.firstElementChild;
+    var visible = wrap.offsetParent !== null && wrap.clientWidth > 0;
+    var scrollable = visible && wrap.scrollWidth > wrap.clientWidth + 2;
+    track.style.display = scrollable ? 'block' : 'none';
+    if (!scrollable) return;
+    var trackWidth = track.clientWidth;
+    var ratio = wrap.clientWidth / wrap.scrollWidth;
+    var thumbWidth = Math.max(ratio * trackWidth, 28);
+    var maxLeft = trackWidth - thumbWidth;
+    var scrollableDist = wrap.scrollWidth - wrap.clientWidth;
+    var scrollRatio = scrollableDist > 0 ? (wrap.scrollLeft / scrollableDist) : 0;
+    thumb.style.width = thumbWidth + 'px';
+    thumb.style.transform = 'translateX(' + (maxLeft * scrollRatio) + 'px)';
+  }
+  function updateAll() {
+    document.querySelectorAll('.table-wrap, .rli-table-wrap').forEach(updateIndicator);
+  }
+  function initAll() {
+    document.querySelectorAll('.table-wrap, .rli-table-wrap').forEach(function (wrap) {
+      ensureIndicator(wrap);
+      wrap.addEventListener('scroll', function () { updateIndicator(wrap); }, { passive: true });
+    });
+    updateAll();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+  function boot() {
+    initAll();
+    window.addEventListener('resize', updateAll);
+    var debounceTimer = null;
+    var mo = new MutationObserver(function () {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(updateAll, 150);
+    });
+    mo.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class'] });
+  }
+})();
 </script>
 </body>
 </html>
