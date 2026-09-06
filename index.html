@@ -789,6 +789,25 @@ display:inline-block; animation:spin .7s linear infinite;
 }
 .spinner-dark{border:2px solid var(--line-strong); border-top-color:var(--teal-600);}
 @keyframes spin{to{transform:rotate(360deg);}}
+/* Full-view loading state for the Annual Work Plan & Budget view: a single
+   overlay covers every section (front matter, tables, charts) until all of
+   loadWorkplanView()'s data has arrived, instead of letting each card/table
+   pop in with its own separate mini-spinner. */
+#view-workplan{position:relative; min-height:420px;}
+.wp-loading-overlay{
+position:absolute; inset:0; z-index:60; display:flex; flex-direction:column;
+align-items:center; justify-content:center; gap:18px; background:var(--paper);
+border-radius:var(--radius-lg); transition:opacity .25s var(--ease);
+}
+.wp-loading-overlay.wp-hide{opacity:0; pointer-events:none;}
+.wp-loading-spinner{
+width:54px; height:54px; border-radius:50%; box-sizing:border-box;
+border:4px solid var(--line); border-top-color:var(--teal-600); border-right-color:var(--gold-500);
+animation:spin .85s linear infinite;
+}
+.wp-loading-label{font-size:13px; font-weight:600; color:var(--ink-700); letter-spacing:.2px;}
+.wp-content{opacity:0; pointer-events:none; transition:opacity .3s var(--ease);}
+.wp-content.wp-loaded{opacity:1; pointer-events:auto;}
 .tabs-sub{display:flex; gap:4px; border-bottom:1px solid var(--line); margin-bottom:18px;}
 .tabs-sub button{
 background:none; border:none; padding:9px 4px; margin-right:22px; font-size:13px; font-weight:600; color:var(--ink-500);
@@ -1455,6 +1474,11 @@ Departments
 <input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-piap-file" accept=".xlsx,.xls" style="display:none;" />
+<div class="wp-loading-overlay" id="wp-loading-overlay">
+<div class="wp-loading-spinner"></div>
+<div class="wp-loading-label">Loading Annual Work Plan &amp; Budget…</div>
+</div>
+<div class="wp-content" id="wp-workplan-content">
 <div class="card card-pad wp-frontmatter" id="wp-annual-frontmatter" style="display:none; margin-bottom:20px;">
 <div class="table-title-row">
 <div class="kicker">REPORT FRONT MATTER</div>
@@ -1584,14 +1608,7 @@ Departments
   </div>
 </div>
 </div>
-<div class="wp-fm-page" id="wp-fm-exec-page-2" style="display:none;">
-<div class="wp-fm-page-num">Page 5</div>
-<div class="wp-fm-section">
-  <div class="wp-fm-heading">EXECUTIVE SUMMARY (CONTINUED)</div>
-  <div class="wp-fm-body" id="wp-fm-exec-body-2" contenteditable="false"></div>
-</div>
-</div>
-</div>
+<div id="wp-fm-exec-overflow"></div>
 </div>
 </div>
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
@@ -1809,6 +1826,7 @@ Departments
 <div class="kicker">🥧 Proportion of the Allocated Budget Share by Department</div>
 <div id="wp-pie-chart" style="margin-top:16px; display:flex; gap:28px; flex-wrap:wrap; align-items:center;">
 <div class="loading-row"><span class="spinner spinner-dark"></span></div>
+</div>
 </div>
 </div>
 </div>
@@ -3711,11 +3729,20 @@ const detailTitleEl = document.getElementById('wp-title-revenue-detail');
 if (detailTitleEl) detailTitleEl.innerHTML = `APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP — ${fy}`;
 }
 async function loadWorkplanView() {
+const overlay = document.getElementById('wp-loading-overlay');
+const content = document.getElementById('wp-workplan-content');
+if (overlay) overlay.classList.remove('wp-hide');
+if (content) content.classList.remove('wp-loaded');
+try {
 await loadWorkplans();
 await loadProgrammeFilterOptions();
 await renderBudgetCodes();
 applyWorkplanSubtabDisplay();
-loadReportFrontmatter();
+await loadReportFrontmatter();
+} finally {
+if (content) content.classList.add('wp-loaded');
+if (overlay) overlay.classList.add('wp-hide');
+}
 }
 // Populates the Programme filter (next to the search bar / department
 // filter on the Annual Work Plan & Budget table) with the distinct
@@ -3746,41 +3773,75 @@ if (data.forward_html) document.getElementById('wp-fm-forward-body').innerHTML =
 if (data.town_clerk_html) document.getElementById('wp-fm-clerk-body').innerHTML = data.town_clerk_html;
 if (data.executive_summary_html) document.getElementById('wp-fm-exec-body').innerHTML = data.executive_summary_html;
 } catch (e) { /* keep the default text shown if this fails */ }
-requestAnimationFrame(() => requestAnimationFrame(paginateExecutiveSummary));
+await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => { paginateExecutiveSummary(); resolve(); })));
 }
 // The Executive Summary is stored/edited as a single HTML blob in
 // #wp-fm-exec-body, but it's routinely too long for one A4 sheet. Rather
 // than let that one page scroll internally, we auto-flow the overflowing
-// tail of it onto a second physical page (#wp-fm-exec-body-2 / "Page 5"),
-// moving whole block elements (never splitting a paragraph mid-way) —
-// re-run any time the content or the page's available size changes.
+// content across as many additional physical A4 pages as it takes
+// (#wp-fm-exec-overflow holds Page 5, Page 6, ...), moving whole block
+// elements — never splitting a paragraph mid-way — and creating or
+// dropping pages on the fly as the content grows or shrinks.
 function mergeExecutiveSummaryPages() {
 const body4 = document.getElementById('wp-fm-exec-body');
-const body5 = document.getElementById('wp-fm-exec-body-2');
-const page5 = document.getElementById('wp-fm-exec-page-2');
-if (!body4 || !body5) return;
-while (body5.firstChild) body4.appendChild(body5.firstChild);
-if (page5) page5.style.display = 'none';
+const overflow = document.getElementById('wp-fm-exec-overflow');
+if (!body4 || !overflow) return;
+overflow.querySelectorAll('.wp-fm-body').forEach(b => { while (b.firstChild) body4.appendChild(b.firstChild); });
+overflow.innerHTML = '';
+}
+function createExecOverflowPage(pageNumber) {
+const page = document.createElement('div');
+page.className = 'wp-fm-page';
+page.innerHTML = `<div class="wp-fm-page-num">Page ${pageNumber}</div><div class="wp-fm-section"><div class="wp-fm-body" contenteditable="false"></div></div>`;
+return page;
 }
 function paginateExecutiveSummary() {
-const page4 = document.getElementById('wp-fm-exec-page');
 const body4 = document.getElementById('wp-fm-exec-body');
-const page5 = document.getElementById('wp-fm-exec-page-2');
-const body5 = document.getElementById('wp-fm-exec-body-2');
-if (!page4 || !body4 || !page5 || !body5) return;
+const page4 = document.getElementById('wp-fm-exec-page');
+const overflow = document.getElementById('wp-fm-exec-overflow');
+if (!body4 || !page4 || !overflow) return;
 mergeExecutiveSummaryPages();
-if (page4.offsetParent === null) return; // view isn't visible yet; nothing measurable
-let guard = 0;
-while (page4.scrollHeight > page4.clientHeight + 1 && body4.children.length > 1 && guard < 500) {
-body5.insertBefore(body4.lastElementChild, body5.firstChild);
-guard++;
+if (page4.offsetParent === null) return; // view isn't visible/measurable yet
+const allNodes = Array.from(body4.children);
+if (!allNodes.length) return;
+allNodes.forEach(n => n.remove());
+let currentPageEl = page4;
+let currentBody = body4;
+let pageNum = 5;
+const createdPages = [];
+allNodes.forEach(node => {
+currentBody.appendChild(node);
+if (currentPageEl.scrollHeight > currentPageEl.clientHeight + 1 && currentBody.children.length > 1) {
+currentBody.removeChild(node);
+const newPage = createExecOverflowPage(pageNum++);
+overflow.appendChild(newPage);
+createdPages.push(newPage);
+currentPageEl = newPage;
+currentBody = newPage.querySelector('.wp-fm-body');
+currentBody.appendChild(node);
 }
-// Don't strand a heading alone at the bottom of page 4 with its text pushed to page 5.
-while (body4.children.length > 1 && /^H[1-4]$/.test(body4.lastElementChild.tagName) && guard < 500) {
-body5.insertBefore(body4.lastElementChild, body5.firstChild);
-guard++;
+});
+// Don't strand a heading alone at the bottom of a page — push it to the next one.
+const allPages = [{ pageEl: page4, bodyEl: body4 }].concat(createdPages.map(p => ({ pageEl: p, bodyEl: p.querySelector('.wp-fm-body') })));
+for (let i = 0; i < allPages.length; i++) {
+const bodyEl = allPages[i].bodyEl;
+if (bodyEl.children.length > 1 && /^H[1-4]$/.test(bodyEl.lastElementChild.tagName)) {
+let next = allPages[i + 1];
+if (!next) {
+const newPage = createExecOverflowPage(pageNum++);
+overflow.appendChild(newPage);
+next = { pageEl: newPage, bodyEl: newPage.querySelector('.wp-fm-body') };
+allPages.push(next);
 }
-page5.style.display = body5.children.length ? '' : 'none';
+next.bodyEl.insertBefore(bodyEl.lastElementChild, next.bodyEl.firstChild);
+}
+}
+// Drop any overflow pages left empty by the fixups above, then renumber what remains.
+Array.from(overflow.children).forEach(p => {
+const b = p.querySelector('.wp-fm-body');
+if (!b || !b.children.length) p.remove();
+});
+Array.from(overflow.children).forEach((p, idx) => { p.querySelector('.wp-fm-page-num').textContent = `Page ${5 + idx}`; });
 }
 let execRepaginateTimer = null;
 window.addEventListener('resize', () => {
