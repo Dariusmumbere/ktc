@@ -500,6 +500,12 @@ solid-teal rule above, so they win regardless of source order. */
 #wp-revenue-summary-table thead th.rev-band-approved{background:#FBE0D2 !important; color:var(--navy-950) !important; box-shadow:none !important;}
 #wp-revenue-summary-table thead th.rev-band-actual{background:#DBF3D3 !important; color:var(--navy-950) !important; box-shadow:none !important;}
 #wp-revenue-summary-table thead th.rev-band-gap{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
+/* The 3 constant masthead rows above the column headers — "Lower Local
+Government Vote / 001 / Karugutu Town Council / Ntoroko District",
+"Part I: ...", and "A1: ... / FY 2026/27" — always shown exactly as on
+the Council's printed PBS sheet; these values do not change per work plan,
+so they are fixed text rather than pulled from any data source. */
+#wp-revenue-summary-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:11px; padding:6px 10px; border-bottom:1px solid var(--line-strong);}
 /* Functional Definition column in the summary table: allow each point to
 sit on its own line (line breaks are inserted when the data is rendered)
 rather than running on as one continuous line of text. */
@@ -1639,6 +1645,19 @@ Departments
 <div class="rli-table-wrap" id="wp-revenue-summary-wrap" style="margin:10px 16px 16px;">
 <table id="wp-revenue-summary-table">
 <thead>
+<tr class="rev-llg-meta-row">
+<th colspan="6" class="rev-meta">Lower Local Government Vote</th>
+<th colspan="2" class="rev-meta">001</th>
+<th colspan="5" class="rev-meta">Karugutu Town Council</th>
+<th colspan="5" class="rev-meta">Ntoroko District</th>
+</tr>
+<tr class="rev-llg-meta-row">
+<th colspan="18" class="rev-meta">Part I: Summary of the Local Government Budget Estimates</th>
+</tr>
+<tr class="rev-llg-meta-row">
+<th colspan="13" class="rev-meta">A1: Summary of the Revenue Performance Plan by Source Category</th>
+<th colspan="5" class="rev-meta">FY 2026/27</th>
+</tr>
 <tr>
 <th rowspan="3" class="rev-band-code">PBS Code</th>
 <th rowspan="3" class="wrap rev-band-code">Revenue Performance Plans by Source</th>
