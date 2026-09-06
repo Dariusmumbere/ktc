@@ -1530,7 +1530,7 @@ Departments
   </div>
 </div>
 </div>
-<div class="wp-fm-page">
+<div class="wp-fm-page" id="wp-fm-exec-page">
 <div class="wp-fm-page-num">Page 4</div>
 <div class="wp-fm-section">
   <div class="wp-fm-heading">EXECUTIVE SUMMARY</div>
@@ -1582,6 +1582,14 @@ Departments
   </ul>
   <p>Ultimately, the detailed document hereunder stands as Karugutu Town Council's binding operational commitment to transparency, evidence-based public financial management, and equitable development.</p>
   </div>
+</div>
+</div>
+<div class="wp-fm-page" id="wp-fm-exec-page-2" style="display:none;">
+<div class="wp-fm-page-num">Page 5</div>
+<div class="wp-fm-section">
+  <div class="wp-fm-heading">EXECUTIVE SUMMARY (CONTINUED)</div>
+  <div class="wp-fm-body" id="wp-fm-exec-body-2" contenteditable="false"></div>
+</div>
 </div>
 </div>
 </div>
@@ -3738,7 +3746,47 @@ if (data.forward_html) document.getElementById('wp-fm-forward-body').innerHTML =
 if (data.town_clerk_html) document.getElementById('wp-fm-clerk-body').innerHTML = data.town_clerk_html;
 if (data.executive_summary_html) document.getElementById('wp-fm-exec-body').innerHTML = data.executive_summary_html;
 } catch (e) { /* keep the default text shown if this fails */ }
+requestAnimationFrame(() => requestAnimationFrame(paginateExecutiveSummary));
 }
+// The Executive Summary is stored/edited as a single HTML blob in
+// #wp-fm-exec-body, but it's routinely too long for one A4 sheet. Rather
+// than let that one page scroll internally, we auto-flow the overflowing
+// tail of it onto a second physical page (#wp-fm-exec-body-2 / "Page 5"),
+// moving whole block elements (never splitting a paragraph mid-way) —
+// re-run any time the content or the page's available size changes.
+function mergeExecutiveSummaryPages() {
+const body4 = document.getElementById('wp-fm-exec-body');
+const body5 = document.getElementById('wp-fm-exec-body-2');
+const page5 = document.getElementById('wp-fm-exec-page-2');
+if (!body4 || !body5) return;
+while (body5.firstChild) body4.appendChild(body5.firstChild);
+if (page5) page5.style.display = 'none';
+}
+function paginateExecutiveSummary() {
+const page4 = document.getElementById('wp-fm-exec-page');
+const body4 = document.getElementById('wp-fm-exec-body');
+const page5 = document.getElementById('wp-fm-exec-page-2');
+const body5 = document.getElementById('wp-fm-exec-body-2');
+if (!page4 || !body4 || !page5 || !body5) return;
+mergeExecutiveSummaryPages();
+if (page4.offsetParent === null) return; // view isn't visible yet; nothing measurable
+let guard = 0;
+while (page4.scrollHeight > page4.clientHeight + 1 && body4.children.length > 1 && guard < 500) {
+body5.insertBefore(body4.lastElementChild, body5.firstChild);
+guard++;
+}
+// Don't strand a heading alone at the bottom of page 4 with its text pushed to page 5.
+while (body4.children.length > 1 && /^H[1-4]$/.test(body4.lastElementChild.tagName) && guard < 500) {
+body5.insertBefore(body4.lastElementChild, body5.firstChild);
+guard++;
+}
+page5.style.display = body5.children.length ? '' : 'none';
+}
+let execRepaginateTimer = null;
+window.addEventListener('resize', () => {
+clearTimeout(execRepaginateTimer);
+execRepaginateTimer = setTimeout(paginateExecutiveSummary, 200);
+});
 const WP_FM_BODY_IDS = ['wp-fm-forward-body', 'wp-fm-clerk-body', 'wp-fm-exec-body'];
 function setFrontmatterEditing(on) {
 WP_FM_BODY_IDS.forEach(id => document.getElementById(id).setAttribute('contenteditable', on ? 'true' : 'false'));
@@ -3748,6 +3796,8 @@ document.getElementById('wp-fm-cancel-btn').style.display = on ? 'inline-flex' :
 document.getElementById('wp-fm-edit-hint').classList.toggle('show', on);
 }
 document.getElementById('wp-fm-edit-btn').addEventListener('click', () => {
+// Edit on one continuous page — fold the auto-flowed tail back in first.
+mergeExecutiveSummaryPages();
 STATE.fmOriginal = {};
 WP_FM_BODY_IDS.forEach(id => { STATE.fmOriginal[id] = document.getElementById(id).innerHTML; });
 setFrontmatterEditing(true);
@@ -3755,6 +3805,7 @@ setFrontmatterEditing(true);
 document.getElementById('wp-fm-cancel-btn').addEventListener('click', () => {
 if (STATE.fmOriginal) WP_FM_BODY_IDS.forEach(id => { if (STATE.fmOriginal[id] !== undefined) document.getElementById(id).innerHTML = STATE.fmOriginal[id]; });
 setFrontmatterEditing(false);
+requestAnimationFrame(paginateExecutiveSummary);
 });
 document.getElementById('wp-fm-save-btn').addEventListener('click', async () => {
 const btn = document.getElementById('wp-fm-save-btn');
@@ -3768,6 +3819,7 @@ executive_summary_html: document.getElementById('wp-fm-exec-body').innerHTML,
 await api('/api/annual-report-content', { method: 'PATCH', body: JSON.stringify(payload) });
 toast('Report front matter updated', 'success');
 setFrontmatterEditing(false);
+requestAnimationFrame(paginateExecutiveSummary);
 } catch (e) { toast(e.message, 'error'); } finally { btn.disabled = false; }
 });
 document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); loadProgrammeFilterOptions().then(renderBudgetCodes); applyWorkplanSubtabDisplay(); });
