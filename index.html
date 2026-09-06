@@ -1154,10 +1154,10 @@ table.pv-block-table input:focus{outline:1px dashed var(--gold-600); background:
 .pv-received-line input:focus{outline:none; border-bottom:1px dotted var(--gold-600); background:#fffdf2;}
 .pv-received-line input.pv-day{width:44px;}
 .pv-received-line input.pv-words{width:60%; min-width:180px; text-align:left;}
-/* ---------------- Hamburger / responsive sidebar ---------------- */
-.hamburger-btn{display:none;}
-.sidebar-backdrop{display:none;}
-@media (max-width: 900px){
+/* ---------------- Hamburger / off-canvas sidebar (all screen sizes) ---------------- */
+/* The sidebar is hidden by default everywhere, desktop included — it now
+   opens as an overlay via the hamburger button in the topbar rather than
+   sitting permanently in the layout, so .main gets the full width. */
 .hamburger-btn{display:flex;}
 .sidebar{
 position:fixed; top:0; left:0; bottom:0; z-index:150; width:250px;
@@ -1168,6 +1168,7 @@ transform:translateX(-100%); transition:transform .25s var(--ease);
 display:none; position:fixed; inset:0; background:rgba(10,20,26,.55); z-index:140;
 }
 .sidebar-backdrop.show{display:block; animation:fadeIn .2s var(--ease);}
+@media (max-width: 900px){
 .stat-grid{grid-template-columns:repeat(2,1fr);}
 .form-grid{grid-template-columns:1fr;}
 .detail-grid{grid-template-columns:1fr;}
