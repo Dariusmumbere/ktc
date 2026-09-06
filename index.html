@@ -481,8 +481,10 @@ text-align:center;
 #wp-revenue-summary-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-revenue-summary-body tr:hover{background:var(--gold-100);}
 #wp-revenue-summary-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
-#wp-revenue-summary-body td.mono, #wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-revenue-summary-body td.mono{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:right;}
 #wp-revenue-summary-wrap tfoot td{text-align:left;}
+#wp-revenue-summary-wrap tfoot td.num{text-align:right;}
 #wp-revenue-summary-wrap{overflow-x:auto;}
 #wp-revenue-summary-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950);}
 #wp-revenue-summary-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
@@ -510,6 +512,21 @@ so they are fixed text rather than pulled from any data source. */
 sit on its own line (line breaks are inserted when the data is rendered)
 rather than running on as one continuous line of text. */
 #wp-revenue-summary-body td.rev-func-def{white-space:normal; line-height:1.5;}
+/* Vertical column dividers for the Summary of the Revenue Performance Plan
+by Source table — mirrors the printed PBS sheet's full grid (vertical
+lines between every column, including the 3 constant masthead cells at
+the top), matching the reference image exactly. */
+#wp-revenue-summary-wrap thead th{border-right:1px solid rgba(10,31,43,.18);}
+#wp-revenue-summary-wrap thead th:last-child{border-right:none;}
+#wp-revenue-summary-body td{border-right:1px solid var(--line-strong);}
+#wp-revenue-summary-body td:last-child{border-right:none;}
+#wp-revenue-summary-wrap tfoot td{border-right:1px solid var(--line-strong);}
+#wp-revenue-summary-wrap tfoot td:last-child{border-right:none;}
+/* Restore centered column headers (PBS Code, Q1–Q4, Total, band titles) —
+a later, more general rule left-aligns every thead th across three tables;
+this table's headers are centered on the printed sheet (only the 3
+constant masthead label rows stay left-aligned, per .rev-meta above). */
+#wp-revenue-summary-table thead th:not(.rev-meta){text-align:center !important;}
 /* ---------------- Revenue Performance Plan by Category & Source table -----
 Same treatment as the Summary table directly above it. */
 #wp-rev-category-table thead th{
