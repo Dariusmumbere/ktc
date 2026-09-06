@@ -532,6 +532,18 @@ right-hand divider misaligned with the body cells below it. Freeing the
 width lets it size naturally with its column, so the line runs straight
 top to bottom. */
 #wp-revenue-summary-table thead th.col-annual-approved{width:auto; max-width:none; white-space:normal; border-right:1px solid var(--line-strong);}
+/* "Summary of the Quarterly Actual Inflow: IRAS Revenue Collected, Central
+Government Transfers, and Donations Realized" is long enough that, left
+on one line, it forces its 4 Q1–Q4 columns extremely wide. Narrowing it
+to wrap across 3 lines instead lets those columns size to their actual
+content (figures + Q1–Q4 labels), not to this header's text. The other
+two group-title headers on this row ("Summary of the Approved Quarterly
+Budget Estimates", "Summary of the Quarterly Revenue Performance Gap")
+get the same treatment, narrower still since their text is shorter, so
+the whole row reads as one consistent height instead of one cell
+dominating it. */
+#wp-revenue-summary-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
+#wp-revenue-summary-table thead th.rev-wrap-narrow{max-width:135px;}
 /* Closing borders: a firm outer edge all the way round the table, and a
 solid line under the very last row, so the grid reads as fully closed
 rather than trailing off at the right/bottom edges. */
@@ -1714,11 +1726,11 @@ Departments
 </th>
 </tr>
 <tr>
-<th colspan="4" class="rev-band-approved">Summary of the Approved Quarterly Budget Estimates</th>
+<th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow">Summary of the Approved Quarterly Budget Estimates</th>
 <th class="col-annual-approved rev-band-approved">Annual Approved Budget Estimates</th>
-<th colspan="4" class="rev-band-actual">Summary of the Quarterly Actual Inflow: IRAS Revenue Collected, Central Government Transfers, and Donations Realized</th>
+<th colspan="4" class="rev-band-actual rev-wrap-header">Summary of the Quarterly Actual Inflow: IRAS Revenue Collected, Central Government Transfers, and Donations Realized</th>
 <th class="rev-band-actual">Annual Actual<br>Cash Inflow Realized</th>
-<th colspan="4" class="rev-band-gap">Summary of the Quarterly Revenue Performance Gap</th>
+<th colspan="4" class="rev-band-gap rev-wrap-header rev-wrap-narrow">Summary of the Quarterly Revenue Performance Gap</th>
 <th class="rev-band-gap">Annual Revenue<br>Performance Gap</th>
 </tr>
 <tr>
