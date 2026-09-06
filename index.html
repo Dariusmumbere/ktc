@@ -490,8 +490,8 @@ text-align:center;
 #wp-revenue-summary-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
 #wp-revenue-summary-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-revenue-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
-#wp-revenue-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
-#wp-revenue-summary-body td{padding:7px 9px; font-size:11.5px;}
+#wp-revenue-summary-table thead th{padding:0 9px; font-size:9px; line-height:1.25;}
+#wp-revenue-summary-body td{padding:0 9px; font-size:10.5px; line-height:1.6;}
 /* Reference-layout header bands (matches the Council's printed PBS
 "Summary of the Revenue Performance Plan by Source" sheet): pale blue for
 the PBS Code/Source columns, pale pink for the Approved Budget Estimates
@@ -507,7 +507,7 @@ Government Vote / 001 / Karugutu Town Council / Ntoroko District",
 "Part I: ...", and "A1: ... / FY 2026/27" — always shown exactly as on
 the Council's printed PBS sheet; these values do not change per work plan,
 so they are fixed text rather than pulled from any data source. */
-#wp-revenue-summary-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:11px; padding:6px 10px; border-bottom:1px solid var(--line-strong);}
+#wp-revenue-summary-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:10.5px; padding:0 10px; line-height:1.9; border-bottom:1px solid var(--line-strong);}
 /* Functional Definition column in the summary table: allow each point to
 sit on its own line (line breaks are inserted when the data is rendered)
 rather than running on as one continuous line of text. */
@@ -516,17 +516,40 @@ rather than running on as one continuous line of text. */
 by Source table — mirrors the printed PBS sheet's full grid (vertical
 lines between every column, including the 3 constant masthead cells at
 the top), matching the reference image exactly. */
-#wp-revenue-summary-wrap thead th{border-right:1px solid rgba(10,31,43,.18);}
+#wp-revenue-summary-wrap thead th{border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-wrap thead th:last-child{border-right:none;}
 #wp-revenue-summary-body td{border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-body td:last-child{border-right:none;}
 #wp-revenue-summary-wrap tfoot td{border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-wrap tfoot td:last-child{border-right:none;}
+/* Group-boundary line between the Approved (pink) and Actual (green) bands
+— mirrors the boundary already drawn before the Gap (white) band above. */
+#wp-revenue-summary-table thead th.rev-band-actual{border-left:1px solid var(--line-strong);}
+/* The Annual Approved Budget Estimates column inherited a fixed 76px cap
+from the generic .col-annual-approved rule (shared with other tables),
+which didn't match this column's actual rendered width and left its
+right-hand divider misaligned with the body cells below it. Freeing the
+width lets it size naturally with its column, so the line runs straight
+top to bottom. */
+#wp-revenue-summary-table thead th.col-annual-approved{width:auto; max-width:none; white-space:normal; border-right:1px solid var(--line-strong);}
+/* Closing borders: a firm outer edge all the way round the table, and a
+solid line under the very last row, so the grid reads as fully closed
+rather than trailing off at the right/bottom edges. */
+#wp-revenue-summary-wrap{border-top:1px solid var(--line-strong); border-left:1px solid var(--line-strong); border-right:1px solid var(--line-strong);}
+#wp-revenue-summary-table{border-bottom:1px solid var(--line-strong);}
+#wp-revenue-summary-body tr:last-child{border-bottom:1px solid var(--line-strong);}
 /* Restore centered column headers (PBS Code, Q1–Q4, Total, band titles) —
 a later, more general rule left-aligns every thead th across three tables;
 this table's headers are centered on the printed sheet (only the 3
 constant masthead label rows stay left-aligned, per .rev-meta above). */
 #wp-revenue-summary-table thead th:not(.rev-meta){text-align:center !important;}
+/* Zoom streak below the table — lets the user scale the whole table up or
+down with + / − controls, for a wide table on a small screen. */
+.table-zoom-bar{display:flex; align-items:center; justify-content:center; gap:10px; margin:0 16px 16px; padding:5px 14px; background:var(--paper); border:1px solid var(--line); border-radius:20px; width:fit-content; margin-left:auto; margin-right:auto;}
+.table-zoom-btn{width:24px; height:24px; border-radius:50%; border:1px solid var(--line-strong); background:#fff; color:var(--teal-700); font-size:16px; font-weight:700; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; transition:background .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease);}
+.table-zoom-btn:hover{background:var(--teal-700); color:#fff; border-color:var(--teal-700);}
+.table-zoom-btn:active{transform:scale(.94);}
+.table-zoom-label{font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--ink-700); min-width:40px; text-align:center;}
 /* ---------------- Revenue Performance Plan by Category & Source table -----
 Same treatment as the Summary table directly above it. */
 #wp-rev-category-table thead th{
@@ -1708,6 +1731,11 @@ Departments
 <tr><td colspan="18" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
+</div>
+<div class="table-zoom-bar" id="wp-revenue-summary-zoom-bar">
+<button type="button" class="table-zoom-btn" id="wp-revenue-summary-zoom-out" title="Zoom out">−</button>
+<span class="table-zoom-label" id="wp-revenue-summary-zoom-label">100%</span>
+<button type="button" class="table-zoom-btn" id="wp-revenue-summary-zoom-in" title="Zoom in">+</button>
 </div>
 </div>
 <div class="card" id="wp-rev-category-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
@@ -3935,6 +3963,24 @@ requestAnimationFrame(paginateExecutiveSummary);
 } catch (e) { toast(e.message, 'error'); } finally { btn.disabled = false; }
 });
 document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); loadProgrammeFilterOptions().then(renderBudgetCodes); applyWorkplanSubtabDisplay(); });
+// ---- Revenue Summary table zoom (+ / − streak below the table) -------------
+let wpRevSummaryZoom = 1;
+function applyWpRevSummaryZoom() {
+const table = document.getElementById('wp-revenue-summary-table');
+if (table) table.style.zoom = wpRevSummaryZoom;
+const label = document.getElementById('wp-revenue-summary-zoom-label');
+if (label) label.textContent = Math.round(wpRevSummaryZoom * 100) + '%';
+}
+const wpRevSummaryZoomInBtn = document.getElementById('wp-revenue-summary-zoom-in');
+const wpRevSummaryZoomOutBtn = document.getElementById('wp-revenue-summary-zoom-out');
+if (wpRevSummaryZoomInBtn) wpRevSummaryZoomInBtn.addEventListener('click', () => {
+wpRevSummaryZoom = Math.min(1.6, Math.round((wpRevSummaryZoom + 0.1) * 10) / 10);
+applyWpRevSummaryZoom();
+});
+if (wpRevSummaryZoomOutBtn) wpRevSummaryZoomOutBtn.addEventListener('click', () => {
+wpRevSummaryZoom = Math.max(0.6, Math.round((wpRevSummaryZoom - 0.1) * 10) / 10);
+applyWpRevSummaryZoom();
+});
 document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
 // Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
 // `page` tells the backend which PBS page's content to include (the cover/
