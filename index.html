@@ -490,6 +490,16 @@ text-align:center;
 #wp-revenue-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
 #wp-revenue-summary-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
 #wp-revenue-summary-body td{padding:7px 9px; font-size:11.5px;}
+/* Reference-layout header bands (matches the Council's printed PBS
+"Summary of the Revenue Performance Plan by Source" sheet): pale blue for
+the PBS Code/Source columns, pale pink for the Approved Budget Estimates
+group, pale green for the Actual Inflow group, and plain white for the
+Performance Gap group. These class selectors are more specific than the
+solid-teal rule above, so they win regardless of source order. */
+#wp-revenue-summary-table thead th.rev-band-code{background:#CFEFFB !important; color:var(--navy-950) !important; box-shadow:none !important;}
+#wp-revenue-summary-table thead th.rev-band-approved{background:#FBE0D2 !important; color:var(--navy-950) !important; box-shadow:none !important;}
+#wp-revenue-summary-table thead th.rev-band-actual{background:#DBF3D3 !important; color:var(--navy-950) !important; box-shadow:none !important;}
+#wp-revenue-summary-table thead th.rev-band-gap{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
 /* Functional Definition column in the summary table: allow each point to
 sit on its own line (line breaks are inserted when the data is rendered)
 rather than running on as one continuous line of text. */
@@ -1630,15 +1640,12 @@ Departments
 <table id="wp-revenue-summary-table">
 <thead>
 <tr>
-<th rowspan="2">PBS Code</th>
-<th rowspan="2" class="wrap">Revenue Performance Plans by Source</th>
-<th colspan="4">Summary of the Approved Quarterly Budget Estimates (UGX)</th>
-<th rowspan="2" class="col-annual-approved">Annual Approved Budget Estimates (UGX)</th>
-<th colspan="4">Summary of the Quarterly Actual Inflow (UGX)</th>
-<th rowspan="2">Annual Actual<br>Cash Inflow Realized (UGX)</th>
-<th colspan="4">Summary of the Quarterly Revenue Performance Gap (UGX)</th>
-<th rowspan="2">Annual Revenue<br>Performance Gap (UGX)</th>
-<th rowspan="2">
+<th rowspan="3" class="rev-band-code">PBS Code</th>
+<th rowspan="3" class="wrap rev-band-code">Revenue Performance Plans by Source</th>
+<th colspan="5" class="rev-band-approved">(UGX' 1000)</th>
+<th colspan="5" class="rev-band-actual">Uganda Shillings Thousands</th>
+<th colspan="5" class="rev-band-gap">Uganda Shillings Thousands</th>
+<th rowspan="3" class="rev-band-code">
 <span class="th-with-clear">
 <span></span>
 <button type="button" class="th-clear-btn" id="wp-summary-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
@@ -1648,9 +1655,17 @@ Departments
 </th>
 </tr>
 <tr>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+<th colspan="4" class="rev-band-approved">Summary of the Approved Quarterly Budget Estimates</th>
+<th class="col-annual-approved rev-band-approved">Annual Approved Budget Estimates</th>
+<th colspan="4" class="rev-band-actual">Summary of the Quarterly Actual Inflow: IRAS Revenue Collected, Central Government Transfers, and Donations Realized</th>
+<th class="rev-band-actual">Annual Actual<br>Cash Inflow Realized</th>
+<th colspan="4" class="rev-band-gap">Summary of the Quarterly Revenue Performance Gap</th>
+<th class="rev-band-gap">Annual Revenue<br>Performance Gap</th>
+</tr>
+<tr>
+<th class="rev-band-approved">Q1</th><th class="rev-band-approved">Q2</th><th class="rev-band-approved">Q3</th><th class="rev-band-approved">Q4</th><th class="rev-band-approved">Total</th>
+<th class="rev-band-actual">Q1</th><th class="rev-band-actual">Q2</th><th class="rev-band-actual">Q3</th><th class="rev-band-actual">Q4</th><th class="rev-band-actual">Total</th>
+<th class="rev-band-gap">Q1</th><th class="rev-band-gap">Q2</th><th class="rev-band-gap">Q3</th><th class="rev-band-gap">Q4</th><th class="rev-band-gap">Total</th>
 </tr>
 </thead>
 <tbody id="wp-revenue-summary-body">
