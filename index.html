@@ -553,6 +553,11 @@ the whole row reads as one consistent height instead of one cell
 dominating it. */
 #wp-revenue-summary-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
 #wp-revenue-summary-table thead th.rev-wrap-narrow{max-width:135px;}
+/* "Summary of the Quarterly Actual Inflow:" header: forced onto exactly 3
+lines at explicit break points (the opening clause on its own line, then
+the 3 comma-separated sources split across the next two) rather than
+left to auto-wrap — wide enough that each manual line stays on one row. */
+#wp-revenue-summary-table thead th.rev-actual-header{white-space:normal !important; width:236px; max-width:236px; line-height:1.35;}
 /* Divider line under "Uganda Shillings Thousand(s)" (row 4), for all 3
 bands, and a divider between the group-title row (row 5) and the Q1–Q4
 row (row 6) — this second line was missing, leaving Q1–Q4 floating with
@@ -1748,7 +1753,7 @@ Departments
 <tr>
 <th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow rev-row5">Summary of the Approved Quarterly Budget Estimates</th>
 <th class="col-annual-approved rev-band-approved rev-annual-col rev-row5">Annual<br>Approved<br>Budget<br>Estimates</th>
-<th colspan="4" class="rev-band-actual rev-wrap-header rev-row5">Summary of the Quarterly Actual Inflow: IRAS Revenue Collected, Central Government Transfers, and Donations Realized</th>
+<th colspan="4" class="rev-band-actual rev-actual-header rev-row5">Summary of the Quarterly Actual Inflow:<br>IRAS Revenue Collected, Central Government Transfers,<br>and Donations Realized</th>
 <th class="rev-band-actual rev-annual-col rev-row5">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
 <th colspan="4" class="rev-band-gap rev-wrap-header rev-wrap-narrow rev-row5">Summary of the Quarterly Revenue Performance Gap</th>
 <th class="rev-band-gap rev-annual-col rev-row5">Annual<br>Revenue<br>Performance<br>Gap</th>
