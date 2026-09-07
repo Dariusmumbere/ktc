@@ -500,8 +500,15 @@ Performance Gap group. These class selectors are more specific than the
 solid-teal rule above, so they win regardless of source order. */
 #wp-revenue-summary-table thead th.rev-band-code{background:#CFEFFB !important; color:var(--navy-950) !important; box-shadow:none !important;}
 #wp-revenue-summary-table thead th.rev-band-approved{background:#FBE0D2 !important; color:var(--navy-950) !important; box-shadow:none !important;}
-#wp-revenue-summary-table thead th.rev-band-actual{background:#DBF3D3 !important; color:var(--navy-950) !important; box-shadow:none !important;}
+#wp-revenue-summary-table thead th.rev-band-actual{background:#3DE0E6 !important; color:var(--navy-950) !important; box-shadow:none !important;}
 #wp-revenue-summary-table thead th.rev-band-gap{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
+/* Column-band coloring matching the reference image: Actual Inflow figures
+on line-item rows get a cyan fill (category/subtotal/grand-total rows stay
+plain, matching the reference), and every Gap-band figure — Q1–Q4 and
+Total, on every row — is shown in the same red accent used elsewhere for
+variances, regardless of sign, matching the reference image. */
+#wp-revenue-summary-body tr.rev-item-row td:nth-child(n+8):nth-child(-n+12){background:#3DE0E6;}
+#wp-revenue-summary-body td:nth-child(n+13):nth-child(-n+17){color:var(--danger);}
 /* The 3 constant masthead rows above the column headers — "Lower Local
 Government Vote / 001 / Karugutu Town Council / Ntoroko District",
 "Part I: ...", and "A1: ... / FY 2026/27" — always shown exactly as on
@@ -525,13 +532,12 @@ the top), matching the reference image exactly. */
 /* Group-boundary line between the Approved (pink) and Actual (green) bands
 — mirrors the boundary already drawn before the Gap (white) band above. */
 #wp-revenue-summary-table thead th.rev-band-actual{border-left:1px solid var(--line-strong);}
-/* The Annual Approved Budget Estimates column inherited a fixed 76px cap
-from the generic .col-annual-approved rule (shared with other tables),
-which didn't match this column's actual rendered width and left its
-right-hand divider misaligned with the body cells below it. Freeing the
-width lets it size naturally with its column, so the line runs straight
-top to bottom. */
-#wp-revenue-summary-table thead th.col-annual-approved{width:auto; max-width:none; white-space:normal; border-right:1px solid var(--line-strong);}
+/* The 3 "Annual ..." columns (Annual Approved Budget Estimates / Annual
+Actual Cash Inflow Realized / Annual Revenue Performance Gap) each wrap
+their header across 4 short lines and share one fixed width, so their
+Total columns all render the same width instead of each column sizing
+itself to whichever header text happened to be longest. */
+#wp-revenue-summary-table thead th.rev-annual-col{width:76px; max-width:76px; white-space:normal !important; line-height:1.3; border-right:1px solid var(--line-strong);}
 /* "Summary of the Quarterly Actual Inflow: IRAS Revenue Collected, Central
 Government Transfers, and Donations Realized" is long enough that, left
 on one line, it forces its 4 Q1–Q4 columns extremely wide. Narrowing it
@@ -544,6 +550,12 @@ the whole row reads as one consistent height instead of one cell
 dominating it. */
 #wp-revenue-summary-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
 #wp-revenue-summary-table thead th.rev-wrap-narrow{max-width:135px;}
+/* Divider line under "Uganda Shillings Thousand(s)" (row 4), for all 3
+bands, and a divider between the group-title row (row 5) and the Q1–Q4
+row (row 6) — this second line was missing, leaving Q1–Q4 floating with
+no rule above them. */
+#wp-revenue-summary-table thead th.rev-band-title{border-bottom:1px solid var(--line-strong);}
+#wp-revenue-summary-table thead th.rev-row5{border-bottom:1px solid var(--line-strong);}
 /* Closing borders: a firm outer edge all the way round the table, and a
 solid line under the very last row, so the grid reads as fully closed
 rather than trailing off at the right/bottom edges. */
@@ -1707,20 +1719,20 @@ Departments
 <th colspan="6" class="rev-meta">Ntoroko District</th>
 </tr>
 <tr class="rev-llg-meta-row">
-<th colspan="2" class="rev-meta">Part I:</th>
-<th colspan="16" class="rev-meta">Summary of the Local Government Budget Estimates</th>
+<th colspan="1" class="rev-meta">Part I:</th>
+<th colspan="17" class="rev-meta">Summary of the Local Government Budget Estimates</th>
 </tr>
 <tr class="rev-llg-meta-row">
-<th colspan="2" class="rev-meta">A1:</th>
-<th colspan="11" class="rev-meta">Summary of the Revenue Performance Plan by Source Category</th>
+<th colspan="1" class="rev-meta">A1:</th>
+<th colspan="12" class="rev-meta">Summary of the Revenue Performance Plan by Source Category</th>
 <th colspan="5" class="rev-meta">FY 2026/27</th>
 </tr>
 <tr>
 <th rowspan="3" class="rev-band-code">PBS Code</th>
 <th rowspan="3" class="wrap rev-band-code">Revenue Performance Plans by Source</th>
-<th colspan="5" class="rev-band-approved">(UGX' 1000)</th>
-<th colspan="5" class="rev-band-actual">Uganda Shillings Thousands</th>
-<th colspan="5" class="rev-band-gap">Uganda Shillings Thousands</th>
+<th colspan="5" class="rev-band-approved rev-band-title">Uganda Shillings Thousand</th>
+<th colspan="5" class="rev-band-actual rev-band-title">Uganda Shillings Thousands</th>
+<th colspan="5" class="rev-band-gap rev-band-title">Uganda Shillings Thousands</th>
 <th rowspan="3" class="rev-band-code">
 <span class="th-with-clear">
 <span></span>
@@ -1731,17 +1743,17 @@ Departments
 </th>
 </tr>
 <tr>
-<th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow">Summary of the Approved Quarterly Budget Estimates</th>
-<th class="col-annual-approved rev-band-approved">Annual Approved Budget Estimates</th>
-<th colspan="4" class="rev-band-actual rev-wrap-header">Summary of the Quarterly Actual Inflow: IRAS Revenue Collected, Central Government Transfers, and Donations Realized</th>
-<th class="rev-band-actual">Annual Actual<br>Cash Inflow<br>Realized</th>
-<th colspan="4" class="rev-band-gap rev-wrap-header rev-wrap-narrow">Summary of the Quarterly Revenue Performance Gap</th>
-<th class="rev-band-gap">Annual Revenue<br>Performance Gap</th>
+<th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow rev-row5">Summary of the Approved Quarterly Budget Estimates</th>
+<th class="col-annual-approved rev-band-approved rev-annual-col rev-row5">Annual<br>Approved<br>Budget<br>Estimates</th>
+<th colspan="4" class="rev-band-actual rev-wrap-header rev-row5">Summary of the Quarterly Actual Inflow: IRAS Revenue Collected, Central Government Transfers, and Donations Realized</th>
+<th class="rev-band-actual rev-annual-col rev-row5">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
+<th colspan="4" class="rev-band-gap rev-wrap-header rev-wrap-narrow rev-row5">Summary of the Quarterly Revenue Performance Gap</th>
+<th class="rev-band-gap rev-annual-col rev-row5">Annual<br>Revenue<br>Performance<br>Gap</th>
 </tr>
 <tr>
-<th class="rev-band-approved">Q1</th><th class="rev-band-approved">Q2</th><th class="rev-band-approved">Q3</th><th class="rev-band-approved">Q4</th><th class="rev-band-approved">Total</th>
-<th class="rev-band-actual">Q1</th><th class="rev-band-actual">Q2</th><th class="rev-band-actual">Q3</th><th class="rev-band-actual">Q4</th><th class="rev-band-actual">Total</th>
-<th class="rev-band-gap">Q1</th><th class="rev-band-gap">Q2</th><th class="rev-band-gap">Q3</th><th class="rev-band-gap">Q4</th><th class="rev-band-gap">Total</th>
+<th class="rev-band-approved">Q1</th><th class="rev-band-approved">Q2</th><th class="rev-band-approved">Q3</th><th class="rev-band-approved">Q4</th><th class="rev-band-approved rev-annual-col">Total</th>
+<th class="rev-band-actual">Q1</th><th class="rev-band-actual">Q2</th><th class="rev-band-actual">Q3</th><th class="rev-band-actual">Q4</th><th class="rev-band-actual rev-annual-col">Total</th>
+<th class="rev-band-gap">Q1</th><th class="rev-band-gap">Q2</th><th class="rev-band-gap">Q3</th><th class="rev-band-gap">Q4</th><th class="rev-band-gap rev-annual-col">Total</th>
 </tr>
 </thead>
 <tbody id="wp-revenue-summary-body">
