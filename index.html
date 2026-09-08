@@ -549,6 +549,14 @@ itself to whichever header text happened to be longest. */
 so Q4 (or any quarter) doesn't render wider than the others just because
 one row's figure happens to be a digit longer. */
 #wp-revenue-summary-table thead th.rev-q-col{width:50px; max-width:50px; white-space:nowrap;}
+/* The header's fixed width alone isn't enough to keep Q1–Q4 columns equal:
+in an auto-layout table, a data cell with a longer figure can still force
+its column wider than the header says. Pin the body cells to the same
+50px in all 3 bands so a longer Q4 (or any quarter) figure can't push
+that one column wider than its neighbours. */
+#wp-revenue-summary-body td:nth-child(n+3):nth-child(-n+6){width:50px; max-width:50px; white-space:nowrap;}
+#wp-revenue-summary-body td:nth-child(n+8):nth-child(-n+11){width:50px; max-width:50px; white-space:nowrap;}
+#wp-revenue-summary-body td:nth-child(n+13):nth-child(-n+16){width:50px; max-width:50px; white-space:nowrap;}
 /* "Summary of the Quarterly Actual Inflow: IRAS Revenue Collected, Central
 Government Transfers, and Donations Realized" is long enough that, left
 on one line, it forces its 4 Q1–Q4 columns extremely wide. Narrowing it
