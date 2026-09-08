@@ -569,6 +569,16 @@ the whole row reads as one consistent height instead of one cell
 dominating it. */
 #wp-revenue-summary-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
 #wp-revenue-summary-table thead th.rev-wrap-narrow{max-width:135px;}
+/* "Summary of the Approved Quarterly Budget Estimates" group-title cell
+(colspan 4, sitting directly above the approved band's Q1–Q4 columns):
+pin its total width to exactly 4 x the 50px given to each Q-column below
+(see .rev-q-col above) instead of the narrower 135px max-width it inherits
+from .rev-wrap-narrow. Left unmatched, the browser has extra width to
+place somewhere under this spanning header and was handing it disproportionately
+to one quarter column instead of splitting it evenly across all four, so Q1–Q4
+rendered at uneven widths. Matching the totals exactly leaves nothing to
+redistribute, so the four columns share the space equally. */
+#wp-revenue-summary-table thead th.rev-approved-qhdr{width:200px !important; max-width:200px !important;}
 /* "Summary of the Quarterly Actual Inflow:" header: forced onto exactly 3
 lines at explicit break points (the opening clause on its own line, then
 the 3 comma-separated sources split across the next two) rather than
@@ -1738,6 +1748,9 @@ Departments
 <button type="button" class="icon-btn icon-btn-sm" id="wp-import-summary-btn" style="display:none;" title="Import From Excel">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
 </button>
+<button type="button" class="th-clear-btn" id="wp-summary-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</button>
 </div>
 </div>
 </div>
@@ -1754,14 +1767,7 @@ Departments
 </tr>
 <tr class="rev-llg-meta-row">
 <th colspan="1" class="rev-meta">Part I:</th>
-<th colspan="16" class="rev-meta">Summary of the Local Government Budget Estimates</th>
-<th colspan="1" class="rev-meta" style="text-align:right;">
-<span style="display:flex; justify-content:flex-end;">
-<button type="button" class="th-clear-btn" id="wp-summary-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-</button>
-</span>
-</th>
+<th colspan="17" class="rev-meta">Summary of the Local Government Budget Estimates</th>
 </tr>
 <tr class="rev-llg-meta-row">
 <th colspan="1" class="rev-meta">A1:</th>
@@ -1779,7 +1785,7 @@ Departments
 <th rowspan="3" class="rev-band-code">Edit<br>and<br>delete rows</th>
 </tr>
 <tr>
-<th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow rev-row5">Summary of the Approved Quarterly Budget Estimates</th>
+<th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow rev-approved-qhdr rev-row5">Summary of the Approved Quarterly Budget Estimates</th>
 <th class="col-annual-approved rev-band-approved rev-annual-col rev-row5">Annual<br>Approved<br>Budget<br>Estimates</th>
 <th colspan="4" class="rev-band-actual rev-actual-header rev-row5">Summary of the Quarterly Actual Inflow: IRAS Revenue<br>Collected, Central Government Transfers,<br>and Donations Realized</th>
 <th class="rev-band-actual rev-annual-col rev-row5">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
