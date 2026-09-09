@@ -608,14 +608,16 @@ no rule above them. */
 was missing, leaving the table body running straight on with no rule
 separating it from the quarter labels above. */
 #wp-revenue-summary-table thead tr:last-child th{border-bottom:1px solid var(--line-strong);}
-/* Light-yellow highlight + bold applies only to rows that actually show a
-PBS code in the first column — not to every row the backend classifies
-as a "category" row, some of which carry no code at all. Keyed off the
-.rev-has-code class (set in JS from a trimmed, whitespace-safe check)
-rather than a bare CSS :empty check, since :empty is defeated by rows
-whose "code" is a stray space rather than a truly empty string — those
-sub-rows (e.g. "o/w Higher/Lower Local Government") were lighting up
-gold even though no code is visible. */
+/* Light-yellow highlight + bold applies only to rows that BOTH show a
+real PBS code in the first column AND carry at least one non-zero figure
+— not to every row the backend classifies as a "category" row (many
+carry no code at all), and not to a coded row that has nothing but
+blanks/zeros to show. Keyed off the .rev-has-code class (set in JS from
+a trimmed, whitespace-safe code check plus a check of the actual
+underlying figures) rather than a bare CSS :empty check, since :empty is
+defeated by rows whose "code" is a stray space rather than a truly empty
+string, and CSS alone can't tell an empty-of-data row from a populated
+one. */
 #wp-revenue-summary-body tr.rev-has-code td{background:var(--gold-100); font-weight:700; color:var(--navy-950);}
 #wp-revenue-summary-body tr.rev-has-code:hover td{background:var(--gold-100);}
 /* Closing borders: a firm outer edge all the way round the table, and a
@@ -1785,10 +1787,10 @@ Departments
 <tr class="rev-llg-meta-row">
 <th colspan="2" class="rev-meta">Lower Local Government Vote:</th>
 <th colspan="2" class="rev-meta rev-meta-value">001</th>
-<th colspan="2" class="rev-meta">Lower Local Government:</th>
-<th colspan="2" class="rev-meta rev-meta-value">Karugutu Town Council</th>
-<th colspan="2" class="rev-meta">Higher Local Government:</th>
-<th colspan="8" class="rev-meta rev-meta-value">Ntoroko District</th>
+<th colspan="3" class="rev-meta">Lower Local Government:</th>
+<th colspan="3" class="rev-meta rev-meta-value">Karugutu Town Council</th>
+<th colspan="3" class="rev-meta">Higher Local Government:</th>
+<th colspan="5" class="rev-meta rev-meta-value">Ntoroko District</th>
 </tr>
 <tr class="rev-llg-meta-row">
 <th colspan="1" class="rev-meta">Part I:</th>
@@ -3561,11 +3563,24 @@ const blank = r.row_type === 'category';
 // but still a non-empty text node, which used to defeat the CSS :empty
 // check on the first cell and made rows with no visible code (like the
 // "o/w Higher/Lower Local Government" sub-rows) light up gold like a
-// real PBS-coded row. Trimming here and carrying the result as an
-// explicit class means the highlight now tracks actual visible content
-// instead of relying on whitespace-sensitive CSS.
+// real PBS-coded row.
 const hasCode = !!String(r.code || '').trim();
-const rowCls = hasCode ? `${cls} rev-has-code` : cls;
+// Strict rule: a code alone isn't enough — a row only gets the gold
+// treatment if it also carries at least one real, non-zero figure that
+// will actually be visible in its cells. This checks the underlying
+// data itself (not the blanked-out display), so a "category" row whose
+// cells are always rendered empty (blank === true) never qualifies, and
+// a coded row where every quarter and the annual total are 0/null/empty
+// — i.e. a row with a code but nothing to show — is left unhighlighted
+// rather than lighting up gold for no visible reason.
+const isRealNumber = v => v !== null && v !== undefined && v !== '' && Number(v) !== 0;
+const hasValues = !blank && (
+  (Array.isArray(r.approved_periods) && r.approved_periods.some(isRealNumber)) ||
+  (Array.isArray(r.actual_periods) && r.actual_periods.some(isRealNumber)) ||
+  isRealNumber(r.approved_annual) ||
+  isRealNumber(r.actual_annual)
+);
+const rowCls = (hasCode && hasValues) ? `${cls} rev-has-code` : cls;
 const labelPad = 14 + (r.indent || 0) * 18;
 const approvedCells = r.approved_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
 const actualCells = r.actual_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
