@@ -527,7 +527,7 @@ Total data column out of alignment. */
 header" button — a dashed outline and pale highlight on every editable
 cell across the 3 masthead rows, so it's obvious which text can be typed
 into right now. */
-#wp-revenue-summary-table thead th.rev-meta.rev-meta-editing{outline:1.5px dashed var(--gold-600); outline-offset:-3px; background:var(--gold-100) !important; cursor:text;}
+#wp-revenue-summary-table thead th.rev-meta-editing{outline:1.5px dashed var(--gold-600); outline-offset:-3px; background:var(--gold-100) !important; cursor:text;}
 /* The 4 filled-in values in the masthead ("001", "Karugutu Town Council",
 "Ntoroko District", "FY 2026/27") are bold too, matching the printed
 sheet — every cell across the first 3 masthead rows is bold. */
@@ -565,8 +565,8 @@ reduced column width. */
 #wp-revenue-summary-body td:nth-child(1){width:52px; max-width:52px;}
 /* Revenue Performance Plans by Source column: reduced width, so the row
 label wraps rather than forcing the whole table wider. */
-#wp-revenue-summary-table thead th.rev-source-col{width:187.5px; max-width:187.5px;}
-#wp-revenue-summary-body td:nth-child(2){width:187.5px; max-width:187.5px;}
+#wp-revenue-summary-table thead th.rev-source-col{width:281.25px; max-width:281.25px;}
+#wp-revenue-summary-body td:nth-child(2){width:281.25px; max-width:281.25px;}
 /* The header's fixed width alone isn't enough to keep Q1–Q4 columns equal:
 in an auto-layout table, a data cell with a longer figure can still force
 its column wider than the header says. Pin the body cells to the same
@@ -631,14 +631,14 @@ rather than trailing off at the right/bottom edges. */
 #wp-revenue-summary-wrap{border-top:1px solid var(--line-strong); border-left:1px solid var(--line-strong); border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-table{border-bottom:1px solid var(--line-strong);}
 #wp-revenue-summary-body tr:last-child{border-bottom:1px solid var(--line-strong);}
-/* All column headers (PBS Code, Q1–Q4, Total, band titles) are left-aligned,
-beginning from the PBS Code column, matching the Council's request — the
-3 constant masthead label rows are already left-aligned via .rev-meta above. */
-#wp-revenue-summary-table thead th:not(.rev-meta){text-align:left !important;}
-/* "Uganda Shillings Thousand(s)" band-title cells are centered, overriding
-the general left-align rule just above (same selector specificity, so
-source order decides — this rule comes after and wins). */
-#wp-revenue-summary-table thead th.rev-band-title{text-align:center !important;}
+/* PBS Code and the wide "Revenue Performance Plans by Source" column stay
+left-aligned for readability; every other header cell (Uganda Shillings
+Thousand(s) band titles, the "Summary of the Quarterly..." captions,
+Q1–Q4, and the Total/Annual columns) is centered — the 3 constant
+masthead label rows keep their own left alignment via .rev-meta above. */
+#wp-revenue-summary-table thead th.rev-code-col,
+#wp-revenue-summary-table thead th.rev-source-col{text-align:left !important;}
+#wp-revenue-summary-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col){text-align:center !important;}
 /* Zoom streak below the table — lets the user scale the whole table up or
 down with + / − controls, for a wide table on a small screen. */
 .table-zoom-bar{display:flex; align-items:center; justify-content:center; gap:10px; margin:0 16px 16px; padding:5px 14px; background:var(--paper); border:1px solid var(--line); border-radius:20px; width:fit-content; margin-left:auto; margin-right:auto;}
@@ -1786,7 +1786,7 @@ Departments
 <table id="wp-revenue-summary-table">
 <colgroup>
 <col style="width:52px">
-<col style="width:187.5px">
+<col style="width:281.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:95px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:95px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:95px">
@@ -1812,7 +1812,7 @@ Departments
 <th colspan="2" class="rev-meta rev-meta-value">FY 2026/27</th>
 <th colspan="7" class="rev-meta"></th>
 </tr>
-<tr>
+<tr id="wp-header-row-bands">
 <th rowspan="3" class="rev-band-code rev-code-col">PBS<br>Code</th>
 <th rowspan="3" class="wrap rev-band-code rev-source-col">Revenue Performance Plans by<br>Source</th>
 <th colspan="5" class="rev-band-approved rev-band-title">Uganda Shillings Thousand</th>
@@ -1820,7 +1820,7 @@ Departments
 <th colspan="5" class="rev-band-gap rev-band-title">Uganda Shillings Thousands</th>
 <th rowspan="3" class="rev-band-code"><button type="button" id="wp-edit-row-header-btn" class="btn btn-ghost" style="padding:4px 8px; font-size:10.5px; white-space:normal; line-height:1.25;" onclick="toggleRevMetaEdit()">Edit row header</button></th>
 </tr>
-<tr>
+<tr id="wp-header-row-captions">
 <th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow rev-approved-qhdr rev-row5">Summary of the Approved Quarterly Budget Estimates</th>
 <th class="col-annual-approved rev-band-approved rev-annual-col rev-row5">Annual<br>Approved<br>Budget<br>Estimates</th>
 <th colspan="4" class="rev-band-actual rev-actual-header rev-row5">Summary of the Quarterly Actual Inflow<br>Realized: IRAS Revenue Collected, GoU<br>Transfers, and Donations</th>
@@ -1828,7 +1828,7 @@ Departments
 <th colspan="4" class="rev-band-gap rev-wrap-header rev-wrap-narrow rev-row5">Summary of the Quarterly Revenue Performance Gap</th>
 <th class="rev-band-gap rev-annual-col rev-row5">Annual<br>Revenue<br>Performance<br>Gap</th>
 </tr>
-<tr>
+<tr id="wp-header-row-quarters">
 <th class="rev-band-approved rev-q-col">Q1</th><th class="rev-band-approved rev-q-col">Q2</th><th class="rev-band-approved rev-q-col">Q3</th><th class="rev-band-approved rev-q-col">Q4</th><th class="rev-band-approved rev-annual-col">Total</th>
 <th class="rev-band-actual rev-q-col">Q1</th><th class="rev-band-actual rev-q-col">Q2</th><th class="rev-band-actual rev-q-col">Q3</th><th class="rev-band-actual rev-q-col">Q4</th><th class="rev-band-actual rev-annual-col">Total</th>
 <th class="rev-band-gap rev-q-col">Q1</th><th class="rev-band-gap rev-q-col">Q2</th><th class="rev-band-gap rev-q-col">Q3</th><th class="rev-band-gap rev-q-col">Q4</th><th class="rev-band-gap rev-annual-col">Total</th>
@@ -3509,14 +3509,23 @@ if (el && wp && wp[field]) el.textContent = wp[field];
 let revMetaEditing = false;
 function toggleRevMetaEdit() {
 const btn = document.getElementById('wp-edit-row-header-btn');
-const rows = ['wp-meta-row-1', 'wp-meta-row-2', 'wp-meta-row-3'].map(id => document.getElementById(id)).filter(Boolean);
+const metaRows = ['wp-meta-row-1', 'wp-meta-row-2', 'wp-meta-row-3'].map(id => document.getElementById(id)).filter(Boolean);
+// The button lives in the rowspan-3 "PBS Code / Source / Uganda Shillings
+// Thousand(s) / caption / Q1–Q4 & Total" header block, so editing it also
+// unlocks that whole block — every th there except the cell the button
+// itself sits in (making that one contenteditable would swallow clicks
+// meant for the button).
+const bandRows = ['wp-header-row-bands', 'wp-header-row-captions', 'wp-header-row-quarters'].map(id => document.getElementById(id)).filter(Boolean);
+const bandCells = bandRows.flatMap(row => Array.from(row.querySelectorAll('th')).filter(th => !th.querySelector('#wp-edit-row-header-btn')));
 if (!revMetaEditing) {
-rows.forEach(row => row.querySelectorAll('th.rev-meta').forEach(th => { th.contentEditable = 'true'; th.classList.add('rev-meta-editing'); }));
+metaRows.forEach(row => row.querySelectorAll('th.rev-meta').forEach(th => { th.contentEditable = 'true'; th.classList.add('rev-meta-editing'); }));
+bandCells.forEach(th => { th.contentEditable = 'true'; th.classList.add('rev-meta-editing'); });
 revMetaEditing = true;
 btn.textContent = 'Save row header';
 return;
 }
-rows.forEach(row => row.querySelectorAll('th.rev-meta').forEach(th => { th.contentEditable = 'false'; th.classList.remove('rev-meta-editing'); }));
+metaRows.forEach(row => row.querySelectorAll('th.rev-meta').forEach(th => { th.contentEditable = 'false'; th.classList.remove('rev-meta-editing'); }));
+bandCells.forEach(th => { th.contentEditable = 'false'; th.classList.remove('rev-meta-editing'); });
 revMetaEditing = false;
 btn.textContent = 'Edit row header';
 saveRevMetaHeader();
