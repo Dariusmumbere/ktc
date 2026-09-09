@@ -480,9 +480,9 @@ text-align:center;
 #wp-revenue-summary-body tr:nth-child(even){background:#FFFFFF;}
 #wp-revenue-summary-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-revenue-summary-body tr:hover{background:var(--gold-100);}
-#wp-revenue-summary-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
-#wp-revenue-summary-body td.mono{color:var(--navy-950); font-weight:700; text-align:left;}
-#wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:700; text-align:right;}
+#wp-revenue-summary-body td{color:var(--ink-900); font-weight:400; text-align:left; vertical-align:top;}
+#wp-revenue-summary-body td.mono{color:var(--navy-950); font-weight:400; text-align:left;}
+#wp-revenue-summary-body td.num{color:var(--navy-950); font-weight:400; text-align:right;}
 #wp-revenue-summary-wrap tfoot td{text-align:left;}
 #wp-revenue-summary-wrap tfoot td.num{text-align:right;}
 #wp-revenue-summary-wrap{overflow-x:auto;}
@@ -502,6 +502,10 @@ group, pale green for the Actual Inflow group, and plain white for the
 Performance Gap group. These class selectors are more specific than the
 solid-teal rule above, so they win regardless of source order. */
 #wp-revenue-summary-table thead th.rev-band-code{background:#CFEFFB !important; color:var(--navy-950) !important; box-shadow:none !important;}
+/* "Revenue Performance Plans by Source" column: narrower than its default
+auto-sized width, matching the reference layout's tighter source column. */
+#wp-revenue-summary-table thead th.rev-source-col-header{width:150px; max-width:150px;}
+#wp-revenue-summary-body td:nth-child(2){width:150px; max-width:150px;}
 #wp-revenue-summary-table thead th.rev-band-approved{background:#FBE0D2 !important; color:var(--navy-950) !important; box-shadow:none !important;}
 #wp-revenue-summary-table thead th.rev-band-actual{background:#3DE0E6 !important; color:var(--navy-950) !important; box-shadow:none !important;}
 #wp-revenue-summary-table thead th.rev-band-gap{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
@@ -519,9 +523,9 @@ the Council's printed PBS sheet; these values do not change per work plan,
 so they are fixed text rather than pulled from any data source. */
 #wp-revenue-summary-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:10.5px; padding:0 10px; line-height:1.9; border-bottom:1px solid var(--line-strong);}
 /* The 4 filled-in values in the masthead ("001", "Karugutu Town Council",
-"Ntoroko District", "FY 2026/27") read as plain text, not bold — only the
-field labels ("LLG:", "HLG:", "Financial Year:", etc.) stay bold. */
-#wp-revenue-summary-table thead th.rev-meta-value{font-weight:400;}
+"Ntoroko District", "FY 2026/27") are bolded along with everything else
+in these 3 masthead rows, matching the Council's printed PBS sheet. */
+#wp-revenue-summary-table thead th.rev-meta-value{font-weight:700;}
 /* Functional Definition column in the summary table: allow each point to
 sit on its own line (line breaks are inserted when the data is rendered)
 rather than running on as one continuous line of text. */
@@ -544,19 +548,20 @@ Actual Cash Inflow Realized / Annual Revenue Performance Gap) each wrap
 their header across 4 short lines and share one fixed width, so their
 Total columns all render the same width instead of each column sizing
 itself to whichever header text happened to be longest. */
-#wp-revenue-summary-table thead th.rev-annual-col{width:76px; max-width:76px; white-space:normal !important; line-height:1.3; border-right:1px solid var(--line-strong);}
+#wp-revenue-summary-table thead th.rev-annual-col{width:95px; max-width:95px; white-space:normal !important; line-height:1.3; border-right:1px solid var(--line-strong);}
 /* Q1–Q4 figure columns, in all 3 bands: same fixed width for every quarter
 so Q4 (or any quarter) doesn't render wider than the others just because
-one row's figure happens to be a digit longer. */
-#wp-revenue-summary-table thead th.rev-q-col{width:50px; max-width:50px; white-space:nowrap;}
+one row's figure happens to be a digit longer. Widened by a quarter (50px
+-> 62.5px) from the original reference width. */
+#wp-revenue-summary-table thead th.rev-q-col{width:62.5px; max-width:62.5px; white-space:nowrap;}
 /* The header's fixed width alone isn't enough to keep Q1–Q4 columns equal:
 in an auto-layout table, a data cell with a longer figure can still force
 its column wider than the header says. Pin the body cells to the same
 50px in all 3 bands so a longer Q4 (or any quarter) figure can't push
 that one column wider than its neighbours. */
-#wp-revenue-summary-body td:nth-child(n+3):nth-child(-n+6){width:50px; max-width:50px; white-space:nowrap;}
-#wp-revenue-summary-body td:nth-child(n+8):nth-child(-n+11){width:50px; max-width:50px; white-space:nowrap;}
-#wp-revenue-summary-body td:nth-child(n+13):nth-child(-n+16){width:50px; max-width:50px; white-space:nowrap;}
+#wp-revenue-summary-body td:nth-child(n+3):nth-child(-n+6){width:62.5px; max-width:62.5px; white-space:nowrap;}
+#wp-revenue-summary-body td:nth-child(n+8):nth-child(-n+11){width:62.5px; max-width:62.5px; white-space:nowrap;}
+#wp-revenue-summary-body td:nth-child(n+13):nth-child(-n+16){width:62.5px; max-width:62.5px; white-space:nowrap;}
 /* "Summary of the Quarterly Actual Inflow: IRAS Revenue Collected, Central
 Government Transfers, and Donations Realized" is long enough that, left
 on one line, it forces its 4 Q1–Q4 columns extremely wide. Narrowing it
@@ -578,12 +583,12 @@ place somewhere under this spanning header and was handing it disproportionately
 to one quarter column instead of splitting it evenly across all four, so Q1–Q4
 rendered at uneven widths. Matching the totals exactly leaves nothing to
 redistribute, so the four columns share the space equally. */
-#wp-revenue-summary-table thead th.rev-approved-qhdr{width:200px !important; max-width:200px !important;}
+#wp-revenue-summary-table thead th.rev-approved-qhdr{width:250px !important; max-width:250px !important;}
 /* "Summary of the Quarterly Actual Inflow:" header: forced onto exactly 3
 lines at explicit break points (the opening clause on its own line, then
 the 3 comma-separated sources split across the next two) rather than
 left to auto-wrap — wide enough that each manual line stays on one row. */
-#wp-revenue-summary-table thead th.rev-actual-header{white-space:normal !important; width:236px; max-width:236px; line-height:1.35;}
+#wp-revenue-summary-table thead th.rev-actual-header{white-space:normal !important; width:295px; max-width:295px; line-height:1.35;}
 /* Divider line under "Uganda Shillings Thousand(s)" (row 4), for all 3
 bands, and a divider between the group-title row (row 5) and the Q1–Q4
 row (row 6) — this second line was missing, leaving Q1–Q4 floating with
@@ -606,11 +611,11 @@ rather than trailing off at the right/bottom edges. */
 #wp-revenue-summary-wrap{border-top:1px solid var(--line-strong); border-left:1px solid var(--line-strong); border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-table{border-bottom:1px solid var(--line-strong);}
 #wp-revenue-summary-body tr:last-child{border-bottom:1px solid var(--line-strong);}
-/* Restore centered column headers (PBS Code, Q1–Q4, Total, band titles) —
-a later, more general rule left-aligns every thead th across three tables;
-this table's headers are centered on the printed sheet (only the 3
-constant masthead label rows stay left-aligned, per .rev-meta above). */
-#wp-revenue-summary-table thead th:not(.rev-meta){text-align:center !important;}
+/* Column headers (PBS Code, Q1–Q4, Total, band titles) are left-aligned,
+starting with the PBS Code column, matching the Council's printed PBS
+sheet (the 3 constant masthead label rows are already left-aligned, per
+.rev-meta above). */
+#wp-revenue-summary-table thead th:not(.rev-meta){text-align:left !important;}
 /* Zoom streak below the table — lets the user scale the whole table up or
 down with + / − controls, for a wide table on a small screen. */
 .table-zoom-bar{display:flex; align-items:center; justify-content:center; gap:10px; margin:0 16px 16px; padding:5px 14px; background:var(--paper); border:1px solid var(--line); border-radius:20px; width:fit-content; margin-left:auto; margin-right:auto;}
@@ -1777,8 +1782,8 @@ Departments
 <th colspan="9" class="rev-meta"></th>
 </tr>
 <tr>
-<th rowspan="3" class="rev-band-code">PBS Code</th>
-<th rowspan="3" class="wrap rev-band-code">Revenue Performance Plans by Source</th>
+<th rowspan="3" class="rev-band-code">PBS<br>Code</th>
+<th rowspan="3" class="wrap rev-band-code rev-source-col-header">Revenue Performance Plans by Source</th>
 <th colspan="5" class="rev-band-approved rev-band-title">Uganda Shillings Thousand</th>
 <th colspan="5" class="rev-band-actual rev-band-title">Uganda Shillings Thousands</th>
 <th colspan="5" class="rev-band-gap rev-band-title">Uganda Shillings Thousands</th>
