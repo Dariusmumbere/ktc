@@ -517,7 +517,12 @@ Government Vote / 001 / Karugutu Town Council / Ntoroko District",
 "Part I: ...", and "A1: ... / FY 2026/27" — always shown exactly as on
 the Council's printed PBS sheet; these values do not change per work plan,
 so they are fixed text rather than pulled from any data source. */
-#wp-revenue-summary-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:10.5px; padding:0 10px; line-height:1.9; border-bottom:1px solid var(--line-strong);}
+/* Fixed column grid — the widths of every column are driven entirely by
+the <colgroup> above, so long masthead label text (e.g. "Lower Local
+Government:", "Higher Local Government:") can never stretch a Q1–Q4 or
+Total data column out of alignment. */
+#wp-revenue-summary-table{table-layout:fixed;}
+#wp-revenue-summary-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:10.5px; padding:0 10px; line-height:1.9; border-bottom:1px solid var(--line-strong); overflow-wrap:break-word; word-break:break-word;}
 /* The 4 filled-in values in the masthead ("001", "Karugutu Town Council",
 "Ntoroko District", "FY 2026/27") are bold too, matching the printed
 sheet — every cell across the first 3 masthead rows is bold. */
@@ -603,12 +608,11 @@ no rule above them. */
 was missing, leaving the table body running straight on with no rule
 separating it from the quarter labels above. */
 #wp-revenue-summary-table thead tr:last-child th{border-bottom:1px solid var(--line-strong);}
-/* Category header rows (e.g. "IRAS - Locally Raised Revenues",
-"Discretionary Government Transfers") get the same light-yellow
-highlight used for this row type on the other revenue tables, matching
-the Council's printed PBS sheet. */
-#wp-revenue-summary-body tr.rev-cat-head td{background:var(--gold-100); font-weight:700; color:var(--navy-950);}
-#wp-revenue-summary-body tr.rev-cat-head:hover td{background:var(--gold-100);}
+/* Light-yellow highlight + bold applies only to rows that actually show a
+PBS code in the first column — not to every row the backend classifies
+as a "category" row, some of which carry no code at all. */
+#wp-revenue-summary-body tr:has(td:first-child:not(:empty)) td{background:var(--gold-100); font-weight:700; color:var(--navy-950);}
+#wp-revenue-summary-body tr:has(td:first-child:not(:empty)):hover td{background:var(--gold-100);}
 /* Closing borders: a firm outer edge all the way round the table, and a
 solid line under the very last row, so the grid reads as fully closed
 rather than trailing off at the right/bottom edges. */
@@ -1764,6 +1768,14 @@ Departments
 </div>
 <div class="rli-table-wrap" id="wp-revenue-summary-wrap" style="margin:10px 16px 16px;">
 <table id="wp-revenue-summary-table">
+<colgroup>
+<col style="width:52px">
+<col style="width:150px">
+<col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:95px">
+<col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:95px">
+<col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:95px">
+<col style="width:70px">
+</colgroup>
 <thead>
 <tr class="rev-llg-meta-row">
 <th colspan="2" class="rev-meta">Lower Local Government Vote:</th>
