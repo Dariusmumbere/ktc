@@ -523,6 +523,11 @@ Government:", "Higher Local Government:") can never stretch a Q1–Q4 or
 Total data column out of alignment. */
 #wp-revenue-summary-table{table-layout:fixed;}
 #wp-revenue-summary-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:13.125px; padding:0 10px; line-height:2.375; border-bottom:1px solid var(--line-strong); overflow-wrap:break-word; word-break:break-word;}
+/* Visual cue while the masthead is in edit mode, toggled by the "Edit row
+header" button — a dashed outline and pale highlight on every editable
+cell across the 3 masthead rows, so it's obvious which text can be typed
+into right now. */
+#wp-revenue-summary-table thead th.rev-meta.rev-meta-editing{outline:1.5px dashed var(--gold-600); outline-offset:-3px; background:var(--gold-100) !important; cursor:text;}
 /* The 4 filled-in values in the masthead ("001", "Karugutu Town Council",
 "Ntoroko District", "FY 2026/27") are bold too, matching the printed
 sheet — every cell across the first 3 masthead rows is bold. */
@@ -1788,19 +1793,19 @@ Departments
 <col style="width:70px">
 </colgroup>
 <thead>
-<tr class="rev-llg-meta-row">
+<tr class="rev-llg-meta-row" id="wp-meta-row-1">
 <th colspan="2" class="rev-meta">Lower Local Government Vote:</th>
-<th colspan="2" class="rev-meta rev-meta-value">001</th>
+<th colspan="2" class="rev-meta rev-meta-value" id="wp-llg-vote">001</th>
 <th colspan="3" class="rev-meta">Lower Local Government:</th>
-<th colspan="3" class="rev-meta rev-meta-value">Karugutu Town Council</th>
+<th colspan="3" class="rev-meta rev-meta-value" id="wp-lower-llg">Karugutu Town Council</th>
 <th colspan="3" class="rev-meta">Higher Local Government:</th>
-<th colspan="5" class="rev-meta rev-meta-value">Ntoroko District</th>
+<th colspan="5" class="rev-meta rev-meta-value" id="wp-higher-llg">Ntoroko District</th>
 </tr>
-<tr class="rev-llg-meta-row">
+<tr class="rev-llg-meta-row" id="wp-meta-row-2">
 <th colspan="1" class="rev-meta">Part I:</th>
 <th colspan="17" class="rev-meta">Summary of the Local Government Budget Estimates</th>
 </tr>
-<tr class="rev-llg-meta-row">
+<tr class="rev-llg-meta-row" id="wp-meta-row-3">
 <th colspan="1" class="rev-meta">A1:</th>
 <th colspan="6" class="rev-meta">Summary of the Revenue Performance Plan by Source Category</th>
 <th colspan="2" class="rev-meta">Financial Year:</th>
@@ -1813,7 +1818,7 @@ Departments
 <th colspan="5" class="rev-band-approved rev-band-title">Uganda Shillings Thousand</th>
 <th colspan="5" class="rev-band-actual rev-band-title">Uganda Shillings Thousands</th>
 <th colspan="5" class="rev-band-gap rev-band-title">Uganda Shillings Thousands</th>
-<th rowspan="3" class="rev-band-code">Edit<br>and<br>delete rows</th>
+<th rowspan="3" class="rev-band-code"><button type="button" id="wp-edit-row-header-btn" class="btn btn-ghost" style="padding:4px 8px; font-size:10.5px; white-space:normal; line-height:1.25;" onclick="toggleRevMetaEdit()">Edit row header</button></th>
 </tr>
 <tr>
 <th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow rev-approved-qhdr rev-row5">Summary of the Approved Quarterly Budget Estimates</th>
@@ -3478,6 +3483,9 @@ const WORKPLAN_TABLE_TITLE_FIELDS = {
 'wp-title-dept-summary': 'title_dept_summary',
 'wp-title-revenue-detail': 'title_revenue_detail',
 'wp-title-main-table': 'title_main_table',
+'wp-llg-vote': 'llg_vote',
+'wp-lower-llg': 'lower_local_government',
+'wp-higher-llg': 'higher_local_government',
 };
 function applyWorkplanTableTitles() {
 const wpVal = document.getElementById('wp-select').value;
@@ -3486,6 +3494,53 @@ for (const [elId, field] of Object.entries(WORKPLAN_TABLE_TITLE_FIELDS)) {
 const el = document.getElementById(elId);
 if (el && wp && wp[field]) el.textContent = wp[field];
 }
+}
+// ---- "Edit row header" toggle for the Revenue Performance Plan by Source
+// table's masthead (the 3 constant rows above the PBS Code / Q1–Q4 grid:
+// Lower/Higher Local Government Vote & names, "Part I:", "A1:" and their
+// captions). The button (in the rowspan-3 cell that used to just read
+// "Edit and delete rows") toggles every <th class="rev-meta"> cell across
+// those 3 rows in and out of contenteditable, and only persists the 3
+// cells that map to real WorkPlan columns (LLG Vote code, Lower/Higher
+// Local Government name) — the rest (section captions like "Part I:
+// Summary of the Local Government Budget Estimates") stay editable on
+// screen for this session but aren't backed by a column, so they're not
+// sent to the server.
+let revMetaEditing = false;
+function toggleRevMetaEdit() {
+const btn = document.getElementById('wp-edit-row-header-btn');
+const rows = ['wp-meta-row-1', 'wp-meta-row-2', 'wp-meta-row-3'].map(id => document.getElementById(id)).filter(Boolean);
+if (!revMetaEditing) {
+rows.forEach(row => row.querySelectorAll('th.rev-meta').forEach(th => { th.contentEditable = 'true'; th.classList.add('rev-meta-editing'); }));
+revMetaEditing = true;
+btn.textContent = 'Save row header';
+return;
+}
+rows.forEach(row => row.querySelectorAll('th.rev-meta').forEach(th => { th.contentEditable = 'false'; th.classList.remove('rev-meta-editing'); }));
+revMetaEditing = false;
+btn.textContent = 'Edit row header';
+saveRevMetaHeader();
+}
+async function saveRevMetaHeader() {
+const wpVal = document.getElementById('wp-select').value;
+const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+if (!wp) { toast('Select a work plan first', 'error'); return; }
+const llg_vote = (document.getElementById('wp-llg-vote').textContent || '').trim();
+const lower_local_government = (document.getElementById('wp-lower-llg').textContent || '').trim();
+const higher_local_government = (document.getElementById('wp-higher-llg').textContent || '').trim();
+const payload = {
+financial_year: wp.financial_year, title: wp.title,
+title_revenue_summary: wp.title_revenue_summary, title_dept_summary: wp.title_dept_summary,
+title_revenue_detail: wp.title_revenue_detail, title_main_table: wp.title_main_table,
+llg_vote, lower_local_government, higher_local_government,
+};
+try {
+await api(`/api/workplans/${wp.id}`, { method: 'PATCH', body: JSON.stringify(payload) });
+toast('Row header saved', 'success');
+await loadWorkplans();
+document.getElementById('wp-select').value = wp.id;
+applyWorkplanTableTitles();
+} catch (e) { toast(e.message, 'error'); }
 }
 // ---- PBS Revenue Performance pages (Monthly / Quarterly / By Source / By --
 // ---- Category) -------------------------------------------------------------
