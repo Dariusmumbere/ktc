@@ -1843,7 +1843,7 @@ Departments
 </div>
 <div class="table-zoom-bar" id="wp-revenue-summary-zoom-bar">
 <button type="button" class="table-zoom-btn" id="wp-revenue-summary-zoom-out" title="Zoom out">−</button>
-<span class="table-zoom-label" id="wp-revenue-summary-zoom-label">100%</span>
+<span class="table-zoom-label" id="wp-revenue-summary-zoom-label">90%</span>
 <button type="button" class="table-zoom-btn" id="wp-revenue-summary-zoom-in" title="Zoom in">+</button>
 </div>
 </div>
@@ -4155,7 +4155,7 @@ requestAnimationFrame(paginateExecutiveSummary);
 });
 document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); loadProgrammeFilterOptions().then(renderBudgetCodes); applyWorkplanSubtabDisplay(); });
 // ---- Revenue Summary table zoom (+ / − streak below the table) -------------
-let wpRevSummaryZoom = 1;
+let wpRevSummaryZoom = 0.9;
 function applyWpRevSummaryZoom() {
 const table = document.getElementById('wp-revenue-summary-table');
 if (table) table.style.zoom = wpRevSummaryZoom;
@@ -4164,6 +4164,7 @@ if (label) label.textContent = Math.round(wpRevSummaryZoom * 100) + '%';
 }
 const wpRevSummaryZoomInBtn = document.getElementById('wp-revenue-summary-zoom-in');
 const wpRevSummaryZoomOutBtn = document.getElementById('wp-revenue-summary-zoom-out');
+applyWpRevSummaryZoom();
 if (wpRevSummaryZoomInBtn) wpRevSummaryZoomInBtn.addEventListener('click', () => {
 wpRevSummaryZoom = Math.min(1.6, Math.round((wpRevSummaryZoom + 0.1) * 10) / 10);
 applyWpRevSummaryZoom();
