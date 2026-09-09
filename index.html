@@ -522,7 +522,7 @@ the <colgroup> above, so long masthead label text (e.g. "Lower Local
 Government:", "Higher Local Government:") can never stretch a Q1–Q4 or
 Total data column out of alignment. */
 #wp-revenue-summary-table{table-layout:fixed;}
-#wp-revenue-summary-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:10.5px; padding:0 10px; line-height:1.9; border-bottom:1px solid var(--line-strong); overflow-wrap:break-word; word-break:break-word;}
+#wp-revenue-summary-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:15.75px; padding:0 10px; line-height:2.85; border-bottom:1px solid var(--line-strong); overflow-wrap:break-word; word-break:break-word;}
 /* The 4 filled-in values in the masthead ("001", "Karugutu Town Council",
 "Ntoroko District", "FY 2026/27") are bold too, matching the printed
 sheet — every cell across the first 3 masthead rows is bold. */
@@ -553,7 +553,7 @@ itself to whichever header text happened to be longest. */
 /* Q1–Q4 figure columns, in all 3 bands: same fixed width for every quarter
 so Q4 (or any quarter) doesn't render wider than the others just because
 one row's figure happens to be a digit longer. */
-#wp-revenue-summary-table thead th.rev-q-col{width:63px; max-width:63px; white-space:nowrap;}
+#wp-revenue-summary-table thead th.rev-q-col{width:63px; max-width:63px; white-space:nowrap; font-size:13.5px; line-height:1.875;}
 /* PBS Code column: shown as "PBS" then "Code" on two lines, with a
 reduced column width. */
 #wp-revenue-summary-table thead th.rev-code-col{width:52px; max-width:52px; white-space:normal !important; line-height:1.3;}
@@ -602,7 +602,7 @@ Left-aligned, and widened to match the widened Q-columns beneath it. */
 bands, and a divider between the group-title row (row 5) and the Q1–Q4
 row (row 6) — this second line was missing, leaving Q1–Q4 floating with
 no rule above them. */
-#wp-revenue-summary-table thead th.rev-band-title{border-bottom:1px solid var(--line-strong);}
+#wp-revenue-summary-table thead th.rev-band-title{border-bottom:1px solid var(--line-strong); font-size:13.5px; line-height:1.875;}
 #wp-revenue-summary-table thead th.rev-row5{border-bottom:1px solid var(--line-strong);}
 /* Divider line under the Q1–Q4 quarter-label row itself (row 6) — this
 was missing, leaving the table body running straight on with no rule
@@ -630,6 +630,10 @@ rather than trailing off at the right/bottom edges. */
 beginning from the PBS Code column, matching the Council's request — the
 3 constant masthead label rows are already left-aligned via .rev-meta above. */
 #wp-revenue-summary-table thead th:not(.rev-meta){text-align:left !important;}
+/* "Uganda Shillings Thousand(s)" band-title cells are centered, overriding
+the general left-align rule just above (same selector specificity, so
+source order decides — this rule comes after and wins). */
+#wp-revenue-summary-table thead th.rev-band-title{text-align:center !important;}
 /* Zoom streak below the table — lets the user scale the whole table up or
 down with + / − controls, for a wide table on a small screen. */
 .table-zoom-bar{display:flex; align-items:center; justify-content:center; gap:10px; margin:0 16px 16px; padding:5px 14px; background:var(--paper); border:1px solid var(--line); border-radius:20px; width:fit-content; margin-left:auto; margin-right:auto;}
