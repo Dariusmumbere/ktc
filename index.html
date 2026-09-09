@@ -486,7 +486,7 @@ text-align:center;
 #wp-revenue-summary-wrap tfoot td{text-align:left;}
 #wp-revenue-summary-wrap tfoot td.num{text-align:right;}
 #wp-revenue-summary-wrap{overflow-x:auto;}
-#wp-revenue-summary-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950);}
+#wp-revenue-summary-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950); font-weight:700;}
 #wp-revenue-summary-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
 #wp-revenue-summary-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-revenue-summary-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
@@ -565,8 +565,8 @@ reduced column width. */
 #wp-revenue-summary-body td:nth-child(1){width:52px; max-width:52px;}
 /* Revenue Performance Plans by Source column: reduced width, so the row
 label wraps rather than forcing the whole table wider. */
-#wp-revenue-summary-table thead th.rev-source-col{width:281.25px; max-width:281.25px;}
-#wp-revenue-summary-body td:nth-child(2){width:281.25px; max-width:281.25px;}
+#wp-revenue-summary-table thead th.rev-source-col{width:351.5625px; max-width:351.5625px;}
+#wp-revenue-summary-body td:nth-child(2){width:351.5625px; max-width:351.5625px;}
 /* The header's fixed width alone isn't enough to keep Q1–Q4 columns equal:
 in an auto-layout table, a data cell with a longer figure can still force
 its column wider than the header says. Pin the body cells to the same
@@ -1786,7 +1786,7 @@ Departments
 <table id="wp-revenue-summary-table">
 <colgroup>
 <col style="width:52px">
-<col style="width:281.25px">
+<col style="width:351.5625px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
@@ -1795,13 +1795,13 @@ Departments
 <thead>
 <tr class="rev-llg-meta-row" id="wp-meta-row-1">
 <th colspan="2" class="rev-meta">Lower Local Government Vote:</th>
-<th colspan="2" class="rev-meta rev-meta-value" id="wp-llg-vote">001</th>
+<th colspan="1" class="rev-meta rev-meta-value" id="wp-llg-vote">001</th>
 <th colspan="1" class="rev-meta"></th>
-<th colspan="2" class="rev-meta">Lower Local Government:</th>
+<th colspan="3" class="rev-meta">Lower Local Government:</th>
 <th colspan="3" class="rev-meta rev-meta-value" id="wp-lower-llg">Karugutu Town Council</th>
 <th colspan="1" class="rev-meta"></th>
-<th colspan="2" class="rev-meta">Higher Local Government:</th>
-<th colspan="5" class="rev-meta rev-meta-value" id="wp-higher-llg">Ntoroko District</th>
+<th colspan="3" class="rev-meta">Higher Local Government:</th>
+<th colspan="4" class="rev-meta rev-meta-value" id="wp-higher-llg">Ntoroko District</th>
 </tr>
 <tr class="rev-llg-meta-row" id="wp-meta-row-2">
 <th colspan="1" class="rev-meta">Part I:</th>
