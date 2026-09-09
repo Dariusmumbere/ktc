@@ -579,6 +579,14 @@ to one quarter column instead of splitting it evenly across all four, so Q1–Q4
 rendered at uneven widths. Matching the totals exactly leaves nothing to
 redistribute, so the four columns share the space equally. */
 #wp-revenue-summary-table thead th.rev-approved-qhdr{width:200px !important; max-width:200px !important;}
+/* Even with the widths above, an auto-layout table still lets a cell's
+content (e.g. a longer Q4 figure once real data is in the row) push that
+one column wider than its width/max-width says — width/max-width are only
+hints in automatic table layout, not a hard limit. table-layout:fixed
+below, together with the <colgroup> on this table, makes the widths
+below the actual, enforced column widths, so Q1–Q4 stay equal no matter
+what figures land in them. */
+#wp-revenue-summary-table{table-layout:fixed; width:auto;}
 /* "Summary of the Quarterly Actual Inflow:" header: forced onto exactly 3
 lines at explicit break points (the opening clause on its own line, then
 the 3 comma-separated sources split across the next two) rather than
@@ -1756,6 +1764,26 @@ Departments
 </div>
 <div class="rli-table-wrap" id="wp-revenue-summary-wrap" style="margin:10px 16px 16px;">
 <table id="wp-revenue-summary-table">
+<colgroup>
+<col style="width:70px;">
+<col style="width:260px;">
+<col style="width:50px;">
+<col style="width:50px;">
+<col style="width:50px;">
+<col style="width:50px;">
+<col style="width:76px;">
+<col style="width:50px;">
+<col style="width:50px;">
+<col style="width:50px;">
+<col style="width:50px;">
+<col style="width:76px;">
+<col style="width:50px;">
+<col style="width:50px;">
+<col style="width:50px;">
+<col style="width:50px;">
+<col style="width:76px;">
+<col style="width:90px;">
+</colgroup>
 <thead>
 <tr class="rev-llg-meta-row">
 <th colspan="2" class="rev-meta">Lower Local Government (LLG) Vote:</th>
@@ -1909,6 +1937,9 @@ Departments
 <button type="button" class="icon-btn icon-btn-sm" id="wp-import-btn" style="display:none;" title="Import Activity & Budget Estimates From Excel">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
 </button>
+<button type="button" class="th-clear-btn" id="wp-clear-btn" style="display:none;" title="Delete activity &amp; budget estimate rows for the Department selected in the dropdown above">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</button>
 </div>
 </div>
 <div class="table-wrap" id="wp-main-table-wrap">
@@ -1935,14 +1966,7 @@ Departments
 <th class="wrap">Funding<br>Source</th>
 <th class="wrap">Expenditure<br>Category</th>
 <th class="wrap">Responsible<br>Party</th>
-<th>
-<span class="th-with-clear">
-<span></span>
-<button type="button" class="th-clear-btn" id="wp-clear-btn" style="display:none;" title="Delete activity &amp; budget estimate rows for the Department selected in the dropdown above">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-</button>
-</span>
-</th>
+<th></th>
 </tr>
 </thead>
 <tbody id="wp-table-body">
