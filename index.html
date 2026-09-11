@@ -506,11 +506,11 @@ solid-teal rule above, so they win regardless of source order. */
 #wp-revenue-summary-table thead th.rev-band-actual{background:#3DE0E6 !important; color:var(--navy-950) !important; box-shadow:none !important;}
 #wp-revenue-summary-table thead th.rev-band-gap{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
 /* Column-band coloring matching the reference image: Actual Inflow figures
-on line-item rows get a cyan fill (category/subtotal/grand-total rows stay
-plain, matching the reference), and every Gap-band figure — Q1–Q4 and
-Total, on every row — is shown in the same red accent used elsewhere for
-variances, regardless of sign, matching the reference image. */
-#wp-revenue-summary-body tr.rev-item-row td:nth-child(n+8):nth-child(-n+12){background:#3DE0E6;}
+on line-item rows get a cyan fill only in the header (Q1–Q4/Total labels)
+— it does not carry down into the data rows below, per request — and
+every Gap-band figure — Q1–Q4 and Total, on every row — is shown in the
+same red accent used elsewhere for variances, regardless of sign,
+matching the reference image. */
 #wp-revenue-summary-body td:nth-child(n+13):nth-child(-n+17){color:var(--danger);}
 /* The 3 constant masthead rows above the column headers — "Lower Local
 Government Vote / 001 / Karugutu Town Council / Ntoroko District",
@@ -561,12 +561,12 @@ one row's figure happens to be a digit longer. */
 #wp-revenue-summary-table thead th.rev-q-col{width:63px; max-width:63px; white-space:nowrap; line-height:1.875;}
 /* PBS Code column: shown as "PBS" then "Code" on two lines, with a
 reduced column width. */
-#wp-revenue-summary-table thead th.rev-code-col{width:52px; max-width:52px; white-space:normal !important; line-height:1.3;}
-#wp-revenue-summary-body td:nth-child(1){width:52px; max-width:52px;}
+#wp-revenue-summary-table thead th.rev-code-col{width:39px; max-width:39px; white-space:normal !important; line-height:1.3;}
+#wp-revenue-summary-body td:nth-child(1){width:39px; max-width:39px;}
 /* Revenue Performance Plans by Source column: reduced width, so the row
 label wraps rather than forcing the whole table wider. */
-#wp-revenue-summary-table thead th.rev-source-col{width:351.5625px; max-width:351.5625px;}
-#wp-revenue-summary-body td:nth-child(2){width:351.5625px; max-width:351.5625px;}
+#wp-revenue-summary-table thead th.rev-source-col{width:341.5625px; max-width:341.5625px;}
+#wp-revenue-summary-body td:nth-child(2){width:341.5625px; max-width:341.5625px;}
 /* The header's fixed width alone isn't enough to keep Q1–Q4 columns equal:
 in an auto-layout table, a data cell with a longer figure can still force
 its column wider than the header says. Pin the body cells to the same
@@ -1785,8 +1785,8 @@ Departments
 <div class="rli-table-wrap" id="wp-revenue-summary-wrap" style="margin:10px 16px 16px;">
 <table id="wp-revenue-summary-table">
 <colgroup>
-<col style="width:52px">
-<col style="width:351.5625px">
+<col style="width:39px">
+<col style="width:341.5625px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
@@ -1794,11 +1794,9 @@ Departments
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row" id="wp-meta-row-1">
-<th colspan="3" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-llg-vote">001</span></th>
-<th colspan="1" class="rev-meta"></th>
+<th colspan="4" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-llg-vote">001</span></th>
 <th colspan="6" class="rev-meta">Lower Local Government: <span class="rev-meta-value" id="wp-lower-llg">Karugutu Town Council</span></th>
-<th colspan="1" class="rev-meta"></th>
-<th colspan="7" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-higher-llg">Ntoroko District</span></th>
+<th colspan="8" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-higher-llg">Ntoroko District</span></th>
 </tr>
 <tr class="rev-llg-meta-row" id="wp-meta-row-2">
 <th colspan="18" class="rev-meta">Part I: Summary of the Local Government Budget Estimates</th>
