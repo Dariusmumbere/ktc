@@ -555,8 +555,10 @@ their header across 4 short lines and share one fixed width, so their
 Total columns all render the same width instead of each column sizing
 itself to whichever header text happened to be longest. */
 #wp-revenue-summary-table thead th.rev-annual-col{width:71.25px; max-width:71.25px; white-space:normal !important; line-height:1.3; border-right:1px solid var(--line-strong);}
-/* Annual Revenue Performance Gap column widened by 10% (71.25px -> 78.375px), independent of the other two Total/Annual columns which share .rev-annual-col. */
-#wp-annual-gap-col{width:78.375px !important; max-width:78.375px !important;}
+/* Annual Actual Cash Inflow Realized column widened by 10% (71.25px -> 78.375px), independent of the other two Total/Annual columns which share .rev-annual-col. */
+#wp-annual-actual-col{width:78.375px !important; max-width:78.375px !important;}
+/* Annual Revenue Performance Gap column widened by a further 5% (78.375px -> 82.29375px), independent of the other two Total/Annual columns which share .rev-annual-col. */
+#wp-annual-gap-col{width:82.29375px !important; max-width:82.29375px !important;}
 /* Q1–Q4 figure columns, in all 3 bands: same fixed width for every quarter
 so Q4 (or any quarter) doesn't render wider than the others just because
 one row's figure happens to be a digit longer. */
@@ -567,8 +569,8 @@ reduced column width. */
 #wp-revenue-summary-body td:nth-child(1){width:39px; max-width:39px;}
 /* Revenue Performance Plans by Source column: reduced width, so the row
 label wraps rather than forcing the whole table wider. */
-#wp-revenue-summary-table thead th.rev-source-col{width:341.5625px; max-width:341.5625px;}
-#wp-revenue-summary-body td:nth-child(2){width:341.5625px; max-width:341.5625px;}
+#wp-revenue-summary-table thead th.rev-source-col{width:336.5625px; max-width:336.5625px;}
+#wp-revenue-summary-body td:nth-child(2){width:336.5625px; max-width:336.5625px;}
 /* The header's fixed width alone isn't enough to keep Q1–Q4 columns equal:
 in an auto-layout table, a data cell with a longer figure can still force
 its column wider than the header says. Pin the body cells to the same
@@ -1788,10 +1790,10 @@ Departments
 <table id="wp-revenue-summary-table">
 <colgroup>
 <col style="width:39px">
-<col style="width:341.5625px">
-<col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
+<col style="width:336.5625px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:78.375px">
+<col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:82.29375px">
 <col style="width:70px">
 </colgroup>
 <thead>
@@ -1820,7 +1822,7 @@ Departments
 <th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow rev-approved-qhdr rev-row5">Summary of the Approved Quarterly Budget Estimates</th>
 <th class="col-annual-approved rev-band-approved rev-annual-col rev-row5">Annual<br>Approved<br>Budget<br>Estimates</th>
 <th colspan="4" class="rev-band-actual rev-actual-header rev-row5">Summary of the Quarterly Actual Inflow<br>Realized: IRAS Revenue Collected, GoU<br>Transfers, and Donations</th>
-<th class="rev-band-actual rev-annual-col rev-row5">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
+<th id="wp-annual-actual-col" class="rev-band-actual rev-annual-col rev-row5">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
 <th colspan="4" class="rev-band-gap rev-wrap-header rev-wrap-narrow rev-row5">Summary of the Quarterly Revenue Performance Gap</th>
 <th id="wp-annual-gap-col" class="rev-band-gap rev-annual-col rev-row5">Annual<br>Revenue<br>Performance<br>Gap</th>
 </tr>
@@ -1837,7 +1839,7 @@ Departments
 </div>
 <div class="table-zoom-bar" id="wp-revenue-summary-zoom-bar">
 <button type="button" class="table-zoom-btn" id="wp-revenue-summary-zoom-out" title="Zoom out">−</button>
-<span class="table-zoom-label" id="wp-revenue-summary-zoom-label">90%</span>
+<span class="table-zoom-label" id="wp-revenue-summary-zoom-label">100%</span>
 <button type="button" class="table-zoom-btn" id="wp-revenue-summary-zoom-in" title="Zoom in">+</button>
 </div>
 </div>
@@ -4149,7 +4151,7 @@ requestAnimationFrame(paginateExecutiveSummary);
 });
 document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); loadProgrammeFilterOptions().then(renderBudgetCodes); applyWorkplanSubtabDisplay(); });
 // ---- Revenue Summary table zoom (+ / − streak below the table) -------------
-let wpRevSummaryZoom = 0.9;
+let wpRevSummaryZoom = 1.0;
 function applyWpRevSummaryZoom() {
 const table = document.getElementById('wp-revenue-summary-table');
 if (table) table.style.zoom = wpRevSummaryZoom;
