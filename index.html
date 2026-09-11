@@ -555,6 +555,8 @@ their header across 4 short lines and share one fixed width, so their
 Total columns all render the same width instead of each column sizing
 itself to whichever header text happened to be longest. */
 #wp-revenue-summary-table thead th.rev-annual-col{width:71.25px; max-width:71.25px; white-space:normal !important; line-height:1.3; border-right:1px solid var(--line-strong);}
+/* Annual Revenue Performance Gap column widened by 10% (71.25px -> 78.375px), independent of the other two Total/Annual columns which share .rev-annual-col. */
+#wp-annual-gap-col{width:78.375px !important; max-width:78.375px !important;}
 /* Q1–Q4 figure columns, in all 3 bands: same fixed width for every quarter
 so Q4 (or any quarter) doesn't render wider than the others just because
 one row's figure happens to be a digit longer. */
@@ -1789,7 +1791,7 @@ Departments
 <col style="width:341.5625px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
-<col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
+<col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:78.375px">
 <col style="width:70px">
 </colgroup>
 <thead>
@@ -1820,7 +1822,7 @@ Departments
 <th colspan="4" class="rev-band-actual rev-actual-header rev-row5">Summary of the Quarterly Actual Inflow<br>Realized: IRAS Revenue Collected, GoU<br>Transfers, and Donations</th>
 <th class="rev-band-actual rev-annual-col rev-row5">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
 <th colspan="4" class="rev-band-gap rev-wrap-header rev-wrap-narrow rev-row5">Summary of the Quarterly Revenue Performance Gap</th>
-<th class="rev-band-gap rev-annual-col rev-row5">Annual<br>Revenue<br>Performance<br>Gap</th>
+<th id="wp-annual-gap-col" class="rev-band-gap rev-annual-col rev-row5">Annual<br>Revenue<br>Performance<br>Gap</th>
 </tr>
 <tr id="wp-header-row-quarters">
 <th class="rev-band-approved rev-q-col">Q1</th><th class="rev-band-approved rev-q-col">Q2</th><th class="rev-band-approved rev-q-col">Q3</th><th class="rev-band-approved rev-q-col">Q4</th><th class="rev-band-approved rev-annual-col">Total</th>
