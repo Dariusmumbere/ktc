@@ -3659,7 +3659,7 @@ const hasValues = !blank && (
   isRealNumber(r.actual_annual)
 );
 const rowCls = (hasCode && hasValues) ? `${cls} rev-has-code` : cls;
-const labelPad = 14;
+const labelPad = 5;
 const approvedCells = r.approved_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
 const actualCells = r.actual_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
 let gapCells = '';
