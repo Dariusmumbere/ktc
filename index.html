@@ -3705,7 +3705,22 @@ const cls = n < 0 ? ' class="rli-gap-negative"' : '';
 return `<td class="num mono"${cls}>${money(n)}</td>`;
 }
 
-function renderRevLineRow(r, cfg, canEdit) {
+// A PBS code is treated as a "main" category row (gold highlight + bold)
+// only when it isn't itself a sub-item of another code already present in
+// the same table — e.g. with 114 (IRAS - Locally Raised Revenues) and its
+// sub-items 1141, 1142, ... present, 114 is main but 1141/1142 are not,
+// since 114 is a shorter code that is a prefix of each of them. A code
+// like 261 stays "main" as long as no shorter code (e.g. "26") exists
+// elsewhere in the table — this generalises correctly across the
+// different code families in the PBS chart of accounts without hardcoding
+// a fixed code length.
+function isSubCode(code, allCodes) {
+const c = String(code || '').trim();
+if (!c || !Array.isArray(allCodes)) return false;
+return allCodes.some(other => other !== c && other.length < c.length && c.startsWith(other));
+}
+
+function renderRevLineRow(r, cfg, canEdit, allCodes) {
 const cls = revLineRowClass(r.row_type);
 const blank = r.row_type === 'category';
 // A code is only "present" if it has real, non-whitespace content — a
@@ -3730,7 +3745,7 @@ const hasValues = !blank && (
   isRealNumber(r.approved_annual) ||
   isRealNumber(r.actual_annual)
 );
-const rowCls = (hasCode && hasValues) ? `${cls} rev-has-code` : cls;
+const rowCls = (hasCode && hasValues && !isSubCode(r.code, allCodes)) ? `${cls} rev-has-code` : cls;
 const labelPad = 5;
 // The "Revenue Performance Plans by Category & Source" column wraps onto
 // as many lines as its content needs (typically 2) instead of forcing a
@@ -3769,7 +3784,8 @@ if (thead) thead.style.display = '';
 return;
 }
 const canEdit = STATE.role === 'admin';
-tbody.innerHTML = rows.map(r => renderRevLineRow(r, cfg, canEdit)).join('');
+const allCodes = rows.map(r => String(r.code || '').trim()).filter(Boolean);
+tbody.innerHTML = rows.map(r => renderRevLineRow(r, cfg, canEdit, allCodes)).join('');
 if (thead) thead.style.display = '';
 }
 
