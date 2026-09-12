@@ -706,7 +706,7 @@ text-align:center;
 #wp-rev-category-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
 #wp-rev-category-body td.mono, #wp-rev-category-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
 #wp-rev-category-body td:nth-child(1){width:39px; max-width:39px;}
-#wp-rev-category-body td:nth-child(2){width:325px; max-width:325px; padding-left:5px; padding-right:4px;}
+#wp-rev-category-body td:nth-child(2){width:325px; max-width:325px; padding-left:5px; padding-right:4px; overflow-wrap:break-word; word-break:break-word;}
 #wp-rev-category-body td:nth-child(n+3):nth-child(-n+6){width:63px; max-width:63px; white-space:nowrap;}
 #wp-rev-category-body td:nth-child(n+8):nth-child(-n+11){width:63px; max-width:63px; white-space:nowrap;}
 #wp-rev-category-body td:nth-child(n+13):nth-child(-n+16){width:63px; max-width:63px; white-space:nowrap;}
@@ -3732,6 +3732,11 @@ const hasValues = !blank && (
 );
 const rowCls = (hasCode && hasValues) ? `${cls} rev-has-code` : cls;
 const labelPad = 5;
+// The "Revenue Performance Plans by Category & Source" column wraps onto
+// as many lines as its content needs (typically 2) instead of forcing a
+// single nowrap line, so long category/source names break onto a new
+// line within the column's fixed width rather than overflowing it.
+const labelWhiteSpace = cfg.periodType === 'rev_by_category' ? 'normal' : 'nowrap';
 const approvedCells = r.approved_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
 const actualCells = r.actual_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
 let gapCells = '';
@@ -3746,7 +3751,7 @@ const actions = canEdit ? `
 return `
 <tr class="${rowCls}">
 <td class="mono">${escapeHtml(r.code || '')}</td>
-<td style="padding-left:${labelPad}px; white-space:nowrap;">${escapeHtml(r.label)}</td>
+<td style="padding-left:${labelPad}px; white-space:${labelWhiteSpace};">${escapeHtml(r.label)}</td>
 ${approvedCells}
 <td class="num mono">${moneyOrBlank(r.approved_annual, blank)}</td>
 ${actualCells}
