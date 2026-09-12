@@ -663,21 +663,62 @@ down with + / − controls, for a wide table on a small screen. */
 .table-zoom-btn:active{transform:scale(.94);}
 .table-zoom-label{font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--ink-700); min-width:40px; text-align:center;}
 /* ---------------- Revenue Performance Plan by Category & Source table -----
-Same treatment as the Summary table directly above it. */
+Now given its own standalone teal frame (matching table 1's) and the exact
+same masthead/band header format as the Summary of the Revenue Performance
+Plan by Source table above it: 3 fixed masthead rows, tri-band coloring
+(PBS/Source, Approved, Actual, Gap), fixed-width columns via <colgroup>,
+and the same Annual/Q1–Q4 column treatment. */
 #wp-rev-category-table thead th{
 background:var(--teal-700) !important;
 color:#FFFFFF !important;
 box-shadow:0 1px 0 rgba(201,154,62,.35) !important;
 text-align:center;
 }
+#wp-rev-category-table{table-layout:fixed;}
+#wp-rev-category-table thead th.rev-band-code{background:#CFEFFB !important; color:var(--navy-950) !important; box-shadow:none !important;}
+#wp-rev-category-table thead th.rev-band-approved{background:#FBE0D2 !important; color:var(--navy-950) !important; box-shadow:none !important;}
+#wp-rev-category-table thead th.rev-band-actual{background:#3DE0E6 !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
+#wp-rev-category-table thead th.rev-band-gap{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
+#wp-rev-category-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:10.828125px; padding:0 10px; line-height:2.375; border-bottom:1px solid var(--line-strong); overflow-wrap:break-word; word-break:break-word;}
+#wp-rev-category-table thead th .rev-meta-value{font-weight:700;}
+#wp-rev-category-wrap thead th{border-right:1px solid var(--line-strong);}
+#wp-rev-category-wrap thead th:last-child{border-right:none;}
+#wp-fy-meta-cell-cat{border-right:none !important;}
+#wp-rev-category-table thead th.rev-annual-col{width:71.25px; max-width:71.25px; white-space:normal !important; line-height:1.3; border-right:1px solid var(--line-strong);}
+#wp-cat-annual-gap-col{width:82.29375px !important; max-width:82.29375px !important;}
+#wp-rev-category-table thead th.rev-q-col{width:63px; max-width:63px; white-space:nowrap; line-height:1.875;}
+#wp-rev-category-table thead th.rev-code-col{width:39px; max-width:39px; white-space:normal !important; line-height:1.3;}
+#wp-rev-category-table thead th.rev-source-col{width:325px; max-width:325px; padding-left:5px; padding-right:4px;}
+#wp-rev-category-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
+#wp-rev-category-table thead th.rev-wrap-narrow{max-width:169px;}
+#wp-rev-category-table thead th.rev-approved-qhdr{width:252px !important; max-width:252px !important;}
+#wp-rev-category-table thead th.rev-actual-header{white-space:normal !important; width:252px; max-width:252px; line-height:1.35; text-align:left !important;}
+#wp-rev-category-table thead th.rev-band-title{border-bottom:1px solid var(--line-strong); line-height:1.875;}
+#wp-rev-category-table thead th.rev-row5{border-bottom:1px solid var(--line-strong);}
+#wp-rev-category-table thead tr:last-child th{border-bottom:1px solid var(--line-strong);}
+#wp-rev-category-table thead th.rev-code-col,
+#wp-rev-category-table thead th.rev-source-col{text-align:left !important;}
+#wp-rev-category-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col){text-align:center !important;}
 #wp-rev-category-body tr:nth-child(odd){background:#D6EEE6;}
 #wp-rev-category-body tr:nth-child(even){background:#FFFFFF;}
 #wp-rev-category-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-rev-category-body tr:hover{background:var(--gold-100);}
 #wp-rev-category-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
 #wp-rev-category-body td.mono, #wp-rev-category-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-rev-category-body td:nth-child(1){width:39px; max-width:39px;}
+#wp-rev-category-body td:nth-child(2){width:325px; max-width:325px; padding-left:5px; padding-right:4px;}
+#wp-rev-category-body td:nth-child(n+3):nth-child(-n+6){width:63px; max-width:63px; white-space:nowrap;}
+#wp-rev-category-body td:nth-child(n+8):nth-child(-n+11){width:63px; max-width:63px; white-space:nowrap;}
+#wp-rev-category-body td:nth-child(n+13):nth-child(-n+16){width:63px; max-width:63px; white-space:nowrap;}
+#wp-rev-category-body td:nth-child(n+13):nth-child(-n+17){color:var(--danger);}
+#wp-rev-category-body td{border-right:1px solid var(--line-strong);}
+#wp-rev-category-body td:last-child{border-right:none;}
+#wp-rev-category-body tr.rev-has-code td{background:var(--gold-100); font-weight:700; color:var(--navy-950);}
+#wp-rev-category-body tr.rev-has-code:hover td{background:var(--gold-100);}
+#wp-rev-category-wrap{border-top:1px solid var(--line-strong); border-left:1px solid var(--line-strong); border-right:1px solid var(--line-strong); overflow-x:auto;}
+#wp-rev-category-table{border-bottom:1px solid var(--line-strong);}
+#wp-rev-category-body tr:last-child{border-bottom:1px solid var(--line-strong);}
 #wp-rev-category-wrap tfoot td{text-align:left;}
-#wp-rev-category-wrap{overflow-x:auto;}
 #wp-rev-category-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950);}
 #wp-rev-category-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
 #wp-rev-category-wrap thead th{position:sticky; top:0; z-index:3;}
@@ -1855,7 +1896,9 @@ Departments
 <button type="button" class="table-zoom-btn" id="wp-revenue-summary-zoom-in" title="Zoom in">+</button>
 </div>
 </div>
-<div class="card" id="wp-rev-category-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
+</div>
+<div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff; margin-top:16px; margin-bottom:20px; box-shadow:var(--shadow-md);">
+<div class="card" id="wp-rev-category-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; display:none;">
 <div style="padding:14px 18px 4px;">
 <div class="table-title-row">
 <div class="kicker" id="wp-title-rev-category" style="font-size:13px; color:var(--navy-950);">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
@@ -1871,17 +1914,35 @@ Departments
 </div>
 <div class="rli-table-wrap" id="wp-rev-category-wrap" style="margin:10px 16px 16px;">
 <table id="wp-rev-category-table">
+<colgroup>
+<col style="width:39px">
+<col style="width:325px">
+<col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
+<col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
+<col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:82.29375px">
+<col style="width:70px">
+</colgroup>
 <thead>
-<tr>
-<th rowspan="2">PBS Code</th>
-<th rowspan="2" class="wrap">Revenue Performance Plans by Category &amp; Source</th>
-<th colspan="4">Summary of the Approved Quarterly Budget Estimates (UGX)</th>
-<th rowspan="2" class="col-annual-approved">Annual Approved Budget Estimates (UGX)</th>
-<th colspan="4">Summary of the Quarterly Actual Inflow (UGX)</th>
-<th rowspan="2">Annual Actual<br>Cash Inflow Realized (UGX)</th>
-<th colspan="4">Summary of the Quarterly Revenue Performance Gap (UGX)</th>
-<th rowspan="2">Annual Revenue<br>Performance Gap (UGX)</th>
-<th rowspan="2">
+<tr class="rev-llg-meta-row" id="wp-cat-meta-row-1">
+<th colspan="4" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-llg-vote-cat">001</span></th>
+<th colspan="6" class="rev-meta">Lower Local Government: <span class="rev-meta-value" id="wp-lower-llg-cat">Karugutu Town Council</span></th>
+<th colspan="8" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-higher-llg-cat">Ntoroko District</span></th>
+</tr>
+<tr class="rev-llg-meta-row" id="wp-cat-meta-row-2">
+<th colspan="4" class="rev-meta">Part I: Summary of the Local Government Budget Estimates</th>
+<th colspan="6" class="rev-meta" id="wp-fy-meta-cell-cat">Financial Year: <span class="rev-meta-value">FY 2026/27</span></th>
+<th colspan="8" class="rev-meta"></th>
+</tr>
+<tr class="rev-llg-meta-row" id="wp-cat-meta-row-3">
+<th colspan="18" class="rev-meta">A2: Revenue Performance Plan by Category &amp; Source</th>
+</tr>
+<tr id="wp-cat-header-row-bands">
+<th rowspan="3" class="rev-band-code rev-code-col">PBS<br>Code</th>
+<th rowspan="3" class="wrap rev-band-code rev-source-col">Revenue Performance Plans by Category &amp; Source</th>
+<th colspan="5" class="rev-band-approved rev-band-title">Uganda Shillings Thousand</th>
+<th colspan="5" class="rev-band-actual rev-band-title">Uganda Shillings Thousands</th>
+<th colspan="5" class="rev-band-gap rev-band-title">Uganda Shillings Thousands</th>
+<th rowspan="3" class="rev-band-code">
 <span class="th-with-clear">
 <span></span>
 <button type="button" class="th-clear-btn" id="wp-category-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
@@ -1890,16 +1951,25 @@ Departments
 </span>
 </th>
 </tr>
-<tr>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+<tr id="wp-cat-header-row-captions">
+<th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow rev-approved-qhdr rev-row5">Summary of the Approved Quarterly Budget Estimates</th>
+<th class="col-annual-approved rev-band-approved rev-annual-col rev-row5">Annual<br>Approved<br>Budget<br>Estimates</th>
+<th colspan="4" class="rev-band-actual rev-actual-header rev-row5">Summary of the Quarterly Actual Inflow<br>Realized: IRAS Revenue Collected, GoU<br>Transfers, and Donations</th>
+<th class="rev-band-actual rev-annual-col rev-row5">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
+<th colspan="4" class="rev-band-gap rev-wrap-header rev-wrap-narrow rev-row5">Summary of the Quarterly Revenue Performance Gap</th>
+<th id="wp-cat-annual-gap-col" class="rev-band-gap rev-annual-col rev-row5">Annual<br>Revenue<br>Performance<br>Gap</th>
+</tr>
+<tr id="wp-cat-header-row-quarters">
+<th class="rev-band-approved rev-q-col">Q1</th><th class="rev-band-approved rev-q-col">Q2</th><th class="rev-band-approved rev-q-col">Q3</th><th class="rev-band-approved rev-q-col">Q4</th><th class="rev-band-approved rev-annual-col">Total</th>
+<th class="rev-band-actual rev-q-col">Q1</th><th class="rev-band-actual rev-q-col">Q2</th><th class="rev-band-actual rev-q-col">Q3</th><th class="rev-band-actual rev-q-col">Q4</th><th class="rev-band-actual rev-annual-col">Total</th>
+<th class="rev-band-gap rev-q-col">Q1</th><th class="rev-band-gap rev-q-col">Q2</th><th class="rev-band-gap rev-q-col">Q3</th><th class="rev-band-gap rev-q-col">Q4</th><th class="rev-band-gap rev-annual-col">Total</th>
 </tr>
 </thead>
 <tbody id="wp-rev-category-body">
 <tr><td colspan="18" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 <div class="card" id="wp-dept-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
@@ -1934,7 +2004,6 @@ Departments
 </tr>
 </tfoot>
 </table>
-</div>
 </div>
 </div>
 <br>
@@ -3496,6 +3565,9 @@ const WORKPLAN_TABLE_TITLE_FIELDS = {
 'wp-llg-vote': 'llg_vote',
 'wp-lower-llg': 'lower_local_government',
 'wp-higher-llg': 'higher_local_government',
+'wp-llg-vote-cat': 'llg_vote',
+'wp-lower-llg-cat': 'lower_local_government',
+'wp-higher-llg-cat': 'higher_local_government',
 };
 function applyWorkplanTableTitles() {
 const wpVal = document.getElementById('wp-select').value;
