@@ -3705,6 +3705,26 @@ const cls = n < 0 ? ' class="rli-gap-negative"' : '';
 return `<td class="num mono"${cls}>${money(n)}</td>`;
 }
 
+// In the "Revenue Performance by Category & Source" table only, restrict
+// the gold highlight + bold treatment to these 4 top-level revenue
+// category rows — every other row (whatever its PBS code) is a sub-item
+// and stays on the normal striped background. Matching is done on the
+// row's label text (case-insensitive, trimmed) rather than the code,
+// since the codes alone don't reliably distinguish a category header from
+// its sub-items across every code family in the PBS chart of accounts.
+// The "Revenue Performance by Source" table (and monthly/quarterly) keep
+// their original hasCode+hasValues behavior, unchanged.
+const MAIN_REVENUE_CATEGORY_LABELS = new Set([
+'external financing',
+'other government transfers direct to llg beneficiaries (ogt)',
+'central government transfers',
+'iras - locally raised revenues'
+]);
+function isMainRevenueCategoryRow(cfg, label) {
+if (cfg.periodType !== 'rev_by_category') return true;
+return MAIN_REVENUE_CATEGORY_LABELS.has(String(label || '').trim().toLowerCase());
+}
+
 function renderRevLineRow(r, cfg, canEdit) {
 const cls = revLineRowClass(r.row_type);
 const blank = r.row_type === 'category';
@@ -3730,7 +3750,7 @@ const hasValues = !blank && (
   isRealNumber(r.approved_annual) ||
   isRealNumber(r.actual_annual)
 );
-const rowCls = (hasCode && hasValues) ? `${cls} rev-has-code` : cls;
+const rowCls = (hasCode && hasValues && isMainRevenueCategoryRow(cfg, r.label)) ? `${cls} rev-has-code` : cls;
 const labelPad = 5;
 // The "Revenue Performance Plans by Category & Source" column wraps onto
 // as many lines as its content needs (typically 2) instead of forcing a
