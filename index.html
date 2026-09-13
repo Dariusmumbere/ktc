@@ -706,7 +706,8 @@ text-align:center;
 #wp-rev-category-body tr{border-bottom:1px solid var(--line-strong);}
 #wp-rev-category-body tr:hover{background:var(--gold-100);}
 #wp-rev-category-body td{color:var(--ink-900); font-weight:600; text-align:left; vertical-align:top;}
-#wp-rev-category-body td.mono, #wp-rev-category-body td.num{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-rev-category-body td.mono{color:var(--navy-950); font-weight:700; text-align:left;}
+#wp-rev-category-body td.num{color:var(--navy-950); font-weight:700; text-align:right;}
 #wp-rev-category-body td:nth-child(1){width:39px; max-width:39px;}
 #wp-rev-category-body td:nth-child(2){width:325px; max-width:325px; padding-left:5px; padding-right:4px; overflow-wrap:break-word; word-break:break-word;}
 #wp-rev-category-body td:nth-child(3){width:110px; max-width:110px; padding-left:5px; padding-right:4px; overflow-wrap:break-word; word-break:break-word;}
@@ -726,8 +727,8 @@ text-align:center;
 #wp-rev-category-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
 #wp-rev-category-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-rev-category-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
-#wp-rev-category-table thead th{padding:8px 9px; font-size:9.5px; line-height:1.25;}
-#wp-rev-category-body td{padding:7px 9px; font-size:11.5px;}
+#wp-rev-category-table thead th{padding:8px 9px; font-size:9px; line-height:1.25;}
+#wp-rev-category-body td{padding:7px 9px; font-size:10.5px;}
 #wp-revenue-detail-wrap{max-height:420px; overflow-x:auto; overflow-y:auto;}
 #wp-revenue-detail-wrap thead th{
 position:sticky; top:0; z-index:3;
@@ -1936,12 +1937,9 @@ Departments
 <th colspan="9" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-higher-llg-cat">Ntoroko District</span></th>
 </tr>
 <tr class="rev-llg-meta-row" id="wp-cat-meta-row-2">
-<th colspan="4" class="rev-meta">Part I: Summary of the Local Government Budget Estimates</th>
+<th colspan="4" class="rev-meta">A2: Detailed Quarterly Revenue Performance Plan by Category and Source</th>
 <th colspan="6" class="rev-meta" id="wp-fy-meta-cell-cat">Financial Year: <span class="rev-meta-value">FY 2026/27</span></th>
 <th colspan="9" class="rev-meta"></th>
-</tr>
-<tr class="rev-llg-meta-row" id="wp-cat-meta-row-3">
-<th colspan="19" class="rev-meta">A2: Revenue Performance Plan by Category &amp; Source</th>
 </tr>
 <tr id="wp-cat-header-row-bands">
 <th rowspan="3" class="rev-band-code rev-code-col">PBS<br>Code</th>
@@ -3646,7 +3644,7 @@ applyWorkplanTableTitles();
 let catMetaEditing = false;
 function toggleCatMetaEdit() {
 const btn = document.getElementById('wp-cat-edit-row-header-btn');
-const metaRows = ['wp-cat-meta-row-1', 'wp-cat-meta-row-2', 'wp-cat-meta-row-3'].map(id => document.getElementById(id)).filter(Boolean);
+const metaRows = ['wp-cat-meta-row-1', 'wp-cat-meta-row-2'].map(id => document.getElementById(id)).filter(Boolean);
 const bandRows = ['wp-cat-header-row-bands', 'wp-cat-header-row-captions', 'wp-cat-header-row-quarters'].map(id => document.getElementById(id)).filter(Boolean);
 const bandCells = bandRows.flatMap(row => Array.from(row.querySelectorAll('th')).filter(th => !th.querySelector('#wp-cat-edit-row-header-btn')));
 if (!catMetaEditing) {
