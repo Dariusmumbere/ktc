@@ -1912,6 +1912,9 @@ Departments
 <button type="button" class="icon-btn icon-btn-sm" id="wp-import-category-btn" style="display:none;" title="Import From Excel">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
 </button>
+<button type="button" class="th-clear-btn" id="wp-category-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</button>
 </div>
 </div>
 </div>
@@ -1924,7 +1927,7 @@ Departments
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:82.29375px">
-<col style="width:96px">
+<col style="width:70px">
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row" id="wp-cat-meta-row-1">
@@ -1947,14 +1950,7 @@ Departments
 <th colspan="5" class="rev-band-approved rev-band-title">Uganda Shillings Thousand</th>
 <th colspan="5" class="rev-band-actual rev-band-title">Uganda Shillings Thousands</th>
 <th colspan="5" class="rev-band-gap rev-band-title">Uganda Shillings Thousands</th>
-<th rowspan="3" class="rev-band-code">
-<span class="th-with-clear" style="flex-direction:column; align-items:stretch; gap:4px;">
-<button type="button" id="wp-cat-edit-row-header-btn" class="btn btn-ghost" style="padding:4px 8px; font-size:10.5px; white-space:normal; line-height:1.25;" onclick="toggleCatMetaEdit()">Edit row header</button>
-<button type="button" class="th-clear-btn" id="wp-category-clear-btn" style="display:none; align-self:center;" title="Clear all rows — deletes every row in this table for the selected work plan">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-</button>
-</span>
-</th>
+<th rowspan="3" class="rev-band-code"><button type="button" id="wp-cat-edit-row-header-btn" class="btn btn-ghost" style="padding:4px 8px; font-size:10.5px; white-space:normal; line-height:1.25;" onclick="toggleCatMetaEdit()">Edit row header</button></th>
 </tr>
 <tr id="wp-cat-header-row-captions">
 <th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow rev-approved-qhdr rev-row5">Summary of the Approved Quarterly Budget Estimates</th>
