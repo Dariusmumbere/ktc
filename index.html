@@ -1920,7 +1920,7 @@ Departments
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:82.29375px">
-<col style="width:70px">
+<col style="width:96px">
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row" id="wp-cat-meta-row-1">
@@ -1943,9 +1943,9 @@ Departments
 <th colspan="5" class="rev-band-actual rev-band-title">Uganda Shillings Thousands</th>
 <th colspan="5" class="rev-band-gap rev-band-title">Uganda Shillings Thousands</th>
 <th rowspan="3" class="rev-band-code">
-<span class="th-with-clear">
-<span></span>
-<button type="button" class="th-clear-btn" id="wp-category-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
+<span class="th-with-clear" style="flex-direction:column; align-items:stretch; gap:4px;">
+<button type="button" id="wp-cat-edit-row-header-btn" class="btn btn-ghost" style="padding:4px 8px; font-size:10.5px; white-space:normal; line-height:1.25;" onclick="toggleCatMetaEdit()">Edit row header</button>
+<button type="button" class="th-clear-btn" id="wp-category-clear-btn" style="display:none; align-self:center;" title="Clear all rows — deletes every row in this table for the selected work plan">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
 </button>
 </span>
@@ -3619,6 +3619,54 @@ if (!wp) { toast('Select a work plan first', 'error'); return; }
 const llg_vote = ((document.getElementById('wp-llg-vote') || {}).textContent || '').trim();
 const lower_local_government = ((document.getElementById('wp-lower-llg') || {}).textContent || '').trim();
 const higher_local_government = ((document.getElementById('wp-higher-llg') || {}).textContent || '').trim();
+const payload = {
+financial_year: wp.financial_year, title: wp.title,
+title_revenue_summary: wp.title_revenue_summary, title_dept_summary: wp.title_dept_summary,
+title_revenue_detail: wp.title_revenue_detail, title_main_table: wp.title_main_table,
+llg_vote, lower_local_government, higher_local_government,
+};
+try {
+await api(`/api/workplans/${wp.id}`, { method: 'PATCH', body: JSON.stringify(payload) });
+toast('Row header saved', 'success');
+await loadWorkplans();
+document.getElementById('wp-select').value = wp.id;
+applyWorkplanTableTitles();
+} catch (e) { toast(e.message, 'error'); }
+}
+// ---- "Edit row header" toggle for the Revenue Performance Plan by
+// Category & Source table's masthead — identical behavior to
+// toggleRevMetaEdit()/saveRevMetaHeader() above, just scoped to this
+// table's own -cat meta/band rows and its own edit button. Both buttons
+// read/write the SAME WorkPlan columns (llg_vote, lower_local_government,
+// higher_local_government) since both tables' mastheads describe the one
+// selected work plan, so saving from either table refreshes both (via
+// applyWorkplanTableTitles(), which already updates every -cat span too).
+let catMetaEditing = false;
+function toggleCatMetaEdit() {
+const btn = document.getElementById('wp-cat-edit-row-header-btn');
+const metaRows = ['wp-cat-meta-row-1', 'wp-cat-meta-row-2', 'wp-cat-meta-row-3'].map(id => document.getElementById(id)).filter(Boolean);
+const bandRows = ['wp-cat-header-row-bands', 'wp-cat-header-row-captions', 'wp-cat-header-row-quarters'].map(id => document.getElementById(id)).filter(Boolean);
+const bandCells = bandRows.flatMap(row => Array.from(row.querySelectorAll('th')).filter(th => !th.querySelector('#wp-cat-edit-row-header-btn')));
+if (!catMetaEditing) {
+metaRows.forEach(row => row.querySelectorAll('th.rev-meta').forEach(th => { th.contentEditable = 'true'; th.classList.add('rev-meta-editing'); }));
+bandCells.forEach(th => { th.contentEditable = 'true'; th.classList.add('rev-meta-editing'); });
+catMetaEditing = true;
+btn.textContent = 'Save row header';
+return;
+}
+metaRows.forEach(row => row.querySelectorAll('th.rev-meta').forEach(th => { th.contentEditable = 'false'; th.classList.remove('rev-meta-editing'); }));
+bandCells.forEach(th => { th.contentEditable = 'false'; th.classList.remove('rev-meta-editing'); });
+catMetaEditing = false;
+btn.textContent = 'Edit row header';
+saveCatMetaHeader();
+}
+async function saveCatMetaHeader() {
+const wpVal = document.getElementById('wp-select').value;
+const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+if (!wp) { toast('Select a work plan first', 'error'); return; }
+const llg_vote = ((document.getElementById('wp-llg-vote-cat') || {}).textContent || '').trim();
+const lower_local_government = ((document.getElementById('wp-lower-llg-cat') || {}).textContent || '').trim();
+const higher_local_government = ((document.getElementById('wp-higher-llg-cat') || {}).textContent || '').trim();
 const payload = {
 financial_year: wp.financial_year, title: wp.title,
 title_revenue_summary: wp.title_revenue_summary, title_dept_summary: wp.title_dept_summary,
