@@ -374,6 +374,11 @@ background:#F7FBFA; box-shadow:0 1px 3px rgba(10,31,43,.08);
 .tl-meta{font-size:11px; color:var(--ink-500); margin-top:1px;}
 /* ---------------- Table styling (echoes the reference work-plan grid) ---------------- */
 .table-wrap{overflow-x:auto; border-radius:var(--radius); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
+.role-label-input{width:100%; max-width:360px; padding:8px 10px; border:1.5px solid var(--line); border-radius:var(--radius-sm); font-size:13px; font-family:inherit; background:#fff; color:var(--ink-900); transition:border-color .15s var(--ease), box-shadow .15s var(--ease);}
+.role-label-input:hover{border-color:var(--line-strong);}
+.role-label-input:focus{border-color:var(--teal-500); box-shadow:var(--shadow-ring);}
+.role-move-btn{padding:5px 9px !important; font-size:13px; line-height:1;}
+.role-move-btn:disabled{opacity:.35; cursor:not-allowed;}
 table{width:100%; border-collapse:collapse; min-width:720px; background:#fff;}
 thead th{
 background:var(--navy-950); color:#fff; font-size:10.5px; text-transform:uppercase; letter-spacing:.5px;
@@ -2210,6 +2215,18 @@ Departments
 <tbody id="users-table-body"><tr><td colspan="10" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
 </table>
 </div>
+<div class="section-head" style="margin-top:32px;">
+<div>
+<h2>Sign-in Role Options</h2>
+<div class="sub">Control which roles appear in the "Sign in as" dropdown on the login page, what each one is called there, and the order they're listed in.</div>
+</div>
+</div>
+<div class="table-wrap">
+<table id="role-options-table">
+<thead><tr><th style="width:22%;">Role</th><th>Label shown at sign-in</th><th style="width:100px;">Visible</th><th style="width:130px;"></th><th style="width:90px;"></th></tr></thead>
+<tbody id="role-options-table-body"><tr><td colspan="5" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+</table>
+</div>
 </div>
 <!-- ===== DEPARTMENTS ===== -->
 <div class="view" id="view-departments">
@@ -3410,7 +3427,7 @@ loadAuditLog();
 const subBtn = document.querySelector(`.tabs-sub button[data-subtab="${subtab}"]`);
 if (subBtn) subBtn.click();
 }
-if (view === 'users') loadUsers();
+if (view === 'users') { loadUsers(); loadRoleOptions(); }
 if (view === 'departments') loadDepartmentsView();
 }
 document.getElementById('nav-pbs-toggle').addEventListener('click', () => {
@@ -6679,6 +6696,57 @@ async function toggleUser(id) {
 try { await api(`/api/users/${id}/toggle-active`, { method: 'PATCH' }); loadUsers(); toast('User status updated', 'success'); }
 catch (e) { toast(e.message, 'error'); }
 }
+// ---- Sign-in Role Options (login page dropdown) --------------------------------------
+async function loadRoleOptions() {
+const tbody = document.getElementById('role-options-table-body');
+if (!tbody) return;
+tbody.innerHTML = '<tr><td colspan="5" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>';
+try {
+const roles = await api('/api/roles');
+STATE.roleOptions = roles;
+renderRoleOptionsTable();
+} catch (e) { tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+function renderRoleOptionsTable() {
+const tbody = document.getElementById('role-options-table-body');
+const roles = STATE.roleOptions || [];
+if (roles.length === 0) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state">No role options found.</div></td></tr>'; return; }
+tbody.innerHTML = roles.map((r, idx) => `<tr>
+<td>${escapeHtml(adminRoleLabel(r.key))}</td>
+<td><input type="text" class="role-label-input" value="${escapeHtml(r.label)}" data-role-id="${r.id}" onchange="saveRoleOptionLabel(${r.id}, this)"/></td>
+<td><span class="pill pill-${r.is_active ? 'approved' : 'rejected'}">${r.is_active ? 'Visible' : 'Hidden'}</span></td>
+<td style="white-space:nowrap;"><button class="btn btn-ghost" style="padding:6px 10px;" onclick="toggleRoleOptionActive(${r.id})">${r.is_active ? 'Hide' : 'Show'}</button></td>
+<td style="white-space:nowrap;">
+<button class="btn btn-ghost role-move-btn" title="Move up" ${idx === 0 ? 'disabled' : ''} onclick="moveRoleOption(${r.id}, 'up')">↑</button>
+<button class="btn btn-ghost role-move-btn" title="Move down" ${idx === roles.length - 1 ? 'disabled' : ''} onclick="moveRoleOption(${r.id}, 'down')">↓</button>
+</td>
+</tr>`).join('');
+}
+async function saveRoleOptionLabel(id, inputEl) {
+const label = inputEl.value.trim();
+if (!label) { toast('Label cannot be empty', 'error'); loadRoleOptions(); return; }
+try {
+await api(`/api/roles/${id}`, { method: 'PATCH', body: JSON.stringify({ label }) });
+toast('Sign-in label updated', 'success');
+loadRoleOptions();
+} catch (e) { toast(e.message, 'error'); loadRoleOptions(); }
+}
+async function toggleRoleOptionActive(id) {
+const current = (STATE.roleOptions || []).find(r => r.id === id);
+if (!current) return;
+try {
+await api(`/api/roles/${id}`, { method: 'PATCH', body: JSON.stringify({ is_active: !current.is_active }) });
+loadRoleOptions();
+toast(current.is_active ? 'Role hidden from sign-in page' : 'Role now visible on sign-in page', 'success');
+} catch (e) { toast(e.message, 'error'); }
+}
+async function moveRoleOption(id, direction) {
+try {
+const roles = await api(`/api/roles/${id}/move`, { method: 'POST', body: JSON.stringify({ direction }) });
+STATE.roleOptions = roles;
+renderRoleOptionsTable();
+} catch (e) { toast(e.message, 'error'); }
+}
 // ---- Departments view ---------------------------------------------------------------
 document.getElementById('new-dept-btn').addEventListener('click', () => {
 STATE.editingDepartmentId = null;
@@ -6746,6 +6814,23 @@ tbody.innerHTML = deps.map(d => `<tr>
 }
 // ---- Utilities -----------------------------------------------------------------------
 function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); }; }
+// ---- Sign-in role dropdown (login page) -----------------------------------------------
+// Populates "Sign in as" from /api/roles/public — the same data an
+// administrator edits from Users & Roles > Sign-in Role Options — instead
+// of a fixed, hard-coded option list. This call is unauthenticated, so it
+// works before the user has signed in at all. If it fails (e.g. offline),
+// the dropdown simply keeps the options already in the markup below.
+async function populateLoginRoleDropdown() {
+const sel = document.getElementById('login-role');
+if (!sel) return;
+try {
+const roles = await api('/api/roles/public');
+if (!Array.isArray(roles) || roles.length === 0) return;
+sel.innerHTML = '<option value="">Select your role</option>' +
+roles.map(r => `<option value="${escapeHtml(r.key)}">${escapeHtml(r.label)}</option>`).join('');
+} catch (e) { /* keep the shipped default options */ }
+}
+populateLoginRoleDropdown();
 // ---- Boot -----------------------------------------------------------------------------
 if (STATE.token) { enterApp().catch(() => logout()); }
 </script>
