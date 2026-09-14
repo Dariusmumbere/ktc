@@ -724,6 +724,92 @@ alignment via .rev-meta above. */
 #wp-rev-category-table thead th.rev-origin-col{text-align:left !important;}
 #wp-revenue-summary-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col):not(.rev-origin-col),
 #wp-rev-category-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col):not(.rev-origin-col){text-align:center !important;}
+/* ---------------- Revenue Performance Plan by Category & Source table
+(MONTHLY variant) — Table 3. Every value below is identical to Table 2
+(#wp-rev-category-table) above — same masthead, header-band colors,
+fonts, weights, padding, borders and row striping — just written as its
+own self-contained block since this table has 12 monthly columns
+(Jul–Jun) per band instead of Q1–Q4, and no Performance Gap band (the
+workbook's monthly sheet carries only Approved/Actual figures, matching
+the Monthly Local Revenue/GoU Transfers table's convention), so the
+nth-child column positions differ from table 2's. */
+#wp-rev-monthly-cat-table thead th{
+background:var(--teal-700) !important;
+color:#FFFFFF !important;
+box-shadow:0 1px 0 rgba(201,154,62,.35) !important;
+text-align:center;
+}
+#wp-rev-monthly-cat-body tr:nth-child(odd){background:#D6EEE6;}
+#wp-rev-monthly-cat-body tr:nth-child(even){background:#FFFFFF;}
+#wp-rev-monthly-cat-body tr{border-bottom:1px solid var(--line-strong);}
+#wp-rev-monthly-cat-body tr:hover{background:var(--gold-100);}
+#wp-rev-monthly-cat-body td{color:var(--ink-900); font-weight:400; text-align:left; vertical-align:top;}
+#wp-rev-monthly-cat-body td.mono{color:var(--navy-950); font-weight:400; text-align:left;}
+#wp-rev-monthly-cat-body td.num{color:var(--navy-950); font-weight:400; text-align:right;}
+#wp-rev-monthly-cat-wrap tfoot td{text-align:left;}
+#wp-rev-monthly-cat-wrap tfoot td.num{text-align:right;}
+#wp-rev-monthly-cat-wrap{overflow-x:auto;}
+#wp-rev-monthly-cat-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950); font-weight:700;}
+#wp-rev-monthly-cat-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
+#wp-rev-monthly-cat-wrap thead th{position:sticky; top:0; z-index:3;}
+#wp-rev-monthly-cat-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
+#wp-rev-monthly-cat-table thead th{padding:0 9px; font-size:9px; line-height:1.25;}
+#wp-rev-monthly-cat-body td{padding:0 9px; font-size:10.5px; line-height:1.6;}
+#wp-rev-monthly-cat-table{font-family:"Arial Narrow", "Liberation Sans Narrow", Arial, sans-serif;}
+#wp-rev-monthly-cat-table thead th.rev-band-code{background:#CFEFFB !important; color:var(--navy-950) !important; box-shadow:none !important;}
+#wp-rev-monthly-cat-table thead th.rev-band-approved{background:#FBE0D2 !important; color:var(--navy-950) !important; box-shadow:none !important;}
+#wp-rev-monthly-cat-table thead th.rev-band-actual{background:#3DE0E6 !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
+#wp-rev-monthly-cat-table{table-layout:fixed;}
+#wp-rev-monthly-cat-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:10.828125px; padding:0 10px; line-height:2.375; border-bottom:1px solid var(--line-strong); overflow-wrap:break-word; word-break:break-word;}
+#wp-rev-monthly-cat-table thead th.rev-meta-editing{outline:1.5px dashed var(--gold-600); outline-offset:-3px; background:var(--gold-100) !important; cursor:text;}
+#wp-rev-monthly-cat-table thead th .rev-meta-value{font-weight:700;}
+#wp-rev-monthly-cat-body td.rev-func-def{white-space:normal; line-height:1.5;}
+#wp-rev-monthly-cat-wrap thead th{border-right:1px solid var(--line-strong);}
+#wp-rev-monthly-cat-wrap thead th:last-child{border-right:none;}
+#wp-fy-meta-cell-cat-m{border-right:none !important;}
+#wp-rev-monthly-cat-body td{border-right:1px solid var(--line-strong);}
+#wp-rev-monthly-cat-body td:last-child{border-right:none;}
+#wp-rev-monthly-cat-wrap tfoot td{border-right:1px solid var(--line-strong);}
+#wp-rev-monthly-cat-wrap tfoot td:last-child{border-right:none;}
+#wp-rev-monthly-cat-table thead th.rev-annual-col{width:71.25px; max-width:71.25px; white-space:normal !important; line-height:1.3; border-right:1px solid var(--line-strong);}
+/* Jul–Jun figure columns, in both bands: same fixed width for every month
+so no single month renders wider than the others just because one row's
+figure happens to be a digit longer. Narrower than table 2's Q1–Q4
+(.rev-q-col, 63px) since there are 12 of these per band instead of 4. */
+#wp-rev-monthly-cat-table thead th.rev-m-col{width:40px; max-width:40px; white-space:nowrap; line-height:1.875;}
+#wp-rev-monthly-cat-table thead th.rev-code-col{width:39px; max-width:39px; white-space:normal !important; line-height:1.3;}
+#wp-rev-monthly-cat-body td:nth-child(1){width:39px; max-width:39px;}
+#wp-rev-monthly-cat-table thead th.rev-source-col{width:325px; max-width:325px; padding-left:5px; padding-right:4px;}
+#wp-rev-monthly-cat-body td:nth-child(2){width:325px; max-width:325px; padding-left:5px; padding-right:4px; overflow-wrap:break-word; word-break:break-word;}
+#wp-rev-monthly-cat-table thead th.rev-origin-col{width:110px; max-width:110px; padding-left:5px; padding-right:4px; white-space:normal !important; line-height:1.3;}
+#wp-rev-monthly-cat-body td:nth-child(3){width:110px; max-width:110px; padding-left:5px; padding-right:4px; overflow-wrap:break-word; word-break:break-word;}
+#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:40px; max-width:40px; white-space:nowrap;}
+#wp-rev-monthly-cat-body td:nth-child(16){width:71.25px; max-width:71.25px; white-space:nowrap;}
+#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:40px; max-width:40px; white-space:nowrap;}
+#wp-rev-monthly-cat-body td:nth-child(29){width:71.25px; max-width:71.25px; white-space:nowrap;}
+#wp-rev-monthly-cat-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
+/* "Summary of the Approved Monthly Budget Estimates" group-title cell
+(colspan 12, sitting directly above the approved band's Jul–Jun columns):
+pin its total width to exactly 12 x the width given to each month column
+below (see .rev-m-col above), matching table 2's .rev-approved-qhdr
+technique of leaving nothing for the browser to redistribute unevenly. */
+#wp-rev-monthly-cat-table thead th.rev-approved-mhdr{width:480px !important; max-width:480px !important;}
+/* "Summary of the Monthly Actual Inflow Realized: ..." header: same
+treatment as table 2's .rev-actual-header — left-aligned and widened to
+match the widened month columns beneath it. */
+#wp-rev-monthly-cat-table thead th.rev-actual-mhdr{white-space:normal !important; width:480px; max-width:480px; line-height:1.35; text-align:left !important;}
+#wp-rev-monthly-cat-table thead th.rev-band-title{border-bottom:1px solid var(--line-strong); line-height:1.875;}
+#wp-rev-monthly-cat-table thead th.rev-row5{border-bottom:1px solid var(--line-strong);}
+#wp-rev-monthly-cat-table thead tr:last-child th{border-bottom:1px solid var(--line-strong);}
+#wp-rev-monthly-cat-body tr.rev-has-code td{background:var(--gold-100); font-weight:700; color:var(--navy-950);}
+#wp-rev-monthly-cat-body tr.rev-has-code:hover td{background:var(--gold-100);}
+#wp-rev-monthly-cat-wrap{border-top:1px solid var(--line-strong); border-left:1px solid var(--line-strong); border-right:1px solid var(--line-strong);}
+#wp-rev-monthly-cat-table{border-bottom:1px solid var(--line-strong);}
+#wp-rev-monthly-cat-body tr:last-child{border-bottom:1px solid var(--line-strong);}
+#wp-rev-monthly-cat-table thead th.rev-code-col,
+#wp-rev-monthly-cat-table thead th.rev-source-col,
+#wp-rev-monthly-cat-table thead th.rev-origin-col{text-align:left !important;}
+#wp-rev-monthly-cat-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col):not(.rev-origin-col){text-align:center !important;}
 /* Zoom streak below the table — lets the user scale the whole table up or
 down with + / − controls, for a wide table on a small screen. */
 .table-zoom-bar{display:flex; align-items:center; justify-content:center; gap:10px; margin:0 16px 16px; padding:5px 14px; background:var(--paper); border:1px solid var(--line); border-radius:20px; width:fit-content; margin-left:auto; margin-right:auto;}
@@ -1688,6 +1774,7 @@ Departments
 <div class="view" id="view-workplan">
 <input type="file" id="wp-import-summary-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-category-file" accept=".xlsx,.xls" style="display:none;" />
+<input type="file" id="wp-import-monthly-cat-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-piap-file" accept=".xlsx,.xls" style="display:none;" />
@@ -1975,6 +2062,74 @@ Departments
 <button type="button" class="table-zoom-btn" id="wp-rev-category-zoom-out" title="Zoom out">−</button>
 <span class="table-zoom-label" id="wp-rev-category-zoom-label">80%</span>
 <button type="button" class="table-zoom-btn" id="wp-rev-category-zoom-in" title="Zoom in">+</button>
+</div>
+</div>
+<div class="card" id="wp-rev-monthly-cat-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
+<div style="padding:14px 18px 4px;">
+<div class="table-title-row">
+<div class="kicker" id="wp-title-rev-monthly-cat" style="font-size:13px; color:var(--navy-950);">MONTHLY REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
+<div class="table-title-actions">
+<button type="button" class="icon-btn icon-btn-sm" id="wp-new-monthly-cat-btn" style="display:none;" title="Add Revenue Row">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+<button type="button" class="icon-btn icon-btn-sm" id="wp-import-monthly-cat-btn" style="display:none;" title="Import From Excel">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+</button>
+<button type="button" class="th-clear-btn" id="wp-monthly-cat-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</button>
+</div>
+</div>
+</div>
+<div class="rli-table-wrap" id="wp-rev-monthly-cat-wrap" style="margin:10px 16px 16px;">
+<table id="wp-rev-monthly-cat-table">
+<colgroup>
+<col style="width:39px">
+<col style="width:325px">
+<col style="width:110px">
+<col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:71.25px">
+<col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:71.25px">
+<col style="width:70px">
+</colgroup>
+<thead>
+<tr class="rev-llg-meta-row" id="wp-cat-m-meta-row-1">
+<th colspan="4" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-llg-vote-cat-m">001</span></th>
+<th colspan="6" class="rev-meta">Lower Local Government: <span class="rev-meta-value" id="wp-lower-llg-cat-m">Karugutu Town Council</span></th>
+<th colspan="20" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-higher-llg-cat-m">Ntoroko District</span></th>
+</tr>
+<tr class="rev-llg-meta-row" id="wp-cat-m-meta-row-2">
+<th colspan="4" class="rev-meta">A3: Detailed Monthly Revenue Performance Plan by Category and Source</th>
+<th colspan="6" class="rev-meta" id="wp-fy-meta-cell-cat-m">Financial Year: <span class="rev-meta-value">FY 2026/27</span></th>
+<th colspan="20" class="rev-meta"></th>
+</tr>
+<tr id="wp-cat-m-header-row-bands">
+<th rowspan="3" class="rev-band-code rev-code-col">PBS<br>Code</th>
+<th rowspan="3" class="wrap rev-band-code rev-source-col">Revenue Performance Plans by Category &amp; Source</th>
+<th rowspan="3" class="wrap rev-band-code rev-origin-col">Originating<br>Revenue Source</th>
+<th colspan="13" class="rev-band-approved rev-band-title">Uganda Shillings Thousand</th>
+<th colspan="13" class="rev-band-actual rev-band-title">Uganda Shillings Thousands</th>
+<th rowspan="3" class="rev-band-code"><button type="button" id="wp-cat-m-edit-row-header-btn" class="btn btn-ghost" style="padding:4px 8px; font-size:10.5px; white-space:normal; line-height:1.25;" onclick="toggleCatMonthlyMetaEdit()">Edit row header</button></th>
+</tr>
+<tr id="wp-cat-m-header-row-captions">
+<th colspan="12" class="rev-band-approved rev-wrap-header rev-approved-mhdr rev-row5">Summary of the Approved Monthly Budget Estimates</th>
+<th class="col-annual-approved rev-band-approved rev-annual-col rev-row5">Annual<br>Approved<br>Budget<br>Estimates</th>
+<th colspan="12" class="rev-band-actual rev-actual-mhdr rev-row5">Summary of the Monthly Actual Inflow Realized: IRAS Revenue Collected, GoU Transfers, and Donations</th>
+<th class="rev-band-actual rev-annual-col rev-row5">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
+</tr>
+<tr id="wp-cat-m-header-row-months">
+<th class="rev-band-approved rev-m-col">Jul</th><th class="rev-band-approved rev-m-col">Aug</th><th class="rev-band-approved rev-m-col">Sep</th><th class="rev-band-approved rev-m-col">Oct</th><th class="rev-band-approved rev-m-col">Nov</th><th class="rev-band-approved rev-m-col">Dec</th><th class="rev-band-approved rev-m-col">Jan</th><th class="rev-band-approved rev-m-col">Feb</th><th class="rev-band-approved rev-m-col">Mar</th><th class="rev-band-approved rev-m-col">Apr</th><th class="rev-band-approved rev-m-col">May</th><th class="rev-band-approved rev-m-col">Jun</th><th class="rev-band-approved rev-annual-col">Total</th>
+<th class="rev-band-actual rev-m-col">Jul</th><th class="rev-band-actual rev-m-col">Aug</th><th class="rev-band-actual rev-m-col">Sep</th><th class="rev-band-actual rev-m-col">Oct</th><th class="rev-band-actual rev-m-col">Nov</th><th class="rev-band-actual rev-m-col">Dec</th><th class="rev-band-actual rev-m-col">Jan</th><th class="rev-band-actual rev-m-col">Feb</th><th class="rev-band-actual rev-m-col">Mar</th><th class="rev-band-actual rev-m-col">Apr</th><th class="rev-band-actual rev-m-col">May</th><th class="rev-band-actual rev-m-col">Jun</th><th class="rev-band-actual rev-annual-col">Total</th>
+</tr>
+</thead>
+<tbody id="wp-rev-monthly-cat-body">
+<tr><td colspan="30" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-zoom-bar" id="wp-rev-monthly-cat-zoom-bar">
+<button type="button" class="table-zoom-btn" id="wp-rev-monthly-cat-zoom-out" title="Zoom out">−</button>
+<span class="table-zoom-label" id="wp-rev-monthly-cat-zoom-label">80%</span>
+<button type="button" class="table-zoom-btn" id="wp-rev-monthly-cat-zoom-in" title="Zoom in">+</button>
 </div>
 </div>
 <div class="card" id="wp-dept-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
@@ -3347,6 +3502,9 @@ document.getElementById('wp-summary-clear-btn').style.display = 'inline-flex';
 document.getElementById('wp-new-category-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-import-category-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-category-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-new-monthly-cat-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-import-monthly-cat-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+document.getElementById('wp-monthly-cat-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 ['rlm'].forEach(prefix => {
 const newBtn = document.getElementById(prefix + '-new-btn');
 const importBtn = document.getElementById(prefix + '-import-btn');
@@ -3586,6 +3744,9 @@ const WORKPLAN_TABLE_TITLE_FIELDS = {
 'wp-llg-vote-cat': 'llg_vote',
 'wp-lower-llg-cat': 'lower_local_government',
 'wp-higher-llg-cat': 'higher_local_government',
+'wp-llg-vote-cat-m': 'llg_vote',
+'wp-lower-llg-cat-m': 'lower_local_government',
+'wp-higher-llg-cat-m': 'higher_local_government',
 };
 function applyWorkplanTableTitles() {
 const wpVal = document.getElementById('wp-select').value;
@@ -3699,6 +3860,54 @@ document.getElementById('wp-select').value = wp.id;
 applyWorkplanTableTitles();
 } catch (e) { toast(e.message, 'error'); }
 }
+// ---- "Edit row header" toggle for the Revenue Performance Plan by
+// Category & Source table's MONTHLY variant (Table 3) — identical
+// behavior to toggleCatMetaEdit()/saveCatMetaHeader() above, just scoped
+// to this table's own -cat-m meta/band rows and its own edit button.
+// All three buttons (Source, Category & Source, and this monthly
+// variant) read/write the SAME WorkPlan columns (llg_vote,
+// lower_local_government, higher_local_government), so saving from any
+// of them refreshes all three via applyWorkplanTableTitles().
+let catMonthlyMetaEditing = false;
+function toggleCatMonthlyMetaEdit() {
+const btn = document.getElementById('wp-cat-m-edit-row-header-btn');
+const metaRows = ['wp-cat-m-meta-row-1', 'wp-cat-m-meta-row-2'].map(id => document.getElementById(id)).filter(Boolean);
+const bandRows = ['wp-cat-m-header-row-bands', 'wp-cat-m-header-row-captions', 'wp-cat-m-header-row-months'].map(id => document.getElementById(id)).filter(Boolean);
+const bandCells = bandRows.flatMap(row => Array.from(row.querySelectorAll('th')).filter(th => !th.querySelector('#wp-cat-m-edit-row-header-btn')));
+if (!catMonthlyMetaEditing) {
+metaRows.forEach(row => row.querySelectorAll('th.rev-meta').forEach(th => { th.contentEditable = 'true'; th.classList.add('rev-meta-editing'); }));
+bandCells.forEach(th => { th.contentEditable = 'true'; th.classList.add('rev-meta-editing'); });
+catMonthlyMetaEditing = true;
+btn.textContent = 'Save row header';
+return;
+}
+metaRows.forEach(row => row.querySelectorAll('th.rev-meta').forEach(th => { th.contentEditable = 'false'; th.classList.remove('rev-meta-editing'); }));
+bandCells.forEach(th => { th.contentEditable = 'false'; th.classList.remove('rev-meta-editing'); });
+catMonthlyMetaEditing = false;
+btn.textContent = 'Edit row header';
+saveCatMonthlyMetaHeader();
+}
+async function saveCatMonthlyMetaHeader() {
+const wpVal = document.getElementById('wp-select').value;
+const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+if (!wp) { toast('Select a work plan first', 'error'); return; }
+const llg_vote = ((document.getElementById('wp-llg-vote-cat-m') || {}).textContent || '').trim();
+const lower_local_government = ((document.getElementById('wp-lower-llg-cat-m') || {}).textContent || '').trim();
+const higher_local_government = ((document.getElementById('wp-higher-llg-cat-m') || {}).textContent || '').trim();
+const payload = {
+financial_year: wp.financial_year, title: wp.title,
+title_revenue_summary: wp.title_revenue_summary, title_dept_summary: wp.title_dept_summary,
+title_revenue_detail: wp.title_revenue_detail, title_main_table: wp.title_main_table,
+llg_vote, lower_local_government, higher_local_government,
+};
+try {
+await api(`/api/workplans/${wp.id}`, { method: 'PATCH', body: JSON.stringify(payload) });
+toast('Row header saved', 'success');
+await loadWorkplans();
+document.getElementById('wp-select').value = wp.id;
+applyWorkplanTableTitles();
+} catch (e) { toast(e.message, 'error'); }
+}
 // ---- PBS Revenue Performance pages (Monthly / Quarterly / By Source / By --
 // ---- Category) -------------------------------------------------------------
 // One generic engine drives all four pages — they differ only in period
@@ -3715,6 +3924,20 @@ importBtnId: 'rlm-import-btn', importFileId: 'rlm-import-file', clearBtnId: 'rlm
 fyLabelId: 'rlm-fy-label', colCount: 29,
 approvedKicker: 'Approved Monthly Revenue Budget Estimates (UGX)',
 actualKicker: 'Monthly Actual Inflow Realized (UGX)',
+},
+// Table 3 — same layout convention as "monthly" above (12 columns,
+// Jul–Jun, no Performance Gap band) but with the "rev_by_category"
+// table's extra Originating Revenue Source column (hasOrigin), so it can
+// share the generic add/edit/delete/import/clear engine below exactly
+// like every other Rev Line page.
+rev_by_category_monthly: {
+periodType: 'rev_by_category_monthly', periodCount: 12, hasGap: false, hasOrigin: true,
+periodLabels: ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'],
+wpSelectId: 'wp-select', bodyId: 'wp-rev-monthly-cat-body', newBtnId: 'wp-new-monthly-cat-btn',
+importBtnId: 'wp-import-monthly-cat-btn', importFileId: 'wp-import-monthly-cat-file', clearBtnId: 'wp-monthly-cat-clear-btn',
+colCount: 30,
+approvedKicker: 'Monthly Approved Revenue Budget Estimates (UGX)',
+actualKicker: 'Monthly Actual Cash Inflow Realized (UGX)',
 },
 quarterly: {
 periodType: 'quarterly', periodCount: 4, hasGap: true,
@@ -3735,7 +3958,7 @@ approvedKicker: 'Summary of the Approved Quarterly Budget Estimates (UGX)',
 actualKicker: 'Summary of the Quarterly Actual Inflow Realized (UGX)',
 },
 rev_by_category: {
-periodType: 'rev_by_category', periodCount: 4, hasGap: true,
+periodType: 'rev_by_category', periodCount: 4, hasGap: true, hasOrigin: true,
 periodLabels: ['Q1','Q2','Q3','Q4'],
 wpSelectId: 'wp-select', bodyId: 'wp-rev-category-body', newBtnId: 'wp-new-category-btn',
 importBtnId: 'wp-import-category-btn', importFileId: 'wp-import-category-file', clearBtnId: 'wp-category-clear-btn',
@@ -3819,7 +4042,7 @@ const hasValues = !blank && (
   isRealNumber(r.approved_annual) ||
   isRealNumber(r.actual_annual)
 );
-const isMainCategory = cfg.periodType === 'rev_by_category'
+const isMainCategory = cfg.hasOrigin
   ? (hasCode && isMainRevenueCategoryLabel(r.label))
   : (hasCode && hasValues);
 const rowCls = isMainCategory ? `${cls} rev-has-code` : cls;
@@ -3828,12 +4051,13 @@ const labelPad = 5;
 // as many lines as its content needs (typically 2) instead of forcing a
 // single nowrap line, so long category/source names break onto a new
 // line within the column's fixed width rather than overflowing it.
-const labelWhiteSpace = cfg.periodType === 'rev_by_category' ? 'normal' : 'nowrap';
-// Only the "Revenue Performance Plan by Category & Source" table has an
-// "Originating Revenue Source" column (e.g. "Finance", "Works &
-// Technical") — every other Rev Line table has one fewer column, so this
-// cell is only emitted when it applies.
-const originCell = cfg.periodType === 'rev_by_category'
+const labelWhiteSpace = cfg.hasOrigin ? 'normal' : 'nowrap';
+// Only the "Revenue Performance Plan by Category & Source" tables (Q1–Q4
+// and the monthly Table 3 variant) have an "Originating Revenue Source"
+// column (e.g. "Finance", "Works & Technical") — every other Rev Line
+// table has one fewer column, so this cell is only emitted when it
+// applies.
+const originCell = cfg.hasOrigin
   ? `<td style="white-space:normal;">${escapeHtml(r.originating_revenue_source || '')}</td>`
   : '';
 const approvedCells = r.approved_periods.map(v => `<td class="num mono">${moneyOrBlank(v, blank)}</td>`).join('');
@@ -3944,7 +4168,7 @@ document.getElementById('rli-workplan').value = document.getElementById(cfg.wpSe
 document.getElementById('rli-code').value = '';
 document.getElementById('rli-label').value = '';
 document.getElementById('rli-row-type').value = 'item';
-document.getElementById('rli-origin-field').style.display = periodType === 'rev_by_category' ? '' : 'none';
+document.getElementById('rli-origin-field').style.display = cfg.hasOrigin ? '' : 'none';
 document.getElementById('rli-origin').value = '';
 buildRliPeriodInputs(cfg, [], []);
 openModal('modal-rli');
@@ -3964,7 +4188,7 @@ document.getElementById('rli-workplan').value = r.work_plan_id;
 document.getElementById('rli-code').value = r.code || '';
 document.getElementById('rli-label').value = r.label || '';
 document.getElementById('rli-row-type').value = r.row_type || 'item';
-document.getElementById('rli-origin-field').style.display = periodType === 'rev_by_category' ? '' : 'none';
+document.getElementById('rli-origin-field').style.display = cfg.hasOrigin ? '' : 'none';
 document.getElementById('rli-origin').value = r.originating_revenue_source || '';
 buildRliPeriodInputs(cfg, r.approved_periods, r.actual_periods);
 openModal('modal-rli');
@@ -4010,7 +4234,7 @@ row_type: document.getElementById('rli-row-type').value,
 approved_periods: approved,
 actual_periods: actual,
 };
-if (periodType === 'rev_by_category') {
+if (cfg.hasOrigin) {
 payload.originating_revenue_source = document.getElementById('rli-origin').value.trim();
 }
 try {
@@ -4143,12 +4367,14 @@ return `
 function applyWorkplanSubtabDisplay() {
 const summaryCard = document.getElementById('wp-revenue-summary-card');
 const categoryCard = document.getElementById('wp-rev-category-card');
+const monthlyCatCard = document.getElementById('wp-rev-monthly-cat-card');
 const deptSummaryCard = document.getElementById('wp-dept-summary-card');
 const frontmatterEl = document.getElementById('wp-annual-frontmatter');
 const piapCard = document.getElementById('wp-piap-card');
 const isAnnual = STATE.workplanSubtab === 'annual';
 if (summaryCard) summaryCard.style.display = isAnnual ? '' : 'none';
 if (categoryCard) categoryCard.style.display = isAnnual ? '' : 'none';
+if (monthlyCatCard) monthlyCatCard.style.display = isAnnual ? '' : 'none';
 // The Department Budget Summary table is shared with the "Approved LG
 // Expenditure Estimates" sub item (sub item 2) and stays exactly as it
 // was there — it's only hidden here, on the Annual Work Plan and Budget
@@ -4167,6 +4393,8 @@ const summaryTitleEl = document.getElementById('wp-title-revenue-summary');
 if (summaryTitleEl) summaryTitleEl.innerHTML = `SUMMARY OF THE REVENUE PERFORMANCE PLAN BY SOURCE`;
 const categoryTitleEl = document.getElementById('wp-title-rev-category');
 if (categoryTitleEl) categoryTitleEl.innerHTML = `REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE`;
+const monthlyCatTitleEl = document.getElementById('wp-title-rev-monthly-cat');
+if (monthlyCatTitleEl) monthlyCatTitleEl.innerHTML = `MONTHLY REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE`;
 const fmFyEl = document.getElementById('wp-fm-fy');
 if (fmFyEl) fmFyEl.textContent = fy;
 const fmGeneratedEl = document.getElementById('wp-fm-generated');
@@ -4177,6 +4405,7 @@ fmGeneratedEl.textContent = `Generated on ${generatedStr}`;
 }
 renderRevLineTable('rev_by_source');
 renderRevLineTable('rev_by_category');
+renderRevLineTable('rev_by_category_monthly');
 }
 // Sets the fy-stamped title on the "Approved Quarterly Revenue Budget
 // Estimates and Quarterly Revenue Performance Gap" card, which now lives
@@ -4387,6 +4616,29 @@ applyWpRevCategoryZoom();
 if (wpRevCategoryZoomOutBtn) wpRevCategoryZoomOutBtn.addEventListener('click', () => {
 wpRevCategoryZoom = Math.max(0.6, Math.round((wpRevCategoryZoom - 0.1) * 10) / 10);
 applyWpRevCategoryZoom();
+});
+// ---- Monthly Revenue Performance Plan by Category & Source table (Table
+// 3) zoom (+ / − streak below the table) — same behavior as the Revenue
+// Performance Plan by Category & Source table's zoom above, defaulting to
+// 80% for the same reason: the extra Originating Revenue Source column
+// benefits from starting a little more zoomed out.
+let wpRevMonthlyCatZoom = 0.8;
+function applyWpRevMonthlyCatZoom() {
+const table = document.getElementById('wp-rev-monthly-cat-table');
+if (table) table.style.zoom = wpRevMonthlyCatZoom;
+const label = document.getElementById('wp-rev-monthly-cat-zoom-label');
+if (label) label.textContent = Math.round(wpRevMonthlyCatZoom * 100) + '%';
+}
+const wpRevMonthlyCatZoomInBtn = document.getElementById('wp-rev-monthly-cat-zoom-in');
+const wpRevMonthlyCatZoomOutBtn = document.getElementById('wp-rev-monthly-cat-zoom-out');
+applyWpRevMonthlyCatZoom();
+if (wpRevMonthlyCatZoomInBtn) wpRevMonthlyCatZoomInBtn.addEventListener('click', () => {
+wpRevMonthlyCatZoom = Math.min(1.6, Math.round((wpRevMonthlyCatZoom + 0.1) * 10) / 10);
+applyWpRevMonthlyCatZoom();
+});
+if (wpRevMonthlyCatZoomOutBtn) wpRevMonthlyCatZoomOutBtn.addEventListener('click', () => {
+wpRevMonthlyCatZoom = Math.max(0.6, Math.round((wpRevMonthlyCatZoom - 0.1) * 10) / 10);
+applyWpRevMonthlyCatZoom();
 });
 document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
 // Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
