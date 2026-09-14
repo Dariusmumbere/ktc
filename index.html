@@ -1967,6 +1967,11 @@ Departments
 </tbody>
 </table>
 </div>
+<div class="table-zoom-bar" id="wp-rev-category-zoom-bar">
+<button type="button" class="table-zoom-btn" id="wp-rev-category-zoom-out" title="Zoom out">−</button>
+<span class="table-zoom-label" id="wp-rev-category-zoom-label">80%</span>
+<button type="button" class="table-zoom-btn" id="wp-rev-category-zoom-in" title="Zoom in">+</button>
+</div>
 </div>
 </div>
 <div class="card" id="wp-dept-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
@@ -4344,6 +4349,29 @@ applyWpRevSummaryZoom();
 if (wpRevSummaryZoomOutBtn) wpRevSummaryZoomOutBtn.addEventListener('click', () => {
 wpRevSummaryZoom = Math.max(0.6, Math.round((wpRevSummaryZoom - 0.1) * 10) / 10);
 applyWpRevSummaryZoom();
+});
+// ---- Revenue Performance Plan by Category & Source table zoom (+ / − streak
+// below the table) — same behavior as the Revenue Summary table's zoom
+// above, but defaults to 80% instead of 100% since this table has one more
+// column (Originating Revenue Source) and benefits from starting a little
+// more zoomed out.
+let wpRevCategoryZoom = 0.8;
+function applyWpRevCategoryZoom() {
+const table = document.getElementById('wp-rev-category-table');
+if (table) table.style.zoom = wpRevCategoryZoom;
+const label = document.getElementById('wp-rev-category-zoom-label');
+if (label) label.textContent = Math.round(wpRevCategoryZoom * 100) + '%';
+}
+const wpRevCategoryZoomInBtn = document.getElementById('wp-rev-category-zoom-in');
+const wpRevCategoryZoomOutBtn = document.getElementById('wp-rev-category-zoom-out');
+applyWpRevCategoryZoom();
+if (wpRevCategoryZoomInBtn) wpRevCategoryZoomInBtn.addEventListener('click', () => {
+wpRevCategoryZoom = Math.min(1.6, Math.round((wpRevCategoryZoom + 0.1) * 10) / 10);
+applyWpRevCategoryZoom();
+});
+if (wpRevCategoryZoomOutBtn) wpRevCategoryZoomOutBtn.addEventListener('click', () => {
+wpRevCategoryZoom = Math.max(0.6, Math.round((wpRevCategoryZoom - 0.1) * 10) / 10);
+applyWpRevCategoryZoom();
 });
 document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
 // Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
