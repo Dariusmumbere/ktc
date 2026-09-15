@@ -757,6 +757,8 @@ text-align:center;
 #wp-rev-monthly-cat-wrap{overflow-x:auto;}
 #wp-rev-monthly-cat-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950); font-weight:700 !important;}
 #wp-rev-monthly-cat-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
+#wp-rev-monthly-cat-wrap tbody tr.rev-total-row td{background:#D6EEE6; color:var(--navy-950); font-weight:700 !important;}
+#wp-rev-monthly-cat-wrap tbody tr.rev-total-row:hover td{background:#D6EEE6;}
 #wp-rev-monthly-cat-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-rev-monthly-cat-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
 #wp-rev-monthly-cat-table thead th{padding:0 9px; font-size:9px; line-height:1.25;}
@@ -782,7 +784,7 @@ text-align:center;
 so no single month renders wider than the others just because one row's
 figure happens to be a digit longer. Narrower than table 2's Q1–Q4
 (.rev-q-col, 63px) since there are 12 of these per band instead of 4. */
-#wp-rev-monthly-cat-table thead th.rev-m-col{width:40px; max-width:40px; white-space:nowrap; line-height:1.875;}
+#wp-rev-monthly-cat-table thead th.rev-m-col{width:43px; max-width:43px; white-space:nowrap; line-height:1.875;}
 /* PBS Code column widened by 5px (39px → 44px) relative to table 2's
 version, since this table's narrower monthly figure columns otherwise
 leave the code column feeling cramped by comparison. */
@@ -799,9 +801,9 @@ from the table-wide 0 9px (see #wp-rev-monthly-cat-body td above) to give
 each right-aligned amount more room before it starts spilling past the
 cell's right edge — most of that reclaimed room comes off the LEFT side,
 since with right-aligned text the free space always sits on the left. */
-#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:40px; max-width:40px; white-space:nowrap; padding-left:1px; padding-right:4px;}
+#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:43px; max-width:43px; white-space:nowrap; padding-left:1px; padding-right:4px;}
 #wp-rev-monthly-cat-body td:nth-child(16){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
-#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:40px; max-width:40px; white-space:nowrap; padding-left:1px; padding-right:4px;}
+#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:43px; max-width:43px; white-space:nowrap; padding-left:1px; padding-right:4px;}
 #wp-rev-monthly-cat-body td:nth-child(29){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
 #wp-rev-monthly-cat-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
 /* "Summary of the Approved Monthly Budget Estimates" group-title cell
@@ -809,11 +811,11 @@ since with right-aligned text the free space always sits on the left. */
 pin its total width to exactly 12 x the width given to each month column
 below (see .rev-m-col above), matching table 2's .rev-approved-qhdr
 technique of leaving nothing for the browser to redistribute unevenly. */
-#wp-rev-monthly-cat-table thead th.rev-approved-mhdr{width:480px !important; max-width:480px !important;}
+#wp-rev-monthly-cat-table thead th.rev-approved-mhdr{width:516px !important; max-width:516px !important;}
 /* "Summary of the Monthly Actual Inflow Realized: ..." header: same
 treatment as table 2's .rev-actual-header — left-aligned and widened to
 match the widened month columns beneath it. */
-#wp-rev-monthly-cat-table thead th.rev-actual-mhdr{white-space:normal !important; width:480px; max-width:480px; line-height:1.35; text-align:left !important;}
+#wp-rev-monthly-cat-table thead th.rev-actual-mhdr{white-space:normal !important; width:516px; max-width:516px; line-height:1.35; text-align:left !important;}
 #wp-rev-monthly-cat-table thead th.rev-band-title{border-bottom:1px solid var(--line-strong); line-height:1.875;}
 #wp-rev-monthly-cat-table thead th.rev-row5{border-bottom:1px solid var(--line-strong);}
 #wp-rev-monthly-cat-table thead tr:last-child th{border-bottom:1px solid var(--line-strong);}
@@ -2103,15 +2105,15 @@ Departments
 <col style="width:44px">
 <col style="width:325px">
 <col style="width:100px">
-<col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:71.25px">
-<col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:71.25px">
+<col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:71.25px">
+<col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:71.25px">
 <col style="width:70px">
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row" id="wp-cat-m-meta-row-1">
 <th colspan="4" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-llg-vote-cat-m">001</span></th>
-<th colspan="6" class="rev-meta">Lower Local Government: <span class="rev-meta-value" id="wp-lower-llg-cat-m">Karugutu Town Council</span></th>
-<th colspan="20" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-higher-llg-cat-m">Ntoroko District</span></th>
+<th colspan="10" class="rev-meta">Lower Local Government: <span class="rev-meta-value" id="wp-lower-llg-cat-m">Karugutu Town Council</span></th>
+<th colspan="16" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-higher-llg-cat-m">Ntoroko District</span></th>
 </tr>
 <tr class="rev-llg-meta-row" id="wp-cat-m-meta-row-2">
 <th colspan="4" class="rev-meta">A3: Detailed Monthly Revenue Performance Plan by Category and Source</th>
