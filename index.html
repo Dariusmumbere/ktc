@@ -517,7 +517,7 @@ text-align:center;
 #wp-revenue-summary-wrap,
 #wp-rev-category-wrap{overflow-x:auto;}
 #wp-revenue-summary-wrap tbody tr.rev-grand-row td,
-#wp-rev-category-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950); font-weight:700;}
+#wp-rev-category-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950); font-weight:700 !important;}
 #wp-revenue-summary-wrap tbody tr.rev-grand-row:hover td,
 #wp-rev-category-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
 #wp-revenue-summary-wrap thead th,
@@ -637,8 +637,8 @@ visual result); right padding is trimmed to match. */
 /* Originating Revenue Source column — only table 2 has this, since table
 1 has no such column at all. Uses the exact same font, padding and
 wrapping conventions as every other header/body cell above. */
-#wp-rev-category-table thead th.rev-origin-col{width:110px; max-width:110px; padding-left:5px; padding-right:4px; white-space:normal !important; line-height:1.3;}
-#wp-rev-category-body td:nth-child(3){width:110px; max-width:110px; padding-left:5px; padding-right:4px; overflow-wrap:break-word; word-break:break-word;}
+#wp-rev-category-table thead th.rev-origin-col{width:100px; max-width:100px; padding-left:5px; padding-right:4px; white-space:normal !important; line-height:1.3;}
+#wp-rev-category-body td:nth-child(3){width:100px; max-width:100px; padding-left:5px; padding-right:4px; overflow-wrap:break-word; word-break:break-word;}
 /* The header's fixed width alone isn't enough to keep Q1–Q4 columns equal:
 in an auto-layout table, a data cell with a longer figure can still force
 its column wider than the header says. Pin the body cells to the same
@@ -722,6 +722,12 @@ alignment via .rev-meta above. */
 #wp-rev-category-table thead th.rev-code-col,
 #wp-rev-category-table thead th.rev-source-col,
 #wp-rev-category-table thead th.rev-origin-col{text-align:left !important;}
+/* "Annual Actual Cash Inflow Realized" header cell (table 2 & table 3):
+padding removed on the HEADER cell only (not the body cells beneath it)
+so "Cash Inflow" has enough room to render on one line instead of
+wrapping onto two within this narrow 71.25px column. */
+#wp-rev-category-table thead th.rev-cash-inflow-hdr,
+#wp-rev-monthly-cat-table thead th.rev-cash-inflow-hdr{padding-left:0 !important; padding-right:0 !important;}
 #wp-revenue-summary-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col):not(.rev-origin-col),
 #wp-rev-category-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col):not(.rev-origin-col){text-align:center !important;}
 /* ---------------- Revenue Performance Plan by Category & Source table
@@ -749,7 +755,7 @@ text-align:center;
 #wp-rev-monthly-cat-wrap tfoot td{text-align:left;}
 #wp-rev-monthly-cat-wrap tfoot td.num{text-align:right;}
 #wp-rev-monthly-cat-wrap{overflow-x:auto;}
-#wp-rev-monthly-cat-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950); font-weight:700;}
+#wp-rev-monthly-cat-wrap tbody tr.rev-grand-row td{background:#D6EEE6; color:var(--navy-950); font-weight:700 !important;}
 #wp-rev-monthly-cat-wrap tbody tr.rev-grand-row:hover td{background:#D6EEE6;}
 #wp-rev-monthly-cat-wrap thead th{position:sticky; top:0; z-index:3;}
 #wp-rev-monthly-cat-wrap tfoot tr{position:sticky; bottom:0; z-index:3; text-align:left !important;}
@@ -777,16 +783,26 @@ so no single month renders wider than the others just because one row's
 figure happens to be a digit longer. Narrower than table 2's Q1–Q4
 (.rev-q-col, 63px) since there are 12 of these per band instead of 4. */
 #wp-rev-monthly-cat-table thead th.rev-m-col{width:40px; max-width:40px; white-space:nowrap; line-height:1.875;}
-#wp-rev-monthly-cat-table thead th.rev-code-col{width:39px; max-width:39px; white-space:normal !important; line-height:1.3;}
-#wp-rev-monthly-cat-body td:nth-child(1){width:39px; max-width:39px;}
+/* PBS Code column widened by 5px (39px → 44px) relative to table 2's
+version, since this table's narrower monthly figure columns otherwise
+leave the code column feeling cramped by comparison. */
+#wp-rev-monthly-cat-table thead th.rev-code-col{width:44px; max-width:44px; white-space:normal !important; line-height:1.3;}
+#wp-rev-monthly-cat-body td:nth-child(1){width:44px; max-width:44px;}
 #wp-rev-monthly-cat-table thead th.rev-source-col{width:325px; max-width:325px; padding-left:5px; padding-right:4px;}
 #wp-rev-monthly-cat-body td:nth-child(2){width:325px; max-width:325px; padding-left:5px; padding-right:4px; overflow-wrap:break-word; word-break:break-word;}
-#wp-rev-monthly-cat-table thead th.rev-origin-col{width:110px; max-width:110px; padding-left:5px; padding-right:4px; white-space:normal !important; line-height:1.3;}
-#wp-rev-monthly-cat-body td:nth-child(3){width:110px; max-width:110px; padding-left:5px; padding-right:4px; overflow-wrap:break-word; word-break:break-word;}
-#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:40px; max-width:40px; white-space:nowrap;}
-#wp-rev-monthly-cat-body td:nth-child(16){width:71.25px; max-width:71.25px; white-space:nowrap;}
-#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:40px; max-width:40px; white-space:nowrap;}
-#wp-rev-monthly-cat-body td:nth-child(29){width:71.25px; max-width:71.25px; white-space:nowrap;}
+/* Originating Revenue Source column narrowed by 10px (110px → 100px),
+matching the same 10px reduction on table 2's version below. */
+#wp-rev-monthly-cat-table thead th.rev-origin-col{width:100px; max-width:100px; padding-left:5px; padding-right:4px; white-space:normal !important; line-height:1.3;}
+#wp-rev-monthly-cat-body td:nth-child(3){width:100px; max-width:100px; padding-left:5px; padding-right:4px; overflow-wrap:break-word; word-break:break-word;}
+/* Approved/Actual monthly + annual figure columns: padding trimmed down
+from the table-wide 0 9px (see #wp-rev-monthly-cat-body td above) to give
+each right-aligned amount more room before it starts spilling past the
+cell's right edge — most of that reclaimed room comes off the LEFT side,
+since with right-aligned text the free space always sits on the left. */
+#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:40px; max-width:40px; white-space:nowrap; padding-left:1px; padding-right:4px;}
+#wp-rev-monthly-cat-body td:nth-child(16){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
+#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:40px; max-width:40px; white-space:nowrap; padding-left:1px; padding-right:4px;}
+#wp-rev-monthly-cat-body td:nth-child(29){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
 #wp-rev-monthly-cat-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
 /* "Summary of the Approved Monthly Budget Estimates" group-title cell
 (colspan 12, sitting directly above the approved band's Jul–Jun columns):
@@ -2013,7 +2029,7 @@ Departments
 <colgroup>
 <col style="width:39px">
 <col style="width:325px">
-<col style="width:110px">
+<col style="width:100px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:71.25px">
 <col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:63px"><col style="width:82.29375px">
@@ -2043,7 +2059,7 @@ Departments
 <th colspan="4" class="rev-band-approved rev-wrap-header rev-wrap-narrow rev-approved-qhdr rev-row5">Summary of the Approved Quarterly Budget Estimates</th>
 <th class="col-annual-approved rev-band-approved rev-annual-col rev-row5">Annual<br>Approved<br>Budget<br>Estimates</th>
 <th colspan="4" class="rev-band-actual rev-actual-header rev-row5">Summary of the Quarterly Actual Inflow<br>Realized: IRAS Revenue Collected, GoU<br>Transfers, and Donations</th>
-<th class="rev-band-actual rev-annual-col rev-row5">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
+<th class="rev-band-actual rev-annual-col rev-row5 rev-cash-inflow-hdr">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
 <th colspan="4" class="rev-band-gap rev-wrap-header rev-wrap-narrow rev-row5">Summary of the Quarterly Revenue Performance Gap</th>
 <th id="wp-cat-annual-gap-col" class="rev-band-gap rev-annual-col rev-row5">Annual<br>Revenue<br>Performance<br>Gap</th>
 </tr>
@@ -2084,9 +2100,9 @@ Departments
 <div class="rli-table-wrap" id="wp-rev-monthly-cat-wrap" style="margin:10px 16px 16px;">
 <table id="wp-rev-monthly-cat-table">
 <colgroup>
-<col style="width:39px">
+<col style="width:44px">
 <col style="width:325px">
-<col style="width:110px">
+<col style="width:100px">
 <col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:71.25px">
 <col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:40px"><col style="width:71.25px">
 <col style="width:70px">
@@ -2114,7 +2130,7 @@ Departments
 <th colspan="12" class="rev-band-approved rev-wrap-header rev-approved-mhdr rev-row5">Summary of the Approved Monthly Budget Estimates</th>
 <th class="col-annual-approved rev-band-approved rev-annual-col rev-row5">Annual<br>Approved<br>Budget<br>Estimates</th>
 <th colspan="12" class="rev-band-actual rev-actual-mhdr rev-row5">Summary of the Monthly Actual Inflow Realized: IRAS Revenue Collected, GoU Transfers, and Donations</th>
-<th class="rev-band-actual rev-annual-col rev-row5">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
+<th class="rev-band-actual rev-annual-col rev-row5 rev-cash-inflow-hdr">Annual<br>Actual<br>Cash Inflow<br>Realized</th>
 </tr>
 <tr id="wp-cat-m-header-row-months">
 <th class="rev-band-approved rev-m-col">Jul</th><th class="rev-band-approved rev-m-col">Aug</th><th class="rev-band-approved rev-m-col">Sep</th><th class="rev-band-approved rev-m-col">Oct</th><th class="rev-band-approved rev-m-col">Nov</th><th class="rev-band-approved rev-m-col">Dec</th><th class="rev-band-approved rev-m-col">Jan</th><th class="rev-band-approved rev-m-col">Feb</th><th class="rev-band-approved rev-m-col">Mar</th><th class="rev-band-approved rev-m-col">Apr</th><th class="rev-band-approved rev-m-col">May</th><th class="rev-band-approved rev-m-col">Jun</th><th class="rev-band-approved rev-annual-col">Total</th>
