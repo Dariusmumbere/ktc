@@ -1695,98 +1695,16 @@ Departments
 </div>
 <!-- ===== PBS: Monthly Local Revenue/GoU Transfers Estimates vs. Actual Realized ===== -->
 <div class="view" id="view-rev-monthly">
-<input type="file" id="rlm-import-file" accept=".xlsx,.xls" style="display:none;" />
-<div class="card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
-<div style="padding:14px 18px 4px;">
-<div class="table-title-row" id="rlm-title-row">
-<div class="kicker" style="font-size:13px; color:var(--teal-700);">MONTHLY LOCAL REVENUE/GOU TRANSFERS ESTIMATES VS. ACTUAL REALIZED — <span id="rlm-fy-label">FY —</span></div>
-<div class="table-title-actions">
-<button type="button" class="icon-btn icon-btn-sm" id="rlm-new-btn" style="display:none;" title="Add Revenue Row">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
-</button>
-<button type="button" class="icon-btn icon-btn-sm" id="rlm-import-btn" style="display:none;" title="Import From Excel">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
-</button>
-</div>
-</div>
-</div>
-<div class="rli-table-wrap" id="rlm-table-wrap" style="margin:10px 16px 16px;">
-<table id="rlm-table">
-<thead id="rlm-table-thead" style="display:none;">
-<tr>
-<th rowspan="2">Code</th>
-<th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
-<th colspan="12">Monthly Approved Revenue Budget Estimates (UGX)</th>
-<th rowspan="2" class="col-annual-approved">Annual Approved Budget Estimates (UGX)</th>
-<th colspan="12">Monthly Actual Inflow Realized (UGX)</th>
-<th rowspan="2">Annual Actual<br>Cash Inflow Realized (UGX)</th>
-<th rowspan="2">
-<span class="th-with-clear">
-<span></span>
-<button type="button" class="th-clear-btn" id="rlm-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-</button>
-</span>
-</th>
-</tr>
-<tr>
-<th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
-<th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
-</tr>
-</thead>
-<tbody id="rlm-table-body">
-<tr><td colspan="29" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="card" id="wp-revenue-detail-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
-<div style="padding:14px 18px 4px;">
-<div class="table-title-row">
-<div class="kicker" id="wp-title-revenue-detail" style="font-size:13px; color:var(--navy-950);">APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP</div>
-<div class="table-title-actions">
-<button type="button" class="icon-btn icon-btn-sm" id="wp-new-revenue-btn" style="display:none;" title="Add Revenue Row">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
-</button>
-<button type="button" class="icon-btn icon-btn-sm" id="wp-import-revenue-btn" style="display:none;" title="Import From Excel">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
-</button>
-</div>
-</div>
-</div>
-<div class="rli-table-wrap" id="wp-revenue-detail-wrap" style="margin:10px 16px 16px;">
-<table id="wp-revenue-detail-table">
-<thead>
-<tr>
-<th rowspan="2">Code</th>
-<th rowspan="2" class="wrap">Fund Category and Source of Financing</th>
-<th colspan="4">Approved Quarterly Revenue Budget Estimates (UGX)</th>
-<th rowspan="2">Approved Annual<br>Revenue Budget Estimates (UGX)</th>
-<th colspan="4">Quarterly Actual Inflow (UGX)</th>
-<th rowspan="2">Actual LG Revenue &amp;<br>Transfers Realized (UGX)</th>
-<th colspan="4">Quarterly Revenue Performance Gap (UGX)</th>
-<th rowspan="2">Annual Revenue<br>Performance Gap (UGX)</th>
-<th rowspan="2">
-<span class="th-with-clear">
-<span></span>
-<button type="button" class="th-clear-btn" id="wp-revenue-clear-btn" style="display:none;" title="Clear all rows — deletes every row in this table for the selected work plan">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-</button>
-</span>
-</th>
-</tr>
-<tr>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-<th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
-</tr>
-</thead>
-<tbody id="wp-revenue-detail-body">
-<tr><td colspan="18" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
-</tbody>
-</table>
-</div>
-</div>
+<!-- Sub Item 1 no longer has its own tables. It shares the same three
+     PBS revenue tables used on the Annual Work Plan sub item (Summary of
+     Revenue Performance Plan by Source, Revenue Performance Plan by
+     Category & Source, Monthly Revenue Performance Plan by Category &
+     Source). Those tables physically live in #view-workplan's markup and
+     are moved into this slot (or back) by placeRevenueTablesFor() in
+     switchView(), so there is exactly one live copy — same IDs, same
+     data, same edit/import/zoom controls, always in sync — wherever it
+     is currently parented. -->
+<div id="rev-monthly-tables-slot"></div>
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
@@ -1933,6 +1851,7 @@ Departments
 <div id="wp-fm-exec-overflow"></div>
 </div>
 </div>
+<div id="wp-revenue-tables-group">
 <div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" id="wp-revenue-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; display:none;">
 <div style="padding:14px 18px 4px;">
@@ -2150,6 +2069,8 @@ Departments
 <button type="button" class="table-zoom-btn" id="wp-rev-monthly-cat-zoom-in" title="Zoom in">+</button>
 </div>
 </div>
+</div>
+<div id="wp-revenue-tables-anchor"></div>
 <div class="card" id="wp-dept-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
 <div class="kicker" id="wp-title-dept-summary" style="font-size:13px; color:var(--navy-950);">APPROVED DEPARTMENTAL SUMMARY OF THE COUNCIL ANNUAL WORK PLAN AND EXPENDITURE ESTIMATES FOR FY 2026/2027</div>
@@ -3544,6 +3465,27 @@ reports: ['Audit & Reports', 'System-wide activity and audit trail'],
 users: ['Users & Roles', 'Account and access management'],
 departments: ['Departments', 'Organisational structure'],
 };
+// Sub Item 1 (Monthly Local Revenue/GoU Transfers) shares the exact same
+// three PBS revenue tables (Summary of Revenue Performance Plan by Source,
+// Revenue Performance Plan by Category & Source, Monthly Revenue
+// Performance Plan by Category & Source) as the Annual Work Plan sub item —
+// there is only ever one live copy of them in the DOM (#wp-revenue-tables-group),
+// so both sub items always show the exact same selected work plan's data
+// and every edit/import/zoom control keeps working, wherever the group
+// currently sits. This just relocates that one element; #wp-revenue-tables-anchor
+// marks where it belongs inside the Annual Work Plan markup so it can be
+// moved back there.
+function placeRevenueTablesFor(view) {
+const group = document.getElementById('wp-revenue-tables-group');
+if (!group) return;
+if (view === 'rev-monthly') {
+const slot = document.getElementById('rev-monthly-tables-slot');
+if (slot) slot.appendChild(group);
+} else {
+const anchor = document.getElementById('wp-revenue-tables-anchor');
+if (anchor) anchor.parentElement.insertBefore(group, anchor);
+}
+}
 function switchView(view, subtab) {
 if (view === 'reports' && !subtab) subtab = 'audit-log';
 document.querySelectorAll('.nav-item[data-view]').forEach(b => {
@@ -3582,9 +3524,14 @@ downloadPdfBtn.title = (view === 'rev-monthly')
 }
 closeNotifPanel();
 if (view === 'dashboard') loadDashboard();
-if (view === 'rev-monthly') { loadRevLinePage('monthly'); applyRevenueDetailTitle(); loadRevLinePage('quarterly'); }
+if (view === 'rev-monthly') {
+STATE.workplanSubtab = 'annual';
+placeRevenueTablesFor('rev-monthly');
+loadWorkplanView();
+}
 if (view === 'workplan') {
 STATE.workplanSubtab = subtab || 'expenditure';
+placeRevenueTablesFor('workplan');
 loadWorkplanView();
 setTimeout(() => {
 if (subtab === 'expenditure') {
@@ -4127,6 +4074,7 @@ delete STATE.revLineMonthlyCache[wpId];
 async function renderRevLineTable(periodType) {
 const cfg = REV_LINE_PAGES[periodType];
 const tbody = document.getElementById(cfg.bodyId);
+if (!tbody) return;
 const wpId = document.getElementById(cfg.wpSelectId).value;
 // Sub item 1 (Monthly Local Revenue/GoU Transfers) keeps its column
 // headers hidden for as long as the table body is loading/empty/errored,
@@ -4301,8 +4249,6 @@ if (clearBtn) clearBtn.addEventListener('click', () => clearRevLineItems(periodT
 // lives in the top-most bar. Summary & category already get re-rendered
 // via applyWorkplanSubtabDisplay() on the wp-select change handler below,
 // so only monthly and quarterly need their own listeners attached here.
-if (wpSel && periodType === 'monthly') wpSel.addEventListener('change', () => { applyRevLineFyLabel(periodType); renderRevLineTable(periodType); });
-if (wpSel && periodType === 'quarterly') wpSel.addEventListener('change', () => { applyRevenueDetailTitle(); renderRevLineTable(periodType); });
 });
 // ---- Dashboard -----------------------------------------------------------------
 async function loadDashboard() {
@@ -4747,6 +4693,7 @@ async function renderRevenueSources() {
 // Auto Category Total row (sum of sub rows) — mirroring the Council's sheet.
 function renderRevenueDetailTable(sources) {
 const tbody = document.getElementById('wp-revenue-detail-body');
+if (!tbody) return;
 if (!sources || sources.length === 0) {
 tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state" style="padding:16px;">No revenue sources recorded for this work plan yet. Use "+ Add Revenue Sources" below to create the first category with its sub rows.</div></td></tr>';
 return;
