@@ -7068,7 +7068,38 @@ roles.map(r => `<option value="${escapeHtml(r.key)}">${escapeHtml(r.label)}</opt
 }
 populateLoginRoleDropdown();
 // ---- Boot -----------------------------------------------------------------------------
-if (STATE.token) { enterApp().catch(() => logout()); }
+// The backend issues a long-lived (8 hour) token — see main.py's
+// ACCESS_TOKEN_EXPIRE_MINUTES — and enforces the actual session length
+// itself via the 20-minute inactivity timer above, not via the token
+// expiring. So a still-valid token in localStorage must survive a plain
+// page refresh. The previous boot logic called logout() unconditionally
+// whenever enterApp() rejected for ANY reason — which included a slow/
+// cold backend, a dropped connection, or any other transient hiccup
+// during the initial loadDepartments()/loadWorkplans() calls — silently
+// discarding a perfectly good session every time the network so much as
+// blinked on refresh.
+// A genuinely invalid/expired token is already handled correctly: api()'s
+// 401 handler (above) calls logout() itself and clears STATE.token before
+// this ever runs. So by the time a boot failure reaches here, checking
+// STATE.token tells us which situation happened — if it's already gone,
+// a real session-expiry logout has already occurred and there's nothing
+// more to do. Otherwise, treat the failure as transient: keep the token,
+// reveal the app shell, and retry once before giving up with a message
+// that invites a manual refresh instead of silently signing the user out.
+function bootApp(isRetry) {
+enterApp().catch((err) => {
+if (!STATE.token) return; // a real 401 already logged the user out via api()
+document.getElementById('login-screen').style.display = 'none';
+document.getElementById('app-screen').style.display = 'block';
+if (!isRetry) {
+toast('Could not reach the server. Retrying…', 'error');
+setTimeout(() => bootApp(true), 2500);
+} else {
+toast('Still having trouble reaching the server. Please check your connection and refresh.', 'error');
+}
+});
+}
+if (STATE.token) { bootApp(false); }
 </script>
 </body>
 </html>
