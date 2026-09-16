@@ -3051,6 +3051,35 @@ return await fetch(url, { ...opts, signal: controller.signal });
 clearTimeout(timer);
 }
 }
+// The backend host sleeps after a period of inactivity, so the very first
+// request after a refresh/login can take far longer to come back than any
+// individual API call's own timeout — that's what previously left the
+// Dashboard (and only the Dashboard, since it's usually the first real
+// data request fired) stuck on its loading state until some later,
+// unrelated click happened to land after the backend had already finished
+// waking up. Rather than let real app data requests absorb that wake-up
+// delay and time out, ping the cheap /api/health endpoint first, with its
+// own patient retry loop, and don't start loading real app data until the
+// backend actually answers — so by the time loadDashboard() (and
+// everything else enterApp() kicks off) makes its first real request, the
+// backend is already warm and it succeeds on the first try, without
+// needing the user to click around themselves to "warm it up".
+async function warmBackend(maxAttempts = 10, retryDelayMs = 2500) {
+const start = Date.now();
+let announced = false;
+for (let attempt = 0; attempt < maxAttempts; attempt++) {
+try {
+const res = await fetchWithTimeout(API_BASE + '/api/health', {}, 8000);
+if (res.ok) return true;
+} catch (e) { /* not reachable yet — keep trying */ }
+if (!announced && Date.now() - start > 4000) {
+toast('Connecting to the server — this can take a few seconds after a period of inactivity…', 'info');
+announced = true;
+}
+await new Promise(r => setTimeout(r, retryDelayMs));
+}
+return false;
+}
 async function api(path, opts = {}) {
 const headers = opts.headers || {};
 if (!(opts.body instanceof FormData)) headers['Content-Type'] = 'application/json';
@@ -7126,11 +7155,22 @@ populateLoginRoleDropdown();
 // more to do. Otherwise, treat the failure as transient: keep the token,
 // reveal the app shell, and retry once before giving up with a message
 // that invites a manual refresh instead of silently signing the user out.
-function bootApp(isRetry) {
-enterApp().catch((err) => {
-if (!STATE.token) return; // a real 401 already logged the user out via api()
+async function bootApp(isRetry) {
 document.getElementById('login-screen').style.display = 'none';
 document.getElementById('app-screen').style.display = 'block';
+// Wait for the backend to actually be reachable before asking enterApp()
+// to start pulling real data — see warmBackend() above for why. This is
+// what fixes the Dashboard (and everything else loaded on entry) getting
+// permanently stuck rather than just taking a few extra seconds.
+if (!isRetry) {
+const warm = await warmBackend();
+if (!warm) {
+if (!STATE.token) return;
+toast('Still having trouble reaching the server. Please check your connection and refresh.', 'error');
+}
+}
+enterApp().catch((err) => {
+if (!STATE.token) return; // a real 401 already logged the user out via api()
 if (!isRetry) {
 toast('Could not reach the server. Retrying…', 'error');
 setTimeout(() => bootApp(true), 2500);
