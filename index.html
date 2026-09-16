@@ -304,7 +304,7 @@ position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 
 background:var(--danger); color:#fff; font-size:9.5px; font-weight:700; display:flex; align-items:center; justify-content:center;
 box-shadow:0 0 0 2px #fff;
 }
-.content{flex:1; overflow-y:auto; padding:24px 26px 60px;}
+.content{flex:1; overflow-y:auto; padding:24px 26px 60px; position:relative;}
 .view{display:none;}
 .view.active{display:block; animation:fadeInUp .35s var(--ease) both;}
 /* ---------------- Notification panel ---------------- */
@@ -801,9 +801,9 @@ from the table-wide 0 9px (see #wp-rev-monthly-cat-body td above) to give
 each right-aligned amount more room before it starts spilling past the
 cell's right edge — most of that reclaimed room comes off the LEFT side,
 since with right-aligned text the free space always sits on the left. */
-#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:43px; max-width:43px; white-space:nowrap; padding-left:1px; padding-right:4px;}
+#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:43px; max-width:43px; white-space:nowrap; padding-left:1px; padding-right:4px; font-size:10px;}
 #wp-rev-monthly-cat-body td:nth-child(16){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
-#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:43px; max-width:43px; white-space:nowrap; padding-left:1px; padding-right:4px;}
+#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:43px; max-width:43px; white-space:nowrap; padding-left:1px; padding-right:4px; font-size:10px;}
 #wp-rev-monthly-cat-body td:nth-child(29){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
 #wp-rev-monthly-cat-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
 /* "Summary of the Approved Monthly Budget Estimates" group-title cell
@@ -1634,7 +1634,17 @@ Departments
 </div>
 <div id="notif-list"></div>
 </div>
-<div class="content">
+<div class="content" id="main-content">
+<!-- Shared full-view loading overlay for every PBS sub item (Monthly Local
+     Revenue, LG Expenditure Estimates, Annual Work Plan & Budget) — all
+     three are driven by loadWorkplanView(), and living here (a sibling of
+     every .view, not nested inside just #view-workplan) means it covers
+     whichever one is currently active instead of only the Annual Work Plan
+     view. -->
+<div class="wp-loading-overlay" id="wp-loading-overlay">
+<div class="wp-loading-spinner"></div>
+<div class="wp-loading-label" id="wp-loading-label">Loading…</div>
+</div>
 <!-- ===== DASHBOARD ===== -->
 <div class="view active" id="view-dashboard">
 <div class="section-head">
@@ -1714,10 +1724,6 @@ Departments
 <input type="file" id="wp-import-revenue-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-file" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="wp-import-piap-file" accept=".xlsx,.xls" style="display:none;" />
-<div class="wp-loading-overlay" id="wp-loading-overlay">
-<div class="wp-loading-spinner"></div>
-<div class="wp-loading-label">Loading Annual Work Plan &amp; Budget…</div>
-</div>
 <div class="wp-content" id="wp-workplan-content">
 <div class="card card-pad wp-frontmatter" id="wp-annual-frontmatter" style="display:none; margin-bottom:20px;">
 <div class="table-title-row">
@@ -2925,14 +2931,15 @@ editingRevenueSourceId: null,
 editingRevLineItemId: null,
 rliPeriodType: null,
 revLineItems: {},
-// Sub item 1 (Monthly Local Revenue/GoU Transfers) cache — keyed by work
-// plan id, holding the last-fetched rows for that plan. Switching between
-// work plans (or navigating away and back to this sub item) re-renders
-// instantly from here instead of re-hitting the network every time; the
-// entry for a plan is dropped whenever its rows are actually changed
-// (added/edited/deleted/cleared/imported) so the next render re-fetches
-// fresh data for it.
-revLineMonthlyCache: {},
+// Client-side cache for the three shared PBS revenue tables (Summary of
+// Revenue Performance Plan by Source, by Category & Source, Monthly by
+// Category & Source), keyed by "periodType:workPlanId". Sub Item 1 and
+// Sub Item 3 both render these same tables, so without this cache every
+// switch between them (and every work-plan change) would re-fetch the
+// same rows from the network; an entry is dropped the instant its rows
+// are actually changed (added/edited/deleted/cleared/imported), so a
+// cache hit can never show stale data.
+revLineCache: {},
 workplanSubtab: 'expenditure',
 reqLineItems: [],
 reqBudgetCodesForDept: [],
@@ -3326,7 +3333,7 @@ btn.disabled = false; btn.innerHTML = 'Sign in to your account';
 }
 });
 function logout() {
-STATE = { ...STATE, token: null, role: null, name: null, userId: null, signatureUrl: null, email: null, position: null, revLineMonthlyCache: {} };
+STATE = { ...STATE, token: null, role: null, name: null, userId: null, signatureUrl: null, email: null, position: null, revLineCache: {} };
 localStorage.removeItem('ktc_token'); localStorage.removeItem('ktc_role');
 localStorage.removeItem('ktc_name'); localStorage.removeItem('ktc_user_id');
 document.getElementById('app-screen').style.display = 'none';
@@ -3527,11 +3534,15 @@ if (view === 'dashboard') loadDashboard();
 if (view === 'rev-monthly') {
 STATE.workplanSubtab = 'annual';
 placeRevenueTablesFor('rev-monthly');
+const lbl = document.getElementById('wp-loading-label');
+if (lbl) lbl.textContent = 'Loading Monthly Local Revenue/GoU Transfers…';
 loadWorkplanView();
 }
 if (view === 'workplan') {
 STATE.workplanSubtab = subtab || 'expenditure';
 placeRevenueTablesFor('workplan');
+const lbl = document.getElementById('wp-loading-label');
+if (lbl) lbl.textContent = (STATE.workplanSubtab === 'expenditure') ? 'Loading Approved LG Expenditure Estimates…' : 'Loading Annual Work Plan & Budget…';
 loadWorkplanView();
 setTimeout(() => {
 if (subtab === 'expenditure') {
@@ -4063,12 +4074,20 @@ if (thead) thead.style.display = '';
 }
 
 // Drops the cached rows for one work plan (or, with no id, every work
-// plan) from the sub item 1 (Monthly Local Revenue/GoU Transfers) cache —
-// called right after any add/edit/delete/clear/import so the next render
-// is forced to fetch fresh data instead of repainting stale cached rows.
-function invalidateMonthlyRevCache(wpId) {
-if (wpId == null) { STATE.revLineMonthlyCache = {}; return; }
-delete STATE.revLineMonthlyCache[wpId];
+// plan) under one revenue-line-items period type — called right after any
+// add/edit/delete/clear/import so the next render is forced to fetch fresh
+// data instead of repainting stale cached rows. Covers all three PBS
+// revenue tables (Summary by Source, by Category & Source, Monthly by
+// Category & Source), which are shared live between Sub Item 1 (Monthly
+// Local Revenue/GoU Transfers) and Sub Item 3 (Annual Work Plan) — caching
+// here means switching between those two sub items repaints instantly
+// from memory instead of re-hitting the network on every switch.
+function invalidateRevLineCache(periodType, wpId) {
+if (wpId == null) {
+Object.keys(STATE.revLineCache).forEach(k => { if (k.startsWith(periodType + ':')) delete STATE.revLineCache[k]; });
+return;
+}
+delete STATE.revLineCache[periodType + ':' + wpId];
 }
 
 async function renderRevLineTable(periodType) {
@@ -4088,18 +4107,18 @@ tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" st
 return;
 }
 // Cache hit: paint straight from memory, no network call and no loading
-// spinner. This is the caching layer for sub item 1 specifically — the
-// cache is keyed by work plan id and is invalidated the instant its rows
-// actually change (see invalidateMonthlyRevCache calls below), so a cache
-// hit can never show stale data.
-if (periodType === 'monthly' && STATE.revLineMonthlyCache.hasOwnProperty(wpId)) {
-paintRevLineTable(tbody, cfg, thead, STATE.revLineMonthlyCache[wpId]);
+// spinner. Keyed by period type + work plan id and invalidated the
+// instant its rows actually change (see invalidateRevLineCache calls
+// below), so a cache hit can never show stale data.
+const cacheKey = periodType + ':' + wpId;
+if (STATE.revLineCache.hasOwnProperty(cacheKey)) {
+paintRevLineTable(tbody, cfg, thead, STATE.revLineCache[cacheKey]);
 return;
 }
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
 try {
 const rows = await api(`/api/revenue-line-items?work_plan_id=${wpId}&period_type=${periodType}`);
-if (periodType === 'monthly') STATE.revLineMonthlyCache[wpId] = rows;
+STATE.revLineCache[cacheKey] = rows;
 paintRevLineTable(tbody, cfg, thead, rows);
 } catch (e) {
 tbody.innerHTML = `<tr><td colspan="${cfg.colCount}"><div class="empty-state" style="padding:16px;">Could not load this table.</div></td></tr>`;
@@ -4165,7 +4184,7 @@ if (!confirm('Delete this row? This cannot be undone.')) return;
 try {
 await api(`/api/revenue-line-items/${id}`, { method: 'DELETE' });
 toast('Row deleted', 'success');
-if (periodType === 'monthly') invalidateMonthlyRevCache(document.getElementById(REV_LINE_PAGES.monthly.wpSelectId).value);
+invalidateRevLineCache(periodType, document.getElementById(REV_LINE_PAGES[periodType].wpSelectId).value);
 renderRevLineTable(periodType);
 } catch (e) { toast(e.message, 'error'); }
 }
@@ -4178,7 +4197,7 @@ if (!confirm('Clear ALL rows in this table for the selected work plan? This cann
 try {
 const result = await api(`/api/revenue-line-items/clear?work_plan_id=${wpId}&period_type=${periodType}`, { method: 'DELETE' });
 toast(`Cleared ${result.deleted} row(s)`, 'success');
-if (periodType === 'monthly') invalidateMonthlyRevCache(wpId);
+invalidateRevLineCache(periodType, wpId);
 renderRevLineTable(periodType);
 } catch (e) { toast(e.message, 'error'); }
 }
@@ -4211,7 +4230,7 @@ toast('Row updated', 'success');
 await api('/api/revenue-line-items', { method: 'POST', body: JSON.stringify(payload) });
 toast('Row added', 'success');
 }
-if (periodType === 'monthly') invalidateMonthlyRevCache(workPlanId);
+invalidateRevLineCache(periodType, workPlanId);
 closeModal('modal-rli');
 renderRevLineTable(periodType);
 } catch (e) { toast(e.message, 'error'); }
@@ -4238,7 +4257,7 @@ try {
 toast('Importing from Excel…', 'info');
 const result = await api(`/api/revenue-line-items/import?work_plan_id=${wpVal}&period_type=${periodType}`, { method: 'POST', body: fd });
 toast(`Imported ${result.created} row(s)`, 'success');
-if (periodType === 'monthly') invalidateMonthlyRevCache(wpVal);
+invalidateRevLineCache(periodType, wpVal);
 renderRevLineTable(periodType);
 } catch (err) { toast(err.message, 'error'); }
 finally { e.target.value = ''; }
