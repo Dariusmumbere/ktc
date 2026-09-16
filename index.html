@@ -3309,7 +3309,7 @@ localStorage.setItem('ktc_token', STATE.token);
 localStorage.setItem('ktc_role', STATE.role);
 localStorage.setItem('ktc_name', STATE.name);
 localStorage.setItem('ktc_user_id', STATE.userId);
-enterApp();
+bootApp(false);
 } catch (err) {
 // Whatever went wrong server-side (wrong credentials, a malformed email
 // address tripping backend validation, an unexpected 500, etc.), the
@@ -3411,9 +3411,31 @@ document.getElementById('sb-role').textContent = statusLabel(STATE.role);
 document.getElementById('sb-avatar').textContent = initials(STATE.name);
 document.getElementById('admin-nav-group').style.display = (STATE.role === 'admin') ? 'block' : 'none';
 applyRoleVisibility();
-await loadDepartments();
-await loadWorkplans();
+// switchView('dashboard') used to run only *after* both loadDepartments()
+// and loadWorkplans() had resolved. Since those are plain sequential
+// awaits, a single failed request in either one — most commonly the very
+// first authenticated call after login hitting a backend that's still
+// waking up from a cold start — threw right there and skipped every line
+// after it in this function: the Dashboard never rendered, notifications
+// never refreshed, and the session timer never started. The only way to
+// recover was to manually open some other screen (whose own loader hits
+// the network fresh and, by then, usually succeeds) and back.
+// The Dashboard only needs /api/dashboard/stats — it doesn't depend on
+// STATE.departments or STATE.workplans — so it's switched to and loaded
+// immediately, independent of them.
 switchView('dashboard');
+// Departments and work plans are shared reference data used to populate
+// dropdowns elsewhere (budget codes, requisitions, the PBS work-plan
+// selector, etc.). They're loaded in parallel rather than one after the
+// other, and a failure in either one no longer blocks the other or
+// anything below — every screen that actually needs this data reloads it
+// itself when opened (see loadDepartmentsView, loadWorkplanView), so a
+// failure here is harmless beyond a toast asking to retry.
+Promise.allSettled([loadDepartments(), loadWorkplans()]).then((results) => {
+if (results.some(r => r.status === 'rejected')) {
+toast('Some reference data could not be loaded. Reopening the relevant screen will retry automatically.', 'error');
+}
+});
 refreshNotifications();
 setInterval(refreshNotifications, 30000);
 api('/api/auth/me').then(me => { STATE.signatureUrl = me.signature_url || null; STATE.departmentId = me.department_id || null; STATE.email = me.email || null; STATE.position = me.position || null; STATE.telephone = me.telephone || null; }).catch(() => {});
