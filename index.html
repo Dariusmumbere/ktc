@@ -3055,21 +3055,35 @@ async function api(path, opts = {}) {
 const headers = opts.headers || {};
 if (!(opts.body instanceof FormData)) headers['Content-Type'] = 'application/json';
 if (STATE.token) headers['Authorization'] = 'Bearer ' + STATE.token;
-// Network-level failures (DNS/connection errors, a cold backend instance
-// timing out, a dropped connection, etc.) surface here as a rejected
-// promise rather than an HTTP error response — retry once after a short
-// pause before giving up, since these are frequently transient (e.g. a
-// free-tier host waking from sleep on the very first request).
-let res;
+// Network-level failures (DNS/connection errors, a dropped connection,
+// etc.) surface here as a rejected promise rather than an HTTP error
+// response. The backend runs on a free-tier host that spins down after a
+// period of inactivity — its very next request has to wait for the
+// instance to spin back up, which commonly takes 30-90+ seconds. A
+// two-attempt, ~50-second budget was shorter than a real worst-case cold
+// start, so it gave up (and told the user something was wrong) while the
+// instance was still perfectly fine, just still booting. This retries up
+// to three times with increasing timeouts/pauses — roughly a 100-second
+// total budget — before finally giving up, so a slow wake-up is no
+// longer mistaken for an outage.
+const attempts = [
+{ timeout: 15000, pauseBeforeMs: 0 },
+{ timeout: 30000, pauseBeforeMs: 2000 },
+{ timeout: 45000, pauseBeforeMs: 4000 },
+];
+let res, lastErr = null;
+for (const attempt of attempts) {
+if (attempt.pauseBeforeMs) await new Promise(r => setTimeout(r, attempt.pauseBeforeMs));
 try {
-res = await fetchWithTimeout(API_BASE + path, { ...opts, headers }, 20000);
+res = await fetchWithTimeout(API_BASE + path, { ...opts, headers }, attempt.timeout);
+lastErr = null;
+break;
 } catch (networkErr) {
-try {
-await new Promise(r => setTimeout(r, 1500));
-res = await fetchWithTimeout(API_BASE + path, { ...opts, headers }, 30000);
-} catch (retryErr) {
-throw new Error('Could not reach the database. Please check your connection and try again in a moment.');
+lastErr = networkErr;
 }
+}
+if (lastErr) {
+throw new Error('Could not reach the server. It may still be waking up after a period of inactivity — please try again shortly.');
 }
 if (res.status === 401 && STATE.token) {
 // Only an already-signed-in request (one that actually sent a token)
@@ -4292,7 +4306,7 @@ if (clearBtn) clearBtn.addEventListener('click', () => clearRevLineItems(periodT
 // so only monthly and quarterly need their own listeners attached here.
 });
 // ---- Dashboard -----------------------------------------------------------------
-async function loadDashboard() {
+async function loadDashboard(isRetry) {
 try {
 const s = await api('/api/dashboard/stats');
 document.getElementById('stat-pending').textContent = s.pending_approvals;
@@ -4316,7 +4330,14 @@ list.innerHTML = s.recent_activity.map(r => `
 </li>`).join('');
 }
 renderDeptChart(s.budget_by_department || []);
-} catch (e) { toast(e.message, 'error'); }
+} catch (e) {
+// Same reasoning as loadWorkplanView above: the first request right
+// after login is the one most likely to catch a cold-starting backend
+// (see api() above), so one silent retry recovers the common case
+// instead of leaving the stat cards on their "—" placeholders forever.
+if (!isRetry) { setTimeout(() => loadDashboard(true), 3000); return; }
+toast(e.message, 'error');
+}
 }
 function statusIcon(status) {
 if (['approved','accounted'].includes(status)) return '✓';
@@ -4424,21 +4445,38 @@ const fy = wp ? `FY ${escapeHtml(wp.financial_year)}` : 'FY —';
 const detailTitleEl = document.getElementById('wp-title-revenue-detail');
 if (detailTitleEl) detailTitleEl.innerHTML = `APPROVED QUARTERLY REVENUE BUDGET ESTIMATES AND QUARTERLY REVENUE PERFORMANCE GAP — ${fy}`;
 }
-async function loadWorkplanView() {
+async function loadWorkplanView(isRetry) {
 const overlay = document.getElementById('wp-loading-overlay');
 const content = document.getElementById('wp-workplan-content');
+if (!isRetry) {
 if (overlay) overlay.classList.remove('wp-hide');
 if (content) content.classList.remove('wp-loaded');
+}
 try {
 await loadWorkplans();
 await loadProgrammeFilterOptions();
 await renderBudgetCodes();
 applyWorkplanSubtabDisplay();
 await loadReportFrontmatter();
-} finally {
+} catch (e) {
+// This used to be a bare `finally` with no `catch` at all: a failure in
+// any one of the awaited calls above (most commonly the backend still
+// waking up from a cold start on the very first request after login —
+// see api() above) silently skipped everything after it and still hid
+// the loading overlay in the finally block, leaving the page looking
+// "loaded" but completely blank — with no error shown and no way to
+// recover short of navigating away and back (which happened to retry
+// the network fresh, usually after the backend had finished waking up).
+// One retry, keeping the overlay up in the meantime, covers that case
+// without the user having to do anything.
+if (!isRetry) {
+setTimeout(() => loadWorkplanView(true), 3000);
+return;
+}
+toast(e.message, 'error');
+}
 if (content) content.classList.add('wp-loaded');
 if (overlay) overlay.classList.add('wp-hide');
-}
 }
 // Populates the Programme filter (next to the search bar / department
 // filter on the Annual Work Plan & Budget table) with the distinct
