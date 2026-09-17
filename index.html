@@ -792,10 +792,13 @@ text-align:center;
 so no single month renders wider than the others just because one row's
 figure happens to be a digit longer. Narrower than table 2's Q1–Q4
 (.rev-q-col, 63px) since there are 12 of these per band instead of 4.
-Left padding nudged up (table-wide 9px → 10px → 12px → 17px). Right
-padding nudged up the same way, then +10px more on top of that (17px →
-27px), to give each month header extra breathing room. */
-#wp-rev-monthly-cat-table thead th.rev-m-col{width:43px; max-width:43px; white-space:nowrap; line-height:1.875; padding-left:17px; padding-right:27px;}
+IMPORTANT: this table uses the page-wide `*{box-sizing:border-box;}` rule
+(so padding is carved OUT of the fixed 43px width, not added on top of
+it). The last few padding increases (up to 17px+27px) left almost no
+room for the "JUL"/"AUG" text itself, which is what was pushing content
+past the cell edge. Settled here at a modest 6px each side — enough for
+a visible gap without eating the column alive. */
+#wp-rev-monthly-cat-table thead th.rev-m-col{width:43px; max-width:43px; white-space:nowrap; line-height:1.875; padding-left:6px; padding-right:6px;}
 /* PBS Code column widened by 5px (39px → 44px) relative to table 2's
 version, since this table's narrower monthly figure columns otherwise
 leave the code column feeling cramped by comparison. */
@@ -813,14 +816,18 @@ from the table-wide 0 9px (see #wp-rev-monthly-cat-body td above) to give
 each right-aligned amount more room before it starts spilling past the
 cell's right edge — most of that reclaimed room comes off the LEFT side,
 since with right-aligned text the free space always sits on the left.
-Left padding on the month (Jul–Jun) cells nudged up (1px → 3px → 5px →
-10px). Right padding nudged up the same way (4px → 6px → 8px → 13px),
-then +10px more on top of that (13px → 23px); the Total column
-(nth-child 16/29) is left at its original 1px/4px since it isn't a
-month column. */
-#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:43px; max-width:43px; white-space:nowrap; padding-left:10px; padding-right:23px; font-size:10px;}
+IMPORTANT: this table uses the page-wide `*{box-sizing:border-box;}` rule,
+so padding is carved OUT of the fixed 43px width rather than added on top
+of it. The last few padding increases (up to 10px left / 23px right) left
+only ~10px of the 43px column for the figure itself, which is exactly why
+amounts like "43,998" were spilling past their cell. Settled back to a
+small, safe left/right (3px/6px) that leaves ~34px for the figure — still
+a bit more breathing room than the original 1px/4px, without overflowing.
+The Total column (nth-child 16/29) is left at its original 1px/4px since
+it isn't a month column and was never part of this. */
+#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:43px; max-width:43px; white-space:nowrap; padding-left:3px; padding-right:6px; font-size:10px;}
 #wp-rev-monthly-cat-body td:nth-child(16){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
-#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:43px; max-width:43px; white-space:nowrap; padding-left:10px; padding-right:23px; font-size:10px;}
+#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:43px; max-width:43px; white-space:nowrap; padding-left:3px; padding-right:6px; font-size:10px;}
 #wp-rev-monthly-cat-body td:nth-child(29){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
 #wp-rev-monthly-cat-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
 /* "Summary of the Approved Monthly Budget Estimates" group-title cell
