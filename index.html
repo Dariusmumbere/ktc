@@ -1007,6 +1007,36 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-piap-wrap tr.piap-field-row td:not(:first-child){white-space:normal; max-width:220px; min-width:150px;}
 #wp-piap-wrap tr.piap-field-row.piap-num-row td:not(:first-child){text-align:right; font-family:var(--font-mono, monospace); white-space:nowrap;}
 #wp-piap-wrap .piap-empty{padding:20px 16px; color:var(--ink-500); font-size:12.5px;}
+/* Each Part 2 department block is laid out on its own true A4-LANDSCAPE
+   sheet (297mm x 210mm) — exact landscape page dimensions — the same
+   "page view" treatment used for the front-matter pages above, but
+   rotated, since the Part 2 tables are wide (one column per activity
+   output) and read far better on a landscape sheet than a portrait one.
+   Content taller or wider than the sheet scrolls inside its own page
+   rather than stretching the page or the app layout. */
+#wp-piap-wrap.wp-piap-pages{
+scroll-snap-type:y proximity; background:#DDE5E3; border-radius:12px;
+padding:32px 16px; margin:0 -4px; display:flex; flex-direction:column;
+align-items:center; gap:28px; overflow-x:visible;
+}
+.wp-piap-page{
+width:297mm; aspect-ratio:297/210; max-width:100%; flex-shrink:0;
+box-sizing:border-box; background:var(--paper-raised); box-shadow:var(--shadow-lg);
+border-radius:2px; overflow:auto; scroll-snap-align:start;
+padding:14mm 12mm;
+}
+#wp-piap-wrap.wp-piap-pages table + table{margin-top:0;}
+@media (max-width:1400px){
+.wp-piap-page{padding:10mm 9mm;}
+}
+@media (max-width:900px){
+#wp-piap-wrap.wp-piap-pages{padding:20px 8px; gap:20px;}
+.wp-piap-page{padding:8mm 6mm;}
+}
+@media print{
+#wp-piap-wrap.wp-piap-pages{background:none; padding:0; margin:0; gap:0;}
+.wp-piap-page{width:auto; aspect-ratio:auto; height:auto; max-height:none; overflow:visible; box-shadow:none; border-radius:0; padding:0; page-break-after:always;}
+}
 #wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
 #wp-main-table tbody td{padding:6.5px 6px; font-size:11px; font-weight:400; line-height:1.3;}
 #wp-main-table td.wrap, #wp-main-table th.wrap{white-space:normal; max-width:118px;}
@@ -2178,7 +2208,7 @@ Departments
 <th>
 <span class="th-with-clear">
 <span></span>
-<button type="button" class="th-clear-btn" id="wp-clear-btn" style="display:none;" title="Delete activity &amp; budget estimate rows for the Department selected in the dropdown above">
+<button type="button" class="th-clear-btn" id="wp-clear-btn" style="display:none;" title="Delete activity &amp; budget estimate rows for the Department selected above — or, with no Department selected, for every department at once">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/><path d="M10 11v6M14 11v6"/></svg>
 </button>
 </span>
@@ -2201,7 +2231,7 @@ Departments
 </div>
 </div>
 </div>
-<div id="wp-piap-wrap" style="margin:0 16px 16px; overflow-x:auto;">
+<div id="wp-piap-wrap" class="wp-piap-pages" style="margin:0 16px 16px;">
 <div class="loading-row"><span class="spinner spinner-dark"></span></div>
 </div>
 </div>
@@ -4876,26 +4906,36 @@ toast('Sub row removed', 'success');
 renderRevenueSources();
 } catch (e) { toast(e.message, 'error'); }
 }
-// ---- Clear selected department's rows: Annual Work Plan / Budget Estimates ----
+// ---- Clear rows: Annual Work Plan / Budget Estimates ----
 // Scoped to whichever Department is chosen in the Departments dropdown
 // (wp-dept-filter) above the table — deletes only that department's
-// activity & budget estimate rows for the selected work plan, never the
-// whole table.
+// activity & budget estimate rows for the selected work plan. When no
+// Department is chosen ("All Departments"), the button instead clears
+// every department's rows for the work plan at once — a more
+// destructive action, so it's gated behind its own, more explicit
+// confirmation prompt before anything is deleted.
 document.getElementById('wp-clear-btn').addEventListener('click', async () => {
 const wpId = document.getElementById('wp-select').value;
 if (!wpId) { toast('Please select a work plan first', 'error'); return; }
 const deptSelect = document.getElementById('wp-dept-filter');
 const deptId = deptSelect.value;
-if (!deptId) { toast('Please choose a Department from the dropdown first', 'error'); return; }
-const deptName = deptSelect.options[deptSelect.selectedIndex].textContent;
-if (!confirm(`Delete ALL activity & budget estimate rows for "${deptName}" in this work plan? This cannot be undone.`)) return;
+const deptName = deptId ? deptSelect.options[deptSelect.selectedIndex].textContent : '';
+const confirmMsg = deptId
+? `Delete ALL activity & budget estimate rows for "${deptName}" in this work plan? This cannot be undone.`
+: `No Department is selected, so this will delete ALL activity & budget estimate rows for EVERY department in this work plan. This cannot be undone. Are you sure you want to continue?`;
+if (!confirm(confirmMsg)) return;
 // Empty the main table and the dependent Department Budget Summary table
 // on screen immediately, before the request even resolves.
 document.getElementById('wp-table-body').innerHTML = '<tr><td colspan="21"><div class="empty-state" style="padding:16px;">Clearing…</div></td></tr>';
 renderDeptSummaryTable([]);
 try {
-const result = await api(`/api/budget-codes/clear?work_plan_id=${wpId}&department_id=${deptId}`, { method: 'DELETE' });
-let msg = `Cleared ${result.deleted} budget estimate row(s) for "${deptName}"`;
+const url = deptId
+? `/api/budget-codes/clear?work_plan_id=${wpId}&department_id=${deptId}`
+: `/api/budget-codes/clear?work_plan_id=${wpId}`;
+const result = await api(url, { method: 'DELETE' });
+let msg = deptId
+? `Cleared ${result.deleted} budget estimate row(s) for "${deptName}"`
+: `Cleared ${result.deleted} budget estimate row(s) across all departments`;
 if (result.skipped) msg += `, ${result.skipped} skipped (have requisitions on record)`;
 toast(msg, 'success');
 } catch (e) { toast(e.message, 'error'); } finally {
@@ -5204,7 +5244,10 @@ byDept.forEach((dept, deptName) => {
 for (let i = 0; i < dept.items.length; i += PIAP_BLOCK_SIZE) {
 const block = dept.items.slice(i, i + PIAP_BLOCK_SIZE);
 const colCount = block.length + 1;
-html += `<table>
+// Each block is its own true A4-landscape "page" (see .wp-piap-page)
+// so every Part 2 department table sits on its own exact-dimension
+// landscape sheet instead of stacking in one continuous scroller.
+html += `<div class="wp-piap-page"><table>
 <tbody>
 <tr class="piap-vote-row"><td colspan="${colCount}">LLG Vote &nbsp; ${escapeHtml(PIAP_LLG_VOTE_CODE)} &nbsp;—&nbsp; ${escapeHtml(PIAP_LLG_VOTE_NAME)} &nbsp;—&nbsp; ${escapeHtml(PIAP_LLG_VOTE_DISTRICT)}</td></tr>
 <tr class="piap-part-row"><td colspan="${colCount}">Part 2: Proposed LLG Departmental Activity Outputs and Expenditure Estimates</td></tr>
@@ -5217,7 +5260,7 @@ const v = f.get(c);
 return `<td>${v === null || v === undefined || v === '' ? '—' : escapeHtml(String(v))}</td>`;
 }).join('')}</tr>`).join('')}
 </tbody>
-</table>`;
+</table></div>`;
 }
 });
 wrap.innerHTML = html;
