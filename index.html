@@ -792,9 +792,10 @@ text-align:center;
 so no single month renders wider than the others just because one row's
 figure happens to be a digit longer. Narrower than table 2's Q1–Q4
 (.rev-q-col, 63px) since there are 12 of these per band instead of 4.
-Left/right padding nudged up (table-wide 9px → 10px → 12px, then +5px
-more → 17px) to give each month header extra breathing room. */
-#wp-rev-monthly-cat-table thead th.rev-m-col{width:43px; max-width:43px; white-space:nowrap; line-height:1.875; padding-left:17px; padding-right:17px;}
+Left padding nudged up (table-wide 9px → 10px → 12px → 17px). Right
+padding nudged up the same way, then +10px more on top of that (17px →
+27px), to give each month header extra breathing room. */
+#wp-rev-monthly-cat-table thead th.rev-m-col{width:43px; max-width:43px; white-space:nowrap; line-height:1.875; padding-left:17px; padding-right:27px;}
 /* PBS Code column widened by 5px (39px → 44px) relative to table 2's
 version, since this table's narrower monthly figure columns otherwise
 leave the code column feeling cramped by comparison. */
@@ -812,13 +813,14 @@ from the table-wide 0 9px (see #wp-rev-monthly-cat-body td above) to give
 each right-aligned amount more room before it starts spilling past the
 cell's right edge — most of that reclaimed room comes off the LEFT side,
 since with right-aligned text the free space always sits on the left.
-Left/right padding on the month (Jul–Jun) cells nudged up (1px → 3px →
-5px left, 4px → 6px → 8px right, then +5px more each side → 10px left,
-13px right) for extra breathing room; the Total column (nth-child 16/29)
-is left at its original 1px/4px since it isn't a month column. */
-#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:43px; max-width:43px; white-space:nowrap; padding-left:10px; padding-right:13px; font-size:10px;}
+Left padding on the month (Jul–Jun) cells nudged up (1px → 3px → 5px →
+10px). Right padding nudged up the same way (4px → 6px → 8px → 13px),
+then +10px more on top of that (13px → 23px); the Total column
+(nth-child 16/29) is left at its original 1px/4px since it isn't a
+month column. */
+#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:43px; max-width:43px; white-space:nowrap; padding-left:10px; padding-right:23px; font-size:10px;}
 #wp-rev-monthly-cat-body td:nth-child(16){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
-#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:43px; max-width:43px; white-space:nowrap; padding-left:10px; padding-right:13px; font-size:10px;}
+#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:43px; max-width:43px; white-space:nowrap; padding-left:10px; padding-right:23px; font-size:10px;}
 #wp-rev-monthly-cat-body td:nth-child(29){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
 #wp-rev-monthly-cat-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
 /* "Summary of the Approved Monthly Budget Estimates" group-title cell
