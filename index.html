@@ -3404,6 +3404,18 @@ document.getElementById('session-logout-btn').addEventListener('click', () => { 
 document.addEventListener(evt, () => { if (STATE.token && !isSessionPromptShowing()) resetSessionTimer(); }, { passive: true });
 });
 async function enterApp() {
+// Force the dashboard's stats to start loading immediately, as the very
+// first thing this function does. Previously the dashboard was only
+// reached via switchView('dashboard') further down this function — but a
+// later line in this same function (applyRoleVisibility, which references
+// a few stale button IDs that no longer exist in the DOM) throws and halts
+// execution right there, so switchView('dashboard') — and therefore
+// loadDashboard() — never ran. The dashboard then sat on its placeholder
+// spinners until some unrelated screen happened to call loadDashboard()
+// itself (e.g. after an approval/requisition action) as a side effect.
+// Calling it here, before anything else in this function has a chance to
+// throw, guarantees the dashboard's stats always start loading at startup.
+loadDashboard();
 document.getElementById('login-screen').style.display = 'none';
 document.getElementById('app-screen').style.display = 'block';
 document.getElementById('sb-name').textContent = STATE.name;
