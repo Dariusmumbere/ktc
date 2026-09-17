@@ -792,13 +792,12 @@ text-align:center;
 so no single month renders wider than the others just because one row's
 figure happens to be a digit longer. Narrower than table 2's Q1–Q4
 (.rev-q-col, 63px) since there are 12 of these per band instead of 4.
-IMPORTANT: this table uses the page-wide `*{box-sizing:border-box;}` rule
-(so padding is carved OUT of the fixed 43px width, not added on top of
-it). The last few padding increases (up to 17px+27px) left almost no
-room for the "JUL"/"AUG" text itself, which is what was pushing content
-past the cell edge. Settled here at a modest 6px each side — enough for
-a visible gap without eating the column alive. */
-#wp-rev-monthly-cat-table thead th.rev-m-col{width:43px; max-width:43px; white-space:nowrap; line-height:1.875; padding-left:6px; padding-right:6px;}
+Widened from 43px to 50px (rather than adding more padding) to give real
+extra room — this table uses the page-wide `*{box-sizing:border-box;}`
+rule, so padding alone was eating into the space meant for the figures;
+widening the column itself is what actually grows the usable area. Kept
+at a modest, safe 6px/6px padding on top of the wider column. */
+#wp-rev-monthly-cat-table thead th.rev-m-col{width:50px; max-width:50px; white-space:nowrap; line-height:1.875; padding-left:6px; padding-right:6px;}
 /* PBS Code column widened by 5px (39px → 44px) relative to table 2's
 version, since this table's narrower monthly figure columns otherwise
 leave the code column feeling cramped by comparison. */
@@ -816,18 +815,15 @@ from the table-wide 0 9px (see #wp-rev-monthly-cat-body td above) to give
 each right-aligned amount more room before it starts spilling past the
 cell's right edge — most of that reclaimed room comes off the LEFT side,
 since with right-aligned text the free space always sits on the left.
-IMPORTANT: this table uses the page-wide `*{box-sizing:border-box;}` rule,
-so padding is carved OUT of the fixed 43px width rather than added on top
-of it. The last few padding increases (up to 10px left / 23px right) left
-only ~10px of the 43px column for the figure itself, which is exactly why
-amounts like "43,998" were spilling past their cell. Settled back to a
-small, safe left/right (3px/6px) that leaves ~34px for the figure — still
-a bit more breathing room than the original 1px/4px, without overflowing.
-The Total column (nth-child 16/29) is left at its original 1px/4px since
-it isn't a month column and was never part of this. */
-#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:43px; max-width:43px; white-space:nowrap; padding-left:3px; padding-right:6px; font-size:10px;}
+Widened from 43px to 50px (matching the header above) to give the
+figures real extra room, rather than stacking more padding on top of a
+`box-sizing:border-box` column where padding just eats into the content
+area. Left/right padding kept at the safe 3px/6px. The Total column
+(nth-child 16/29) is left at its original 71.25px/1px/4px since it isn't
+a month column and was never part of this. */
+#wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15){width:50px; max-width:50px; white-space:nowrap; padding-left:3px; padding-right:6px; font-size:10px;}
 #wp-rev-monthly-cat-body td:nth-child(16){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
-#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:43px; max-width:43px; white-space:nowrap; padding-left:3px; padding-right:6px; font-size:10px;}
+#wp-rev-monthly-cat-body td:nth-child(n+17):nth-child(-n+28){width:50px; max-width:50px; white-space:nowrap; padding-left:3px; padding-right:6px; font-size:10px;}
 #wp-rev-monthly-cat-body td:nth-child(29){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
 #wp-rev-monthly-cat-table thead th.rev-wrap-header{white-space:normal !important; max-width:190px; line-height:1.35;}
 /* "Summary of the Approved Monthly Budget Estimates" group-title cell
@@ -835,11 +831,11 @@ it isn't a month column and was never part of this. */
 pin its total width to exactly 12 x the width given to each month column
 below (see .rev-m-col above), matching table 2's .rev-approved-qhdr
 technique of leaving nothing for the browser to redistribute unevenly. */
-#wp-rev-monthly-cat-table thead th.rev-approved-mhdr{width:516px !important; max-width:516px !important;}
+#wp-rev-monthly-cat-table thead th.rev-approved-mhdr{width:600px !important; max-width:600px !important;}
 /* "Summary of the Monthly Actual Inflow Realized: ..." header: same
 treatment as table 2's .rev-actual-header — left-aligned and widened to
 match the widened month columns beneath it. */
-#wp-rev-monthly-cat-table thead th.rev-actual-mhdr{white-space:normal !important; width:516px; max-width:516px; line-height:1.35; text-align:left !important;}
+#wp-rev-monthly-cat-table thead th.rev-actual-mhdr{white-space:normal !important; width:600px; max-width:600px; line-height:1.35; text-align:left !important;}
 #wp-rev-monthly-cat-table thead th.rev-band-title{border-bottom:1px solid var(--line-strong); line-height:1.875;}
 #wp-rev-monthly-cat-table thead th.rev-row5{border-bottom:1px solid var(--line-strong);}
 #wp-rev-monthly-cat-table thead tr:last-child th{border-bottom:1px solid var(--line-strong);}
@@ -2054,8 +2050,8 @@ Departments
 <col style="width:44px">
 <col style="width:325px">
 <col style="width:70px">
-<col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:71.25px">
-<col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:71.25px">
+<col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:71.25px">
+<col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:71.25px">
 <col style="width:70px">
 </colgroup>
 <thead>
