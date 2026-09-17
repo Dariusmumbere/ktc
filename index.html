@@ -3473,9 +3473,16 @@ document.getElementById('wp-import-piap-btn').style.display = (STATE.role === 'a
 document.getElementById('new-req-btn').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'inline-flex' : 'none';
 document.getElementById('qa-new-req').style.display = (['staff','hod','admin'].includes(STATE.role)) ? 'block' : 'none';
 document.getElementById('wp-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
-document.getElementById('wp-new-revenue-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
-document.getElementById('wp-import-revenue-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
-document.getElementById('wp-revenue-clear-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
+// These three IDs are stale (no matching element exists in the DOM any
+// more — the revenue-source controls were renamed to rev-add-item-btn /
+// rev-create-btn elsewhere). getElementById(...) returns null for them, so
+// the old unguarded `.style.display = ...` threw a TypeError right here,
+// aborting the rest of enterApp() every time it ran. On a normal login
+// click that just silently skipped later setup; on a page refresh, the
+// boot code's `enterApp().catch(() => logout())` turned that same throw
+// into an unwanted logout. Guarding with `?.` makes the missing elements a
+// harmless no-op instead of a crash.
+[document.getElementById('wp-new-revenue-btn'), document.getElementById('wp-import-revenue-btn'), document.getElementById('wp-revenue-clear-btn')].forEach(el => { if (el) el.style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none'; });
 document.getElementById('wp-new-summary-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-import-summary-btn').style.display = (STATE.role === 'admin') ? 'inline-flex' : 'none';
 document.getElementById('wp-summary-clear-btn').style.display = 'inline-flex';
