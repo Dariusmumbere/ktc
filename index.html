@@ -2190,7 +2190,7 @@ Departments
 <th class="wrap">Programme</th>
 <th class="wrap">Sub<br>Programme</th>
 <th class="wrap">Budget Output<br>Code</th>
-<th class="wrap">Budget Output<br>Description</th>
+<th class="wrap">Activity Output<br>Description</th>
 <th class="wrap">PIAP Output<br>Description</th>
 <th class="wrap">PIAP Output<br>Indicator</th>
 <th class="wrap">Unit of<br>Measure</th>
@@ -4921,8 +4921,8 @@ const deptSelect = document.getElementById('wp-dept-filter');
 const deptId = deptSelect.value;
 const deptName = deptId ? deptSelect.options[deptSelect.selectedIndex].textContent : '';
 const confirmMsg = deptId
-? `Delete ALL activity & budget estimate rows for "${deptName}" in this work plan? This cannot be undone.`
-: `No Department is selected, so this will delete ALL activity & budget estimate rows for EVERY department in this work plan. This cannot be undone. Are you sure you want to continue?`;
+? `Delete ALL activity & budget estimate rows for "${deptName}" in this work plan? Any requisitions already raised against these rows will be kept but unlinked from them. This cannot be undone.`
+: `No Department is selected, so this will delete ALL activity & budget estimate rows for EVERY department in this work plan. Any requisitions already raised against these rows will be kept but unlinked from them. This cannot be undone. Are you sure you want to continue?`;
 if (!confirm(confirmMsg)) return;
 // Empty the main table and the dependent Department Budget Summary table
 // on screen immediately, before the request even resolves.
@@ -5268,7 +5268,10 @@ wrap.innerHTML = html;
 
 async function deleteBudgetCode(id) {
 const c = STATE.budgetCodes.find(x => x.id === id);
-if (!confirm(`Delete budget code ${c ? c.code : id}? This cannot be undone.`)) return;
+// Deleting is allowed even if requisitions have been raised against this
+// code — those requisitions are kept (not deleted) but unlinked from the
+// code/activity being removed, so the warning below covers that case too.
+if (!confirm(`Delete budget code ${c ? c.code : id}? Any requisitions already raised against it will be kept but unlinked from it. This cannot be undone.`)) return;
 try {
 await api(`/api/budget-codes/${id}`, { method: 'DELETE' });
 toast('Budget estimate deleted', 'success');
