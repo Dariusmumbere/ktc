@@ -4116,11 +4116,14 @@ const isMainCategory = cfg.hasOrigin
   : (hasCode && hasValues);
 const rowCls = isMainCategory ? `${cls} rev-has-code` : cls;
 const labelPad = 5;
-// The "Revenue Performance Plans by Category & Source" column wraps onto
-// as many lines as its content needs (typically 2) instead of forcing a
-// single nowrap line, so long category/source names break onto a new
-// line within the column's fixed width rather than overflowing it.
-const labelWhiteSpace = cfg.hasOrigin ? 'normal' : 'nowrap';
+// The "Revenue Performance Plans by Source" / "...by Category & Source"
+// column wraps onto as many lines as its content needs (typically 2)
+// instead of forcing a single nowrap line, so long category/source names
+// break onto a new line within the column's fixed width rather than
+// overflowing past it — this applies to every Rev Line table, not just
+// the ones with an Originating Revenue Source column, since nowrap here
+// is exactly what let a long label spill past its column's set width.
+const labelWhiteSpace = 'normal';
 // Only the "Revenue Performance Plan by Category & Source" tables (Q1–Q4
 // and the monthly Table 3 variant) have an "Originating Revenue Source"
 // column (e.g. "Finance", "Works & Technical") — every other Rev Line
