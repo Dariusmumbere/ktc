@@ -738,6 +738,14 @@ matched by .rev-annual-col minus the .rev-row5 cells (which are the
 captions one row up, left untouched). This never reaches the body/tbody,
 so every row's actual Total figure keeps its normal padding. */
 #wp-rev-monthly-cat-table thead th.rev-annual-col:not(.rev-row5){padding-left:0 !important; padding-right:0 !important;}
+/* "Annual Approved Budget Estimates" header cell in table 3 (the rev-row5
+caption cell, .col-annual-approved): padding removed on this HEADER cell
+only, matching the zero-padding already applied to the "Total" header
+above and to the Annual Actual Cash Inflow header, so this column can
+render at its reduced width. Body cells beneath it (td:nth-child(16))
+keep their own padding untouched, so only the column's on-screen width
+shrinks, not the content's spacing. */
+#wp-rev-monthly-cat-table thead th.col-annual-approved{padding-left:0 !important; padding-right:0 !important;}
 #wp-revenue-summary-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col):not(.rev-origin-col),
 #wp-rev-category-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col):not(.rev-origin-col){text-align:center !important;}
 /* ---------------- Revenue Performance Plan by Category & Source table
@@ -790,6 +798,19 @@ text-align:center;
 #wp-rev-monthly-cat-wrap tfoot td{border-right:1px solid var(--line-strong);}
 #wp-rev-monthly-cat-wrap tfoot td:last-child{border-right:none;}
 #wp-rev-monthly-cat-table thead th.rev-annual-col{width:71.25px; max-width:71.25px; white-space:normal !important; line-height:1.3; border-right:1px solid var(--line-strong);}
+/* "Annual Approved Budget Estimates" column (both its rev-row5 caption
+header and the "Total" header below it, which together make up the whole
+of this one column) narrowed from 71.25px to 53.25px — the exact 18px
+freed up by zeroing this header's own left/right padding (0 9px -> 0)
+above and via the .col-annual-approved rule further down, so the header
+text still has the same usable room it had before. Scoped to
+.rev-band-approved so it overrides the shared .rev-annual-col width only
+for this column, leaving the parallel "Annual Actual Cash Inflow
+Realized" column (.rev-band-actual) at the original 71.25px. The body
+cells beneath this column (td:nth-child(16)) keep their own untouched
+width and padding, so only the header's/column's rendered width shrinks,
+not the content's spacing. */
+#wp-rev-monthly-cat-table thead th.rev-band-approved.rev-annual-col{width:53.25px; max-width:53.25px;}
 /* Jul–Jun figure columns, in both bands: same fixed width for every month
 so no single month renders wider than the others just because one row's
 figure happens to be a digit longer. Narrower than table 2's Q1–Q4
@@ -2082,7 +2103,7 @@ Departments
 <col style="width:44px">
 <col style="width:227.5px">
 <col style="width:70px">
-<col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:71.25px">
+<col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:53.25px">
 <col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:50px"><col style="width:71.25px">
 <col style="width:70px">
 </colgroup>
