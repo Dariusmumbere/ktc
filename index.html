@@ -1030,31 +1030,33 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-piap-wrap tr.piap-field-row td:not(:first-child){white-space:normal; max-width:220px; min-width:150px;}
 #wp-piap-wrap tr.piap-field-row.piap-num-row td:not(:first-child){text-align:right; font-family:var(--font-mono, monospace); white-space:nowrap;}
 #wp-piap-wrap .piap-empty{padding:20px 16px; color:var(--ink-500); font-size:12.5px;}
-/* Each Part 2 department block is laid out on its own true A4-LANDSCAPE
-   sheet (297mm x 210mm) — exact landscape page dimensions — the same
-   "page view" treatment used for the front-matter pages above, but
-   rotated, since the Part 2 tables are wide (one column per activity
-   output) and read far better on a landscape sheet than a portrait one.
-   Content taller or wider than the sheet scrolls inside its own page
-   rather than stretching the page or the app layout. */
+/* Each Part 2 department block is laid out on its own landscape-shaped
+   "page view" card — the same treatment used for the front-matter pages
+   above, but rotated, since the Part 2 tables are wide (one column per
+   activity output) and read far better on a landscape sheet than a
+   portrait one. On screen the page now stretches to fill the wrapper's
+   own width (rather than sitting fixed at 297mm), so it uses all the
+   space the wrapper gives it; the wrapper itself keeps a 20px left/right
+   inset so the page doesn't run flush against the surrounding layout.
+   Each page carries a 20px bottom margin so consecutive department pages
+   don't feel crowded against one another; the last page's own margin
+   just becomes trailing space at the bottom of the wrapper. Content
+   taller or wider than the sheet scrolls inside its own page rather than
+   stretching the page or the app layout. */
 #wp-piap-wrap.wp-piap-pages{
 scroll-snap-type:y proximity; background:#DDE5E3; border-radius:12px;
-padding:0; margin:0; display:flex; flex-direction:column;
-align-items:center; gap:0; overflow-x:visible;
+padding:0 20px; margin:0; display:flex; flex-direction:column;
+align-items:stretch; overflow-x:visible;
 }
 .wp-piap-page{
-width:297mm; aspect-ratio:297/210; max-width:100%; flex-shrink:0;
+width:100%; aspect-ratio:297/210; flex-shrink:0;
 box-sizing:border-box; background:var(--paper-raised); box-shadow:var(--shadow-lg);
 border-radius:2px; overflow:auto; scroll-snap-align:start;
-padding:0; margin:0;
+padding:0; margin:0 0 20px;
 }
 #wp-piap-wrap.wp-piap-pages table + table{margin-top:0;}
-@media (max-width:1400px){
-.wp-piap-page{padding:0;}
-}
 @media (max-width:900px){
-#wp-piap-wrap.wp-piap-pages{padding:0; gap:0;}
-.wp-piap-page{padding:0;}
+#wp-piap-wrap.wp-piap-pages{padding:0 20px;}
 }
 @media print{
 #wp-piap-wrap.wp-piap-pages{background:none; padding:0; margin:0; gap:0;}
@@ -1066,7 +1068,7 @@ via the `page` property, and its own @page rule sets size:A4 landscape.
 Width/height are still left to flow (matching the front-matter pages'
 print treatment above) since the named @page's landscape dimensions now
 do that job instead. */
-.wp-piap-page{width:auto; aspect-ratio:auto; height:auto; max-height:none; overflow:visible; box-shadow:none; border-radius:0; padding:0; page-break-after:always; page:piap-landscape;}
+.wp-piap-page{width:auto; aspect-ratio:auto; height:auto; max-height:none; overflow:visible; box-shadow:none; border-radius:0; padding:0; margin:0; page-break-after:always; page:piap-landscape;}
 }
 @page piap-landscape{ size:A4 landscape; margin:0; }
 #wp-main-table thead th{padding:8px 6px; font-size:9px; line-height:1.25; letter-spacing:.3px;}
