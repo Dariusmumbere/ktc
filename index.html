@@ -1039,8 +1039,8 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
    rather than stretching the page or the app layout. */
 #wp-piap-wrap.wp-piap-pages{
 scroll-snap-type:y proximity; background:#DDE5E3; border-radius:12px;
-padding:32px 16px; margin:0 -4px; display:flex; flex-direction:column;
-align-items:center; gap:28px; overflow-x:visible;
+padding:0; margin:0; display:flex; flex-direction:column;
+align-items:center; gap:0; overflow-x:visible;
 }
 .wp-piap-page{
 width:297mm; aspect-ratio:297/210; max-width:100%; flex-shrink:0;
@@ -1053,7 +1053,7 @@ padding:0; margin:0;
 .wp-piap-page{padding:0;}
 }
 @media (max-width:900px){
-#wp-piap-wrap.wp-piap-pages{padding:20px 8px; gap:20px;}
+#wp-piap-wrap.wp-piap-pages{padding:0; gap:0;}
 .wp-piap-page{padding:0;}
 }
 @media print{
@@ -2263,7 +2263,7 @@ Departments
 </div>
 </div>
 </div>
-<div id="wp-piap-wrap" class="wp-piap-pages" style="margin:0 16px 16px;">
+<div id="wp-piap-wrap" class="wp-piap-pages" style="margin:0;">
 <div class="loading-row"><span class="spinner spinner-dark"></span></div>
 </div>
 </div>
