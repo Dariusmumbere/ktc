@@ -4497,11 +4497,15 @@ return `
 // two ("Approved Local Government Expenditure Estimates" / subtab
 // "expenditure", and "Approved Local Government Annual Work Plan and Budget
 // Estimates" / subtab "annual") both open this same #view-workplan, and
-// what the first two tables on the page show depends on which one was
-// clicked (STATE.workplanSubtab):
-//   - "expenditure": the summary framework-paper table and its matching
-//     detail table are removed entirely — only the departmental summary and
-//     the main activity/budget table (both unaffected by this) are shown.
+// what the page shows depends on which one was clicked
+// (STATE.workplanSubtab):
+//   - "expenditure": the summary framework-paper table, its matching detail
+//     table, and the departmental summary table are all removed entirely.
+//     Only the main "Approved Annual Work Plan and Expenditure Estimates"
+//     activity/budget table (unaffected by this — always shown) and the
+//     "Part 2: Proposed LLG Departmental Activity Outputs and Expenditure
+//     Estimates" tables are shown, carried over exactly as they appear on
+//     sub item 3 below.
 //   - "annual": the summary framework-paper table is replaced by the actual
 //     "Summary of the LG Annual and Quarterly Revenue Performance" table
 //     (this used to be its own sub item 3 — it now lives only here, as
@@ -4511,7 +4515,7 @@ return `
 //     it now lives on sub item 1 (Local Revenue/GoU Transfers Estimates
 //     vs. Actual Realized), stacked under the monthly table there, driven
 //     by applyRevenueDetailTitle() and loadRevLinePage('quarterly') instead
-//     of this function.
+//     of this function. The main table and Part 2 tables are shown here too.
 function applyWorkplanSubtabDisplay() {
 const summaryCard = document.getElementById('wp-revenue-summary-card');
 const categoryCard = document.getElementById('wp-rev-category-card');
@@ -4523,16 +4527,15 @@ const isAnnual = STATE.workplanSubtab === 'annual';
 if (summaryCard) summaryCard.style.display = isAnnual ? '' : 'none';
 if (categoryCard) categoryCard.style.display = isAnnual ? '' : 'none';
 if (monthlyCatCard) monthlyCatCard.style.display = isAnnual ? '' : 'none';
-// The Department Budget Summary table is shared with the "Approved LG
-// Expenditure Estimates" sub item (sub item 2) and stays exactly as it
-// was there — it's only hidden here, on the Annual Work Plan and Budget
-// Estimates sub item (sub item 3), where it has been replaced by the two
-// PBS revenue tables above (Summary of the Revenue Performance Plan
-// by Source, Revenue Performance Plan by Category & Source).
-if (deptSummaryCard) deptSummaryCard.style.display = isAnnual ? 'none' : '';
+// The Department Budget Summary table used to be shown on the "Approved LG
+// Expenditure Estimates" sub item (sub item 2) — it has been dropped there
+// entirely, so it now only ever shows here as hidden regardless of subtab.
+if (deptSummaryCard) deptSummaryCard.style.display = 'none';
 if (frontmatterEl) frontmatterEl.style.display = isAnnual ? '' : 'none';
-if (piapCard) piapCard.style.display = isAnnual ? '' : 'none';
-if (isAnnual) renderPiapTable();
+// Part 2 (the PIAP tables) is carried over to sub item 2 exactly as it
+// appears on sub item 3, so it's shown regardless of which subtab this is.
+if (piapCard) piapCard.style.display = '';
+renderPiapTable();
 if (!isAnnual) return;
 const wpVal = document.getElementById('wp-select').value;
 const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
