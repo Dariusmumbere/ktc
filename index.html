@@ -1019,7 +1019,7 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 /* ---------------- Work Plan & Budget: PIAP / "Part 2" transposed table
    (one column per activity output, one row per field, blocked per
    department to mirror the LLG's own Sheet2-style workbook layout) ------- */
-#wp-piap-wrap table{min-width:640px; border-collapse:collapse; font-family:"Arial Narrow", "Liberation Sans Narrow", Arial, sans-serif;}
+#wp-piap-wrap table{min-width:640px; border-collapse:collapse; font-family:"Arial Narrow", "Liberation Sans Narrow", Arial, sans-serif; margin-left:auto; margin-right:auto;}
 #wp-piap-wrap table + table{margin-top:22px;}
 #wp-piap-wrap td, #wp-piap-wrap th{border:1px solid var(--line); padding:6px 9px; font-size:11px; vertical-align:top; text-align:left; color:var(--ink-900);}
 #wp-piap-wrap tr.piap-vote-row td{background:var(--navy-950); color:#fff; font-weight:700; font-size:11.5px;}
@@ -1027,39 +1027,58 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
 #wp-piap-wrap tr.piap-meta-row td:first-child{background:#EAF0EF; font-weight:700; width:150px; white-space:nowrap;}
 #wp-piap-wrap tr.piap-activity-num-row td{background:var(--teal-700); color:#fff; font-weight:700; text-align:left;}
 #wp-piap-wrap tr.piap-field-row td:first-child{background:#EAF0EF; font-weight:700; white-space:nowrap; width:190px;}
-#wp-piap-wrap tr.piap-field-row td:not(:first-child){white-space:normal; max-width:220px; min-width:150px;}
+/* Per-activity-output data columns (including the "Activity Output
+Description" row's cells) narrowed by a quarter — 220px/150px down to
+165px/112.5px — freeing up horizontal space inside each page. Because
+the <table> itself has no set width, it now sizes to its (narrower)
+columns and is centered via margin-left/right:auto above, so that freed
+space becomes equal left/right margin around the table instead of
+just trailing empty space on one side. */
+#wp-piap-wrap tr.piap-field-row td:not(:first-child){white-space:normal; max-width:165px; min-width:112.5px;}
 #wp-piap-wrap tr.piap-field-row.piap-num-row td:not(:first-child){text-align:right; font-family:var(--font-mono, monospace); white-space:nowrap;}
 #wp-piap-wrap .piap-empty{padding:20px 16px; color:var(--ink-500); font-size:12.5px;}
 /* Each Part 2 department block is laid out on its own landscape-shaped
    "page view" card — the same treatment used for the front-matter pages
    above, but rotated, since the Part 2 tables are wide (one column per
    activity output) and read far better on a landscape sheet than a
-   portrait one. On screen the page now stretches to fill the wrapper's
-   own width (rather than sitting fixed at 297mm), so it uses all the
-   space the wrapper gives it; the wrapper itself keeps a 20px left/right
-   inset so the page doesn't run flush against the surrounding layout.
-   Each page carries a 20px bottom margin so consecutive department pages
-   don't feel crowded against one another; the last page's own margin
-   just becomes trailing space at the bottom of the wrapper. Content
-   taller or wider than the sheet scrolls inside its own page rather than
-   stretching the page or the app layout. */
+   portrait one. On screen the page stretches to fill the wrapper's own
+   width (rather than sitting fixed at 297mm), so it uses all the space
+   the wrapper gives it; the wrapper itself keeps a 20px left/right inset
+   so the page doesn't run flush against the surrounding layout, and its
+   background is plain white rather than grey. A visible "Page Break"
+   divider (.wp-piap-page-break, inserted between pages in JS) marks
+   where one landscape page ends and the next begins, with a 50px margin
+   above it so consecutive department pages don't feel crowded against
+   one another; the wrapper's own bottom padding gives the last page that
+   same trailing breathing room even though it has no break marker after
+   it. Content taller or wider than the sheet scrolls inside its own page
+   rather than stretching the page or the app layout. */
 #wp-piap-wrap.wp-piap-pages{
-scroll-snap-type:y proximity; background:#DDE5E3; border-radius:12px;
-padding:0 20px; margin:0; display:flex; flex-direction:column;
+scroll-snap-type:y proximity; background:#fff; border-radius:12px;
+padding:0 20px 20px; margin:0; display:flex; flex-direction:column;
 align-items:stretch; overflow-x:visible;
 }
 .wp-piap-page{
 width:100%; aspect-ratio:297/210; flex-shrink:0;
 box-sizing:border-box; background:var(--paper-raised); box-shadow:var(--shadow-lg);
 border-radius:2px; overflow:auto; scroll-snap-align:start;
-padding:0; margin:0 0 20px;
+padding:0; margin:0;
 }
+/* Visible page-break divider between landscape pages (hidden in print,
+where page-break-after already does the real pagination). */
+.wp-piap-page-break{
+margin:50px 0 0; display:flex; align-items:center; gap:12px;
+color:var(--ink-500); font-size:10.5px; font-weight:700;
+letter-spacing:.6px; text-transform:uppercase;
+}
+.wp-piap-page-break::before, .wp-piap-page-break::after{content:''; flex:1; border-top:1px dashed var(--line-strong);}
 #wp-piap-wrap.wp-piap-pages table + table{margin-top:0;}
 @media (max-width:900px){
-#wp-piap-wrap.wp-piap-pages{padding:0 20px;}
+#wp-piap-wrap.wp-piap-pages{padding:0 20px 20px;}
 }
 @media print{
 #wp-piap-wrap.wp-piap-pages{background:none; padding:0; margin:0; gap:0;}
+.wp-piap-page-break{display:none;}
 /* Each Part 2 page keeps printing at true A4-landscape dimensions rather
 than falling back to the browser's default page size/orientation: the
 named "piap-landscape" page (declared below, outside this @media print
@@ -2013,7 +2032,7 @@ Departments
 </div>
 <div class="table-zoom-bar" id="wp-revenue-summary-zoom-bar">
 <button type="button" class="table-zoom-btn" id="wp-revenue-summary-zoom-out" title="Zoom out">−</button>
-<span class="table-zoom-label" id="wp-revenue-summary-zoom-label">100%</span>
+<span class="table-zoom-label" id="wp-revenue-summary-zoom-label">90%</span>
 <button type="button" class="table-zoom-btn" id="wp-revenue-summary-zoom-in" title="Zoom in">+</button>
 </div>
 </div>
@@ -4705,7 +4724,7 @@ requestAnimationFrame(paginateExecutiveSummary);
 });
 document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); loadProgrammeFilterOptions().then(renderBudgetCodes); applyWorkplanSubtabDisplay(); });
 // ---- Revenue Summary table zoom (+ / − streak below the table) -------------
-let wpRevSummaryZoom = 1.0;
+let wpRevSummaryZoom = 0.9;
 function applyWpRevSummaryZoom() {
 const table = document.getElementById('wp-revenue-summary-table');
 if (table) table.style.zoom = wpRevSummaryZoom;
@@ -5277,14 +5296,26 @@ const FIELD_ROWS = [
 ];
 
 let html = '';
+let isFirstPiapPage = true;
 byDept.forEach((dept, deptName) => {
 for (let i = 0; i < dept.items.length; i += PIAP_BLOCK_SIZE) {
 const block = dept.items.slice(i, i + PIAP_BLOCK_SIZE);
 const colCount = block.length + 1;
+// A visible "Page Break" divider goes between pages (not before the
+// first one) so users can see where one landscape page ends and the
+// next begins on screen; it's hidden again in print, where the real
+// page-break-after already does the job.
+if (!isFirstPiapPage) html += `<div class="wp-piap-page-break"><span>Page Break</span></div>`;
+// The very first landscape page opens pre-zoomed to 90% (via the same
+// `zoom` CSS property the other tables' zoom controls already use) so
+// it fits comfortably in view as soon as Part 2 loads; later pages
+// render at their normal 100%.
+const firstPageZoom = isFirstPiapPage ? ' style="zoom:0.9;"' : '';
+isFirstPiapPage = false;
 // Each block is its own true A4-landscape "page" (see .wp-piap-page)
 // so every Part 2 department table sits on its own exact-dimension
 // landscape sheet instead of stacking in one continuous scroller.
-html += `<div class="wp-piap-page"><table>
+html += `<div class="wp-piap-page"><table${firstPageZoom}>
 <tbody>
 <tr class="piap-vote-row"><td colspan="${colCount}">LLG Vote &nbsp; ${escapeHtml(PIAP_LLG_VOTE_CODE)} &nbsp;—&nbsp; ${escapeHtml(PIAP_LLG_VOTE_NAME)} &nbsp;—&nbsp; ${escapeHtml(PIAP_LLG_VOTE_DISTRICT)}</td></tr>
 <tr class="piap-part-row"><td colspan="${colCount}">Part 2: Proposed LLG Departmental Activity Outputs and Expenditure Estimates</td></tr>
