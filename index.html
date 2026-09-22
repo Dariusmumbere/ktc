@@ -909,6 +909,8 @@ point begins on its own line rather than running together as one line. */
 .wp-frontmatter{max-width:none; margin:0;}
 .wp-fm-body{transition:background .15s var(--ease), outline-color .15s var(--ease);}
 .wp-fm-body[contenteditable="true"]{outline:2px dashed var(--teal-500); outline-offset:8px; border-radius:8px; background:#FFFDF5; cursor:text;}
+.wp-fm-body[contenteditable="true"] [data-force-break="true"]{border-top:2px dashed var(--gold-600); margin-top:22px; padding-top:16px; position:relative;}
+.wp-fm-body[contenteditable="true"] [data-force-break="true"]::before{content:"New page starts here"; position:absolute; top:-9px; left:0; background:#FFFDF5; padding:0 6px; font-size:9.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--gold-600);}
 .wp-fm-body[contenteditable="true"]:focus{outline-style:solid; outline-color:var(--teal-700);}
 .wp-fm-edit-hint{display:none; font-size:11px; color:var(--teal-700); font-weight:600; margin:-4px 0 16px; text-align:right;}
 .wp-fm-edit-hint.show{display:block;}
@@ -1857,6 +1859,9 @@ Departments
 <button type="button" class="icon-btn icon-btn-sm" id="wp-fm-edit-btn" style="display:none;" title="Edit Report Front Matter">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
 </button>
+<button type="button" class="icon-btn icon-btn-sm" id="wp-fm-break-btn" style="display:none;" title="Start a New Page Here">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h4M16 12h4M9 4v3M15 4v3M9 17v3M15 17v3" stroke-dasharray="3 2"/></svg>
+</button>
 <button type="button" class="icon-btn icon-btn-sm" id="wp-fm-save-btn" style="display:none;" title="Save Changes">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 6L9 17l-5-5"/></svg>
 </button>
@@ -1865,7 +1870,7 @@ Departments
 </button>
 </div>
 </div>
-<div class="wp-fm-edit-hint" id="wp-fm-edit-hint">Click into a section below and edit the text, then press the checkmark to save.</div>
+<div class="wp-fm-edit-hint" id="wp-fm-edit-hint">Click into a section below and edit the text. To start a new page at a paragraph or heading, click into it and press the page-break button, then press the checkmark to save.</div>
 <div class="wp-fm-pages">
 <div class="wp-fm-page wp-fm-cover-page">
 <div class="wp-fm-cover">
@@ -4740,6 +4745,7 @@ const WP_FM_BODY_IDS = ['wp-fm-forward-body', 'wp-fm-clerk-body', 'wp-fm-exec-bo
 function setFrontmatterEditing(on) {
 WP_FM_BODY_IDS.forEach(id => document.getElementById(id).setAttribute('contenteditable', on ? 'true' : 'false'));
 document.getElementById('wp-fm-edit-btn').style.display = on ? 'none' : 'inline-flex';
+document.getElementById('wp-fm-break-btn').style.display = on ? 'inline-flex' : 'none';
 document.getElementById('wp-fm-save-btn').style.display = on ? 'inline-flex' : 'none';
 document.getElementById('wp-fm-cancel-btn').style.display = on ? 'inline-flex' : 'none';
 document.getElementById('wp-fm-edit-hint').classList.toggle('show', on);
@@ -4750,6 +4756,28 @@ mergeExecutiveSummaryPages();
 STATE.fmOriginal = {};
 WP_FM_BODY_IDS.forEach(id => { STATE.fmOriginal[id] = document.getElementById(id).innerHTML; });
 setFrontmatterEditing(true);
+});
+// Marks (or unmarks) the paragraph/heading the cursor is currently inside
+// as the start of a new printed page. Only meaningful inside the
+// Executive Summary, since that's the only section that auto-paginates —
+// this sets the same data-force-break="true" attribute that
+// paginateExecutiveSummary() reads, and because it's saved as part of
+// that section's innerHTML, it survives the edit/save round trip (unlike
+// a break baked only into the page's default, unsaved markup).
+document.getElementById('wp-fm-break-btn').addEventListener('click', () => {
+const sel = window.getSelection();
+const execBody = document.getElementById('wp-fm-exec-body');
+if (!sel.rangeCount || !execBody.contains(sel.getRangeAt(0).startContainer)) {
+toast('Click into the Executive Summary text first, where you want the new page to start', 'error');
+return;
+}
+let node = sel.getRangeAt(0).startContainer;
+if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+while (node && node.parentElement !== execBody) node = node.parentElement;
+if (!node) { toast('Click into the Executive Summary text first, where you want the new page to start', 'error'); return; }
+const already = node.getAttribute('data-force-break') === 'true';
+if (already) { node.removeAttribute('data-force-break'); toast('Page break removed', 'success'); }
+else { node.setAttribute('data-force-break', 'true'); toast('This will now start a new page', 'success'); }
 });
 document.getElementById('wp-fm-cancel-btn').addEventListener('click', () => {
 if (STATE.fmOriginal) WP_FM_BODY_IDS.forEach(id => { if (STATE.fmOriginal[id] !== undefined) document.getElementById(id).innerHTML = STATE.fmOriginal[id]; });
