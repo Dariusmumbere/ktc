@@ -1078,11 +1078,15 @@ padding:30px 20px 20px; margin:0; display:flex; flex-direction:column;
 align-items:stretch; overflow-x:visible;
 }
 #wp-piap-wrap.wp-piap-pages table{background:#fff;}
+/* A small top inset, like the front-matter pages' own padding, so the
+table doesn't start flush against the top edge of the white sheet —
+gives the same "page" feel on screen. Left/right/bottom stay flush since
+the table itself already fills the width the page needs. */
 .wp-piap-page{
 width:100%; aspect-ratio:297/210; flex-shrink:0;
 box-sizing:border-box; background:var(--paper-raised); box-shadow:var(--shadow-lg);
 border-radius:2px; overflow:auto; scroll-snap-align:start;
-padding:0; margin:0;
+padding:10mm 0 0; margin:0;
 }
 /* Gap between landscape pages — plain grey space (the wrapper's own
 background shows through), like Word's real page-to-page gap in Print
@@ -1960,7 +1964,7 @@ Departments
   <h3>Annual Budget Framework for FY 2026/27</h3>
   <p>The Annual Budget Framework for FY 2026/27 provides the strategic financial planning and resource allocation mechanism through which Karugutu Town Council will implement its development priorities and statutory mandates during the financial year 1 July 2026 to 30 June 2027.</p>
   <p>The budget framework is financed through a combination of locally generated revenue, central government transfers, external financing where applicable, and other lawful sources of revenue, allocated across programmes, departments, and budget outputs.</p>
-  <p>The framework adopts a results-based and programme-oriented approach, ensuring that financial resources are directly linked to measurable outputs, outcomes, and performance indicators, guided by principles of fiscal discipline, value for money, equity, transparency, and accountability.</p>
+  <p data-force-break="true">The framework adopts a results-based and programme-oriented approach, ensuring that financial resources are directly linked to measurable outputs, outcomes, and performance indicators, guided by principles of fiscal discipline, value for money, equity, transparency, and accountability.</p>
   <p>To enhance accountability and effective budget execution, the Council will undertake participatory planning, stakeholder consultations, budget conferences, technical planning committee reviews, council approvals, and regular monitoring and evaluation.</p>
   <h3>Annual Workplan and Budget Output Performance Targets for FY 2026/27</h3>
   <p>The Karugutu Town Council Annual Workplan and Budget Output Performance Targets document serves as the formal ex-ante planning instrument, translating national strategic objectives into localized service delivery milestones, formulated under the Programme Budgeting System (PBS) and the Programme Implementation Action Plans (PIAP) framework.</p>
@@ -4651,7 +4655,10 @@ await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame((
 // content across as many additional physical A4 pages as it takes
 // (#wp-fm-exec-overflow holds Page 5, Page 6, ...), moving whole block
 // elements — never splitting a paragraph mid-way — and creating or
-// dropping pages on the fly as the content grows or shrinks.
+// dropping pages on the fly as the content grows or shrinks. A block can
+// also carry data-force-break="true" to always start a fresh page (used
+// for the "Annual Budget Framework" paragraph that's meant to open
+// Page 5), regardless of whether it would otherwise still fit above.
 function mergeExecutiveSummaryPages() {
 const body4 = document.getElementById('wp-fm-exec-body');
 const overflow = document.getElementById('wp-fm-exec-overflow');
@@ -4680,6 +4687,14 @@ let currentBody = body4;
 let pageNum = 5;
 const createdPages = [];
 allNodes.forEach(node => {
+const forceBreak = node.dataset && node.dataset.forceBreak === 'true';
+if (forceBreak && currentBody.children.length > 0) {
+const newPage = createExecOverflowPage(pageNum++);
+overflow.appendChild(newPage);
+createdPages.push(newPage);
+currentPageEl = newPage;
+currentBody = newPage.querySelector('.wp-fm-body');
+}
 currentBody.appendChild(node);
 if (currentPageEl.scrollHeight > currentPageEl.clientHeight + 1 && currentBody.children.length > 1) {
 currentBody.removeChild(node);
