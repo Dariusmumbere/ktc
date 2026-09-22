@@ -1961,7 +1961,7 @@ Departments
   <p>The integration of digital planning tools, electronic records management, GIS-based planning systems, and performance reporting further reinforces the Council's commitment to transparency, innovation, and effective public sector management.</p>
   <h4>5. Strategic Outlook</h4>
   <p>The FY 2026/27 Annual Work Plan represents the practical implementation roadmap for the Karugutu Town Council Five-Year Strategic Development Plan (2025–2030), providing a clear pathway for achieving the Council's long-term development aspirations while ensuring accountability, efficiency, and value for public resources.</p>
-  <h3>Annual Budget Framework for FY 2026/27</h3>
+  <h3 data-force-break="true">Annual Budget Framework for FY 2026/27</h3>
   <p>The Annual Budget Framework for FY 2026/27 provides the strategic financial planning and resource allocation mechanism through which Karugutu Town Council will implement its development priorities and statutory mandates during the financial year 1 July 2026 to 30 June 2027.</p>
   <p>The budget framework is financed through a combination of locally generated revenue, central government transfers, external financing where applicable, and other lawful sources of revenue, allocated across programmes, departments, and budget outputs.</p>
   <p data-force-break="true">The framework adopts a results-based and programme-oriented approach, ensuring that financial resources are directly linked to measurable outputs, outcomes, and performance indicators, guided by principles of fiscal discipline, value for money, equity, transparency, and accountability.</p>
@@ -4656,9 +4656,12 @@ await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame((
 // (#wp-fm-exec-overflow holds Page 5, Page 6, ...), moving whole block
 // elements — never splitting a paragraph mid-way — and creating or
 // dropping pages on the fly as the content grows or shrinks. A block can
-// also carry data-force-break="true" to always start a fresh page (used
-// for the "Annual Budget Framework" paragraph that's meant to open
-// Page 5), regardless of whether it would otherwise still fit above.
+// also carry data-force-break="true" to always start a fresh page,
+// regardless of whether it would otherwise still fit above. Two blocks
+// carry it: the "Annual Budget Framework for FY 2026/27" heading (meant
+// to open Page 5) and, right after it, the "The framework adopts a
+// results-based and programme-oriented approach..." paragraph (meant to
+// open Page 6, immediately following the heading's page).
 function mergeExecutiveSummaryPages() {
 const body4 = document.getElementById('wp-fm-exec-body');
 const overflow = document.getElementById('wp-fm-exec-overflow');
