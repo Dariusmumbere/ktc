@@ -1056,37 +1056,41 @@ in print, since each .wp-piap-page becomes one physical printed page. */
    portrait one. On screen the page stretches to fill the wrapper's own
    width (rather than sitting fixed at 297mm), so it uses all the space
    the wrapper gives it; the wrapper itself keeps a 20px left/right inset
-   so the page doesn't run flush against the surrounding layout, a 30px
-   top inset (bumped up from 20px so the section has more breathing room
-   above the first page), and its background is plain white rather than
-   grey. A visible dashed divider
-   (.wp-piap-page-break, inserted between pages in JS) marks
-   where one landscape page ends and the next begins, with a 50px margin
-   above it so consecutive department pages don't feel crowded against
-   one another; the wrapper's own bottom padding gives the last page that
-   same trailing breathing room even though it has no break marker after
-   it. Content taller or wider than the sheet scrolls inside its own page
-   rather than stretching the page or the app layout. */
+   so the page doesn't run flush against the surrounding layout and a
+   30px top inset. To read like Word's own Print Layout view — a neutral
+   grey canvas with distinct white page sheets sitting on it, separated
+   by plain gaps rather than a drawn divider line — the wrapper's own
+   background is a soft grey (var(--paper)) while each individual page
+   (.wp-piap-page) and the table filling it stay pure white with a drop
+   shadow, so the pages themselves read as sheets of paper against the
+   canvas behind them. The gap between one page and the next
+   (.wp-piap-page-break, inserted in JS) is now just that plain grey
+   space with a 50px margin above it, matching how Word actually shows a
+   break between two real pages — no dashed line — so consecutive
+   department pages don't feel crowded against one another; the
+   wrapper's own bottom padding gives the last page that same trailing
+   breathing room even though it has no break marker after it. Content
+   taller or wider than the sheet scrolls inside its own page rather
+   than stretching the page or the app layout. */
 #wp-piap-wrap.wp-piap-pages{
-scroll-snap-type:y proximity; background:#fff; border-radius:12px;
+scroll-snap-type:y proximity; background:var(--paper); border-radius:12px;
 padding:30px 20px 20px; margin:0; display:flex; flex-direction:column;
 align-items:stretch; overflow-x:visible;
 }
+#wp-piap-wrap.wp-piap-pages table{background:#fff;}
 .wp-piap-page{
 width:100%; aspect-ratio:297/210; flex-shrink:0;
 box-sizing:border-box; background:var(--paper-raised); box-shadow:var(--shadow-lg);
 border-radius:2px; overflow:auto; scroll-snap-align:start;
 padding:0; margin:0;
 }
-/* Visible page-break divider between landscape pages (hidden in print,
-where page-break-after already does the real pagination). */
+/* Gap between landscape pages — plain grey space (the wrapper's own
+background shows through), like Word's real page-to-page gap in Print
+Layout view, rather than a drawn divider. Hidden in print, where
+page-break-after already does the real pagination. */
 .wp-piap-page-break{
-margin:50px 0 0; display:flex; align-items:center; gap:12px;
-color:var(--ink-500); font-size:10.5px; font-weight:700;
-letter-spacing:.6px; text-transform:uppercase;
+margin:50px 0 0;
 }
-.wp-piap-page-break::before, .wp-piap-page-break::after{content:''; flex:1; border-top:1px dashed var(--line-strong);}
-#wp-piap-wrap.wp-piap-pages table + table{margin-top:0;}
 @media (max-width:900px){
 #wp-piap-wrap.wp-piap-pages{padding:30px 20px 20px;}
 }
