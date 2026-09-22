@@ -1021,8 +1021,8 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
    department to mirror the LLG's own Sheet2-style workbook layout) ------- */
 #wp-piap-wrap table{min-width:640px; border-collapse:collapse; font-family:"Arial Narrow", "Liberation Sans Narrow", Arial, sans-serif; margin-left:auto; margin-right:auto;}
 #wp-piap-wrap table + table{margin-top:22px;}
-#wp-piap-wrap td, #wp-piap-wrap th{border:1px solid var(--line); padding:6px 9px; font-size:14px; vertical-align:top; text-align:left; color:var(--ink-900);}
-#wp-piap-wrap tr.piap-vote-row td{background:var(--navy-950); color:#fff; font-weight:700; font-size:15px;}
+#wp-piap-wrap td, #wp-piap-wrap th{border:1px solid var(--line); padding:6px 9px; font-size:12px; vertical-align:top; text-align:left; color:var(--ink-900);}
+#wp-piap-wrap tr.piap-vote-row td{background:var(--navy-950); color:#fff; font-weight:700; font-size:13px;}
 #wp-piap-wrap tr.piap-part-row td{background:var(--gold-100); color:var(--navy-950); font-weight:600; font-style:italic;}
 #wp-piap-wrap tr.piap-meta-row td:first-child{background:#EAF0EF; font-weight:700; width:150px; white-space:nowrap;}
 #wp-piap-wrap tr.piap-activity-num-row td{background:var(--teal-700); color:#fff; font-weight:700; text-align:left;}
@@ -1036,6 +1036,18 @@ space becomes equal left/right margin around the table instead of
 just trailing empty space on one side. */
 #wp-piap-wrap tr.piap-field-row td:not(:first-child){white-space:normal; max-width:165px; min-width:112.5px;}
 #wp-piap-wrap tr.piap-field-row.piap-num-row td:not(:first-child){text-align:right; font-family:var(--font-mono, monospace); white-space:nowrap;}
+/* Row of per-activity Edit buttons, admin-only, appended after the last
+field row of each block — mirrors the main table's own row-level Edit
+button (openEditBudgetCode), just reached from Part 2 instead. Not part
+of the printed sheet, since editing controls have no place on a printed
+report. */
+#wp-piap-wrap tr.piap-actions-row td:first-child{background:#EAF0EF; font-weight:700;}
+#wp-piap-wrap .piap-edit-btn{padding:4px 10px; font-size:11px;}
+@media print{#wp-piap-wrap tr.piap-actions-row{display:none;}}
+/* Page number, bottom-right of every landscape page — both on screen and
+in print, since each .wp-piap-page becomes one physical printed page. */
+.wp-piap-page-num{position:absolute; bottom:6px; right:10px; font-size:10px; font-weight:600; color:var(--ink-500);}
+.wp-piap-page{position:relative;}
 #wp-piap-wrap .piap-empty{padding:20px 16px; color:var(--ink-500); font-size:12.5px;}
 /* Each Part 2 department block is laid out on its own landscape-shaped
    "page view" card — the same treatment used for the front-matter pages
@@ -1044,8 +1056,10 @@ just trailing empty space on one side. */
    portrait one. On screen the page stretches to fill the wrapper's own
    width (rather than sitting fixed at 297mm), so it uses all the space
    the wrapper gives it; the wrapper itself keeps a 20px left/right inset
-   so the page doesn't run flush against the surrounding layout, and its
-   background is plain white rather than grey. A visible dashed divider
+   so the page doesn't run flush against the surrounding layout, a 30px
+   top inset (bumped up from 20px so the section has more breathing room
+   above the first page), and its background is plain white rather than
+   grey. A visible dashed divider
    (.wp-piap-page-break, inserted between pages in JS) marks
    where one landscape page ends and the next begins, with a 50px margin
    above it so consecutive department pages don't feel crowded against
@@ -1055,7 +1069,7 @@ just trailing empty space on one side. */
    rather than stretching the page or the app layout. */
 #wp-piap-wrap.wp-piap-pages{
 scroll-snap-type:y proximity; background:#fff; border-radius:12px;
-padding:0 20px 20px; margin:0; display:flex; flex-direction:column;
+padding:30px 20px 20px; margin:0; display:flex; flex-direction:column;
 align-items:stretch; overflow-x:visible;
 }
 .wp-piap-page{
@@ -1074,7 +1088,7 @@ letter-spacing:.6px; text-transform:uppercase;
 .wp-piap-page-break::before, .wp-piap-page-break::after{content:''; flex:1; border-top:1px dashed var(--line-strong);}
 #wp-piap-wrap.wp-piap-pages table + table{margin-top:0;}
 @media (max-width:900px){
-#wp-piap-wrap.wp-piap-pages{padding:0 20px 20px;}
+#wp-piap-wrap.wp-piap-pages{padding:30px 20px 20px;}
 }
 @media print{
 #wp-piap-wrap.wp-piap-pages{background:none; padding:0; margin:0; gap:0;}
@@ -1961,7 +1975,7 @@ Departments
 </div>
 </div>
 <div id="wp-revenue-tables-group">
-<div style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
+<div id="wp-revenue-tables-band" style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff; margin-bottom:20px; box-shadow:var(--shadow-md);">
 <div class="card" id="wp-revenue-summary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; display:none;">
 <div style="padding:14px 18px 4px;">
 <div class="table-title-row">
@@ -4523,6 +4537,7 @@ function applyWorkplanSubtabDisplay() {
 const summaryCard = document.getElementById('wp-revenue-summary-card');
 const categoryCard = document.getElementById('wp-rev-category-card');
 const monthlyCatCard = document.getElementById('wp-rev-monthly-cat-card');
+const revenueBand = document.getElementById('wp-revenue-tables-band');
 const deptSummaryCard = document.getElementById('wp-dept-summary-card');
 const frontmatterEl = document.getElementById('wp-annual-frontmatter');
 const piapCard = document.getElementById('wp-piap-card');
@@ -4530,6 +4545,12 @@ const isAnnual = STATE.workplanSubtab === 'annual';
 if (summaryCard) summaryCard.style.display = isAnnual ? '' : 'none';
 if (categoryCard) categoryCard.style.display = isAnnual ? '' : 'none';
 if (monthlyCatCard) monthlyCatCard.style.display = isAnnual ? '' : 'none';
+// The teal gradient band that frames the three revenue tables above only
+// has content on the "annual" subtab (the tables inside it are hidden on
+// "expenditure") — without this, an empty colored bar was left showing
+// right before the Department Summary table on the "expenditure" subtab,
+// so it's hidden along with its contents now.
+if (revenueBand) revenueBand.style.display = isAnnual ? '' : 'none';
 // The Department Budget Summary table shows on both sub items now — it was
 // already shown on "Approved LG Expenditure Estimates" (sub item 2), and
 // nothing about that has changed.
@@ -5236,6 +5257,12 @@ const PIAP_LLG_VOTE_CODE = '001';
 const PIAP_LLG_VOTE_NAME = 'Karugutu Town Council';
 const PIAP_LLG_VOTE_DISTRICT = 'Ntoroko District';
 const PIAP_BLOCK_SIZE = 5; // activity outputs per block, matching the source template
+// Looked up by openEditPiapBudgetCode() below — kept separate from
+// STATE.budgetCodes (which the main table's own filtered fetch controls)
+// since Part 2 is always fetched unfiltered by department/search/programme,
+// so it can include activity outputs the main table's current filters
+// would otherwise hide.
+let piapCodesById = new Map();
 
 // Renders the "Part 2: Proposed LLG Departmental Activity Outputs and
 // Expenditure Estimates" table — the same budget_codes data as the main
@@ -5303,10 +5330,16 @@ const FIELD_ROWS = [
 
 let html = '';
 let isFirstPiapPage = true;
+let pageIndex = 0;
+let totalPiapPages = 0;
+byDept.forEach(dept => { totalPiapPages += Math.ceil(dept.items.length / PIAP_BLOCK_SIZE); });
+piapCodesById = new Map(codes.map(c => [c.id, c]));
+const isAdmin = STATE.role === 'admin';
 byDept.forEach((dept, deptName) => {
 for (let i = 0; i < dept.items.length; i += PIAP_BLOCK_SIZE) {
 const block = dept.items.slice(i, i + PIAP_BLOCK_SIZE);
 const colCount = block.length + 1;
+pageIndex++;
 // A visible dashed divider goes between pages (not before the first
 // one) so users can see where one landscape page ends and the next
 // begins on screen; it's hidden again in print, where the real
@@ -5320,7 +5353,9 @@ const firstPageZoom = isFirstPiapPage ? ' style="zoom:0.9;"' : '';
 isFirstPiapPage = false;
 // Each block is its own true A4-landscape "page" (see .wp-piap-page)
 // so every Part 2 department table sits on its own exact-dimension
-// landscape sheet instead of stacking in one continuous scroller.
+// landscape sheet instead of stacking in one continuous scroller. A
+// page number sits in its bottom-right corner (both on screen and
+// when printed, since .wp-piap-page becomes one real printed page).
 html += `<div class="wp-piap-page"><table${firstPageZoom}>
 <tbody>
 <tr class="piap-vote-row"><td colspan="${colCount}">LLG Vote &nbsp; ${escapeHtml(PIAP_LLG_VOTE_CODE)} &nbsp;—&nbsp; ${escapeHtml(PIAP_LLG_VOTE_NAME)} &nbsp;—&nbsp; ${escapeHtml(PIAP_LLG_VOTE_DISTRICT)}</td></tr>
@@ -5333,11 +5368,24 @@ ${FIELD_ROWS.map(f => `<tr class="piap-field-row${f.num ? ' piap-num-row' : ''}"
 const v = f.get(c);
 return `<td>${v === null || v === undefined || v === '' ? '—' : escapeHtml(String(v))}</td>`;
 }).join('')}</tr>`).join('')}
+${isAdmin ? `<tr class="piap-field-row piap-actions-row"><td>Actions</td>${block.map(c => `<td><button type="button" class="btn btn-ghost piap-edit-btn" onclick="openEditPiapBudgetCode(${c.id})">Edit</button></td>`).join('')}</tr>` : ''}
 </tbody>
-</table></div>`;
+</table><div class="wp-piap-page-num">Page ${pageIndex} of ${totalPiapPages}</div></div>`;
 }
 });
 wrap.innerHTML = html;
+}
+// Opens the same Edit Budget Estimate modal the main table's row-level
+// Edit button uses, pre-filled from the activity output's own column in
+// Part 2. Saving goes through the normal PATCH /api/budget-codes/{id} —
+// see the bc-create-btn click handler below, which refreshes both the
+// main table and Part 2 afterwards.
+function openEditPiapBudgetCode(id) {
+const c = piapCodesById.get(id);
+if (!c) { toast('Could not find that activity output — try refreshing.', 'error'); return; }
+STATE.budgetCodes = STATE.budgetCodes || [];
+if (!STATE.budgetCodes.some(x => x.id === id)) STATE.budgetCodes.push(c);
+openEditBudgetCode(id);
 }
 
 async function deleteBudgetCode(id) {
@@ -5449,6 +5497,9 @@ toast('Budget estimate created', 'success');
 }
 closeModal('modal-bc');
 renderBudgetCodes();
+// Part 2 (the PIAP tables) shows the same budget_codes data transposed,
+// and can now be visible alongside the main table — keep it in sync too.
+if (document.getElementById('wp-piap-wrap')) renderPiapTable();
 } catch (e) { toast(e.message, 'error'); }
 });
 document.getElementById('wp-new-workplan-btn').addEventListener('click', () => {
