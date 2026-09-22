@@ -1021,8 +1021,8 @@ dual-scrollable tables (Department Budget Summary + main grid) ---------- */
    department to mirror the LLG's own Sheet2-style workbook layout) ------- */
 #wp-piap-wrap table{min-width:640px; border-collapse:collapse; font-family:"Arial Narrow", "Liberation Sans Narrow", Arial, sans-serif; margin-left:auto; margin-right:auto;}
 #wp-piap-wrap table + table{margin-top:22px;}
-#wp-piap-wrap td, #wp-piap-wrap th{border:1px solid var(--line); padding:6px 9px; font-size:11px; vertical-align:top; text-align:left; color:var(--ink-900);}
-#wp-piap-wrap tr.piap-vote-row td{background:var(--navy-950); color:#fff; font-weight:700; font-size:11.5px;}
+#wp-piap-wrap td, #wp-piap-wrap th{border:1px solid var(--line); padding:6px 9px; font-size:16px; vertical-align:top; text-align:left; color:var(--ink-900);}
+#wp-piap-wrap tr.piap-vote-row td{background:var(--navy-950); color:#fff; font-weight:700; font-size:17px;}
 #wp-piap-wrap tr.piap-part-row td{background:var(--gold-100); color:var(--navy-950); font-weight:600; font-style:italic;}
 #wp-piap-wrap tr.piap-meta-row td:first-child{background:#EAF0EF; font-weight:700; width:150px; white-space:nowrap;}
 #wp-piap-wrap tr.piap-activity-num-row td{background:var(--teal-700); color:#fff; font-weight:700; text-align:left;}
@@ -4499,13 +4499,15 @@ return `
 // Estimates" / subtab "annual") both open this same #view-workplan, and
 // what the page shows depends on which one was clicked
 // (STATE.workplanSubtab):
-//   - "expenditure": the summary framework-paper table, its matching detail
-//     table, and the departmental summary table are all removed entirely.
-//     Only the main "Approved Annual Work Plan and Expenditure Estimates"
-//     activity/budget table (unaffected by this — always shown) and the
-//     "Part 2: Proposed LLG Departmental Activity Outputs and Expenditure
-//     Estimates" tables are shown, carried over exactly as they appear on
-//     sub item 3 below.
+//   - "expenditure": the summary framework-paper table and its matching
+//     detail table stay removed. Everything else that used to show here
+//     (the departmental summary table, plus the main "Approved Annual Work
+//     Plan and Expenditure Estimates" activity/budget table, which is
+//     unaffected by this and always shown) is kept, and the "Part 2:
+//     Proposed LLG Departmental Activity Outputs and Expenditure Estimates"
+//     tables are additionally carried over here exactly as they appear on
+//     sub item 3 below — nothing that was already on this sub item is
+//     removed.
 //   - "annual": the summary framework-paper table is replaced by the actual
 //     "Summary of the LG Annual and Quarterly Revenue Performance" table
 //     (this used to be its own sub item 3 — it now lives only here, as
@@ -4515,7 +4517,8 @@ return `
 //     it now lives on sub item 1 (Local Revenue/GoU Transfers Estimates
 //     vs. Actual Realized), stacked under the monthly table there, driven
 //     by applyRevenueDetailTitle() and loadRevLinePage('quarterly') instead
-//     of this function. The main table and Part 2 tables are shown here too.
+//     of this function. The main table, departmental summary table, and
+//     Part 2 tables are all shown here too.
 function applyWorkplanSubtabDisplay() {
 const summaryCard = document.getElementById('wp-revenue-summary-card');
 const categoryCard = document.getElementById('wp-rev-category-card');
@@ -4527,10 +4530,10 @@ const isAnnual = STATE.workplanSubtab === 'annual';
 if (summaryCard) summaryCard.style.display = isAnnual ? '' : 'none';
 if (categoryCard) categoryCard.style.display = isAnnual ? '' : 'none';
 if (monthlyCatCard) monthlyCatCard.style.display = isAnnual ? '' : 'none';
-// The Department Budget Summary table used to be shown on the "Approved LG
-// Expenditure Estimates" sub item (sub item 2) — it has been dropped there
-// entirely, so it now only ever shows here as hidden regardless of subtab.
-if (deptSummaryCard) deptSummaryCard.style.display = 'none';
+// The Department Budget Summary table shows on both sub items now — it was
+// already shown on "Approved LG Expenditure Estimates" (sub item 2), and
+// nothing about that has changed.
+if (deptSummaryCard) deptSummaryCard.style.display = '';
 if (frontmatterEl) frontmatterEl.style.display = isAnnual ? '' : 'none';
 // Part 2 (the PIAP tables) is carried over to sub item 2 exactly as it
 // appears on sub item 3, so it's shown regardless of which subtab this is.
