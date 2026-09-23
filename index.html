@@ -416,6 +416,24 @@ text-align:center;
 #wp-dept-summary-wrap tfoot td{text-align:left;}
 #view-workplan .table-wrap tfoot tr{background:#EAF0EF !important;}
 #view-workplan .table-wrap tfoot td{color:var(--ink-900); font-weight:700;}
+/* ---------------- Table A1 "Revenue Performance and Plans by Source" ----
+Read-only table shown only on the "Approved LG Expenditure Estimates" sub
+item, directly above the Departmental Summary table. Its figures are
+derived from the Summary of the Revenue Performance Plan by Source table
+rather than entered here — see renderA1RevenueEstimatesTable(). Full grid
+borders (including vertical lines between every column) match the
+Council's printed Table A1 layout, unlike most other tables in this app,
+which only rule off rows. */
+#wp-a1-revenue-table{width:100%; border-collapse:collapse; font-size:12.5px;}
+#wp-a1-revenue-table th, #wp-a1-revenue-table td{border:1px solid var(--line-strong); padding:7px 10px;}
+#wp-a1-revenue-table thead th{background:var(--teal-700); color:#FFFFFF; font-weight:700; text-align:center; font-size:11px; line-height:1.4; padding:9px 10px;}
+#wp-a1-revenue-table thead th:first-child{background:var(--navy-950);}
+#wp-a1-revenue-table tbody td{color:var(--ink-900);}
+#wp-a1-revenue-table tbody td.num{text-align:right; font-variant-numeric:tabular-nums;}
+#wp-a1-revenue-table .wp-a1-cat-row td{font-weight:700; background:#EAF0EF;}
+#wp-a1-revenue-table .wp-a1-owr-row td{font-weight:400;}
+#wp-a1-revenue-table .wp-a1-owr-row td:first-child{padding-left:24px; color:var(--ink-700); font-style:italic;}
+#wp-a1-revenue-table .wp-a1-grand-row td{font-weight:800; background:#D6EEE6; border-top:2px solid var(--teal-700);}
 #view-workplan .table-wrap tfoot td.mono, #view-workplan .table-wrap tfoot td.num{color:var(--navy-950); font-weight:700;}
 /* Requisitions list — compressed: tighter column widths, smaller padding
 and type, and single-line cells (except Subject, which still wraps) so
@@ -1581,40 +1599,6 @@ vertical-align:middle; flex-shrink:0;
 .th-clear-btn:hover{background:rgba(184,56,42,.9); color:#fff; opacity:1;}
 .th-clear-btn svg{width:14px;height:14px; display:block; pointer-events:none;}
 .th-with-clear{display:flex; align-items:center; justify-content:space-between; gap:6px; white-space:nowrap;}
-/* ---------------- Budget Estimates Summary table (Part I / A1) -------------
-Shown on the "Approved LG Expenditure Estimates" sub item (sub item 2),
-right next to the "Summary of the Revenue Performance Plan by Source"
-table it draws its category totals from. Matches that table's printed-PBS
-look (solid teal header band, full grid of vertical/horizontal dividers,
-"Uganda Shillings Thousand" band spanning the two Approved Budget
-columns) but compares the prior and current financial year's Approved
-Budget only, by revenue category, rather than a Q1–Q4 breakdown. */
-#wp-besummary-table{table-layout:fixed; font-family:"Arial Narrow","Liberation Sans Narrow", Arial, sans-serif; border-collapse:collapse; width:100%;}
-#wp-besummary-wrap{overflow-x:auto; border-top:1px solid var(--line-strong); border-left:1px solid var(--line-strong); border-right:1px solid var(--line-strong);}
-#wp-besummary-table{border-bottom:1px solid var(--line-strong);}
-#wp-besummary-table thead th{background:var(--teal-700); color:#FFFFFF; font-size:11px; padding:8px 9px; line-height:1.3; border-right:1px solid var(--line-strong); border-bottom:1px solid var(--line-strong);}
-#wp-besummary-table thead th:last-child{border-right:none;}
-#wp-besummary-table thead th.besummary-label-col{text-align:left; font-style:italic; font-weight:700; vertical-align:bottom;}
-#wp-besummary-table thead th.besummary-band-title{font-weight:700;}
-#wp-besummary-table thead th.besummary-year-col{font-weight:700;}
-#wp-besummary-table col.besummary-label-col-w{width:340px;}
-#wp-besummary-table col.besummary-year-col-w{width:150px;}
-#wp-besummary-table tbody td{padding:6px 9px; font-size:11px; border-right:1px solid var(--line-strong); border-bottom:1px solid var(--line-strong); vertical-align:middle;}
-#wp-besummary-table tbody td:last-child{border-right:none;}
-#wp-besummary-table tbody tr:last-child td{border-bottom:1px solid var(--line-strong);}
-#wp-besummary-table tbody tr.besummary-category-row td{background:#D6EEE6; font-weight:700; color:var(--navy-950);}
-#wp-besummary-table tbody tr.besummary-subrow td{background:#FFFFFF; color:var(--ink-900);}
-#wp-besummary-table tbody tr.besummary-grand-row td{background:var(--gold-100); font-weight:700; color:var(--navy-950); border-top:2px solid var(--line-strong);}
-#wp-besummary-table tbody td.besummary-label{text-align:left; white-space:normal; overflow-wrap:break-word;}
-#wp-besummary-table tbody tr.besummary-subrow td.besummary-label{padding-left:22px; font-weight:400; font-style:normal;}
-#wp-besummary-table tbody td.besummary-num{text-align:right; font-family:var(--font-mono);}
-#wp-besummary-table tbody td.besummary-num input{width:100%; border:none; background:transparent; text-align:right; font-family:var(--font-mono); font-size:11px; color:var(--navy-950); font-weight:inherit; padding:0;}
-#wp-besummary-table tbody td.besummary-num input:focus{outline:1.5px dashed var(--gold-600); outline-offset:-2px; background:var(--gold-100);}
-#wp-besummary-table tbody td.besummary-num input[readonly]{pointer-events:none;}
-#wp-besummary-table tbody td.besummary-num input::-webkit-outer-spin-button,
-#wp-besummary-table tbody td.besummary-num input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
-#wp-besummary-table tbody td.besummary-num input[type=number]{-moz-appearance:textfield;}
-#wp-besummary-table tbody span.besummary-computed{display:block; text-align:right; font-family:var(--font-mono);}
 </style>
 </head>
 <body>
@@ -2241,129 +2225,31 @@ Departments
 </div>
 </div>
 <div id="wp-revenue-tables-anchor"></div>
-<!-- ===== Budget Estimates Summary (Part I / A1) — sub item 2 only, shown
-     right next to the Summary of the Revenue Performance Plan by Source
-     table above, which its category totals are drawn from. ===== -->
-<div class="card" id="wp-besummary-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
+<!-- Table A1 "Revenue Performance and Plans by Source" (Part I of the
+     printed Local Government Budget Estimates) — shown only on the
+     "Approved LG Expenditure Estimates" sub item (sub item 2), right above
+     the Departmental Summary table it sits next to. Read-only: its figures
+     are derived from the "Summary of the Revenue Performance Plan by
+     Source" table (period_type "rev_by_source") rather than entered here —
+     see renderA1RevenueEstimatesTable(). Hidden by default; shown/hidden
+     alongside every other sub-item-specific card in
+     applyWorkplanSubtabDisplay(). -->
+<div class="card" id="wp-a1-revenue-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
 <div style="padding:14px 18px 4px;">
-<div class="table-title-row">
-<div>
-<div class="kicker" style="font-size:13px; color:var(--navy-950);">PART I: SUMMARY OF THE LOCAL GOVERNMENT BUDGET ESTIMATES</div>
-<div style="font-size:11.5px; font-weight:700; color:var(--navy-950); margin-top:2px;">A1: Revenue Performance and Plans by Source</div>
+<div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">PART I: LOCAL GOVERNMENT BUDGET ESTIMATES</div>
+<div class="kicker" id="wp-title-a1-revenue" style="font-size:13px; color:var(--navy-950); margin-top:2px;">A1: REVENUE PERFORMANCE AND PLANS BY SOURCE</div>
 </div>
-<div class="table-title-actions">
-<button type="button" class="btn btn-ghost" id="wp-besummary-save-btn" style="display:none; padding:5px 10px; font-size:11px;" title="Save Budget Estimates Summary">Save</button>
-</div>
-</div>
-</div>
-<div class="rli-table-wrap" id="wp-besummary-wrap" style="margin:10px 16px 16px;">
-<table id="wp-besummary-table">
-<colgroup>
-<col class="besummary-label-col-w">
-<col class="besummary-year-col-w">
-<col class="besummary-year-col-w">
-</colgroup>
+<div class="table-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px; overflow-x:auto;">
+<table id="wp-a1-revenue-table">
 <thead>
 <tr>
-<th rowspan="2" class="besummary-label-col">Uganda Shillings Thousand</th>
-<th colspan="2" class="besummary-band-title">Uganda Shillings Thousand</th>
-</tr>
-<tr>
-<th class="besummary-year-col" id="wp-besummary-prior-col-hdr">2025/26 Approved Budget</th>
-<th class="besummary-year-col" id="wp-besummary-current-col-hdr">2026/27 Approved Budget</th>
+<th></th>
+<th>Uganda Shillings Thousands<br><span id="wp-a1-prior-fy-label">2025/26 Approved Budget</span></th>
+<th>Uganda Shillings Thousands<br><span id="wp-a1-current-fy-label">2026/27 Approved Budget</span></th>
 </tr>
 </thead>
-<tbody id="wp-besummary-body">
-<tr class="besummary-category-row">
-<td class="besummary-label">Locally Raised Revenues</td>
-<td class="besummary-num"><span class="besummary-computed" id="be-lrr-total-prior">0</span></td>
-<td class="besummary-num"><span class="besummary-computed" id="be-lrr-total-current">0</span></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Higher Local Government</td>
-<td class="besummary-num"><input type="number" id="be-lrr-higher-prior" value="0"></td>
-<td class="besummary-num"><input type="number" id="be-lrr-higher-current" value="0"></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Lower Local Government</td>
-<td class="besummary-num"><input type="number" id="be-lrr-lower-prior" value="0"></td>
-<td class="besummary-num"><input type="number" id="be-lrr-lower-current" value="0"></td>
-</tr>
-<tr class="besummary-category-row">
-<td class="besummary-label">Discretionary Government Transfers</td>
-<td class="besummary-num"><span class="besummary-computed" id="be-dgt-total-prior">0</span></td>
-<td class="besummary-num"><span class="besummary-computed" id="be-dgt-total-current">0</span></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Higher Local Government</td>
-<td class="besummary-num"><input type="number" id="be-dgt-higher-prior" value="0"></td>
-<td class="besummary-num"><input type="number" id="be-dgt-higher-current" value="0"></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Lower Local Government</td>
-<td class="besummary-num"><input type="number" id="be-dgt-lower-prior" value="0"></td>
-<td class="besummary-num"><input type="number" id="be-dgt-lower-current" value="0"></td>
-</tr>
-<tr class="besummary-category-row">
-<td class="besummary-label">Conditional Government Transfers</td>
-<td class="besummary-num"><span class="besummary-computed" id="be-cgt-total-prior">0</span></td>
-<td class="besummary-num"><span class="besummary-computed" id="be-cgt-total-current">0</span></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Higher Local Government</td>
-<td class="besummary-num"><input type="number" id="be-cgt-higher-prior" value="0"></td>
-<td class="besummary-num"><input type="number" id="be-cgt-higher-current" value="0"></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Lower Local Government</td>
-<td class="besummary-num"><input type="number" id="be-cgt-lower-prior" value="0"></td>
-<td class="besummary-num"><input type="number" id="be-cgt-lower-current" value="0"></td>
-</tr>
-<tr class="besummary-category-row">
-<td class="besummary-label">Other Government Transfers</td>
-<td class="besummary-num"><span class="besummary-computed" id="be-ogt-total-prior">0</span></td>
-<td class="besummary-num"><span class="besummary-computed" id="be-ogt-total-current">0</span></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Higher Local Government</td>
-<td class="besummary-num"><input type="number" id="be-ogt-higher-prior" value="0"></td>
-<td class="besummary-num"><input type="number" id="be-ogt-higher-current" value="0"></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Lower Local Government</td>
-<td class="besummary-num"><input type="number" id="be-ogt-lower-prior" value="0"></td>
-<td class="besummary-num"><input type="number" id="be-ogt-lower-current" value="0"></td>
-</tr>
-<tr class="besummary-category-row">
-<td class="besummary-label">External Financing</td>
-<td class="besummary-num"><span class="besummary-computed" id="be-ext-total-prior">0</span></td>
-<td class="besummary-num"><span class="besummary-computed" id="be-ext-total-current">0</span></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Higher Local Government</td>
-<td class="besummary-num"><input type="number" id="be-ext-higher-prior" value="0"></td>
-<td class="besummary-num"><input type="number" id="be-ext-higher-current" value="0"></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Lower Local Government</td>
-<td class="besummary-num"><input type="number" id="be-ext-lower-prior" value="0"></td>
-<td class="besummary-num"><input type="number" id="be-ext-lower-current" value="0"></td>
-</tr>
-<tr class="besummary-grand-row">
-<td class="besummary-label">Grand Total</td>
-<td class="besummary-num"><span class="besummary-computed" id="be-grand-total-prior">0</span></td>
-<td class="besummary-num"><span class="besummary-computed" id="be-grand-total-current">0</span></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Higher Local Government</td>
-<td class="besummary-num"><span class="besummary-computed" id="be-grand-higher-prior">0</span></td>
-<td class="besummary-num"><span class="besummary-computed" id="be-grand-higher-current">0</span></td>
-</tr>
-<tr class="besummary-subrow">
-<td class="besummary-label">o/w Lower Local Government</td>
-<td class="besummary-num"><span class="besummary-computed" id="be-grand-lower-prior">0</span></td>
-<td class="besummary-num"><span class="besummary-computed" id="be-grand-lower-current">0</span></td>
-</tr>
+<tbody id="wp-a1-revenue-body">
+<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
 </div>
@@ -4707,6 +4593,160 @@ return `
 //     by applyRevenueDetailTitle() and loadRevLinePage('quarterly') instead
 //     of this function. The main table, departmental summary table, and
 //     Part 2 tables are all shown here too.
+// ---- Table A1: "Revenue Performance and Plans by Source" -----------------
+// Shown only on the "Approved LG Expenditure Estimates" sub item (sub item
+// 2), right above the Departmental Summary table. It has no data of its
+// own: its five category rows and Grand Total are derived automatically
+// from the "Summary of the Revenue Performance Plan by Source" table
+// (period_type "rev_by_source") — first for the currently selected work
+// plan (the current-FY column), then for whichever other work plan on the
+// dropdown carries the immediately preceding financial year (the prior-FY
+// column), if one exists. Editing/adding revenue there is reflected here
+// automatically the next time this table repaints; there's nothing to
+// save on this table itself.
+const A1_REVENUE_CATEGORIES = [
+{ key: 'locally_raised', label: 'Locally Raised Revenues', match: /locally raised/i },
+{ key: 'discretionary_transfers', label: 'Discretionary Government Transfers', match: /discretionary/i },
+{ key: 'conditional_transfers', label: 'Conditional Government Transfers', match: /\bconditional\b/i },
+{ key: 'other_transfers', label: 'Other Government Transfers', match: /other government/i },
+{ key: 'external_financing', label: 'External Financing', match: /external financing/i },
+];
+
+// Fetches (and caches, via the same revLineCache used everywhere else) the
+// "Summary of the Revenue Performance Plan by Source" rows for one work
+// plan, then rolls them up into the 5 fixed Table A1 categories plus a
+// Grand Total, following the same category/item/subtotal/grand_total
+// hierarchy the source table itself uses: a "category" row is a
+// header-only row, so each category's amount comes from its own
+// "subtotal" row(s) where present, or — when a category has no subtotal
+// row — from the sum of its "item" rows instead. The Grand Total is read
+// from the source table's own "grand_total" row when one exists, so it
+// always matches that table exactly even if a category above went
+// unrecognized; only as a fallback (no grand_total row saved yet) is it
+// computed as the sum of the 5 categories.
+async function fetchA1RevenueTotals(wpId) {
+const empty = () => {
+const categories = {};
+A1_REVENUE_CATEGORIES.forEach(c => { categories[c.key] = 0; });
+return { categories, grandTotal: 0 };
+};
+if (!wpId) return empty();
+const cacheKey = 'rev_by_source:' + wpId;
+let rows = STATE.revLineCache[cacheKey];
+if (!rows) {
+try {
+rows = await api(`/api/revenue-line-items?work_plan_id=${wpId}&period_type=rev_by_source`);
+STATE.revLineCache[cacheKey] = rows;
+} catch (e) { return empty(); }
+}
+const categories = {};
+const itemSums = {};
+const hasSubtotal = {};
+A1_REVENUE_CATEGORIES.forEach(c => { categories[c.key] = 0; itemSums[c.key] = 0; hasSubtotal[c.key] = false; });
+let currentKey = null;
+let grandTotal = null;
+(rows || []).forEach(r => {
+if (r.row_type === 'category') {
+const found = A1_REVENUE_CATEGORIES.find(c => c.match.test(r.label || ''));
+currentKey = found ? found.key : null;
+return;
+}
+if (r.row_type === 'grand_total') {
+grandTotal = Number(r.approved_annual) || 0;
+currentKey = null;
+return;
+}
+if (!currentKey) return;
+const amt = Number(r.approved_annual) || 0;
+if (r.row_type === 'subtotal') {
+categories[currentKey] += amt;
+hasSubtotal[currentKey] = true;
+} else {
+itemSums[currentKey] += amt;
+}
+});
+A1_REVENUE_CATEGORIES.forEach(c => {
+if (!hasSubtotal[c.key]) categories[c.key] = itemSums[c.key];
+});
+if (grandTotal === null) {
+grandTotal = A1_REVENUE_CATEGORIES.reduce((sum, c) => sum + categories[c.key], 0);
+}
+return { categories, grandTotal };
+}
+
+// Given a "2026/27"-style financial year string, returns the immediately
+// preceding one ("2025/26"), or null if the string isn't in that shape.
+function priorFinancialYear(fy) {
+const m = /^(\d{4})\/(\d{2})$/.exec(String(fy || '').trim());
+if (!m) return null;
+const startYear = Number(m[1]);
+const endShort = String(startYear % 100).padStart(2, '0');
+return `${startYear - 1}/${endShort}`;
+}
+
+// This table has no separate Higher/Lower Local Government revenue ledger
+// of its own to split from — the Summary of the Revenue Performance Plan
+// by Source table it derives from is scoped to this work plan's own Lower
+// Local Government (per its masthead), so the full amount is shown under
+// "o/w Lower Local Government" and "o/w Higher Local Government" reads 0.
+function a1OwRowsHtml(priorTotal, currentTotal) {
+const priorLowerCell = priorTotal === null ? '—' : money(priorTotal);
+return `
+<tr class="wp-a1-owr-row">
+<td>o/w Higher Local Government</td>
+<td class="num mono">${priorTotal === null ? '—' : money(0)}</td>
+<td class="num mono">${money(0)}</td>
+</tr>
+<tr class="wp-a1-owr-row">
+<td>o/w Lower Local Government</td>
+<td class="num mono">${priorLowerCell}</td>
+<td class="num mono">${money(currentTotal)}</td>
+</tr>`;
+}
+
+async function renderA1RevenueEstimatesTable() {
+const tbody = document.getElementById('wp-a1-revenue-body');
+if (!tbody) return;
+const wpVal = document.getElementById('wp-select').value;
+const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+const currentLabelEl = document.getElementById('wp-a1-current-fy-label');
+const priorLabelEl = document.getElementById('wp-a1-prior-fy-label');
+if (!wp) {
+tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
+if (currentLabelEl) currentLabelEl.textContent = 'Approved Budget';
+if (priorLabelEl) priorLabelEl.textContent = 'Approved Budget';
+return;
+}
+const currentFy = wp.financial_year;
+const priorFy = priorFinancialYear(currentFy);
+if (currentLabelEl) currentLabelEl.textContent = `${currentFy} Approved Budget`;
+if (priorLabelEl) priorLabelEl.textContent = priorFy ? `${priorFy} Approved Budget` : 'Prior FY Approved Budget';
+const priorWp = priorFy ? STATE.workplans.find(w => w.financial_year === priorFy) : null;
+tbody.innerHTML = `<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
+const [currentTotals, priorTotals] = await Promise.all([
+fetchA1RevenueTotals(wp.id),
+priorWp ? fetchA1RevenueTotals(priorWp.id) : Promise.resolve(null),
+]);
+const rowsHtml = A1_REVENUE_CATEGORIES.map(c => {
+const cur = currentTotals.categories[c.key] || 0;
+const pri = priorTotals ? (priorTotals.categories[c.key] || 0) : null;
+return `
+<tr class="wp-a1-cat-row">
+<td>${escapeHtml(c.label)}</td>
+<td class="num mono">${pri === null ? '—' : money(pri)}</td>
+<td class="num mono">${money(cur)}</td>
+</tr>${a1OwRowsHtml(pri, cur)}`;
+}).join('');
+const grandCur = currentTotals.grandTotal || 0;
+const grandPri = priorTotals ? (priorTotals.grandTotal || 0) : null;
+tbody.innerHTML = rowsHtml + `
+<tr class="wp-a1-grand-row">
+<td>Grand Total</td>
+<td class="num mono">${grandPri === null ? '—' : money(grandPri)}</td>
+<td class="num mono">${money(grandCur)}</td>
+</tr>${a1OwRowsHtml(grandPri, grandCur)}`;
+}
+
 function applyWorkplanSubtabDisplay() {
 const summaryCard = document.getElementById('wp-revenue-summary-card');
 const categoryCard = document.getElementById('wp-rev-category-card');
@@ -4715,18 +4755,10 @@ const revenueBand = document.getElementById('wp-revenue-tables-band');
 const deptSummaryCard = document.getElementById('wp-dept-summary-card');
 const frontmatterEl = document.getElementById('wp-annual-frontmatter');
 const piapCard = document.getElementById('wp-piap-card');
-const besummaryCard = document.getElementById('wp-besummary-card');
 const isAnnual = STATE.workplanSubtab === 'annual';
 if (summaryCard) summaryCard.style.display = isAnnual ? '' : 'none';
 if (categoryCard) categoryCard.style.display = isAnnual ? '' : 'none';
 if (monthlyCatCard) monthlyCatCard.style.display = isAnnual ? '' : 'none';
-// The Budget Estimates Summary (Part I / A1) table only shows on sub item
-// 2 ("Approved LG Expenditure Estimates") — the reverse of the three
-// revenue tables above, which only show on sub item 3 ("annual").
-if (besummaryCard) {
-besummaryCard.style.display = isAnnual ? 'none' : '';
-if (!isAnnual) loadBudgetEstimatesSummary();
-}
 // The teal gradient band that frames the three revenue tables above only
 // has content on the "annual" subtab (the tables inside it are hidden on
 // "expenditure") — without this, an empty colored bar was left showing
@@ -4742,7 +4774,11 @@ if (frontmatterEl) frontmatterEl.style.display = isAnnual ? '' : 'none';
 // appears on sub item 3, so it's shown regardless of which subtab this is.
 if (piapCard) piapCard.style.display = '';
 renderPiapTable();
-if (!isAnnual) return;
+// Table A1 "Revenue Performance and Plans by Source" — sub item 2 only
+// (see the card's own comment in the markup above for why).
+const a1Card = document.getElementById('wp-a1-revenue-card');
+if (a1Card) a1Card.style.display = isAnnual ? 'none' : '';
+if (!isAnnual) { renderA1RevenueEstimatesTable(); return; }
 const wpVal = document.getElementById('wp-select').value;
 const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
 const fy = wp ? `FY ${escapeHtml(wp.financial_year)}` : 'FY —';
@@ -4763,132 +4799,6 @@ fmGeneratedEl.textContent = `Generated on ${generatedStr}`;
 renderRevLineTable('rev_by_source');
 renderRevLineTable('rev_by_category');
 renderRevLineTable('rev_by_category_monthly');
-}
-// ---- Budget Estimates Summary (Part I / A1) ---------------------------------
-// Shown only on sub item 2 ("Approved LG Expenditure Estimates"). Compares
-// the prior financial year's Approved Budget against the current work
-// plan's Approved Budget, by revenue category, each split into a Higher
-// Local Government (HLG) and Lower Local Government (LLG) portion — the
-// two portions are entered directly by an admin (the "o/w" rows), and
-// every bold category/Grand Total row is derived on-screen as their sum,
-// mirroring the "Category Total" auto-sum convention used elsewhere.
-const BESUMMARY_CATEGORIES = ['lrr', 'dgt', 'cgt', 'ogt', 'ext'];
-// Parses a "YYYY/YY" financial year string (e.g. "2026/27") and returns
-// the financial year immediately before it (e.g. "2025/26"). Returns ''
-// if the input doesn't match that shape.
-function prevFinancialYear(fy) {
-const m = /^(\d{4})\/(\d{2})$/.exec(String(fy || '').trim());
-if (!m) return '';
-const y1 = parseInt(m[1], 10) - 1;
-const y2 = parseInt(m[2], 10) - 1;
-return `${y1}/${String(y2).padStart(2, '0')}`;
-}
-// Recomputes every bold category row (Higher + Lower) and the Grand Total
-// row (+ its own Higher/Lower rollups) from the current input values —
-// called on every keystroke in an "o/w" cell so the totals always stay in
-// sync with what's on screen, even before the admin clicks Save.
-function computeBesummaryTotals() {
-const val = id => {
-const el = document.getElementById(id);
-return el ? (parseNumericLoose(el.value) || 0) : 0;
-};
-let grandHigherPrior = 0, grandLowerPrior = 0, grandHigherCurrent = 0, grandLowerCurrent = 0;
-BESUMMARY_CATEGORIES.forEach(cat => {
-const higherPrior = val(`be-${cat}-higher-prior`);
-const lowerPrior = val(`be-${cat}-lower-prior`);
-const higherCurrent = val(`be-${cat}-higher-current`);
-const lowerCurrent = val(`be-${cat}-lower-current`);
-const totalPriorEl = document.getElementById(`be-${cat}-total-prior`);
-const totalCurrentEl = document.getElementById(`be-${cat}-total-current`);
-if (totalPriorEl) totalPriorEl.textContent = money(higherPrior + lowerPrior);
-if (totalCurrentEl) totalCurrentEl.textContent = money(higherCurrent + lowerCurrent);
-grandHigherPrior += higherPrior;
-grandLowerPrior += lowerPrior;
-grandHigherCurrent += higherCurrent;
-grandLowerCurrent += lowerCurrent;
-});
-const setText = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = money(n); };
-setText('be-grand-higher-prior', grandHigherPrior);
-setText('be-grand-lower-prior', grandLowerPrior);
-setText('be-grand-higher-current', grandHigherCurrent);
-setText('be-grand-lower-current', grandLowerCurrent);
-setText('be-grand-total-prior', grandHigherPrior + grandLowerPrior);
-setText('be-grand-total-current', grandHigherCurrent + grandLowerCurrent);
-}
-// Wires every "o/w" input to recompute the totals live, and shows/hides
-// the inline inputs vs. the Save button depending on role — called once
-// at startup (renderApp/init), not per work plan switch.
-function initBesummaryTable() {
-const wrap = document.getElementById('wp-besummary-wrap');
-if (!wrap) return;
-wrap.querySelectorAll('input[type="number"]').forEach(inp => {
-inp.addEventListener('input', computeBesummaryTotals);
-});
-const saveBtn = document.getElementById('wp-besummary-save-btn');
-if (saveBtn) saveBtn.addEventListener('click', saveBudgetEstimatesSummary);
-}
-// Fetches the saved figures for the currently selected work plan and
-// fills every "o/w" input, then recomputes the bold totals. Also stamps
-// the two column headers with the current work plan's financial year and
-// the year immediately before it. Called whenever sub item 2 becomes
-// active or the work plan dropdown changes.
-async function loadBudgetEstimatesSummary() {
-const wpVal = document.getElementById('wp-select').value;
-if (!wpVal) return;
-const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
-const currentLabel = wp ? wp.financial_year : '—';
-let data;
-try {
-data = await api(`/api/budget-estimates-summary?work_plan_id=${encodeURIComponent(wpVal)}`);
-} catch (err) {
-toast(err.message || 'Could not load the Budget Estimates Summary table', 'error');
-data = { work_plan_id: wpVal };
-}
-const priorLabel = data.prior_year_label || prevFinancialYear(currentLabel) || '2025/26';
-const priorHdr = document.getElementById('wp-besummary-prior-col-hdr');
-const currentHdr = document.getElementById('wp-besummary-current-col-hdr');
-if (priorHdr) priorHdr.textContent = `${priorLabel} Approved Budget`;
-if (currentHdr) currentHdr.textContent = `${currentLabel} Approved Budget`;
-BESUMMARY_CATEGORIES.forEach(cat => {
-['higher_prior', 'lower_prior', 'higher_current', 'lower_current'].forEach(suffix => {
-const el = document.getElementById(`be-${cat}-${suffix.replace('_', '-')}`);
-if (el) el.value = data[`${cat}_${suffix}`] ?? 0;
-});
-});
-computeBesummaryTotals();
-const canEdit = STATE.role === 'admin';
-document.querySelectorAll('#wp-besummary-wrap input[type="number"]').forEach(inp => {
-inp.readOnly = !canEdit;
-inp.tabIndex = canEdit ? 0 : -1;
-});
-const saveBtn = document.getElementById('wp-besummary-save-btn');
-if (saveBtn) saveBtn.style.display = canEdit ? 'inline-flex' : 'none';
-}
-// Gathers every "o/w" input's current value and saves the whole table for
-// the selected work plan in one PATCH request.
-async function saveBudgetEstimatesSummary() {
-const wpVal = document.getElementById('wp-select').value;
-if (!wpVal) return;
-const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
-const priorHdr = document.getElementById('wp-besummary-prior-col-hdr');
-const priorLabel = prevFinancialYear(wp ? wp.financial_year : '') || (priorHdr ? priorHdr.textContent.replace(' Approved Budget', '') : '');
-const val = id => {
-const el = document.getElementById(id);
-return el ? (parseNumericLoose(el.value) || 0) : 0;
-};
-const payload = { work_plan_id: Number(wpVal), prior_year_label: priorLabel };
-BESUMMARY_CATEGORIES.forEach(cat => {
-payload[`${cat}_higher_prior`] = val(`be-${cat}-higher-prior`);
-payload[`${cat}_lower_prior`] = val(`be-${cat}-lower-prior`);
-payload[`${cat}_higher_current`] = val(`be-${cat}-higher-current`);
-payload[`${cat}_lower_current`] = val(`be-${cat}-lower-current`);
-});
-try {
-await api('/api/budget-estimates-summary', { method: 'PATCH', body: JSON.stringify(payload) });
-toast('Budget Estimates Summary saved', 'success');
-} catch (err) {
-toast(err.message || 'Could not save the Budget Estimates Summary table', 'error');
-}
 }
 // Sets the fy-stamped title on the "Approved Quarterly Revenue Budget
 // Estimates and Quarterly Revenue Performance Gap" card, which now lives
@@ -5095,7 +5005,6 @@ requestAnimationFrame(paginateExecutiveSummary);
 } catch (e) { toast(e.message, 'error'); } finally { btn.disabled = false; }
 });
 document.getElementById('wp-select').addEventListener('change', () => { applyWorkplanTableTitles(); loadProgrammeFilterOptions().then(renderBudgetCodes); applyWorkplanSubtabDisplay(); });
-initBesummaryTable();
 // ---- Revenue Summary table zoom (+ / − streak below the table) -------------
 let wpRevSummaryZoom = 0.9;
 function applyWpRevSummaryZoom() {
