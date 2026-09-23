@@ -4615,12 +4615,20 @@ const A1_REVENUE_CATEGORIES = [
 // Fetches (and caches, via the same revLineCache used everywhere else) the
 // "Summary of the Revenue Performance Plan by Source" rows for one work
 // plan, then rolls them up into the 5 fixed Table A1 categories plus a
-// Grand Total, following the same category/item/subtotal/grand_total
-// hierarchy the source table itself uses: a "category" row is a
-// header-only row, so each category's amount comes from its own
-// "subtotal" row(s) where present, or — when a category has no subtotal
-// row — from the sum of its "item" rows instead. The Grand Total is read
-// from the source table's own "grand_total" row when one exists, so it
+// Grand Total. A category's label can appear either as a blank header row
+// (row_type "category") with its own figures carried on separate "item"/
+// "subtotal" rows below it, OR directly on the row that carries the
+// figure itself (the Council's own data entry does both, depending on the
+// work plan) — this checks every row's label against the 5 known category
+// names regardless of its row_type, so a category is counted correctly
+// either way: a matching "category" row only opens that category's
+// context for the rows under it; a matching row that isn't a blank
+// header (item/subtotal/anything else) contributes its own
+// approved_annual directly AND opens that context for anything under it.
+// Once a category has at least one "subtotal" row, that becomes its
+// authoritative total (overriding any item-row sum) to avoid double
+// counting. The Grand Total is read from the source table's own
+// "grand_total" row (by row_type or by label) when one exists, so it
 // always matches that table exactly even if a category above went
 // unrecognized; only as a fallback (no grand_total row saved yet) is it
 // computed as the sum of the 5 categories.
@@ -4646,18 +4654,22 @@ A1_REVENUE_CATEGORIES.forEach(c => { categories[c.key] = 0; itemSums[c.key] = 0;
 let currentKey = null;
 let grandTotal = null;
 (rows || []).forEach(r => {
-if (r.row_type === 'category') {
-const found = A1_REVENUE_CATEGORIES.find(c => c.match.test(r.label || ''));
-currentKey = found ? found.key : null;
-return;
-}
-if (r.row_type === 'grand_total') {
-grandTotal = Number(r.approved_annual) || 0;
+const label = r.label || '';
+const amt = Number(r.approved_annual) || 0;
+if (r.row_type === 'grand_total' || /grand\s*total/i.test(label)) {
+grandTotal = (grandTotal || 0) + amt;
 currentKey = null;
 return;
 }
-if (!currentKey) return;
-const amt = Number(r.approved_annual) || 0;
+const matched = A1_REVENUE_CATEGORIES.find(c => c.match.test(label));
+if (matched) {
+currentKey = matched.key;
+if (r.row_type === 'category') return; // blank header row — figures live on the rows below it
+if (r.row_type === 'subtotal') { categories[matched.key] += amt; hasSubtotal[matched.key] = true; }
+else { itemSums[matched.key] += amt; }
+return;
+}
+if (!currentKey || r.row_type === 'category') return;
 if (r.row_type === 'subtotal') {
 categories[currentKey] += amt;
 hasSubtotal[currentKey] = true;
