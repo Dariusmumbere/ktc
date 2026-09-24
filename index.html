@@ -437,16 +437,21 @@ rule off rows. */
 #wp-a1-revenue-table thead th:first-child{background:#FFFFFF; box-shadow:none;}
 #wp-a1-revenue-table tbody td{color:var(--ink-900); font-size:10.5px; line-height:1.6;}
 #wp-a1-revenue-table tbody td.num{text-align:right; font-variant-numeric:tabular-nums;}
-#wp-a1-revenue-table .wp-a1-cat-row td{font-weight:700; background:#EAF0EF;}
+#wp-a1-revenue-table .wp-a1-cat-row td{font-weight:700;}
 #wp-a1-revenue-table .wp-a1-owr-row td{font-weight:400;}
 #wp-a1-revenue-table .wp-a1-owr-row td:first-child{padding-left:24px; color:var(--ink-700); font-style:italic;}
-#wp-a1-revenue-table .wp-a1-grand-row td{font-weight:800; background:#D6EEE6; border-top:2px solid var(--teal-700);}
+#wp-a1-revenue-table tbody tr:nth-child(odd) td{background:#D6EEE6;}
+#wp-a1-revenue-table tbody tr:nth-child(even) td{background:#FFFFFF;}
+#wp-a1-revenue-table tbody tr:hover td{background:var(--gold-100);}
+#wp-a1-revenue-table .wp-a1-grand-row td{font-weight:800; background:#D6EEE6 !important; border-top:2px solid var(--teal-700);}
+#wp-a1-revenue-table .wp-a1-grand-row:hover td{background:#D6EEE6 !important;}
 /* ---------------- Revenue Performance Plan by Category & Source — Annual
 Cash Inflow Realized ---- companion to Table A1 above, but a full,
 row-for-row rendering of the source table (every category, sub-item and
-subtotal row it has — see renderCategorySourceActualTable()), so it reuses
-the shared .rli-table-wrap look (gold category rows, teal subtotal rows,
-navy grand-total row) rather than Table A1's condensed grid-border style.
+subtotal row it has — see renderCategorySourceActualTable()). Its row
+colors are overridden below to match Table 3's banding (mint/white
+alternating, mint + bold grand-total row) instead of the shared
+.rli-table-wrap default (gold category rows, navy grand-total row).
 Only the label column needs to wrap instead of the shared default's
 single-line nowrap, since category/source names here can run long. */
 #wp-cat-source-wrap td:nth-child(2){white-space:normal;}
@@ -465,15 +470,23 @@ single-line nowrap, since category/source names here can run long. */
 #wp-cat-source-table{font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif; border-collapse:collapse; table-layout:fixed;}
 #wp-cat-source-table thead th{font-size:9px; line-height:1.25; padding:7px 9px; white-space:normal; box-shadow:0 1px 0 rgba(201,154,62,.35) !important; border-right:1px solid rgba(255,255,255,.35);}
 #wp-cat-source-table tbody td{font-size:10.5px; line-height:1.6; padding:6px 9px; border-right:1px solid var(--line-strong); overflow-wrap:break-word; word-break:break-word;}
+#wp-cat-source-body tr:nth-child(odd) td{background:#D6EEE6;}
+#wp-cat-source-body tr:nth-child(even) td{background:#FFFFFF;}
+#wp-cat-source-body tr:hover td{background:var(--gold-100);}
+#wp-cat-source-body tr.rev-grand-row td{background:#D6EEE6 !important; color:var(--navy-950) !important; font-weight:700 !important;}
+#wp-cat-source-body tr.rev-grand-row:hover td{background:#D6EEE6 !important;}
 #view-workplan .table-wrap tfoot td.mono, #view-workplan .table-wrap tfoot td.num{color:var(--navy-950); font-weight:700;}
 /* Table A1 and the Category & Source (Annual Cash Inflow Realized) table
    (both now on PBS sub item 1) should not stretch the full card width on
-   laptop-size screens and up — only three-quarters of it. Below that
-   breakpoint they stay full width so the (already horizontally
-   scrollable) tables remain usable on narrower screens. */
+   laptop-size screens and up. Below that breakpoint they stay full width
+   so the (already horizontally scrollable) tables remain usable on
+   narrower screens. Their wrapping element's margins (above, set to
+   "auto" left/right) center each table within the card, so — combined
+   with these slightly-enlarged widths — the empty space left and right
+   of each table is now equal rather than being lopsided to one side. */
 @media (min-width:901px){
-#wp-a1-revenue-card .table-wrap{width:75%;}
-#wp-cat-source-wrap{width:65%;}
+#wp-a1-revenue-card .table-wrap{width:85%;}
+#wp-cat-source-wrap{width:75%;}
 }
 /* Table A1 and the Category & Source (Annual Cash Inflow Realized) table
    each sit on their own A4 portrait "page" (210mm × 297mm, matching the
@@ -623,13 +636,27 @@ group, pale green for the Actual Inflow group, and plain white for the
 Performance Gap group. These class selectors are more specific than the
 solid-teal rule above, so they win regardless of source order. */
 #wp-revenue-summary-table thead th.rev-band-code,
-#wp-rev-category-table thead th.rev-band-code{background:#CFEFFB !important; color:var(--navy-950) !important; box-shadow:none !important;}
+#wp-rev-category-table thead th.rev-band-code,
+#wp-a1-revenue-table thead th.rev-band-code,
+#wp-cat-source-table thead th.rev-band-code{background:#CFEFFB !important; color:var(--navy-950) !important; box-shadow:none !important;}
 #wp-revenue-summary-table thead th.rev-band-approved,
-#wp-rev-category-table thead th.rev-band-approved{background:#FBE0D2 !important; color:var(--navy-950) !important; box-shadow:none !important;}
+#wp-rev-category-table thead th.rev-band-approved,
+#wp-a1-revenue-table thead th.rev-band-approved,
+#wp-cat-source-table thead th.rev-band-approved{background:#FBE0D2 !important; color:var(--navy-950) !important; box-shadow:none !important;}
 #wp-revenue-summary-table thead th.rev-band-actual,
-#wp-rev-category-table thead th.rev-band-actual{background:#3DE0E6 !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
+#wp-rev-category-table thead th.rev-band-actual,
+#wp-a1-revenue-table thead th.rev-band-actual,
+#wp-cat-source-table thead th.rev-band-actual{background:#3DE0E6 !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
 #wp-revenue-summary-table thead th.rev-band-gap,
-#wp-rev-category-table thead th.rev-band-gap{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
+#wp-rev-category-table thead th.rev-band-gap,
+#wp-a1-revenue-table thead th.rev-band-gap,
+#wp-cat-source-table thead th.rev-band-gap{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; border-left:1px solid var(--line-strong);}
+/* Table A1 and the Category & Source (Annual Cash Inflow) table reuse
+   the exact same four header band colors as the reference "Summary of
+   the Revenue Performance Plan by Source" table above (blue = code/
+   source column, pink = prior-FY column, cyan = current-FY column,
+   white = variance columns), and the same body row banding (alternating
+   mint/white, gold on hover, mint + bold for the grand-total row). */
 /* Column-band coloring matching the reference image: every Gap-band
 figure — Q1–Q4 and Total, on every row — is shown in the same red accent
 used elsewhere for variances, regardless of sign. Written twice because
@@ -1936,7 +1963,7 @@ Departments
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">PART I: LOCAL GOVERNMENT BUDGET ESTIMATES</div>
 <div class="kicker" id="wp-title-a1-revenue" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL REVENUE ESTIMATES AND PERFORMANCE BY REVENUE SOURCE CATEGORY AND ALLOCATION TO LLG AND HLG: A TWO-YEAR COMPARATIVE FRAMEWORK</div>
 </div>
-<div class="table-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px; overflow-x:visible;">
+<div class="table-wrap" style="border:none; box-shadow:none; margin:10px auto 16px auto; overflow-x:visible;">
 <table id="wp-a1-revenue-table">
 <colgroup>
 <col style="width:23.95%;">
@@ -1947,11 +1974,11 @@ Departments
 </colgroup>
 <thead>
 <tr>
-<th></th>
-<th>Uganda Shillings Thousands<br><span id="wp-a1-prior-fy-label">2025/26<br>Approved Budget</span></th>
-<th>Uganda Shillings Thousands<br><span id="wp-a1-current-fy-label">2026/27<br>Approved Budget</span></th>
-<th>Absolute Variance<br>(The Performance Gap value)<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
-<th>Percentage<br>Variance<br>(% Growth/Decline)</th>
+<th class="rev-band-code"></th>
+<th class="rev-band-approved">Uganda Shillings Thousands<br><span id="wp-a1-prior-fy-label">2025/26<br>Approved Budget</span></th>
+<th class="rev-band-actual">Uganda Shillings Thousands<br><span id="wp-a1-current-fy-label">2026/27<br>Approved Budget</span></th>
+<th class="rev-band-gap">Absolute Variance<br>(The Performance Gap value)<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
+<th class="rev-band-gap">Percentage<br>Variance<br>(% Growth/Decline)</th>
 </tr>
 </thead>
 <tbody id="wp-a1-revenue-body">
@@ -1975,7 +2002,7 @@ Departments
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
 <div class="kicker" id="wp-title-cat-source-actual" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL REVENUE ESTIMATES AND PERFORMANCE BY REVENUE SOURCE: A TWO-YEAR COMPARATIVE FRAMEWORK</div>
 </div>
-<div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px 16px 16px;">
+<div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px auto 16px auto;">
 <table id="wp-cat-source-table">
 <colgroup>
 <col style="width:8%;">
@@ -1987,12 +2014,12 @@ Departments
 </colgroup>
 <thead>
 <tr>
-<th style="width:64px;">Code</th>
-<th>Category &amp; Source</th>
-<th>Uganda Shillings<br><span id="wp-cs-prior-fy-label">2025/26 Actual Cash Inflow Realized</span></th>
-<th>Uganda Shillings<br><span id="wp-cs-current-fy-label">2026/27 Actual Cash Inflow Realized</span></th>
-<th>Absolute Variance (The Performance Gap value)<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
-<th>Percentage<br>Variance<br>(%<br>Growth/Decline)</th>
+<th class="rev-band-code" style="width:64px;">Code</th>
+<th class="rev-band-code">Category &amp; Source</th>
+<th class="rev-band-approved">Uganda Shillings<br><span id="wp-cs-prior-fy-label">2025/26 Actual Cash Inflow Realized</span></th>
+<th class="rev-band-actual">Uganda Shillings<br><span id="wp-cs-current-fy-label">2026/27 Actual Cash Inflow Realized</span></th>
+<th class="rev-band-gap">Absolute Variance (The Performance Gap value)<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
+<th class="rev-band-gap">Percentage<br>Variance<br>(%<br>Growth/Decline)</th>
 </tr>
 </thead>
 <tbody id="wp-cat-source-body">
