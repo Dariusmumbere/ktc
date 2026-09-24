@@ -456,11 +456,15 @@ single-line nowrap, since category/source names here can run long. */
    font sizes and line-heights, same gold-underlined teal header — while
    keeping this table at its own portrait width (set below) rather than
    Table 3's wide landscape layout. */
-#wp-cat-source-table{font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif; border-collapse:collapse;}
+/* table-layout:fixed so the <colgroup> above is honored exactly: the
+   Percentage Variance header is squeezed onto 4 lines (narrowing its
+   column from an 18% baseline to 10%), and the 8% freed by that squeeze
+   is handed to the Category & Source column (22% baseline → 30%). Every
+   column — including the last — gets its own border-right, so the grid
+   is closed off on the right edge instead of stopping one column short. */
+#wp-cat-source-table{font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif; border-collapse:collapse; table-layout:fixed;}
 #wp-cat-source-table thead th{font-size:9px; line-height:1.25; padding:7px 9px; white-space:normal; box-shadow:0 1px 0 rgba(201,154,62,.35) !important; border-right:1px solid rgba(255,255,255,.35);}
-#wp-cat-source-table thead th:last-child{border-right:none;}
-#wp-cat-source-table tbody td{font-size:10.5px; line-height:1.6; padding:6px 9px; border-right:1px solid var(--line-strong);}
-#wp-cat-source-table tbody td:last-child{border-right:none;}
+#wp-cat-source-table tbody td{font-size:10.5px; line-height:1.6; padding:6px 9px; border-right:1px solid var(--line-strong); overflow-wrap:break-word; word-break:break-word;}
 #view-workplan .table-wrap tfoot td.mono, #view-workplan .table-wrap tfoot td.num{color:var(--navy-950); font-weight:700;}
 /* Table A1 and the Category & Source (Annual Cash Inflow Realized) table
    (both now on PBS sub item 1) should not stretch the full card width on
@@ -1973,6 +1977,14 @@ Departments
 </div>
 <div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px 16px 16px;">
 <table id="wp-cat-source-table">
+<colgroup>
+<col style="width:8%;">
+<col style="width:30%;">
+<col style="width:17%;">
+<col style="width:17%;">
+<col style="width:18%;">
+<col style="width:10%;">
+</colgroup>
 <thead>
 <tr>
 <th style="width:64px;">Code</th>
@@ -1980,7 +1992,7 @@ Departments
 <th>Uganda Shillings<br><span id="wp-cs-prior-fy-label">2025/26 Actual Cash Inflow Realized</span></th>
 <th>Uganda Shillings<br><span id="wp-cs-current-fy-label">2026/27 Actual Cash Inflow Realized</span></th>
 <th>Absolute Variance (The Performance Gap value)<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
-<th>Percentage Variance (% Growth/Decline)</th>
+<th>Percentage<br>Variance<br>(%<br>Growth/Decline)</th>
 </tr>
 </thead>
 <tbody id="wp-cat-source-body">
