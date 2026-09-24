@@ -424,12 +424,12 @@ entered here — see renderA1RevenueEstimatesTable(). Full grid borders
 (including vertical lines between every column) match the Council's
 printed Table A1 layout, unlike most other tables in this app, which only
 rule off rows. */
-#wp-a1-revenue-table{width:100%; border-collapse:collapse; font-size:12.5px;}
-#wp-a1-revenue-table th, #wp-a1-revenue-table td{border:1px solid var(--line-strong); padding:7px 10px;}
-#wp-a1-revenue-table thead th{background:var(--teal-700); color:#FFFFFF; font-weight:700; text-align:center; font-size:11px; line-height:1.4; padding:9px 10px;}
-#wp-a1-revenue-table thead th:first-child{background:#FFFFFF;}
+#wp-a1-revenue-table{width:100%; border-collapse:collapse; font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif;}
+#wp-a1-revenue-table th, #wp-a1-revenue-table td{border:1px solid var(--line-strong); padding:7px 9px;}
+#wp-a1-revenue-table thead th{background:var(--teal-700); color:#FFFFFF; font-weight:700; text-align:center; font-size:9px; line-height:1.25; padding:7px 9px; box-shadow:0 1px 0 rgba(201,154,62,.35);}
+#wp-a1-revenue-table thead th:first-child{background:#FFFFFF; box-shadow:none;}
 #wp-a1-revenue-table th:first-child, #wp-a1-revenue-table td:first-child{width:140px; min-width:140px;}
-#wp-a1-revenue-table tbody td{color:var(--ink-900);}
+#wp-a1-revenue-table tbody td{color:var(--ink-900); font-size:10.5px; line-height:1.6;}
 #wp-a1-revenue-table tbody td.num{text-align:right; font-variant-numeric:tabular-nums;}
 #wp-a1-revenue-table .wp-a1-cat-row td{font-weight:700; background:#EAF0EF;}
 #wp-a1-revenue-table .wp-a1-owr-row td{font-weight:400;}
@@ -445,6 +445,14 @@ Only the label column needs to wrap instead of the shared default's
 single-line nowrap, since category/source names here can run long. */
 #wp-cat-source-wrap td:nth-child(2){white-space:normal;}
 #wp-cat-source-wrap td.num{text-align:right; font-variant-numeric:tabular-nums;}
+/* Match Table 3's (Summary of Revenue Performance Plan by Source) type,
+   sizing and header treatment — same Arial Narrow font, same header/body
+   font sizes and line-heights, same gold-underlined teal header — while
+   keeping this table at its own portrait width (set below) rather than
+   Table 3's wide landscape layout. */
+#wp-cat-source-table{font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif;}
+#wp-cat-source-table thead th{font-size:9px; line-height:1.25; padding:7px 9px; white-space:normal; box-shadow:0 1px 0 rgba(201,154,62,.35) !important;}
+#wp-cat-source-table tbody td{font-size:10.5px; line-height:1.6; padding:6px 9px;}
 #view-workplan .table-wrap tfoot td.mono, #view-workplan .table-wrap tfoot td.num{color:var(--navy-950); font-weight:700;}
 /* Table A1 and the Category & Source (Annual Cash Inflow Realized) table
    (both now on PBS sub item 1) should not stretch the full card width on
@@ -4916,14 +4924,14 @@ const currentLabelEl = document.getElementById('wp-cs-current-fy-label');
 const priorLabelEl = document.getElementById('wp-cs-prior-fy-label');
 if (!wp) {
 tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
-if (currentLabelEl) currentLabelEl.textContent = 'Actual Cash Inflow Realized';
-if (priorLabelEl) priorLabelEl.textContent = 'Actual Cash Inflow Realized';
+if (currentLabelEl) currentLabelEl.innerHTML = 'Actual Cash Inflow<br>Realized';
+if (priorLabelEl) priorLabelEl.innerHTML = 'Actual Cash Inflow<br>Realized';
 return;
 }
 const currentFy = wp.financial_year;
 const priorFy = priorFinancialYear(currentFy);
-if (currentLabelEl) currentLabelEl.textContent = `${currentFy} Actual Cash Inflow Realized`;
-if (priorLabelEl) priorLabelEl.textContent = priorFy ? `${priorFy} Actual Cash Inflow Realized` : 'Prior FY Actual Cash Inflow Realized';
+if (currentLabelEl) currentLabelEl.innerHTML = `${escapeHtml(currentFy)}<br>Actual Cash Inflow Realized`;
+if (priorLabelEl) priorLabelEl.innerHTML = priorFy ? `${escapeHtml(priorFy)}<br>Actual Cash Inflow Realized` : 'Prior FY<br>Actual Cash Inflow Realized';
 const priorWp = priorFy ? STATE.workplans.find(w => w.financial_year === priorFy) : null;
 tbody.innerHTML = `<tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
 const [currentRows, priorRows] = await Promise.all([
