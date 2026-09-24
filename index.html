@@ -1877,7 +1877,8 @@ Departments
      figures are derived from the "Summary of the Revenue Performance
      Plan by Source" table (period_type "rev_by_source") rather than
      entered here — see renderA1RevenueEstimatesTable(). Includes a
-     Comparative Gap column (current FY minus prior FY). Always shown
+     Absolute Variance (Comparative Gap) column (current FY minus prior FY),
+     plus a Percentage Variance (% Growth/Decline) column. Always shown
      here — rendering is triggered on sub item load and whenever the
      selected work plan changes, no longer gated by
      applyWorkplanSubtabDisplay(). -->
@@ -1893,11 +1894,12 @@ Departments
 <th></th>
 <th>Uganda Shillings Thousands<br><span id="wp-a1-prior-fy-label">2025/26 Approved Budget</span></th>
 <th>Uganda Shillings Thousands<br><span id="wp-a1-current-fy-label">2026/27 Approved Budget</span></th>
-<th>Comparative Gap<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
+<th>Absolute Variance (The Performance Gap value)<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
+<th>Percentage Variance (% Growth/Decline)</th>
 </tr>
 </thead>
 <tbody id="wp-a1-revenue-body">
-<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+<tr><td colspan="5" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
 </div>
@@ -1909,7 +1911,7 @@ Departments
      whichever work plan carries the immediately preceding FY, if any. See
      renderCategorySourceActualTable(). Also moved here from sub item 2,
      for the same reason as Table A1 above, and carries the same
-     Comparative Gap column. -->
+     Absolute Variance and Percentage Variance columns. -->
 <div class="card" id="wp-cat-source-actual-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
@@ -1923,11 +1925,12 @@ Departments
 <th>Category &amp; Source</th>
 <th>Uganda Shillings<br><span id="wp-cs-prior-fy-label">2025/26 Actual Cash Inflow Realized</span></th>
 <th>Uganda Shillings<br><span id="wp-cs-current-fy-label">2026/27 Actual Cash Inflow Realized</span></th>
-<th>Comparative Gap<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
+<th>Absolute Variance (The Performance Gap value)<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
+<th>Percentage Variance (% Growth/Decline)</th>
 </tr>
 </thead>
 <tbody id="wp-cat-source-body">
-<tr><td colspan="5" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+<tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
 </div>
@@ -4247,6 +4250,20 @@ const cls = n < 0 ? ' class="rli-gap-negative"' : '';
 return `<td class="num mono"${cls}>${money(n)}</td>`;
 }
 
+// Percentage Variance (% Growth/Decline): the absolute variance (current
+// minus prior) divided by the prior-FY base value, ×100. Returns an
+// em-dash cell when there is no prior value to divide by (null/undefined)
+// or when the prior value is exactly zero, since that division is
+// undefined.
+function percentGapCell(variance, priorValue) {
+if (priorValue === null || priorValue === undefined || Number(priorValue) === 0) {
+return '<td class="num mono">—</td>';
+}
+const pct = (Number(variance || 0) / Number(priorValue)) * 100;
+const cls = pct < 0 ? ' class="rli-gap-negative"' : '';
+return `<td class="num mono"${cls}>${pct.toLocaleString('en-UG', { maximumFractionDigits: 1, minimumFractionDigits: 1 })}%</td>`;
+}
+
 // In the "Revenue Performance by Category & Source" table only, restrict
 // the gold highlight + bold treatment to these 4 top-level revenue
 // category rows — every other row (whatever its PBS code) is a sub-item
@@ -4780,20 +4797,25 @@ return `${startYear - 1}/${endShort}`;
 // current-minus-prior convention as the category and Grand Total rows.
 function a1OwRowsHtml(priorTotal, currentTotal) {
 const priorLowerCell = priorTotal === null ? '—' : money(priorTotal);
-const lowerGapCell = priorTotal === null ? '<td class="num mono">—</td>' : moneyGapCell(currentTotal - priorTotal);
+const lowerVariance = priorTotal === null ? null : currentTotal - priorTotal;
+const lowerGapCell = priorTotal === null ? '<td class="num mono">—</td>' : moneyGapCell(lowerVariance);
+const lowerPercentCell = priorTotal === null ? '<td class="num mono">—</td>' : percentGapCell(lowerVariance, priorTotal);
 const higherGapCell = priorTotal === null ? '<td class="num mono">—</td>' : moneyGapCell(0);
+const higherPercentCell = priorTotal === null ? '<td class="num mono">—</td>' : percentGapCell(0, 0);
 return `
 <tr class="wp-a1-owr-row">
 <td>o/w Higher Local Government</td>
 <td class="num mono">${priorTotal === null ? '—' : money(0)}</td>
 <td class="num mono">${money(0)}</td>
 ${higherGapCell}
+${higherPercentCell}
 </tr>
 <tr class="wp-a1-owr-row">
 <td>o/w Lower Local Government</td>
 <td class="num mono">${priorLowerCell}</td>
 <td class="num mono">${money(currentTotal)}</td>
 ${lowerGapCell}
+${lowerPercentCell}
 </tr>`;
 }
 
@@ -4805,7 +4827,7 @@ const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
 const currentLabelEl = document.getElementById('wp-a1-current-fy-label');
 const priorLabelEl = document.getElementById('wp-a1-prior-fy-label');
 if (!wp) {
-tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
+tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
 if (currentLabelEl) currentLabelEl.textContent = 'Approved Budget';
 if (priorLabelEl) priorLabelEl.textContent = 'Approved Budget';
 return;
@@ -4815,7 +4837,7 @@ const priorFy = priorFinancialYear(currentFy);
 if (currentLabelEl) currentLabelEl.textContent = `${currentFy} Approved Budget`;
 if (priorLabelEl) priorLabelEl.textContent = priorFy ? `${priorFy} Approved Budget` : 'Prior FY Approved Budget';
 const priorWp = priorFy ? STATE.workplans.find(w => w.financial_year === priorFy) : null;
-tbody.innerHTML = `<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
+tbody.innerHTML = `<tr><td colspan="5" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
 const [currentTotals, priorTotals] = await Promise.all([
 fetchA1RevenueTotals(wp.id),
 priorWp ? fetchA1RevenueTotals(priorWp.id) : Promise.resolve(null),
@@ -4823,24 +4845,30 @@ priorWp ? fetchA1RevenueTotals(priorWp.id) : Promise.resolve(null),
 const rowsHtml = A1_REVENUE_CATEGORIES.map(c => {
 const cur = currentTotals.categories[c.key] || 0;
 const pri = priorTotals ? (priorTotals.categories[c.key] || 0) : null;
-const gapCell = pri === null ? '<td class="num mono">—</td>' : moneyGapCell(cur - pri);
+const variance = pri === null ? null : cur - pri;
+const gapCell = pri === null ? '<td class="num mono">—</td>' : moneyGapCell(variance);
+const percentCell = pri === null ? '<td class="num mono">—</td>' : percentGapCell(variance, pri);
 return `
 <tr class="wp-a1-cat-row">
 <td>${escapeHtml(c.label)}</td>
 <td class="num mono">${pri === null ? '—' : money(pri)}</td>
 <td class="num mono">${money(cur)}</td>
 ${gapCell}
+${percentCell}
 </tr>${a1OwRowsHtml(pri, cur)}`;
 }).join('');
 const grandCur = currentTotals.grandTotal || 0;
 const grandPri = priorTotals ? (priorTotals.grandTotal || 0) : null;
-const grandGapCell = grandPri === null ? '<td class="num mono">—</td>' : moneyGapCell(grandCur - grandPri);
+const grandVariance = grandPri === null ? null : grandCur - grandPri;
+const grandGapCell = grandPri === null ? '<td class="num mono">—</td>' : moneyGapCell(grandVariance);
+const grandPercentCell = grandPri === null ? '<td class="num mono">—</td>' : percentGapCell(grandVariance, grandPri);
 tbody.innerHTML = rowsHtml + `
 <tr class="wp-a1-grand-row">
 <td>Grand Total</td>
 <td class="num mono">${grandPri === null ? '—' : money(grandPri)}</td>
 <td class="num mono">${money(grandCur)}</td>
 ${grandGapCell}
+${grandPercentCell}
 </tr>${a1OwRowsHtml(grandPri, grandCur)}`;
 }
 
@@ -4886,7 +4914,7 @@ const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
 const currentLabelEl = document.getElementById('wp-cs-current-fy-label');
 const priorLabelEl = document.getElementById('wp-cs-prior-fy-label');
 if (!wp) {
-tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
+tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
 if (currentLabelEl) currentLabelEl.textContent = 'Actual Cash Inflow Realized';
 if (priorLabelEl) priorLabelEl.textContent = 'Actual Cash Inflow Realized';
 return;
@@ -4896,13 +4924,13 @@ const priorFy = priorFinancialYear(currentFy);
 if (currentLabelEl) currentLabelEl.textContent = `${currentFy} Actual Cash Inflow Realized`;
 if (priorLabelEl) priorLabelEl.textContent = priorFy ? `${priorFy} Actual Cash Inflow Realized` : 'Prior FY Actual Cash Inflow Realized';
 const priorWp = priorFy ? STATE.workplans.find(w => w.financial_year === priorFy) : null;
-tbody.innerHTML = `<tr><td colspan="5" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
+tbody.innerHTML = `<tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
 const [currentRows, priorRows] = await Promise.all([
 fetchRevByCategoryRows(wp.id),
 priorWp ? fetchRevByCategoryRows(priorWp.id) : Promise.resolve([]),
 ]);
 if (!currentRows.length) {
-tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:16px;">No rows recorded yet for the Revenue Performance Plan by Category &amp; Source table on this work plan.</div></td></tr>`;
+tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:16px;">No rows recorded yet for the Revenue Performance Plan by Category &amp; Source table on this work plan.</div></td></tr>`;
 return;
 }
 // Match each current-year row to its prior-year counterpart by PBS code
@@ -4933,7 +4961,9 @@ const isMainCategory = hasCode && isMainRevenueCategoryLabel(r.label);
 const rowCls = isMainCategory ? `${cls} rev-has-code` : cls;
 const cur = Number(r.actual_annual) || 0;
 const pri = priorAmountFor(r);
-const gapCell = pri === null ? '<td class="num mono">—</td>' : moneyGapCell(cur - pri);
+const variance = pri === null ? null : cur - pri;
+const gapCell = pri === null ? '<td class="num mono">—</td>' : moneyGapCell(variance);
+const percentCell = pri === null ? '<td class="num mono">—</td>' : percentGapCell(variance, pri);
 return `
 <tr class="${rowCls}">
 <td class="mono">${escapeHtml(r.code || '')}</td>
@@ -4941,6 +4971,7 @@ return `
 <td class="num mono">${pri === null ? '—' : money(pri)}</td>
 <td class="num mono">${money(cur)}</td>
 ${gapCell}
+${percentCell}
 </tr>`;
 }).join('');
 }
