@@ -451,8 +451,8 @@ single-line nowrap, since category/source names here can run long. */
    breakpoint they stay full width so the (already horizontally
    scrollable) tables remain usable on narrower screens. */
 @media (min-width:901px){
-#wp-a1-revenue-card .table-wrap{width:75%;}
-#wp-cat-source-wrap{width:75%;}
+#wp-a1-revenue-card .table-wrap{width:65%;}
+#wp-cat-source-wrap{width:65%;}
 }
 /* Requisitions list — compressed: tighter column widths, smaller padding
 and type, and single-line cells (except Subject, which still wraps) so
@@ -1869,30 +1869,22 @@ Departments
 </div>
 <!-- ===== PBS: Monthly Local Revenue/GoU Transfers Estimates vs. Actual Realized ===== -->
 <div class="view" id="view-rev-monthly">
-<!-- Sub Item 1 no longer has its own tables. It shares the same three
-     PBS revenue tables used on the Annual Work Plan sub item (Summary of
-     Revenue Performance Plan by Source, Revenue Performance Plan by
-     Category & Source, Monthly Revenue Performance Plan by Category &
-     Source). Those tables physically live in #view-workplan's markup and
-     are moved into this slot (or back) by placeRevenueTablesFor() in
-     switchView(), so there is exactly one live copy — same IDs, same
-     data, same edit/import/zoom controls, always in sync — wherever it
-     is currently parented. -->
-<div id="rev-monthly-tables-slot"></div>
 <!-- Table A1 "Revenue Performance and Plans by Source" (Part I of the
      printed Local Government Budget Estimates) — moved here from the
      "Approved LG Expenditure Estimates" sub item (sub item 2) so it now
-     lives permanently on this sub item instead. Read-only: its figures
-     are derived from the "Summary of the Revenue Performance Plan by
-     Source" table (period_type "rev_by_source") rather than entered here
-     — see renderA1RevenueEstimatesTable(). Includes a Comparative Gap
-     column (current FY minus prior FY). Always shown here — rendering is
-     triggered on sub item load and whenever the selected work plan
-     changes, no longer gated by applyWorkplanSubtabDisplay(). -->
-<div class="card" id="wp-a1-revenue-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
+     lives permanently on this sub item instead, at the very start of the
+     page (before the shared revenue tables below). Read-only: its
+     figures are derived from the "Summary of the Revenue Performance
+     Plan by Source" table (period_type "rev_by_source") rather than
+     entered here — see renderA1RevenueEstimatesTable(). Includes a
+     Comparative Gap column (current FY minus prior FY). Always shown
+     here — rendering is triggered on sub item load and whenever the
+     selected work plan changes, no longer gated by
+     applyWorkplanSubtabDisplay(). -->
+<div class="card" id="wp-a1-revenue-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">PART I: LOCAL GOVERNMENT BUDGET ESTIMATES</div>
-<div class="kicker" id="wp-title-a1-revenue" style="font-size:13px; color:var(--navy-950); margin-top:2px;">A1: REVENUE PERFORMANCE AND PLANS BY SOURCE</div>
+<div class="kicker" id="wp-title-a1-revenue" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL REVENUE ESTIMATES AND PERFORMANCE BY REVENUE SOURCE CATEGORY AND ALLOCATION TO LLG AND HLG: A TWO-YEAR COMPARATIVE FRAMEWORK</div>
 </div>
 <div class="table-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px; overflow-x:auto;">
 <table id="wp-a1-revenue-table">
@@ -1921,7 +1913,7 @@ Departments
 <div class="card" id="wp-cat-source-actual-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
-<div class="kicker" id="wp-title-cat-source-actual" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL REVENUE ESTIMATES AND PERFORMANCE: A TWO-YEAR COMPARATIVE FRAMEWORK</div>
+<div class="kicker" id="wp-title-cat-source-actual" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL REVENUE ESTIMATES AND PERFORMANCE BY REVENUE SOURCE: A TWO-YEAR COMPARATIVE FRAMEWORK</div>
 </div>
 <div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px 16px 16px;">
 <table id="wp-cat-source-table">
@@ -1940,6 +1932,16 @@ Departments
 </table>
 </div>
 </div>
+<!-- Sub Item 1 otherwise has no tables of its own below this point. It
+     shares the same three PBS revenue tables used on the Annual Work Plan
+     sub item (Summary of Revenue Performance Plan by Source, Revenue
+     Performance Plan by Category & Source, Monthly Revenue Performance
+     Plan by Category & Source). Those tables physically live in
+     #view-workplan's markup and are moved into this slot (or back) by
+     placeRevenueTablesFor() in switchView(), so there is exactly one live
+     copy — same IDs, same data, same edit/import/zoom controls, always in
+     sync — wherever it is currently parented. -->
+<div id="rev-monthly-tables-slot"></div>
 </div>
 <!-- ===== WORK PLAN & BUDGET (styled per reference) ===== -->
 <div class="view" id="view-workplan">
