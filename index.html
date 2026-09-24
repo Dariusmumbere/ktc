@@ -428,6 +428,7 @@ rule off rows. */
 #wp-a1-revenue-table th, #wp-a1-revenue-table td{border:1px solid var(--line-strong); padding:7px 10px;}
 #wp-a1-revenue-table thead th{background:var(--teal-700); color:#FFFFFF; font-weight:700; text-align:center; font-size:11px; line-height:1.4; padding:9px 10px;}
 #wp-a1-revenue-table thead th:first-child{background:#FFFFFF;}
+#wp-a1-revenue-table th:first-child, #wp-a1-revenue-table td:first-child{width:140px; min-width:140px;}
 #wp-a1-revenue-table tbody td{color:var(--ink-900);}
 #wp-a1-revenue-table tbody td.num{text-align:right; font-variant-numeric:tabular-nums;}
 #wp-a1-revenue-table .wp-a1-cat-row td{font-weight:700; background:#EAF0EF;}
@@ -451,7 +452,7 @@ single-line nowrap, since category/source names here can run long. */
    breakpoint they stay full width so the (already horizontally
    scrollable) tables remain usable on narrower screens. */
 @media (min-width:901px){
-#wp-a1-revenue-card .table-wrap{width:65%;}
+#wp-a1-revenue-card .table-wrap{width:75%;}
 #wp-cat-source-wrap{width:65%;}
 }
 /* Requisitions list — compressed: tighter column widths, smaller padding
@@ -1892,10 +1893,10 @@ Departments
 <thead>
 <tr>
 <th></th>
-<th>Uganda Shillings Thousands<br><span id="wp-a1-prior-fy-label">2025/26 Approved Budget</span></th>
-<th>Uganda Shillings Thousands<br><span id="wp-a1-current-fy-label">2026/27 Approved Budget</span></th>
-<th>Absolute Variance (The Performance Gap value)<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
-<th>Percentage Variance (% Growth/Decline)</th>
+<th>Uganda Shillings Thousands<br><span id="wp-a1-prior-fy-label">2025/26<br>Approved Budget</span></th>
+<th>Uganda Shillings Thousands<br><span id="wp-a1-current-fy-label">2026/27<br>Approved Budget</span></th>
+<th>Absolute Variance<br>(The Performance Gap value)<br><span style="font-weight:400;">(Current FY − Prior FY)</span></th>
+<th>Percentage<br>Variance<br>(% Growth/Decline)</th>
 </tr>
 </thead>
 <tbody id="wp-a1-revenue-body">
@@ -4828,14 +4829,14 @@ const currentLabelEl = document.getElementById('wp-a1-current-fy-label');
 const priorLabelEl = document.getElementById('wp-a1-prior-fy-label');
 if (!wp) {
 tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
-if (currentLabelEl) currentLabelEl.textContent = 'Approved Budget';
-if (priorLabelEl) priorLabelEl.textContent = 'Approved Budget';
+if (currentLabelEl) currentLabelEl.innerHTML = 'Approved Budget';
+if (priorLabelEl) priorLabelEl.innerHTML = 'Approved Budget';
 return;
 }
 const currentFy = wp.financial_year;
 const priorFy = priorFinancialYear(currentFy);
-if (currentLabelEl) currentLabelEl.textContent = `${currentFy} Approved Budget`;
-if (priorLabelEl) priorLabelEl.textContent = priorFy ? `${priorFy} Approved Budget` : 'Prior FY Approved Budget';
+if (currentLabelEl) currentLabelEl.innerHTML = `${escapeHtml(currentFy)}<br>Approved Budget`;
+if (priorLabelEl) priorLabelEl.innerHTML = priorFy ? `${escapeHtml(priorFy)}<br>Approved Budget` : 'Prior FY<br>Approved Budget';
 const priorWp = priorFy ? STATE.workplans.find(w => w.financial_year === priorFy) : null;
 tbody.innerHTML = `<tr><td colspan="5" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
 const [currentTotals, priorTotals] = await Promise.all([
