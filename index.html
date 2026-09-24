@@ -480,10 +480,8 @@ single-line nowrap, since category/source names here can run long. */
    (both now on PBS sub item 1) should not stretch the full card width on
    laptop-size screens and up. Below that breakpoint they stay full width
    so the (already horizontally scrollable) tables remain usable on
-   narrower screens. Their wrapping element's margins (above, set to
-   "auto" left/right) center each table within the card, so — combined
-   with these slightly-enlarged widths — the empty space left and right
-   of each table is now equal rather than being lopsided to one side. */
+   narrower screens. Their wrapping element's left/right margins (above)
+   are a fixed 10px, matching the top margin. */
 @media (min-width:901px){
 #wp-a1-revenue-card .table-wrap{width:85%;}
 #wp-cat-source-wrap{width:75%;}
@@ -1963,7 +1961,7 @@ Departments
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">PART I: LOCAL GOVERNMENT BUDGET ESTIMATES</div>
 <div class="kicker" id="wp-title-a1-revenue" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL REVENUE ESTIMATES AND PERFORMANCE BY REVENUE SOURCE CATEGORY AND ALLOCATION TO LLG AND HLG: A TWO-YEAR COMPARATIVE FRAMEWORK</div>
 </div>
-<div class="table-wrap" style="border:none; box-shadow:none; margin:10px auto 16px auto; overflow-x:visible;">
+<div class="table-wrap" style="border:none; box-shadow:none; margin:10px 10px 16px; overflow-x:visible;">
 <table id="wp-a1-revenue-table">
 <colgroup>
 <col style="width:23.95%;">
@@ -2002,7 +2000,7 @@ Departments
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
 <div class="kicker" id="wp-title-cat-source-actual" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL REVENUE ESTIMATES AND PERFORMANCE BY REVENUE SOURCE: A TWO-YEAR COMPARATIVE FRAMEWORK</div>
 </div>
-<div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px auto 16px auto;">
+<div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px 10px 16px;">
 <table id="wp-cat-source-table">
 <colgroup>
 <col style="width:8%;">
