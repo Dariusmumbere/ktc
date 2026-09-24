@@ -434,6 +434,18 @@ which only rule off rows. */
 #wp-a1-revenue-table .wp-a1-owr-row td{font-weight:400;}
 #wp-a1-revenue-table .wp-a1-owr-row td:first-child{padding-left:24px; color:var(--ink-700); font-style:italic;}
 #wp-a1-revenue-table .wp-a1-grand-row td{font-weight:800; background:#D6EEE6; border-top:2px solid var(--teal-700);}
+/* ---------------- Revenue Performance Plan by Category & Source — Annual
+Cash Inflow Realized ---- companion to Table A1 above; same read-only,
+current-vs-prior-FY, full-grid-border treatment, just without the o/w
+Higher/Lower rows (this source table isn't split that way). */
+#wp-cat-source-table{width:100%; border-collapse:collapse; font-size:12.5px;}
+#wp-cat-source-table th, #wp-cat-source-table td{border:1px solid var(--line-strong); padding:7px 10px;}
+#wp-cat-source-table thead th{background:var(--teal-700); color:#FFFFFF; font-weight:700; text-align:center; font-size:11px; line-height:1.4; padding:9px 10px;}
+#wp-cat-source-table thead th:first-child{background:var(--navy-950);}
+#wp-cat-source-table tbody td{color:var(--ink-900);}
+#wp-cat-source-table tbody td.num{text-align:right; font-variant-numeric:tabular-nums;}
+#wp-cat-source-table .wp-cs-cat-row td{font-weight:700; background:#EAF0EF;}
+#wp-cat-source-table .wp-cs-grand-row td{font-weight:800; background:#D6EEE6; border-top:2px solid var(--teal-700);}
 #view-workplan .table-wrap tfoot td.mono, #view-workplan .table-wrap tfoot td.num{color:var(--navy-950); font-weight:700;}
 /* Requisitions list — compressed: tighter column widths, smaller padding
 and type, and single-line cells (except Subject, which still wraps) so
@@ -2249,6 +2261,32 @@ Departments
 </tr>
 </thead>
 <tbody id="wp-a1-revenue-body">
+<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Companion to Table A1 above: uses the "Revenue Performance Plan by
+     Category & Source" table (period_type "rev_by_category") instead of
+     "...by Source", and shows Annual Actual Cash Inflow Realized rather
+     than Approved Budget — again for the current work plan's FY and
+     whichever work plan carries the immediately preceding FY, if any. See
+     renderCategorySourceActualTable(). Also sub item 2 only. -->
+<div class="card" id="wp-cat-source-actual-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
+<div style="padding:14px 18px 4px;">
+<div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
+<div class="kicker" id="wp-title-cat-source-actual" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL CASH INFLOW REALIZED</div>
+</div>
+<div class="table-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px; overflow-x:auto;">
+<table id="wp-cat-source-table">
+<thead>
+<tr>
+<th></th>
+<th>Uganda Shillings<br><span id="wp-cs-prior-fy-label">2025/26 Actual Cash Inflow Realized</span></th>
+<th>Uganda Shillings<br><span id="wp-cs-current-fy-label">2026/27 Actual Cash Inflow Realized</span></th>
+</tr>
+</thead>
+<tbody id="wp-cat-source-body">
 <tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
@@ -4759,6 +4797,133 @@ tbody.innerHTML = rowsHtml + `
 </tr>${a1OwRowsHtml(grandPri, grandCur)}`;
 }
 
+// ---- Revenue Performance Plan by Category & Source: Annual Cash Inflow
+// Realized -----------------------------------------------------------
+// Companion to Table A1 above, but drawn from the "Revenue Performance
+// Plan by Category & Source" table (period_type "rev_by_category") and
+// showing Annual Actual Cash Inflow Realized (actual_annual) instead of
+// the Approved Budget — again for the current work plan's FY and
+// whichever work plan carries the immediately preceding FY, if any. Also
+// read-only and re-derived on every repaint; nothing is saved here.
+//
+// Matches labels loosely (substring, case-insensitive) rather than
+// against the app's exact MAIN_REVENUE_CATEGORY_LABELS strings — those
+// are meant for highlighting a row that already reads exactly right, but
+// real entered labels vary (a PBS code prefix, extra wording, different
+// casing), and an exact match silently drops every row that doesn't line
+// up letter-for-letter. Loose matching means every row that belongs to a
+// category actually gets picked up, the same fix Table A1 needed.
+const CATEGORY_SOURCE_CATEGORIES = [
+{ key: 'locally_raised', label: 'Locally Raised Revenues', match: /locally raised/i },
+{ key: 'central_govt', label: 'Central Government Transfers', match: /central government/i },
+{ key: 'other_transfers', label: 'Other Government Transfers Direct to LLG Beneficiaries (OGT)', match: /other government/i },
+{ key: 'external_financing', label: 'External Financing', match: /external financing/i },
+];
+
+// Same category-label-matches-anywhere approach as fetchA1RevenueTotals()
+// above (see its comment for why) — a matching "category" row just opens
+// that category's context for the rows below it, while a matching row
+// that isn't a blank header contributes its own actual_annual directly.
+// Every row in the source table gets walked (nothing is skipped up
+// front), so the only rows that don't end up counted in one of the 4
+// categories are ones appearing before any category is recognized at all.
+async function fetchCategorySourceActualTotals(wpId) {
+const empty = () => {
+const categories = {};
+CATEGORY_SOURCE_CATEGORIES.forEach(c => { categories[c.key] = 0; });
+return { categories, grandTotal: 0 };
+};
+if (!wpId) return empty();
+const cacheKey = 'rev_by_category:' + wpId;
+let rows = STATE.revLineCache[cacheKey];
+if (!rows) {
+try {
+rows = await api(`/api/revenue-line-items?work_plan_id=${wpId}&period_type=rev_by_category`);
+STATE.revLineCache[cacheKey] = rows;
+} catch (e) { return empty(); }
+}
+const categories = {};
+const itemSums = {};
+const hasSubtotal = {};
+CATEGORY_SOURCE_CATEGORIES.forEach(c => { categories[c.key] = 0; itemSums[c.key] = 0; hasSubtotal[c.key] = false; });
+let currentKey = null;
+let grandTotal = null;
+(rows || []).forEach(r => {
+const label = r.label || '';
+const amt = Number(r.actual_annual) || 0;
+if (r.row_type === 'grand_total' || /grand\s*total/i.test(label)) {
+grandTotal = (grandTotal || 0) + amt;
+currentKey = null;
+return;
+}
+const matched = CATEGORY_SOURCE_CATEGORIES.find(c => c.match.test(label));
+if (matched) {
+currentKey = matched.key;
+if (r.row_type === 'category') return;
+if (r.row_type === 'subtotal') { categories[matched.key] += amt; hasSubtotal[matched.key] = true; }
+else { itemSums[matched.key] += amt; }
+return;
+}
+if (!currentKey || r.row_type === 'category') return;
+if (r.row_type === 'subtotal') {
+categories[currentKey] += amt;
+hasSubtotal[currentKey] = true;
+} else {
+itemSums[currentKey] += amt;
+}
+});
+CATEGORY_SOURCE_CATEGORIES.forEach(c => {
+if (!hasSubtotal[c.key]) categories[c.key] = itemSums[c.key];
+});
+if (grandTotal === null) {
+grandTotal = CATEGORY_SOURCE_CATEGORIES.reduce((sum, c) => sum + categories[c.key], 0);
+}
+return { categories, grandTotal };
+}
+
+async function renderCategorySourceActualTable() {
+const tbody = document.getElementById('wp-cat-source-body');
+if (!tbody) return;
+const wpVal = document.getElementById('wp-select').value;
+const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
+const currentLabelEl = document.getElementById('wp-cs-current-fy-label');
+const priorLabelEl = document.getElementById('wp-cs-prior-fy-label');
+if (!wp) {
+tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
+if (currentLabelEl) currentLabelEl.textContent = 'Actual Cash Inflow Realized';
+if (priorLabelEl) priorLabelEl.textContent = 'Actual Cash Inflow Realized';
+return;
+}
+const currentFy = wp.financial_year;
+const priorFy = priorFinancialYear(currentFy);
+if (currentLabelEl) currentLabelEl.textContent = `${currentFy} Actual Cash Inflow Realized`;
+if (priorLabelEl) priorLabelEl.textContent = priorFy ? `${priorFy} Actual Cash Inflow Realized` : 'Prior FY Actual Cash Inflow Realized';
+const priorWp = priorFy ? STATE.workplans.find(w => w.financial_year === priorFy) : null;
+tbody.innerHTML = `<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
+const [currentTotals, priorTotals] = await Promise.all([
+fetchCategorySourceActualTotals(wp.id),
+priorWp ? fetchCategorySourceActualTotals(priorWp.id) : Promise.resolve(null),
+]);
+const rowsHtml = CATEGORY_SOURCE_CATEGORIES.map(c => {
+const cur = currentTotals.categories[c.key] || 0;
+const pri = priorTotals ? (priorTotals.categories[c.key] || 0) : null;
+return `
+<tr class="wp-cs-cat-row">
+<td>${escapeHtml(c.label)}</td>
+<td class="num mono">${pri === null ? '—' : money(pri)}</td>
+<td class="num mono">${money(cur)}</td>
+</tr>`;
+}).join('');
+const grandCur = currentTotals.grandTotal || 0;
+const grandPri = priorTotals ? (priorTotals.grandTotal || 0) : null;
+tbody.innerHTML = rowsHtml + `
+<tr class="wp-cs-grand-row">
+<td>Grand Total</td>
+<td class="num mono">${grandPri === null ? '—' : money(grandPri)}</td>
+<td class="num mono">${money(grandCur)}</td>
+</tr>`;
+}
+
 function applyWorkplanSubtabDisplay() {
 const summaryCard = document.getElementById('wp-revenue-summary-card');
 const categoryCard = document.getElementById('wp-rev-category-card');
@@ -4790,7 +4955,11 @@ renderPiapTable();
 // (see the card's own comment in the markup above for why).
 const a1Card = document.getElementById('wp-a1-revenue-card');
 if (a1Card) a1Card.style.display = isAnnual ? 'none' : '';
-if (!isAnnual) { renderA1RevenueEstimatesTable(); return; }
+// Revenue Performance Plan by Category & Source — Annual Cash Inflow
+// Realized — also sub item 2 only, same reasoning.
+const catSourceCard = document.getElementById('wp-cat-source-actual-card');
+if (catSourceCard) catSourceCard.style.display = isAnnual ? 'none' : '';
+if (!isAnnual) { renderA1RevenueEstimatesTable(); renderCategorySourceActualTable(); return; }
 const wpVal = document.getElementById('wp-select').value;
 const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
 const fy = wp ? `FY ${escapeHtml(wp.financial_year)}` : 'FY —';
