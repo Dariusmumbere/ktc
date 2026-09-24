@@ -435,17 +435,15 @@ which only rule off rows. */
 #wp-a1-revenue-table .wp-a1-owr-row td:first-child{padding-left:24px; color:var(--ink-700); font-style:italic;}
 #wp-a1-revenue-table .wp-a1-grand-row td{font-weight:800; background:#D6EEE6; border-top:2px solid var(--teal-700);}
 /* ---------------- Revenue Performance Plan by Category & Source — Annual
-Cash Inflow Realized ---- companion to Table A1 above; same read-only,
-current-vs-prior-FY, full-grid-border treatment, just without the o/w
-Higher/Lower rows (this source table isn't split that way). */
-#wp-cat-source-table{width:100%; border-collapse:collapse; font-size:12.5px;}
-#wp-cat-source-table th, #wp-cat-source-table td{border:1px solid var(--line-strong); padding:7px 10px;}
-#wp-cat-source-table thead th{background:var(--teal-700); color:#FFFFFF; font-weight:700; text-align:center; font-size:11px; line-height:1.4; padding:9px 10px;}
-#wp-cat-source-table thead th:first-child{background:var(--navy-950);}
-#wp-cat-source-table tbody td{color:var(--ink-900);}
-#wp-cat-source-table tbody td.num{text-align:right; font-variant-numeric:tabular-nums;}
-#wp-cat-source-table .wp-cs-cat-row td{font-weight:700; background:#EAF0EF;}
-#wp-cat-source-table .wp-cs-grand-row td{font-weight:800; background:#D6EEE6; border-top:2px solid var(--teal-700);}
+Cash Inflow Realized ---- companion to Table A1 above, but a full,
+row-for-row rendering of the source table (every category, sub-item and
+subtotal row it has — see renderCategorySourceActualTable()), so it reuses
+the shared .rli-table-wrap look (gold category rows, teal subtotal rows,
+navy grand-total row) rather than Table A1's condensed grid-border style.
+Only the label column needs to wrap instead of the shared default's
+single-line nowrap, since category/source names here can run long. */
+#wp-cat-source-wrap td:nth-child(2){white-space:normal;}
+#wp-cat-source-wrap td.num{text-align:right; font-variant-numeric:tabular-nums;}
 #view-workplan .table-wrap tfoot td.mono, #view-workplan .table-wrap tfoot td.num{color:var(--navy-950); font-weight:700;}
 /* Requisitions list — compressed: tighter column widths, smaller padding
 and type, and single-line cells (except Subject, which still wraps) so
@@ -2277,17 +2275,18 @@ Departments
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
 <div class="kicker" id="wp-title-cat-source-actual" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL CASH INFLOW REALIZED</div>
 </div>
-<div class="table-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px; overflow-x:auto;">
+<div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px 16px 16px;">
 <table id="wp-cat-source-table">
 <thead>
 <tr>
-<th></th>
+<th style="width:64px;">Code</th>
+<th>Category &amp; Source</th>
 <th>Uganda Shillings<br><span id="wp-cs-prior-fy-label">2025/26 Actual Cash Inflow Realized</span></th>
 <th>Uganda Shillings<br><span id="wp-cs-current-fy-label">2026/27 Actual Cash Inflow Realized</span></th>
 </tr>
 </thead>
 <tbody id="wp-cat-source-body">
-<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
+<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
 </div>
@@ -4806,79 +4805,29 @@ tbody.innerHTML = rowsHtml + `
 // whichever work plan carries the immediately preceding FY, if any. Also
 // read-only and re-derived on every repaint; nothing is saved here.
 //
-// Matches labels loosely (substring, case-insensitive) rather than
-// against the app's exact MAIN_REVENUE_CATEGORY_LABELS strings — those
-// are meant for highlighting a row that already reads exactly right, but
-// real entered labels vary (a PBS code prefix, extra wording, different
-// casing), and an exact match silently drops every row that doesn't line
-// up letter-for-letter. Loose matching means every row that belongs to a
-// category actually gets picked up, the same fix Table A1 needed.
-const CATEGORY_SOURCE_CATEGORIES = [
-{ key: 'locally_raised', label: 'Locally Raised Revenues', match: /locally raised/i },
-{ key: 'central_govt', label: 'Central Government Transfers', match: /central government/i },
-{ key: 'other_transfers', label: 'Other Government Transfers Direct to LLG Beneficiaries (OGT)', match: /other government/i },
-{ key: 'external_financing', label: 'External Financing', match: /external financing/i },
-];
+// Unlike Table A1 (a condensed 5-row summary matching the Council's
+// printed layout), this one reproduces every row of the source table —
+// every category header, every individual revenue source underneath it,
+// and every subtotal — in the source table's own order, just with the
+// two FY actual-annual columns swapped in for the usual
+// Approved/Actual/Gap × Q1–Q4 columns. Dropping down to just the 4
+// category totals left out exactly the rows (Local Service Tax, Urban
+// Unconditional Grant, PDM funding, etc.) that make this table useful.
 
-// Same category-label-matches-anywhere approach as fetchA1RevenueTotals()
-// above (see its comment for why) — a matching "category" row just opens
-// that category's context for the rows below it, while a matching row
-// that isn't a blank header contributes its own actual_annual directly.
-// Every row in the source table gets walked (nothing is skipped up
-// front), so the only rows that don't end up counted in one of the 4
-// categories are ones appearing before any category is recognized at all.
-async function fetchCategorySourceActualTotals(wpId) {
-const empty = () => {
-const categories = {};
-CATEGORY_SOURCE_CATEGORIES.forEach(c => { categories[c.key] = 0; });
-return { categories, grandTotal: 0 };
-};
-if (!wpId) return empty();
+// Fetches (and caches, via the same revLineCache used everywhere else)
+// one work plan's "Revenue Performance Plan by Category & Source" rows,
+// in their saved order.
+async function fetchRevByCategoryRows(wpId) {
+if (!wpId) return [];
 const cacheKey = 'rev_by_category:' + wpId;
 let rows = STATE.revLineCache[cacheKey];
 if (!rows) {
 try {
 rows = await api(`/api/revenue-line-items?work_plan_id=${wpId}&period_type=rev_by_category`);
 STATE.revLineCache[cacheKey] = rows;
-} catch (e) { return empty(); }
+} catch (e) { return []; }
 }
-const categories = {};
-const itemSums = {};
-const hasSubtotal = {};
-CATEGORY_SOURCE_CATEGORIES.forEach(c => { categories[c.key] = 0; itemSums[c.key] = 0; hasSubtotal[c.key] = false; });
-let currentKey = null;
-let grandTotal = null;
-(rows || []).forEach(r => {
-const label = r.label || '';
-const amt = Number(r.actual_annual) || 0;
-if (r.row_type === 'grand_total' || /grand\s*total/i.test(label)) {
-grandTotal = (grandTotal || 0) + amt;
-currentKey = null;
-return;
-}
-const matched = CATEGORY_SOURCE_CATEGORIES.find(c => c.match.test(label));
-if (matched) {
-currentKey = matched.key;
-if (r.row_type === 'category') return;
-if (r.row_type === 'subtotal') { categories[matched.key] += amt; hasSubtotal[matched.key] = true; }
-else { itemSums[matched.key] += amt; }
-return;
-}
-if (!currentKey || r.row_type === 'category') return;
-if (r.row_type === 'subtotal') {
-categories[currentKey] += amt;
-hasSubtotal[currentKey] = true;
-} else {
-itemSums[currentKey] += amt;
-}
-});
-CATEGORY_SOURCE_CATEGORIES.forEach(c => {
-if (!hasSubtotal[c.key]) categories[c.key] = itemSums[c.key];
-});
-if (grandTotal === null) {
-grandTotal = CATEGORY_SOURCE_CATEGORIES.reduce((sum, c) => sum + categories[c.key], 0);
-}
-return { categories, grandTotal };
+return rows || [];
 }
 
 async function renderCategorySourceActualTable() {
@@ -4889,7 +4838,7 @@ const wp = STATE.workplans.find(w => String(w.id) === String(wpVal));
 const currentLabelEl = document.getElementById('wp-cs-current-fy-label');
 const priorLabelEl = document.getElementById('wp-cs-prior-fy-label');
 if (!wp) {
-tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
+tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
 if (currentLabelEl) currentLabelEl.textContent = 'Actual Cash Inflow Realized';
 if (priorLabelEl) priorLabelEl.textContent = 'Actual Cash Inflow Realized';
 return;
@@ -4899,29 +4848,51 @@ const priorFy = priorFinancialYear(currentFy);
 if (currentLabelEl) currentLabelEl.textContent = `${currentFy} Actual Cash Inflow Realized`;
 if (priorLabelEl) priorLabelEl.textContent = priorFy ? `${priorFy} Actual Cash Inflow Realized` : 'Prior FY Actual Cash Inflow Realized';
 const priorWp = priorFy ? STATE.workplans.find(w => w.financial_year === priorFy) : null;
-tbody.innerHTML = `<tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
-const [currentTotals, priorTotals] = await Promise.all([
-fetchCategorySourceActualTotals(wp.id),
-priorWp ? fetchCategorySourceActualTotals(priorWp.id) : Promise.resolve(null),
+tbody.innerHTML = `<tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
+const [currentRows, priorRows] = await Promise.all([
+fetchRevByCategoryRows(wp.id),
+priorWp ? fetchRevByCategoryRows(priorWp.id) : Promise.resolve([]),
 ]);
-const rowsHtml = CATEGORY_SOURCE_CATEGORIES.map(c => {
-const cur = currentTotals.categories[c.key] || 0;
-const pri = priorTotals ? (priorTotals.categories[c.key] || 0) : null;
+if (!currentRows.length) {
+tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state" style="padding:16px;">No rows recorded yet for the Revenue Performance Plan by Category &amp; Source table on this work plan.</div></td></tr>`;
+return;
+}
+// Match each current-year row to its prior-year counterpart by PBS code
+// first (the stable identifier across years, e.g. "1141", "2701"), and
+// only fall back to a case-insensitive label match for rows with no code
+// (a rare blank sub-header) — the same row can then carry a different
+// value year to year without losing the match.
+const priorByCode = {};
+const priorByLabel = {};
+priorRows.forEach(r => {
+const amt = Number(r.actual_annual) || 0;
+const code = String(r.code || '').trim();
+if (code) priorByCode[code] = amt;
+const label = String(r.label || '').trim().toLowerCase();
+if (label && !(label in priorByLabel)) priorByLabel[label] = amt;
+});
+function priorAmountFor(r) {
+const code = String(r.code || '').trim();
+if (code && code in priorByCode) return priorByCode[code];
+const label = String(r.label || '').trim().toLowerCase();
+if (label && label in priorByLabel) return priorByLabel[label];
+return null;
+}
+tbody.innerHTML = currentRows.map(r => {
+const cls = revLineRowClass(r.row_type);
+const hasCode = !!String(r.code || '').trim();
+const isMainCategory = hasCode && isMainRevenueCategoryLabel(r.label);
+const rowCls = isMainCategory ? `${cls} rev-has-code` : cls;
+const cur = Number(r.actual_annual) || 0;
+const pri = priorAmountFor(r);
 return `
-<tr class="wp-cs-cat-row">
-<td>${escapeHtml(c.label)}</td>
+<tr class="${rowCls}">
+<td class="mono">${escapeHtml(r.code || '')}</td>
+<td>${escapeHtml(r.label)}</td>
 <td class="num mono">${pri === null ? '—' : money(pri)}</td>
 <td class="num mono">${money(cur)}</td>
 </tr>`;
 }).join('');
-const grandCur = currentTotals.grandTotal || 0;
-const grandPri = priorTotals ? (priorTotals.grandTotal || 0) : null;
-tbody.innerHTML = rowsHtml + `
-<tr class="wp-cs-grand-row">
-<td>Grand Total</td>
-<td class="num mono">${grandPri === null ? '—' : money(grandPri)}</td>
-<td class="num mono">${money(grandCur)}</td>
-</tr>`;
 }
 
 function applyWorkplanSubtabDisplay() {
