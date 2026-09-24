@@ -425,10 +425,12 @@ entered here — see renderA1RevenueEstimatesTable(). Full grid borders
 printed Table A1 layout, unlike most other tables in this app, which only
 rule off rows. */
 /* table-layout:fixed so the <colgroup> percentages below are honored
-   exactly, rather than the browser re-sizing columns to fit content —
-   first column widened (~37%) and the 4 data columns narrowed (~16%
-   each) relative to an even 20%-per-column split (first +40%, others
-   -40% each, then rescaled so all five still total 100%). */
+   exactly, rather than the browser re-sizing columns to fit content.
+   Starting from an even 20%-per-column split: first +40%, others -40%
+   each, rescaled to total 100% (~36.8% / ~15.8% each) — then the first
+   column reduced a further 35% from that (~23.95%), with the freed
+   width redistributed evenly across the other four (~19.01% each), so
+   all five still total 100%. */
 #wp-a1-revenue-table{width:100%; border-collapse:collapse; table-layout:fixed; font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif;}
 #wp-a1-revenue-table th, #wp-a1-revenue-table td{border:1px solid var(--line-strong); padding:7px 9px; overflow-wrap:break-word; word-break:break-word;}
 #wp-a1-revenue-table thead th{background:var(--teal-700); color:#FFFFFF; font-weight:700; text-align:center; font-size:9px; line-height:1.25; padding:7px 9px; box-shadow:0 1px 0 rgba(201,154,62,.35);}
@@ -454,9 +456,11 @@ single-line nowrap, since category/source names here can run long. */
    font sizes and line-heights, same gold-underlined teal header — while
    keeping this table at its own portrait width (set below) rather than
    Table 3's wide landscape layout. */
-#wp-cat-source-table{font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif;}
-#wp-cat-source-table thead th{font-size:9px; line-height:1.25; padding:7px 9px; white-space:normal; box-shadow:0 1px 0 rgba(201,154,62,.35) !important;}
-#wp-cat-source-table tbody td{font-size:10.5px; line-height:1.6; padding:6px 9px;}
+#wp-cat-source-table{font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif; border-collapse:collapse;}
+#wp-cat-source-table thead th{font-size:9px; line-height:1.25; padding:7px 9px; white-space:normal; box-shadow:0 1px 0 rgba(201,154,62,.35) !important; border-right:1px solid rgba(255,255,255,.35);}
+#wp-cat-source-table thead th:last-child{border-right:none;}
+#wp-cat-source-table tbody td{font-size:10.5px; line-height:1.6; padding:6px 9px; border-right:1px solid var(--line-strong);}
+#wp-cat-source-table tbody td:last-child{border-right:none;}
 #view-workplan .table-wrap tfoot td.mono, #view-workplan .table-wrap tfoot td.num{color:var(--navy-950); font-weight:700;}
 /* Table A1 and the Category & Source (Annual Cash Inflow Realized) table
    (both now on PBS sub item 1) should not stretch the full card width on
@@ -466,6 +470,32 @@ single-line nowrap, since category/source names here can run long. */
 @media (min-width:901px){
 #wp-a1-revenue-card .table-wrap{width:75%;}
 #wp-cat-source-wrap{width:65%;}
+}
+/* Table A1 and the Category & Source (Annual Cash Inflow Realized) table
+   each sit on their own A4 portrait "page" (210mm × 297mm, matching the
+   Report Front Matter page treatment) so the two are presented as two
+   separate portrait pages rather than one continuous scroll. Content
+   taller than one sheet scrolls inside its own page rather than
+   stretching it. */
+.wp-rev-pages{
+background:#DDE5E3; border-radius:12px; padding:32px 16px; margin:0 -4px;
+display:flex; flex-direction:column; align-items:center; gap:28px;
+}
+.wp-rev-page{
+width:210mm; aspect-ratio:210/297; max-width:100%; flex-shrink:0;
+box-sizing:border-box; background:var(--paper-raised); box-shadow:var(--shadow-lg);
+border-radius:2px; overflow-y:auto;
+}
+@media (max-width:900px){
+.wp-rev-pages{padding:20px 8px; gap:20px;}
+}
+@media print{
+.wp-rev-pages{background:none; padding:0; margin:0; gap:0;}
+.wp-rev-page{
+width:auto; aspect-ratio:auto; height:auto; max-height:none;
+overflow:visible; box-shadow:none; border-radius:0; page-break-after:always;
+}
+.wp-rev-page:last-child{page-break-after:auto;}
 }
 /* Requisitions list — compressed: tighter column widths, smaller padding
 and type, and single-line cells (except Subject, which still wraps) so
@@ -1895,6 +1925,8 @@ Departments
      here — rendering is triggered on sub item load and whenever the
      selected work plan changes, no longer gated by
      applyWorkplanSubtabDisplay(). -->
+<div class="wp-rev-pages">
+<div class="wp-rev-page">
 <div class="card" id="wp-a1-revenue-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">PART I: LOCAL GOVERNMENT BUDGET ESTIMATES</div>
@@ -1903,11 +1935,11 @@ Departments
 <div class="table-wrap" style="border:none; box-shadow:none; margin:10px 16px 16px; overflow-x:auto;">
 <table id="wp-a1-revenue-table">
 <colgroup>
-<col style="width:36.8%;">
-<col style="width:15.8%;">
-<col style="width:15.8%;">
-<col style="width:15.8%;">
-<col style="width:15.8%;">
+<col style="width:23.95%;">
+<col style="width:19.01%;">
+<col style="width:19.01%;">
+<col style="width:19.01%;">
+<col style="width:19.01%;">
 </colgroup>
 <thead>
 <tr>
@@ -1924,6 +1956,7 @@ Departments
 </table>
 </div>
 </div>
+</div>
 <!-- Companion to Table A1 above: uses the "Revenue Performance Plan by
      Category & Source" table (period_type "rev_by_category") instead of
      "...by Source", and shows Annual Actual Cash Inflow Realized rather
@@ -1932,6 +1965,7 @@ Departments
      renderCategorySourceActualTable(). Also moved here from sub item 2,
      for the same reason as Table A1 above, and carries the same
      Absolute Variance and Percentage Variance columns. -->
+<div class="wp-rev-page">
 <div class="card" id="wp-cat-source-actual-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
 <div style="padding:14px 18px 4px;">
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
@@ -1953,6 +1987,8 @@ Departments
 <tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
+</div>
+</div>
 </div>
 </div>
 <!-- Sub Item 1 otherwise has no tables of its own below this point. It
