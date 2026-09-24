@@ -480,11 +480,13 @@ single-line nowrap, since category/source names here can run long. */
    (both now on PBS sub item 1) should not stretch the full card width on
    laptop-size screens and up. Below that breakpoint they stay full width
    so the (already horizontally scrollable) tables remain usable on
-   narrower screens. Their wrapping element's left/right margins (above)
-   are a fixed 10px, matching the top margin. */
+   narrower screens. Both tables share the same 85% width so the empty
+   space left and right of each (outside their fixed 10px margins, set
+   above) reads the same on both, rather than Category & Source's being
+   noticeably wider than Table A1's. */
 @media (min-width:901px){
 #wp-a1-revenue-card .table-wrap{width:85%;}
-#wp-cat-source-wrap{width:75%;}
+#wp-cat-source-wrap{width:85%;}
 }
 /* Table A1 and the Category & Source (Annual Cash Inflow Realized) table
    each sit on their own A4 portrait "page" (210mm × 297mm, matching the
