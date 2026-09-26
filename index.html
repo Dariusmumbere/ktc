@@ -659,7 +659,9 @@ Total data column out of alignment. */
 #wp-revenue-summary-table,
 #wp-rev-category-table{table-layout:fixed;}
 #wp-revenue-summary-table thead th.rev-meta,
-#wp-rev-category-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:10.828125px; padding:0 10px; line-height:2.375; border-bottom:1px solid var(--line-strong); overflow-wrap:break-word; word-break:break-word;}
+#wp-rev-category-table thead th.rev-meta,
+#wp-a1-revenue-table thead th.rev-meta,
+#wp-cat-source-table thead th.rev-meta{background:#FFFFFF !important; color:var(--navy-950) !important; box-shadow:none !important; text-align:left !important; font-weight:700; font-size:10.828125px; padding:0 10px; line-height:2.375; border-bottom:1px solid var(--line-strong); overflow-wrap:break-word; word-break:break-word;}
 /* Visual cue while the masthead is in edit mode, toggled by either
 table's "Edit row header" button — a dashed outline and pale highlight on
 every editable cell across the masthead rows, so it's obvious which text
@@ -670,7 +672,9 @@ can be typed into right now. */
 "Ntoroko District", "FY 2026/27") are bold too, matching the printed
 sheet — every cell across the masthead rows is bold. */
 #wp-revenue-summary-table thead th .rev-meta-value,
-#wp-rev-category-table thead th .rev-meta-value{font-weight:700;}
+#wp-rev-category-table thead th .rev-meta-value,
+#wp-a1-revenue-table thead th .rev-meta-value,
+#wp-cat-source-table thead th .rev-meta-value{font-weight:700;}
 /* Functional Definition column: allow each point to sit on its own line
 (line breaks are inserted when the data is rendered) rather than running
 on as one continuous line of text. */
@@ -680,14 +684,20 @@ on as one continuous line of text. */
 (vertical lines between every column, including the constant masthead
 cells at the top), matching the reference image exactly. */
 #wp-revenue-summary-wrap thead th,
-#wp-rev-category-wrap thead th{border-right:1px solid var(--line-strong);}
+#wp-rev-category-wrap thead th,
+#wp-a1-revenue-wrap thead th,
+#wp-cat-source-wrap thead th{border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-wrap thead th:last-child,
-#wp-rev-category-wrap thead th:last-child{border-right:none;}
+#wp-rev-category-wrap thead th:last-child,
+#wp-a1-revenue-wrap thead th:last-child,
+#wp-cat-source-wrap thead th:last-child{border-right:none;}
 /* No vertical divider to the right of the "Financial Year: FY 2026/27"
 masthead cell — this row's next cell is blank, so the rule that draws a
 divider between every header cell is switched off just here. */
 #wp-fy-meta-cell,
-#wp-fy-meta-cell-cat{border-right:none !important;}
+#wp-fy-meta-cell-cat,
+#wp-a1-fy-meta-cell,
+#wp-cs-fy-meta-cell{border-right:none !important;}
 #wp-revenue-summary-body td,
 #wp-rev-category-body td{border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-body td:last-child,
@@ -1948,17 +1958,29 @@ Departments
 <div class="rli-table-wrap" id="wp-a1-revenue-wrap" style="margin:10px 10px 16px 30px;">
 <table id="wp-a1-revenue-table">
 <colgroup>
-<col style="width:8%;">
-<col style="width:30%;">
-<col style="width:17%;">
-<col style="width:17%;">
-<col style="width:18%;">
-<col style="width:10%;">
+<col style="width:39px">
+<col style="width:292.5px">
+<col style="width:120px">
+<col style="width:120px">
+<col style="width:120px">
+<col style="width:90px">
 </colgroup>
 <thead>
+<tr class="rev-llg-meta-row" id="wp-a1-meta-row-1">
+<th colspan="2" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-llg-vote-a1">001</span></th>
+<th colspan="2" class="rev-meta">Lower Local Government: <span class="rev-meta-value" id="wp-lower-llg-a1">Karugutu Town Council</span></th>
+<th colspan="2" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-higher-llg-a1">Ntoroko District</span></th>
+</tr>
+<tr class="rev-llg-meta-row" id="wp-a1-meta-row-2">
+<th colspan="3" class="rev-meta">Part I: Summary of the Local Government Budget Estimates</th>
+<th colspan="3" class="rev-meta" id="wp-a1-fy-meta-cell">Financial Year: <span class="rev-meta-value" id="wp-a1-fy-value">FY 2026/27</span></th>
+</tr>
+<tr class="rev-llg-meta-row" id="wp-a1-meta-row-3">
+<th colspan="6" class="rev-meta">A1: Summary of the Revenue Performance Plan by Source Category — Two-Year Comparative Framework</th>
+</tr>
 <tr>
-<th class="rev-band-code" style="width:64px;">Code</th>
-<th class="rev-band-code">Category &amp; Source</th>
+<th class="rev-band-code rev-code-col">PBS<br>Code</th>
+<th class="wrap rev-band-code rev-source-col">Revenue Performance Plans by Source</th>
 <th class="rev-band-approved">Uganda Shillings Thousands<br><span id="wp-a1-prior-fy-label">2025/26<br>Approved Budget</span></th>
 <th class="rev-band-actual">Uganda Shillings Thousands<br><span id="wp-a1-current-fy-label">2026/27<br>Approved Budget</span></th>
 <th class="rev-band-gap">Absolute Variance<br>(The Performance<br>Gap value)</th>
@@ -1969,6 +1991,11 @@ Departments
 <tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
+</div>
+<div class="table-zoom-bar" id="wp-a1-revenue-zoom-bar">
+<button type="button" class="table-zoom-btn" id="wp-a1-revenue-zoom-out" title="Zoom out">−</button>
+<span class="table-zoom-label" id="wp-a1-revenue-zoom-label">100%</span>
+<button type="button" class="table-zoom-btn" id="wp-a1-revenue-zoom-in" title="Zoom in">+</button>
 </div>
 </div>
 </div>
@@ -1989,17 +2016,29 @@ Departments
 <div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px 10px 16px 30px;">
 <table id="wp-cat-source-table">
 <colgroup>
-<col style="width:8%;">
-<col style="width:30%;">
-<col style="width:17%;">
-<col style="width:17%;">
-<col style="width:18%;">
-<col style="width:10%;">
+<col style="width:39px">
+<col style="width:325px">
+<col style="width:120px">
+<col style="width:120px">
+<col style="width:120px">
+<col style="width:90px">
 </colgroup>
 <thead>
+<tr class="rev-llg-meta-row" id="wp-cs-meta-row-1">
+<th colspan="2" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-llg-vote-cs">001</span></th>
+<th colspan="2" class="rev-meta">Lower Local Government: <span class="rev-meta-value" id="wp-lower-llg-cs">Karugutu Town Council</span></th>
+<th colspan="2" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-higher-llg-cs">Ntoroko District</span></th>
+</tr>
+<tr class="rev-llg-meta-row" id="wp-cs-meta-row-2">
+<th colspan="3" class="rev-meta">Revenue Performance Plan by Category &amp; Source</th>
+<th colspan="3" class="rev-meta" id="wp-cs-fy-meta-cell">Financial Year: <span class="rev-meta-value" id="wp-cs-fy-value">FY 2026/27</span></th>
+</tr>
+<tr class="rev-llg-meta-row" id="wp-cs-meta-row-3">
+<th colspan="6" class="rev-meta">A2: Revenue Performance Plan by Category and Source — Two-Year Comparative Framework</th>
+</tr>
 <tr>
-<th class="rev-band-code" style="width:64px;">Code</th>
-<th class="rev-band-code">Category &amp; Source</th>
+<th class="rev-band-code rev-code-col">PBS<br>Code</th>
+<th class="wrap rev-band-code rev-source-col">Category &amp; Source</th>
 <th class="rev-band-approved">Uganda Shillings<br><span id="wp-cs-prior-fy-label">2025/26 Actual Cash Inflow Realized</span></th>
 <th class="rev-band-actual">Uganda Shillings<br><span id="wp-cs-current-fy-label">2026/27 Actual Cash Inflow Realized</span></th>
 <th class="rev-band-gap">Absolute Variance (The Performance Gap value)</th>
@@ -2010,6 +2049,11 @@ Departments
 <tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>
 </tbody>
 </table>
+</div>
+<div class="table-zoom-bar" id="wp-cat-source-zoom-bar">
+<button type="button" class="table-zoom-btn" id="wp-cat-source-zoom-out" title="Zoom out">−</button>
+<span class="table-zoom-label" id="wp-cat-source-zoom-label">100%</span>
+<button type="button" class="table-zoom-btn" id="wp-cat-source-zoom-in" title="Zoom in">+</button>
 </div>
 </div>
 </div>
@@ -4082,6 +4126,12 @@ const WORKPLAN_TABLE_TITLE_FIELDS = {
 'wp-llg-vote-cat-m': 'llg_vote',
 'wp-lower-llg-cat-m': 'lower_local_government',
 'wp-higher-llg-cat-m': 'higher_local_government',
+'wp-llg-vote-a1': 'llg_vote',
+'wp-lower-llg-a1': 'lower_local_government',
+'wp-higher-llg-a1': 'higher_local_government',
+'wp-llg-vote-cs': 'llg_vote',
+'wp-lower-llg-cs': 'lower_local_government',
+'wp-higher-llg-cs': 'higher_local_government',
 };
 function applyWorkplanTableTitles() {
 const wpVal = document.getElementById('wp-select').value;
@@ -4816,12 +4866,16 @@ if (!wp) {
 tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
 if (currentLabelEl) currentLabelEl.innerHTML = 'Approved Budget';
 if (priorLabelEl) priorLabelEl.innerHTML = 'Approved Budget';
+const a1FyValueElEmpty = document.getElementById('wp-a1-fy-value');
+if (a1FyValueElEmpty) a1FyValueElEmpty.textContent = 'FY —';
 return;
 }
 const currentFy = wp.financial_year;
 const priorFy = priorFinancialYear(currentFy);
 if (currentLabelEl) currentLabelEl.innerHTML = `${escapeHtml(currentFy)}<br>Approved Budget`;
 if (priorLabelEl) priorLabelEl.innerHTML = priorFy ? `${escapeHtml(priorFy)}<br>Approved Budget` : 'Prior FY<br>Approved Budget';
+const a1FyValueEl = document.getElementById('wp-a1-fy-value');
+if (a1FyValueEl) a1FyValueEl.textContent = `FY ${currentFy}`;
 const priorWp = priorFy ? STATE.workplans.find(w => w.financial_year === priorFy) : null;
 tbody.innerHTML = `<tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
 const [currentRows, priorRows] = await Promise.all([
@@ -4920,12 +4974,16 @@ if (!wp) {
 tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:16px;">Select a work plan above to view this table.</div></td></tr>`;
 if (currentLabelEl) currentLabelEl.innerHTML = 'Actual Cash Inflow<br>Realized';
 if (priorLabelEl) priorLabelEl.innerHTML = 'Actual Cash Inflow<br>Realized';
+const csFyValueElEmpty = document.getElementById('wp-cs-fy-value');
+if (csFyValueElEmpty) csFyValueElEmpty.textContent = 'FY —';
 return;
 }
 const currentFy = wp.financial_year;
 const priorFy = priorFinancialYear(currentFy);
 if (currentLabelEl) currentLabelEl.innerHTML = `${escapeHtml(currentFy)}<br>Actual Cash Inflow Realized`;
 if (priorLabelEl) priorLabelEl.innerHTML = priorFy ? `${escapeHtml(priorFy)}<br>Actual Cash Inflow Realized` : 'Prior FY<br>Actual Cash Inflow Realized';
+const csFyValueEl = document.getElementById('wp-cs-fy-value');
+if (csFyValueEl) csFyValueEl.textContent = `FY ${currentFy}`;
 const priorWp = priorFy ? STATE.workplans.find(w => w.financial_year === priorFy) : null;
 tbody.innerHTML = `<tr><td colspan="6" class="loading-row"><span class="spinner spinner-dark"></span></td></tr>`;
 const [currentRows, priorRows] = await Promise.all([
@@ -5303,6 +5361,49 @@ applyWpRevMonthlyCatZoom();
 if (wpRevMonthlyCatZoomOutBtn) wpRevMonthlyCatZoomOutBtn.addEventListener('click', () => {
 wpRevMonthlyCatZoom = Math.max(0.6, Math.round((wpRevMonthlyCatZoom - 0.1) * 10) / 10);
 applyWpRevMonthlyCatZoom();
+});
+// ---- Table A1 (Summary of the Revenue Performance Plan by Source, two-FY
+// comparison) zoom (+ / − streak below the table) — same behavior as the
+// wide tables' zoom above, just against this table's own id.
+let wpA1RevenueZoom = 1;
+function applyWpA1RevenueZoom() {
+const table = document.getElementById('wp-a1-revenue-table');
+if (table) table.style.zoom = wpA1RevenueZoom;
+const label = document.getElementById('wp-a1-revenue-zoom-label');
+if (label) label.textContent = Math.round(wpA1RevenueZoom * 100) + '%';
+}
+const wpA1RevenueZoomInBtn = document.getElementById('wp-a1-revenue-zoom-in');
+const wpA1RevenueZoomOutBtn = document.getElementById('wp-a1-revenue-zoom-out');
+applyWpA1RevenueZoom();
+if (wpA1RevenueZoomInBtn) wpA1RevenueZoomInBtn.addEventListener('click', () => {
+wpA1RevenueZoom = Math.min(1.6, Math.round((wpA1RevenueZoom + 0.1) * 10) / 10);
+applyWpA1RevenueZoom();
+});
+if (wpA1RevenueZoomOutBtn) wpA1RevenueZoomOutBtn.addEventListener('click', () => {
+wpA1RevenueZoom = Math.max(0.6, Math.round((wpA1RevenueZoom - 0.1) * 10) / 10);
+applyWpA1RevenueZoom();
+});
+// ---- Revenue Performance Plan by Category & Source (Annual Cash Inflow
+// Realized, two-FY comparison) zoom (+ / − streak below the table) — same
+// behavior as the wide tables' zoom above, just against this table's own
+// id.
+let wpCatSourceZoom = 1;
+function applyWpCatSourceZoom() {
+const table = document.getElementById('wp-cat-source-table');
+if (table) table.style.zoom = wpCatSourceZoom;
+const label = document.getElementById('wp-cat-source-zoom-label');
+if (label) label.textContent = Math.round(wpCatSourceZoom * 100) + '%';
+}
+const wpCatSourceZoomInBtn = document.getElementById('wp-cat-source-zoom-in');
+const wpCatSourceZoomOutBtn = document.getElementById('wp-cat-source-zoom-out');
+applyWpCatSourceZoom();
+if (wpCatSourceZoomInBtn) wpCatSourceZoomInBtn.addEventListener('click', () => {
+wpCatSourceZoom = Math.min(1.6, Math.round((wpCatSourceZoom + 0.1) * 10) / 10);
+applyWpCatSourceZoom();
+});
+if (wpCatSourceZoomOutBtn) wpCatSourceZoomOutBtn.addEventListener('click', () => {
+wpCatSourceZoom = Math.max(0.6, Math.round((wpCatSourceZoom - 0.1) * 10) / 10);
+applyWpCatSourceZoom();
 });
 document.getElementById('wp-download-pdf-btn').addEventListener('click', downloadWorkPlanPdf);
 // Fetches the PDF as a blob (auth header can't ride a plain <a href>) and triggers a save.
