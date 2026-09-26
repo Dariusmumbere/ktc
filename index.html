@@ -739,6 +739,17 @@ reduced column width. */
 #wp-rev-category-body td:nth-child(1),
 #wp-a1-revenue-body td:nth-child(1),
 #wp-cat-source-body td:nth-child(1){width:39px; max-width:39px;}
+/* Tables A1 and A2 only: PBS Code column halved (39px -> 19.5px), Revenue
+Performance Plans by Source/Category & Source column reduced by 0.2
+(40.5% -> 32.4%, set on the colgroup), and the Percentage Variance column
+reduced by 0.3 (13.5% -> 9.45%, also set on the colgroup). Narrowing the
+Vote/label column here is also what pulls the "Lower Local Government",
+"Higher Local Government" and "Financial Year" masthead cells closer
+together, since they sit directly on top of these same columns. */
+#wp-a1-revenue-table thead th.rev-code-col,
+#wp-cat-source-table thead th.rev-code-col{width:19.5px; max-width:19.5px;}
+#wp-a1-revenue-body td:nth-child(1),
+#wp-cat-source-body td:nth-child(1){width:19.5px; max-width:19.5px;}
 /* Revenue Performance Plans by Source/Category & Source column: width
 trimmed to hug its longest line so the next column's divider starts right
 after that text instead of leaving a gap. Left padding is set to 5px to
@@ -846,10 +857,10 @@ rather than trailing off at the right/bottom edges. */
 #wp-rev-category-table,
 #wp-a1-revenue-table,
 #wp-cat-source-table{border-bottom:1px solid var(--line-strong);}
-#wp-revenue-summary-body tr:last-child,
-#wp-rev-category-body tr:last-child,
-#wp-a1-revenue-body tr:last-child,
-#wp-cat-source-body tr:last-child{border-bottom:1px solid var(--line-strong);}
+#wp-revenue-summary-body tr:last-child td,
+#wp-rev-category-body tr:last-child td,
+#wp-a1-revenue-body tr:last-child td,
+#wp-cat-source-body tr:last-child td{border-bottom:1px solid var(--line-strong) !important;}
 /* PBS Code and the wide label column stay left-aligned for readability;
 every other header cell (Uganda Shillings Thousand(s) band titles, the
 "Summary of the Quarterly..." captions, Q1–Q4, and the Total/Annual
@@ -1985,19 +1996,19 @@ Departments
      applyWorkplanSubtabDisplay(). -->
 <div id="wp-a1-band" style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff;">
 <div class="card" id="wp-a1-revenue-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
-<div style="padding:14px 18px 4px;">
+<div style="padding:14px 16px 4px;">
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">PART I: LOCAL GOVERNMENT BUDGET ESTIMATES</div>
 <div class="kicker" id="wp-title-a1-revenue" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL REVENUE ESTIMATES AND PERFORMANCE BY REVENUE SOURCE CATEGORY AND ALLOCATION TO LLG AND HLG: A TWO-YEAR COMPARATIVE FRAMEWORK</div>
 </div>
 <div class="rli-table-wrap" id="wp-a1-revenue-wrap" style="margin:10px 16px 16px;">
 <table id="wp-a1-revenue-table">
 <colgroup>
-<col style="width:39px;">
-<col style="width:40.5%;">
+<col style="width:19.5px;">
+<col style="width:32.4%;">
 <col style="width:11.5%;">
 <col style="width:11.5%;">
 <col style="width:12%;">
-<col style="width:13.5%;">
+<col style="width:9.45%;">
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row">
@@ -2044,19 +2055,19 @@ Departments
      wrapper above. -->
 <div id="wp-cat-source-band" style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff; margin-top:16px;">
 <div class="card" id="wp-cat-source-actual-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
-<div style="padding:14px 18px 4px;">
+<div style="padding:14px 16px 4px;">
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
 <div class="kicker" id="wp-title-cat-source-actual" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL REVENUE ESTIMATES AND PERFORMANCE BY REVENUE SOURCE: A TWO-YEAR COMPARATIVE FRAMEWORK</div>
 </div>
 <div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px 16px 16px;">
 <table id="wp-cat-source-table">
 <colgroup>
-<col style="width:39px;">
-<col style="width:40.5%;">
+<col style="width:19.5px;">
+<col style="width:32.4%;">
 <col style="width:11.5%;">
 <col style="width:11.5%;">
 <col style="width:12%;">
-<col style="width:13.5%;">
+<col style="width:9.45%;">
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row">
