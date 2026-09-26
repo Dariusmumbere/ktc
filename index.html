@@ -654,12 +654,17 @@ Total data column out of alignment. */
 #wp-cat-source-table{table-layout:fixed;}
 /* Tables A1 and A2: columns 3-5 (the two Uganda Shillings columns and
 Absolute Variance) are half the width of their counterparts in the main
-work-plan tables. The freed-up space isn't handed to the other columns —
-it's pushed out to equal left/right margins instead, so each table sits
-narrower and centered within its own wrapper. 74% reflects the total
-width freed by halving those three columns (see the colgroup above). */
+work-plan tables. Every column below is a fixed pixel value (not a
+percentage) and the table's own width is the literal sum of those six
+values — not a separately-declared percentage of the wrapper — precisely
+so that shrinking one column (e.g. the PBS Code or Percentage Variance
+column) actually removes that width from the table instead of it being
+silently redistributed into a neighbouring column, which is what happens
+if the table is given its own fixed/percentage width while the columns
+underneath it don't add up to that same total. margin:0 auto still
+centers the (now narrower) table within its wrapper. */
 #wp-a1-revenue-table,
-#wp-cat-source-table{width:74%; margin:0 auto; min-width:533px;}
+#wp-cat-source-table{width:793.45px; margin:0 auto;}
 #wp-revenue-summary-table thead th.rev-meta,
 #wp-rev-category-table thead th.rev-meta,
 #wp-a1-revenue-table thead th.rev-meta,
@@ -739,17 +744,23 @@ reduced column width. */
 #wp-rev-category-body td:nth-child(1),
 #wp-a1-revenue-body td:nth-child(1),
 #wp-cat-source-body td:nth-child(1){width:39px; max-width:39px;}
-/* Tables A1 and A2 only: PBS Code column halved (39px -> 19.5px), Revenue
+/* Tables A1 and A2 only: every column's real width now comes from the
+pixel colgroup above (see the "width:793.45px" rule further up, which
+explains why these two tables switched from percentage columns to a
+fixed pixel table). PBS Code halved (105.98px -> 53px), the Revenue
 Performance Plans by Source/Category & Source column reduced by 0.2
-(40.5% -> 32.4%, set on the colgroup), and the Percentage Variance column
-reduced by 0.3 (13.5% -> 9.45%, also set on the colgroup). Narrowing the
-Vote/label column here is also what pulls the "Lower Local Government",
-"Higher Local Government" and "Financial Year" masthead cells closer
-together, since they sit directly on top of these same columns. */
+(390.2px -> 312.2px), and the Percentage Variance column reduced by 0.3
+(130.07px -> 91.05px); the two Uganda Shillings columns and the Absolute
+Variance column are untouched. Narrowing the Vote/label column here is
+also what pulls the "Lower Local Government", "Higher Local Government"
+and "Financial Year" masthead cells closer together, since they sit
+directly on top of these same columns. These two overrides just keep the
+.rev-code-col class (used by all four revenue tables) from re-imposing
+its shared 39px on these two tables specifically. */
 #wp-a1-revenue-table thead th.rev-code-col,
-#wp-cat-source-table thead th.rev-code-col{width:19.5px; max-width:19.5px;}
+#wp-cat-source-table thead th.rev-code-col{width:53px; max-width:53px;}
 #wp-a1-revenue-body td:nth-child(1),
-#wp-cat-source-body td:nth-child(1){width:19.5px; max-width:19.5px;}
+#wp-cat-source-body td:nth-child(1){width:53px; max-width:53px;}
 /* Revenue Performance Plans by Source/Category & Source column: width
 trimmed to hug its longest line so the next column's divider starts right
 after that text instead of leaving a gap. Left padding is set to 5px to
@@ -2003,12 +2014,12 @@ Departments
 <div class="rli-table-wrap" id="wp-a1-revenue-wrap" style="margin:10px 16px 16px;">
 <table id="wp-a1-revenue-table">
 <colgroup>
-<col style="width:19.5px;">
-<col style="width:32.4%;">
-<col style="width:11.5%;">
-<col style="width:11.5%;">
-<col style="width:12%;">
-<col style="width:9.45%;">
+<col style="width:53px;">
+<col style="width:312.2px;">
+<col style="width:110.8px;">
+<col style="width:110.8px;">
+<col style="width:115.6px;">
+<col style="width:91.05px;">
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row">
@@ -2062,12 +2073,12 @@ Departments
 <div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px 16px 16px;">
 <table id="wp-cat-source-table">
 <colgroup>
-<col style="width:19.5px;">
-<col style="width:32.4%;">
-<col style="width:11.5%;">
-<col style="width:11.5%;">
-<col style="width:12%;">
-<col style="width:9.45%;">
+<col style="width:53px;">
+<col style="width:312.2px;">
+<col style="width:110.8px;">
+<col style="width:110.8px;">
+<col style="width:115.6px;">
+<col style="width:91.05px;">
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row">
