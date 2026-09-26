@@ -664,7 +664,7 @@ if the table is given its own fixed/percentage width while the columns
 underneath it don't add up to that same total. margin:0 auto still
 centers the (now narrower) table within its wrapper. */
 #wp-a1-revenue-table,
-#wp-cat-source-table{width:801.25px; margin:0 auto;}
+#wp-cat-source-table{width:831.25px; margin:0 auto;}
 #wp-revenue-summary-table thead th.rev-meta,
 #wp-rev-category-table thead th.rev-meta,
 #wp-a1-revenue-table thead th.rev-meta,
@@ -678,6 +678,11 @@ A2 label/Financial Year" rows except the first cell of each row (the
 Vote cell and the Part I/A2 label cell), which keep the full 10px. */
 #wp-a1-revenue-wrap thead tr.rev-llg-meta-row th.rev-meta:not(:first-child),
 #wp-cat-source-wrap thead tr.rev-llg-meta-row th.rev-meta:not(:first-child){padding-left:4px;}
+/* "Higher Local Government" specifically pulled closer still to "Lower
+Local Government" immediately to its left, on top of the general
+tightening above. */
+#wp-a1-revenue-wrap thead tr.rev-llg-meta-row th.rev-meta:nth-child(3),
+#wp-cat-source-wrap thead tr.rev-llg-meta-row th.rev-meta:nth-child(3){padding-left:2px;}
 /* Visual cue while the masthead is in edit mode, toggled by either
 table's "Edit row header" button — a dashed outline and pale highlight on
 every editable cell across the masthead rows, so it's obvious which text
@@ -754,12 +759,12 @@ reduced column width. */
 #wp-a1-revenue-body td:nth-child(1),
 #wp-cat-source-body td:nth-child(1){width:39px; max-width:39px;}
 /* Tables A1 and A2 only: every column's real width now comes from the
-pixel colgroup above (see the "width:801.25px" rule further up, which
+pixel colgroup above (see the "width:831.25px" rule further up, which
 explains why these two tables switched from percentage columns to a
 fixed pixel table). PBS Code halved (105.98px -> 53px), the Revenue
 Performance Plans by Source/Category & Source column reduced by 0.2
-(390.2px -> 312.2px) then increased to 320px (312.2px -> 312.35px ->
-320px), and the Percentage Variance column reduced by 0.3
+(390.2px -> 312.2px) then increased to 350px (312.2px -> 312.35px ->
+320px -> 350px), and the Percentage Variance column reduced by 0.3
 (130.07px -> 91.05px); the two Uganda Shillings columns and the Absolute
 Variance column are untouched. Narrowing the Vote/label column here is
 also what pulls the "Lower Local Government", "Higher Local Government"
@@ -2025,7 +2030,7 @@ Departments
 <table id="wp-a1-revenue-table">
 <colgroup>
 <col style="width:53px;">
-<col style="width:320px;">
+<col style="width:350px;">
 <col style="width:110.8px;">
 <col style="width:110.8px;">
 <col style="width:115.6px;">
@@ -2083,7 +2088,7 @@ Departments
 <table id="wp-cat-source-table">
 <colgroup>
 <col style="width:53px;">
-<col style="width:320px;">
+<col style="width:350px;">
 <col style="width:110.8px;">
 <col style="width:110.8px;">
 <col style="width:115.6px;">
