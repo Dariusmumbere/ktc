@@ -664,7 +664,7 @@ if the table is given its own fixed/percentage width while the columns
 underneath it don't add up to that same total. margin:0 auto still
 centers the (now narrower) table within its wrapper. */
 #wp-a1-revenue-table,
-#wp-cat-source-table{width:831.25px; margin:0 auto;}
+#wp-cat-source-table{width:781.25px; margin:0 auto;}
 #wp-revenue-summary-table thead th.rev-meta,
 #wp-rev-category-table thead th.rev-meta,
 #wp-a1-revenue-table thead th.rev-meta,
@@ -759,12 +759,15 @@ reduced column width. */
 #wp-a1-revenue-body td:nth-child(1),
 #wp-cat-source-body td:nth-child(1){width:39px; max-width:39px;}
 /* Tables A1 and A2 only: every column's real width now comes from the
-pixel colgroup above (see the "width:831.25px" rule further up, which
+pixel colgroup above (see the "width:781.25px" rule further up, which
 explains why these two tables switched from percentage columns to a
 fixed pixel table). PBS Code halved (105.98px -> 53px), the Revenue
 Performance Plans by Source/Category & Source column reduced by 0.2
 (390.2px -> 312.2px) then increased to 350px (312.2px -> 312.35px ->
-320px -> 350px), and the Percentage Variance column reduced by 0.3
+320px -> 350px), the two Uganda Shillings columns narrowed from
+110.8px to 85.8px each so the "Higher Local Government" masthead
+label sits closer to "Lower Local Government Vote", and the
+Percentage Variance column reduced by 0.3
 (130.07px -> 91.05px); the two Uganda Shillings columns and the Absolute
 Variance column are untouched. Narrowing the Vote/label column here is
 also what pulls the "Lower Local Government", "Higher Local Government"
@@ -2031,8 +2034,8 @@ Departments
 <colgroup>
 <col style="width:53px;">
 <col style="width:350px;">
-<col style="width:110.8px;">
-<col style="width:110.8px;">
+<col style="width:85.8px;">
+<col style="width:85.8px;">
 <col style="width:115.6px;">
 <col style="width:91.05px;">
 </colgroup>
@@ -2089,8 +2092,8 @@ Departments
 <colgroup>
 <col style="width:53px;">
 <col style="width:350px;">
-<col style="width:110.8px;">
-<col style="width:110.8px;">
+<col style="width:85.8px;">
+<col style="width:85.8px;">
 <col style="width:115.6px;">
 <col style="width:91.05px;">
 </colgroup>
