@@ -652,6 +652,14 @@ Total data column out of alignment. */
 #wp-rev-category-table,
 #wp-a1-revenue-table,
 #wp-cat-source-table{table-layout:fixed;}
+/* Tables A1 and A2: columns 3-5 (the two Uganda Shillings columns and
+Absolute Variance) are half the width of their counterparts in the main
+work-plan tables. The freed-up space isn't handed to the other columns —
+it's pushed out to equal left/right margins instead, so each table sits
+narrower and centered within its own wrapper. 74% reflects the total
+width freed by halving those three columns (see the colgroup above). */
+#wp-a1-revenue-table,
+#wp-cat-source-table{width:74%; margin:0 auto; min-width:533px;}
 #wp-revenue-summary-table thead th.rev-meta,
 #wp-rev-category-table thead th.rev-meta,
 #wp-a1-revenue-table thead th.rev-meta,
@@ -1975,7 +1983,7 @@ Departments
      here — rendering is triggered on sub item load and whenever the
      selected work plan changes, no longer gated by
      applyWorkplanSubtabDisplay(). -->
-<div id="wp-a1-cat-band" style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff;">
+<div id="wp-a1-band" style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff;">
 <div class="card" id="wp-a1-revenue-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">PART I: LOCAL GOVERNMENT BUDGET ESTIMATES</div>
@@ -1985,11 +1993,11 @@ Departments
 <table id="wp-a1-revenue-table">
 <colgroup>
 <col style="width:39px;">
-<col style="width:30%;">
-<col style="width:17%;">
-<col style="width:17%;">
-<col style="width:18%;">
-<col style="width:10%;">
+<col style="width:40.5%;">
+<col style="width:11.5%;">
+<col style="width:11.5%;">
+<col style="width:12%;">
+<col style="width:13.5%;">
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row">
@@ -2023,6 +2031,7 @@ Departments
 </table>
 </div>
 </div>
+</div>
 <!-- Companion to Table A1 above: uses the "Revenue Performance Plan by
      Category & Source" table (period_type "rev_by_category") instead of
      "...by Source", and shows Annual Actual Cash Inflow Realized rather
@@ -2030,8 +2039,11 @@ Departments
      whichever work plan carries the immediately preceding FY, if any. See
      renderCategorySourceActualTable(). Also moved here from sub item 2,
      for the same reason as Table A1 above, and carries the same
-     Absolute Variance and Percentage Variance columns. -->
-<div class="card" id="wp-cat-source-actual-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px;">
+     Absolute Variance and Percentage Variance columns. Kept in its own
+     separate band wrapper (wp-cat-source-band), independent of table A1's
+     wrapper above. -->
+<div id="wp-cat-source-band" style="background:linear-gradient(120deg, var(--teal-700), var(--teal-500)); border-radius:14px; padding:10px 12px; color:#fff; margin-top:16px;">
+<div class="card" id="wp-cat-source-actual-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden;">
 <div style="padding:14px 18px 4px;">
 <div class="kicker" style="font-size:11.5px; color:var(--ink-700); font-weight:700; letter-spacing:.3px;">REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
 <div class="kicker" id="wp-title-cat-source-actual" style="font-size:13px; color:var(--navy-950); margin-top:2px;">ANNUAL REVENUE ESTIMATES AND PERFORMANCE BY REVENUE SOURCE: A TWO-YEAR COMPARATIVE FRAMEWORK</div>
@@ -2040,11 +2052,11 @@ Departments
 <table id="wp-cat-source-table">
 <colgroup>
 <col style="width:39px;">
-<col style="width:30%;">
-<col style="width:17%;">
-<col style="width:17%;">
-<col style="width:18%;">
-<col style="width:10%;">
+<col style="width:40.5%;">
+<col style="width:11.5%;">
+<col style="width:11.5%;">
+<col style="width:12%;">
+<col style="width:13.5%;">
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row">
