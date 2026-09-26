@@ -724,7 +724,9 @@ one row's figure happens to be a digit longer. */
 /* PBS Code column: shown as "PBS" then "Code" on two lines, with a
 reduced column width. */
 #wp-revenue-summary-table thead th.rev-code-col,
-#wp-rev-category-table thead th.rev-code-col{width:39px; max-width:39px; white-space:normal !important; line-height:1.3;}
+#wp-rev-category-table thead th.rev-code-col,
+#wp-a1-revenue-table thead th.rev-code-col,
+#wp-cat-source-table thead th.rev-code-col{width:39px; max-width:39px; white-space:normal !important; line-height:1.3;}
 #wp-revenue-summary-body td:nth-child(1),
 #wp-rev-category-body td:nth-child(1){width:39px; max-width:39px;}
 /* Revenue Performance Plans by Source/Category & Source column: width
@@ -789,7 +791,9 @@ to match the widened Q-columns beneath it. */
 /* Divider line under "Uganda Shillings Thousand(s)", for all 3 bands, and
 a divider between the group-title row and the Q1–Q4 row. */
 #wp-revenue-summary-table thead th.rev-band-title,
-#wp-rev-category-table thead th.rev-band-title{border-bottom:1px solid var(--line-strong); line-height:1.875;}
+#wp-rev-category-table thead th.rev-band-title,
+#wp-a1-revenue-table thead th.rev-band-title,
+#wp-cat-source-table thead th.rev-band-title{border-bottom:1px solid var(--line-strong); line-height:1.875;}
 #wp-revenue-summary-table thead th.rev-row5,
 #wp-rev-category-table thead th.rev-row5{border-bottom:1px solid var(--line-strong);}
 /* Divider line under the Q1–Q4 quarter-label row itself — separates the
@@ -1973,7 +1977,7 @@ Departments
 <div class="rli-table-wrap" id="wp-a1-revenue-wrap" style="margin:10px 16px 16px;">
 <table id="wp-a1-revenue-table">
 <colgroup>
-<col style="width:8%;">
+<col style="width:39px;">
 <col style="width:30%;">
 <col style="width:17%;">
 <col style="width:17%;">
@@ -1982,23 +1986,23 @@ Departments
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row">
-<th colspan="1" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-a1-llg-vote">001</span></th>
+<th colspan="2" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-a1-llg-vote">001</span></th>
 <th colspan="2" class="rev-meta">Lower Local Government: <span class="rev-meta-value" id="wp-a1-lower-llg">Karugutu Town Council</span></th>
-<th colspan="3" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-a1-higher-llg">Ntoroko District</span></th>
+<th colspan="2" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-a1-higher-llg">Ntoroko District</span></th>
 </tr>
 <tr class="rev-llg-meta-row">
-<th colspan="1" class="rev-meta">Part I: Summary of the Local Government Budget Estimates</th>
+<th colspan="2" class="rev-meta">Part I: Summary of the Local Government Budget Estimates</th>
 <th colspan="2" class="rev-meta" id="wp-a1-fy-meta-cell">Financial Year: <span class="rev-meta-value" id="wp-a1-fy-meta-value">FY 2026/27</span></th>
-<th colspan="3" class="rev-meta"></th>
+<th colspan="2" class="rev-meta"></th>
 </tr>
 <tr class="rev-llg-meta-row">
 <th colspan="6" class="rev-meta">A1: Summary of the Revenue Performance Plan by Source Category — Two-Year Comparative Summary</th>
 </tr>
 <tr>
-<th class="rev-band-code">PBS<br>Code</th>
+<th class="rev-band-code rev-code-col">PBS<br>Code</th>
 <th class="rev-band-code">Revenue Performance Plans by Source</th>
-<th class="rev-band-approved">Uganda Shillings Thousands<br><span id="wp-a1-prior-fy-label">2025/26<br>Approved Budget</span></th>
-<th class="rev-band-actual">Uganda Shillings Thousands<br><span id="wp-a1-current-fy-label">2026/27<br>Approved Budget</span></th>
+<th class="rev-band-approved rev-band-title">Uganda Shillings Thousands<br><span id="wp-a1-prior-fy-label">2025/26<br>Approved Budget</span></th>
+<th class="rev-band-actual rev-band-title">Uganda Shillings Thousands<br><span id="wp-a1-current-fy-label">2026/27<br>Approved Budget</span></th>
 <th class="rev-band-gap">Absolute Variance<br>(The Performance<br>Gap value)</th>
 <th class="rev-band-gap">Percentage<br>Variance<br>(% Growth/Decline)</th>
 </tr>
@@ -2025,7 +2029,7 @@ Departments
 <div class="rli-table-wrap" id="wp-cat-source-wrap" style="margin:10px 16px 16px;">
 <table id="wp-cat-source-table">
 <colgroup>
-<col style="width:8%;">
+<col style="width:39px;">
 <col style="width:30%;">
 <col style="width:17%;">
 <col style="width:17%;">
@@ -2034,23 +2038,23 @@ Departments
 </colgroup>
 <thead>
 <tr class="rev-llg-meta-row">
-<th colspan="1" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-cs-llg-vote">001</span></th>
+<th colspan="2" class="rev-meta">Lower Local Government Vote: <span class="rev-meta-value" id="wp-cs-llg-vote">001</span></th>
 <th colspan="2" class="rev-meta">Lower Local Government: <span class="rev-meta-value" id="wp-cs-lower-llg">Karugutu Town Council</span></th>
-<th colspan="3" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-cs-higher-llg">Ntoroko District</span></th>
+<th colspan="2" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-cs-higher-llg">Ntoroko District</span></th>
 </tr>
 <tr class="rev-llg-meta-row">
-<th colspan="1" class="rev-meta">A2: Revenue Performance Plan by Category and Source</th>
+<th colspan="2" class="rev-meta">A2: Revenue Performance Plan by Category and Source</th>
 <th colspan="2" class="rev-meta" id="wp-cs-fy-meta-cell">Financial Year: <span class="rev-meta-value" id="wp-cs-fy-meta-value">FY 2026/27</span></th>
-<th colspan="3" class="rev-meta"></th>
+<th colspan="2" class="rev-meta"></th>
 </tr>
 <tr class="rev-llg-meta-row">
 <th colspan="6" class="rev-meta">Revenue Performance Plan by Category &amp; Source — Two-Year Comparative Summary of Annual Actual Cash Inflow Realized</th>
 </tr>
 <tr>
-<th class="rev-band-code" style="width:64px;">Code</th>
+<th class="rev-band-code rev-code-col">Code</th>
 <th class="rev-band-code">Category &amp; Source</th>
-<th class="rev-band-approved">Uganda Shillings<br><span id="wp-cs-prior-fy-label">2025/26 Actual Cash Inflow Realized</span></th>
-<th class="rev-band-actual">Uganda Shillings<br><span id="wp-cs-current-fy-label">2026/27 Actual Cash Inflow Realized</span></th>
+<th class="rev-band-approved rev-band-title">Uganda Shillings<br><span id="wp-cs-prior-fy-label">2025/26 Actual Cash Inflow Realized</span></th>
+<th class="rev-band-actual rev-band-title">Uganda Shillings<br><span id="wp-cs-current-fy-label">2026/27 Actual Cash Inflow Realized</span></th>
 <th class="rev-band-gap">Absolute Variance (The Performance Gap value)</th>
 <th class="rev-band-gap">Percentage<br>Variance<br>(% Growth/<br>Decline)</th>
 </tr>
