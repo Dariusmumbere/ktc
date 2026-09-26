@@ -680,18 +680,28 @@ on as one continuous line of text. */
 (vertical lines between every column, including the constant masthead
 cells at the top), matching the reference image exactly. */
 #wp-revenue-summary-wrap thead th,
-#wp-rev-category-wrap thead th{border-right:1px solid var(--line-strong);}
+#wp-rev-category-wrap thead th,
+#wp-a1-revenue-wrap thead th,
+#wp-cat-source-wrap thead th{border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-wrap thead th:last-child,
-#wp-rev-category-wrap thead th:last-child{border-right:none;}
+#wp-rev-category-wrap thead th:last-child,
+#wp-a1-revenue-wrap thead th:last-child,
+#wp-cat-source-wrap thead th:last-child{border-right:none;}
 /* No vertical divider to the right of the "Financial Year: FY 2026/27"
 masthead cell — this row's next cell is blank, so the rule that draws a
 divider between every header cell is switched off just here. */
 #wp-fy-meta-cell,
-#wp-fy-meta-cell-cat{border-right:none !important;}
+#wp-fy-meta-cell-cat,
+#wp-a1-fy-meta-cell,
+#wp-cs-fy-meta-cell{border-right:none !important;}
 #wp-revenue-summary-body td,
-#wp-rev-category-body td{border-right:1px solid var(--line-strong);}
+#wp-rev-category-body td,
+#wp-a1-revenue-body td,
+#wp-cat-source-body td{border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-body td:last-child,
-#wp-rev-category-body td:last-child{border-right:none;}
+#wp-rev-category-body td:last-child,
+#wp-a1-revenue-body td:last-child,
+#wp-cat-source-body td:last-child{border-right:none;}
 #wp-revenue-summary-wrap tfoot td,
 #wp-rev-category-wrap tfoot td{border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-wrap tfoot td:last-child,
@@ -785,7 +795,9 @@ a divider between the group-title row and the Q1–Q4 row. */
 /* Divider line under the Q1–Q4 quarter-label row itself — separates the
 table body from the quarter labels above. */
 #wp-revenue-summary-table thead tr:last-child th,
-#wp-rev-category-table thead tr:last-child th{border-bottom:1px solid var(--line-strong);}
+#wp-rev-category-table thead tr:last-child th,
+#wp-a1-revenue-table thead tr:last-child th,
+#wp-cat-source-table thead tr:last-child th{border-bottom:1px solid var(--line-strong);}
 /* Light-yellow highlight + bold applies only to rows that BOTH show a
 real PBS code in the first column AND carry at least one non-zero figure
 — not to every row the backend classifies as a "category" row (many
@@ -795,18 +807,28 @@ than a bare CSS :empty check, since :empty is defeated by rows whose
 "code" is a stray space rather than a truly empty string, and CSS alone
 can't tell an empty-of-data row from a populated one. */
 #wp-revenue-summary-body tr.rev-has-code td,
-#wp-rev-category-body tr.rev-has-code td{background:var(--gold-100); font-weight:700; color:var(--navy-950);}
+#wp-rev-category-body tr.rev-has-code td,
+#wp-a1-revenue-body tr.rev-has-code td,
+#wp-cat-source-body tr.rev-has-code td{background:var(--gold-100); font-weight:700; color:var(--navy-950);}
 #wp-revenue-summary-body tr.rev-has-code:hover td,
-#wp-rev-category-body tr.rev-has-code:hover td{background:var(--gold-100);}
+#wp-rev-category-body tr.rev-has-code:hover td,
+#wp-a1-revenue-body tr.rev-has-code:hover td,
+#wp-cat-source-body tr.rev-has-code:hover td{background:var(--gold-100);}
 /* Closing borders: a firm outer edge all the way round the table, and a
 solid line under the very last row, so the grid reads as fully closed
 rather than trailing off at the right/bottom edges. */
 #wp-revenue-summary-wrap,
-#wp-rev-category-wrap{border-top:1px solid var(--line-strong); border-left:1px solid var(--line-strong); border-right:1px solid var(--line-strong);}
+#wp-rev-category-wrap,
+#wp-a1-revenue-wrap,
+#wp-cat-source-wrap{border-top:1px solid var(--line-strong); border-left:1px solid var(--line-strong); border-right:1px solid var(--line-strong);}
 #wp-revenue-summary-table,
-#wp-rev-category-table{border-bottom:1px solid var(--line-strong);}
+#wp-rev-category-table,
+#wp-a1-revenue-table,
+#wp-cat-source-table{border-bottom:1px solid var(--line-strong);}
 #wp-revenue-summary-body tr:last-child,
-#wp-rev-category-body tr:last-child{border-bottom:1px solid var(--line-strong);}
+#wp-rev-category-body tr:last-child,
+#wp-a1-revenue-body tr:last-child,
+#wp-cat-source-body tr:last-child{border-bottom:1px solid var(--line-strong);}
 /* PBS Code and the wide label column stay left-aligned for readability;
 every other header cell (Uganda Shillings Thousand(s) band titles, the
 "Summary of the Quarterly..." captions, Q1–Q4, and the Total/Annual
@@ -1966,7 +1988,7 @@ Departments
 </tr>
 <tr class="rev-llg-meta-row">
 <th colspan="1" class="rev-meta">Part I: Summary of the Local Government Budget Estimates</th>
-<th colspan="2" class="rev-meta">Financial Year: <span class="rev-meta-value" id="wp-a1-fy-meta-value">FY 2026/27</span></th>
+<th colspan="2" class="rev-meta" id="wp-a1-fy-meta-cell">Financial Year: <span class="rev-meta-value" id="wp-a1-fy-meta-value">FY 2026/27</span></th>
 <th colspan="3" class="rev-meta"></th>
 </tr>
 <tr class="rev-llg-meta-row">
@@ -2018,7 +2040,7 @@ Departments
 </tr>
 <tr class="rev-llg-meta-row">
 <th colspan="1" class="rev-meta">A2: Revenue Performance Plan by Category and Source</th>
-<th colspan="2" class="rev-meta">Financial Year: <span class="rev-meta-value" id="wp-cs-fy-meta-value">FY 2026/27</span></th>
+<th colspan="2" class="rev-meta" id="wp-cs-fy-meta-cell">Financial Year: <span class="rev-meta-value" id="wp-cs-fy-meta-value">FY 2026/27</span></th>
 <th colspan="3" class="rev-meta"></th>
 </tr>
 <tr class="rev-llg-meta-row">
