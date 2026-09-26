@@ -664,7 +664,7 @@ if the table is given its own fixed/percentage width while the columns
 underneath it don't add up to that same total. margin:0 auto still
 centers the (now narrower) table within its wrapper. */
 #wp-a1-revenue-table,
-#wp-cat-source-table{width:793.45px; margin:0 auto;}
+#wp-cat-source-table{width:793.6px; margin:0 auto;}
 #wp-revenue-summary-table thead th.rev-meta,
 #wp-rev-category-table thead th.rev-meta,
 #wp-a1-revenue-table thead th.rev-meta,
@@ -745,11 +745,12 @@ reduced column width. */
 #wp-a1-revenue-body td:nth-child(1),
 #wp-cat-source-body td:nth-child(1){width:39px; max-width:39px;}
 /* Tables A1 and A2 only: every column's real width now comes from the
-pixel colgroup above (see the "width:793.45px" rule further up, which
+pixel colgroup above (see the "width:793.6px" rule further up, which
 explains why these two tables switched from percentage columns to a
 fixed pixel table). PBS Code halved (105.98px -> 53px), the Revenue
 Performance Plans by Source/Category & Source column reduced by 0.2
-(390.2px -> 312.2px), and the Percentage Variance column reduced by 0.3
+(390.2px -> 312.2px) then increased by 0.15 (312.2px -> 312.35px), and
+the Percentage Variance column reduced by 0.3
 (130.07px -> 91.05px); the two Uganda Shillings columns and the Absolute
 Variance column are untouched. Narrowing the Vote/label column here is
 also what pulls the "Lower Local Government", "Higher Local Government"
@@ -2015,7 +2016,7 @@ Departments
 <table id="wp-a1-revenue-table">
 <colgroup>
 <col style="width:53px;">
-<col style="width:312.2px;">
+<col style="width:312.35px;">
 <col style="width:110.8px;">
 <col style="width:110.8px;">
 <col style="width:115.6px;">
@@ -2028,9 +2029,8 @@ Departments
 <th colspan="2" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-a1-higher-llg">Ntoroko District</span></th>
 </tr>
 <tr class="rev-llg-meta-row">
-<th colspan="2" class="rev-meta">Part I: Summary of the Local Government Budget Estimates</th>
+<th colspan="4" class="rev-meta">Part I: Summary of the Local Government Budget Estimates</th>
 <th colspan="2" class="rev-meta" id="wp-a1-fy-meta-cell">Financial Year: <span class="rev-meta-value" id="wp-a1-fy-meta-value">FY 2026/27</span></th>
-<th colspan="2" class="rev-meta"></th>
 </tr>
 <tr class="rev-llg-meta-row">
 <th colspan="6" class="rev-meta">A1: Summary of the Revenue Performance Plan by Source Category — Two-Year Comparative Summary</th>
@@ -2074,7 +2074,7 @@ Departments
 <table id="wp-cat-source-table">
 <colgroup>
 <col style="width:53px;">
-<col style="width:312.2px;">
+<col style="width:312.35px;">
 <col style="width:110.8px;">
 <col style="width:110.8px;">
 <col style="width:115.6px;">
@@ -2087,9 +2087,8 @@ Departments
 <th colspan="2" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-cs-higher-llg">Ntoroko District</span></th>
 </tr>
 <tr class="rev-llg-meta-row">
-<th colspan="2" class="rev-meta">A2: Revenue Performance Plan by Category and Source</th>
+<th colspan="4" class="rev-meta">A2: Revenue Performance Plan by Category and Source</th>
 <th colspan="2" class="rev-meta" id="wp-cs-fy-meta-cell">Financial Year: <span class="rev-meta-value" id="wp-cs-fy-meta-value">FY 2026/27</span></th>
-<th colspan="2" class="rev-meta"></th>
 </tr>
 <tr class="rev-llg-meta-row">
 <th colspan="6" class="rev-meta">Revenue Performance Plan by Category &amp; Source — Two-Year Comparative Summary of Annual Actual Cash Inflow Realized</th>
