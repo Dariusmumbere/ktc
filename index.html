@@ -728,7 +728,9 @@ reduced column width. */
 #wp-a1-revenue-table thead th.rev-code-col,
 #wp-cat-source-table thead th.rev-code-col{width:39px; max-width:39px; white-space:normal !important; line-height:1.3;}
 #wp-revenue-summary-body td:nth-child(1),
-#wp-rev-category-body td:nth-child(1){width:39px; max-width:39px;}
+#wp-rev-category-body td:nth-child(1),
+#wp-a1-revenue-body td:nth-child(1),
+#wp-cat-source-body td:nth-child(1){width:39px; max-width:39px;}
 /* Revenue Performance Plans by Source/Category & Source column: width
 trimmed to hug its longest line so the next column's divider starts right
 after that text instead of leaving a gap. Left padding is set to 5px to
@@ -796,6 +798,13 @@ a divider between the group-title row and the Q1–Q4 row. */
 #wp-cat-source-table thead th.rev-band-title{border-bottom:1px solid var(--line-strong); line-height:1.875;}
 #wp-revenue-summary-table thead th.rev-row5,
 #wp-rev-category-table thead th.rev-row5{border-bottom:1px solid var(--line-strong);}
+/* Tables A1 and A2: the "Uganda Shillings Thousand(s)" title is shared
+across the Approved and Actual columns (colspan 2, half pink / half cyan
+to nod at both bands it covers) rather than repeated once per column, so
+its .rev-band-title border-bottom above already runs as a single divider
+across both columns' full width. */
+#wp-a1-revenue-table thead th.rev-band-shared-ugx,
+#wp-cat-source-table thead th.rev-band-shared-ugx{background:linear-gradient(90deg, #FBE0D2 50%, #3DE0E6 50%) !important; color:var(--navy-950) !important; box-shadow:none !important;}
 /* Divider line under the Q1–Q4 quarter-label row itself — separates the
 table body from the quarter labels above. */
 #wp-revenue-summary-table thead tr:last-child th,
@@ -843,10 +852,8 @@ alignment via .rev-meta above. */
 #wp-rev-category-table thead th.rev-code-col,
 #wp-rev-category-table thead th.rev-source-col,
 #wp-rev-category-table thead th.rev-origin-col,
-#wp-a1-revenue-table thead tr:last-child th:nth-child(1),
-#wp-a1-revenue-table thead tr:last-child th:nth-child(2),
-#wp-cat-source-table thead tr:last-child th:nth-child(1),
-#wp-cat-source-table thead tr:last-child th:nth-child(2){text-align:left !important;}
+#wp-a1-revenue-table thead tr.rev-header-row-bands th.rev-band-code,
+#wp-cat-source-table thead tr.rev-header-row-bands th.rev-band-code{text-align:left !important;}
 /* "Annual Actual Cash Inflow Realized" header cell (table 2 & table 3):
 padding removed on the HEADER cell only (not the body cells beneath it)
 so "Cash Inflow" has enough room to render on one line instead of
@@ -1998,13 +2005,16 @@ Departments
 <tr class="rev-llg-meta-row">
 <th colspan="6" class="rev-meta">A1: Summary of the Revenue Performance Plan by Source Category — Two-Year Comparative Summary</th>
 </tr>
+<tr class="rev-header-row-bands">
+<th rowspan="2" class="rev-band-code rev-code-col">PBS<br>Code</th>
+<th rowspan="2" class="rev-band-code">Revenue Performance Plans by Source</th>
+<th colspan="2" class="rev-band-shared-ugx rev-band-title">Uganda Shillings Thousands</th>
+<th rowspan="2" class="rev-band-gap">Absolute Variance<br>(The Performance<br>Gap value)</th>
+<th rowspan="2" class="rev-band-gap">Percentage<br>Variance<br>(% Growth/Decline)</th>
+</tr>
 <tr>
-<th class="rev-band-code rev-code-col">PBS<br>Code</th>
-<th class="rev-band-code">Revenue Performance Plans by Source</th>
-<th class="rev-band-approved rev-band-title">Uganda Shillings Thousands<br><span id="wp-a1-prior-fy-label">2025/26<br>Approved Budget</span></th>
-<th class="rev-band-actual rev-band-title">Uganda Shillings Thousands<br><span id="wp-a1-current-fy-label">2026/27<br>Approved Budget</span></th>
-<th class="rev-band-gap">Absolute Variance<br>(The Performance<br>Gap value)</th>
-<th class="rev-band-gap">Percentage<br>Variance<br>(% Growth/Decline)</th>
+<th class="rev-band-approved" id="wp-a1-prior-fy-label">2025/26<br>Approved Budget</th>
+<th class="rev-band-actual" id="wp-a1-current-fy-label">2026/27<br>Approved Budget</th>
 </tr>
 </thead>
 <tbody id="wp-a1-revenue-body">
@@ -2050,13 +2060,16 @@ Departments
 <tr class="rev-llg-meta-row">
 <th colspan="6" class="rev-meta">Revenue Performance Plan by Category &amp; Source — Two-Year Comparative Summary of Annual Actual Cash Inflow Realized</th>
 </tr>
+<tr class="rev-header-row-bands">
+<th rowspan="2" class="rev-band-code rev-code-col">PBS<br>Code</th>
+<th rowspan="2" class="rev-band-code">Category &amp; Source</th>
+<th colspan="2" class="rev-band-shared-ugx rev-band-title">Uganda Shillings</th>
+<th rowspan="2" class="rev-band-gap">Absolute Variance<br>(The Performance Gap value)</th>
+<th rowspan="2" class="rev-band-gap">Percentage<br>Variance<br>(% Growth/<br>Decline)</th>
+</tr>
 <tr>
-<th class="rev-band-code rev-code-col">Code</th>
-<th class="rev-band-code">Category &amp; Source</th>
-<th class="rev-band-approved rev-band-title">Uganda Shillings<br><span id="wp-cs-prior-fy-label">2025/26 Actual Cash Inflow Realized</span></th>
-<th class="rev-band-actual rev-band-title">Uganda Shillings<br><span id="wp-cs-current-fy-label">2026/27 Actual Cash Inflow Realized</span></th>
-<th class="rev-band-gap">Absolute Variance (The Performance Gap value)</th>
-<th class="rev-band-gap">Percentage<br>Variance<br>(% Growth/<br>Decline)</th>
+<th class="rev-band-approved" id="wp-cs-prior-fy-label">2025/26<br>Actual Cash Inflow Realized</th>
+<th class="rev-band-actual" id="wp-cs-current-fy-label">2026/27<br>Actual Cash Inflow Realized</th>
 </tr>
 </thead>
 <tbody id="wp-cat-source-body">
