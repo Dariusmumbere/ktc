@@ -688,17 +688,14 @@ Local Government" immediately to its left, on top of the general
 tightening above. */
 #wp-a1-revenue-wrap thead tr.rev-llg-meta-row th.rev-meta:nth-child(3),
 #wp-cat-source-wrap thead tr.rev-llg-meta-row th.rev-meta:nth-child(3){padding-left:2px;}
-/* "Lower Local Government Vote: 910-01" is short text sitting in a wide
-cell (it shares columns with the 350px-wide "Revenue Performance Plans
-by Source" body column), which left a lot of unused space between
-"910-01" and "Lower Local Government" — the next cell had nowhere to
-move into since column widths are fixed. Right-aligning just this one
-cell's text pulls "910-01" flush to the cell's own right edge, so
-"Lower Local Government" starts immediately after it instead of
-across a wide gap — using up that unused space rather than removing
-it from the Uganda Shillings columns. */
+/* "Lower Local Government Vote: 910-01" used to be right-aligned here,
+which pulled its text flush to the cell's own right edge — but that left
+it starting far from the table's left edge, unlike every other row
+("Part I: Summary...", "A1: Summary...", "PBS Code") which all start
+flush left. Left-aligned like the rest of the masthead so this row's
+text starts at the same point as every other row. */
 #wp-a1-revenue-wrap thead tr.rev-llg-meta-row:first-child th.rev-meta:first-child,
-#wp-cat-source-wrap thead tr.rev-llg-meta-row:first-child th.rev-meta:first-child{text-align:right !important; padding-right:10px;}
+#wp-cat-source-wrap thead tr.rev-llg-meta-row:first-child th.rev-meta:first-child{text-align:left !important; padding-right:10px;}
 /* The shared ".rli-table-wrap thead th" rule sets white-space:nowrap,
 which was letting "Lower Local Government: Karugutu Town Council" and
 "Higher Local Government: Ntoroko District" run past their own cell's
