@@ -2005,6 +2005,10 @@ Users &amp; Roles
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6M3 21h18"/></svg>
 Departments
 </button>
+<button class="nav-item" data-view="publications">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
+Publications
+</button>
 </div>
 <div class="sidebar-footer">
 <button class="user-chip" id="user-chip-btn" title="My Settings &amp; Signature">
@@ -2998,6 +3002,26 @@ Departments
 <table>
 <thead><tr><th>Code</th><th>Name</th><th>Abbreviation</th><th></th></tr></thead>
 <tbody id="depts-table-body"><tr><td colspan="4" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
+</table>
+</div>
+</div>
+<!-- ===== PUBLICATIONS ===== -->
+<div class="view" id="view-publications">
+<div class="section-head">
+<div>
+<h2>Publications</h2>
+<div class="sub">Upload documents and share them via a link that opens the document directly</div>
+</div>
+</div>
+<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
+<div class="field" style="margin:0; flex:1; min-width:180px;"><input type="text" id="pub-title" placeholder="Title (optional)"/></div>
+<input type="file" id="pub-file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.jpeg,.png"/>
+<button class="btn btn-primary" id="pub-upload-btn">Upload</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Title</th><th>Uploaded</th><th></th></tr></thead>
+<tbody id="pub-table-body"><tr><td colspan="3" class="loading-row"><span class="spinner spinner-dark"></span></td></tr></tbody>
 </table>
 </div>
 </div>
@@ -4169,6 +4193,7 @@ accountability: ['Accountability', 'Post-approval documentation and verification
 reports: ['Audit & Reports', 'System-wide activity and audit trail'],
 users: ['Users & Roles', 'Account and access management'],
 departments: ['Departments', 'Organisational structure'],
+publications: ['Publications', 'Shareable documents'],
 };
 // Sub Item 1 (Monthly Local Revenue/GoU Transfers) shares the exact same
 // three PBS revenue tables (Summary of Revenue Performance Plan by Source,
@@ -4267,6 +4292,7 @@ if (subBtn) subBtn.click();
 }
 if (view === 'users') { loadUsers(); loadRoleOptions(); }
 if (view === 'departments') loadDepartmentsView();
+if (view === 'publications') loadPublications();
 }
 document.getElementById('nav-pbs-toggle').addEventListener('click', () => {
 const submenu = document.getElementById('nav-pbs-submenu');
@@ -8164,6 +8190,49 @@ tbody.innerHTML = deps.map(d => `<tr>
 '<tr><td colspan="4"><div class="empty-state">No departments yet.</div></td></tr>';
 } catch (e) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
 }
+// ---- Publications ---------------------------------------------------------------------
+function publicationLink(p) { return `${API_BASE}/p/${p.token}`; }
+async function loadPublications() {
+const tbody = document.getElementById('pub-table-body');
+try {
+const rows = await api('/api/publications');
+tbody.innerHTML = rows.map(p => `<tr>
+<td>${escapeHtml(p.title)}</td>
+<td>${p.created_at ? new Date(p.created_at).toLocaleDateString() : ''}</td>
+<td style="white-space:nowrap; text-align:right;">
+<a class="btn btn-ghost" style="padding:6px 10px;" href="${publicationLink(p)}" target="_blank" rel="noopener">Open</a>
+<button class="btn btn-ghost" style="padding:6px 10px; margin-left:4px;" onclick="copyPublicationLink('${p.token}')">Copy link</button>
+<button class="btn btn-danger" style="padding:6px 10px; margin-left:4px;" onclick="deletePublication(${p.id})">Delete</button>
+</td>
+</tr>`).join('') || '<tr><td colspan="3"><div class="empty-state">No publications yet.</div></td></tr>';
+} catch (e) { tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state">${escapeHtml(e.message)}</div></td></tr>`; }
+}
+async function copyPublicationLink(token) {
+const link = publicationLink({ token });
+try { await navigator.clipboard.writeText(link); toast('Link copied', 'success'); }
+catch (e) { window.prompt('Copy this link:', link); }
+}
+async function deletePublication(id) {
+if (!confirm('Delete this publication? Its shared link will stop working.')) return;
+try { await api('/api/publications/' + id, { method: 'DELETE' }); loadPublications(); }
+catch (e) { toast(e.message, 'error'); }
+}
+document.getElementById('pub-upload-btn').addEventListener('click', async () => {
+const fileEl = document.getElementById('pub-file');
+const titleEl = document.getElementById('pub-title');
+if (!fileEl.files.length) { toast('Choose a file to upload', 'error'); return; }
+const btn = document.getElementById('pub-upload-btn');
+btn.disabled = true;
+try {
+const fd = new FormData();
+fd.append('file', fileEl.files[0]);
+await api('/api/publications?title=' + encodeURIComponent(titleEl.value.trim()), { method: 'POST', body: fd });
+fileEl.value = ''; titleEl.value = '';
+toast('Document published', 'success');
+loadPublications();
+} catch (e) { toast(e.message, 'error'); }
+finally { btn.disabled = false; }
+});
 // ---- Utilities -----------------------------------------------------------------------
 function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); }; }
 // ---- Sign-in role dropdown (login page) -----------------------------------------------
