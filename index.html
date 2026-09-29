@@ -767,7 +767,7 @@ balances the same way the row below it does. */
 #wp-a1-revenue-wrap thead tr.rev-llg-meta-row:first-child th.rev-meta,
 #wp-cat-source-wrap thead tr.rev-llg-meta-row:first-child th.rev-meta{white-space:normal; line-height:1.3;}
 #wp-s3a1-revenue-wrap thead tr.rev-llg-meta-row:first-child th.rev-meta,
-#wp-s3cat-source-wrap thead tr.rev-llg-meta-row:first-child th.rev-meta{white-space:normal; line-height:1.3;}
+#wp-s3cat-source-wrap thead tr.rev-llg-meta-row:first-child th.rev-meta{white-space:normal; line-height:2.375;}
 /* Visual cue while the masthead is in edit mode, toggled by either
 table's "Edit row header" button — a dashed outline and pale highlight on
 every editable cell across the masthead rows, so it's obvious which text
@@ -2664,7 +2664,7 @@ Departments
 <div class="card" id="wp-rev-monthly-cat-card" style="background:rgba(255,255,255,.97); border:none; overflow:hidden; margin-top:16px; display:none;">
 <div style="padding:14px 18px 4px;">
 <div class="table-title-row">
-<div class="kicker" id="wp-title-rev-monthly-cat" style="font-size:13px; color:var(--navy-950);">MONTHLY REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE</div>
+<div class="kicker" id="wp-title-rev-monthly-cat" style="font-size:13px; color:var(--navy-950);">MONTHLY REVENUE PERFORMANCE ESTIMATES</div>
 <div class="table-title-actions">
 <button type="button" class="icon-btn icon-btn-sm" id="wp-new-monthly-cat-btn" style="display:none;" title="Add Revenue Row">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
@@ -2695,9 +2695,12 @@ Departments
 <th colspan="16" class="rev-meta">Higher Local Government: <span class="rev-meta-value" id="wp-higher-llg-cat-m">Ntoroko District</span></th>
 </tr>
 <tr class="rev-llg-meta-row" id="wp-cat-m-meta-row-2">
-<th colspan="4" class="rev-meta">A3: Detailed Monthly Revenue Performance Plan by Category and Source</th>
+<th colspan="4" class="rev-meta">Part III: Summary of the Local Government Budget Estimates</th>
 <th colspan="6" class="rev-meta" id="wp-fy-meta-cell-cat-m">Financial Year: <span class="rev-meta-value">FY 2026/27</span></th>
 <th colspan="20" class="rev-meta"></th>
+</tr>
+<tr class="rev-llg-meta-row" id="wp-cat-m-meta-row-3">
+<th colspan="30" class="rev-meta">A3: Detailed Monthly Revenue Performance Plan by Category and Source</th>
 </tr>
 <tr id="wp-cat-m-header-row-bands">
 <th rowspan="3" class="rev-band-code rev-code-col">PBS<br>Code</th>
@@ -4548,7 +4551,7 @@ applyWorkplanTableTitles();
 let catMonthlyMetaEditing = false;
 function toggleCatMonthlyMetaEdit() {
 const btn = document.getElementById('wp-cat-m-edit-row-header-btn');
-const metaRows = ['wp-cat-m-meta-row-1', 'wp-cat-m-meta-row-2'].map(id => document.getElementById(id)).filter(Boolean);
+const metaRows = ['wp-cat-m-meta-row-1', 'wp-cat-m-meta-row-2', 'wp-cat-m-meta-row-3'].map(id => document.getElementById(id)).filter(Boolean);
 const bandRows = ['wp-cat-m-header-row-bands', 'wp-cat-m-header-row-captions', 'wp-cat-m-header-row-months'].map(id => document.getElementById(id)).filter(Boolean);
 const bandCells = bandRows.flatMap(row => Array.from(row.querySelectorAll('th')).filter(th => !th.querySelector('#wp-cat-m-edit-row-header-btn')));
 if (!catMonthlyMetaEditing) {
@@ -5389,7 +5392,7 @@ if (summaryTitleEl) summaryTitleEl.innerHTML = `SUMMARY OF THE REVENUE PERFORMAN
 const categoryTitleEl = document.getElementById('wp-title-rev-category');
 if (categoryTitleEl) categoryTitleEl.innerHTML = `REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE`;
 const monthlyCatTitleEl = document.getElementById('wp-title-rev-monthly-cat');
-if (monthlyCatTitleEl) monthlyCatTitleEl.innerHTML = `MONTHLY REVENUE PERFORMANCE PLAN BY CATEGORY &amp; SOURCE`;
+if (monthlyCatTitleEl) monthlyCatTitleEl.innerHTML = `MONTHLY REVENUE PERFORMANCE ESTIMATES`;
 const fmFyEl = document.getElementById('wp-fm-fy');
 if (fmFyEl) fmFyEl.textContent = fy;
 const fmGeneratedEl = document.getElementById('wp-fm-generated');
