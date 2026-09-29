@@ -3776,7 +3776,7 @@ n = cleaned === '' ? 0 : Number(cleaned);
 n = Number(n || 0);
 }
 if (!Number.isFinite(n)) n = 0;
-return n.toLocaleString('en-UG', { maximumFractionDigits: 0 });
+return n.toLocaleString('en-UG', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 }
 function parseNumericLoose(v) {
 if (v === null || v === undefined) return null;
@@ -5753,9 +5753,9 @@ async function renderRevenueSources() {
       <tr>
         <td>${escapeHtml(cat.pbs_fund_code)} — ${escapeHtml(cat.source_of_financing_name)}</td>
         <td class="rev-func-def">${formatMultilinePoints(cat.functional_definition)}</td>
-        <td class="num mono">0</td>
+        <td class="num mono">0.0</td>
       </tr>`).join('');
-    totalEl.textContent = 'UGX 0';
+    totalEl.textContent = 'UGX 0.0';
     toast(e.message, 'error');
     renderRevenueDetailTable([]);
   }
