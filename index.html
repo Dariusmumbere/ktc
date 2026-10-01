@@ -1169,6 +1169,17 @@ match the widened month columns beneath it. */
 #wp-rev-monthly-cat-table thead th.rev-source-col,
 #wp-rev-monthly-cat-table thead th.rev-origin-col{text-align:left !important;}
 #wp-rev-monthly-cat-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col):not(.rev-origin-col){text-align:center !important;}
+/* Sub item 3 (Annual Work Plan) only: tables 3 and 4 (A1 / A2 quarterly) hide the
+"Summary of the Quarterly Revenue Performance Gap" Q1-Q4 columns — the caption
+and Q1-Q4 headers, their body cells, and the "Uganda Shillings Thousands" label
+above them — leaving the Annual Revenue Performance Gap total column in place.
+Collapsing the <col> elements (rather than display:none on cells) keeps the
+table grid and every colspan intact, and the same two tables keep showing the
+full Gap columns on sub item 1, where they are scoped out by #view-workplan. */
+#view-workplan #wp-revenue-summary-table colgroup col:nth-child(n+13):nth-child(-n+16),
+#view-workplan #wp-rev-category-table colgroup col:nth-child(n+14):nth-child(-n+17){visibility:collapse;}
+#view-workplan #wp-revenue-summary-table thead th.rev-band-gap.rev-band-title,
+#view-workplan #wp-rev-category-table thead th.rev-band-gap.rev-band-title{visibility:hidden;}
 /* Zoom streak below the table — lets the user scale the whole table up or
 down with + / − controls, for a wide table on a small screen. */
 .table-zoom-bar{display:flex; align-items:center; justify-content:center; gap:10px; margin:0 16px 16px; padding:5px 14px; background:var(--paper); border:1px solid var(--line); border-radius:20px; width:fit-content; margin-left:auto; margin-right:auto;}
