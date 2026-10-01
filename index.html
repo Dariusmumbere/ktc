@@ -1254,18 +1254,19 @@ html body #wp-rev-category-table thead th.rev-annual-col{width:96.855px !importa
 html body #wp-rev-category-table thead th.rev-approved-qhdr, html body #wp-rev-category-table thead th.rev-actual-header{width:351.12px !important; max-width:351.12px !important;}
 html body #wp-rev-category-table thead th.rev-origin-col{width:128.48px !important; max-width:128.48px !important;}
 html body #wp-cat-annual-gap-col{width:109.003125px !important; max-width:109.003125px !important;}
-/* Sub items 1 and 3, tables 3 and 4: font size increased by half (x1.5) — header cells
-9px -> 13.5px, body cells 10.5px -> 15.75px, masthead (meta) cells
-10.828125px -> 16.2421875px, plus the Edit row header button. All line-heights
-in these tables are relative, so they scale with the text. */
+/* Sub items 1 and 3, tables 3 and 4: font size is 1.25x the original (reduced
+from 1.5x) — header cells 9px -> 11.25px, body cells 10.5px -> 13.125px,
+masthead (meta) cells 10.828125px -> 13.53515625px, plus the Edit row header
+button. Every other table in sub item 3 is set to these same three sizes
+further below. Line-heights in these tables are relative, so they scale. */
 html body #wp-revenue-summary-table thead th,
-html body #wp-rev-category-table thead th{font-size:13.5px;}
+html body #wp-rev-category-table thead th{font-size:11.25px;}
 html body #wp-revenue-summary-table thead th.rev-meta,
-html body #wp-rev-category-table thead th.rev-meta{font-size:16.2421875px;}
+html body #wp-rev-category-table thead th.rev-meta{font-size:13.53515625px;}
 html body #wp-revenue-summary-body td,
-html body #wp-rev-category-body td{font-size:15.75px;}
+html body #wp-rev-category-body td{font-size:13.125px;}
 html body #wp-edit-row-header-btn,
-html body #wp-cat-edit-row-header-btn{font-size:15.75px !important;}
+html body #wp-cat-edit-row-header-btn{font-size:13.125px !important;}
 /* Table 3b — the second half of the monthly A3 table: only the Summary of the
 Monthly Actual Inflow Realized columns (plus the PBS code and revenue source
 that label each row). Styling is the same as the monthly table above, so
@@ -1322,6 +1323,50 @@ text-align:center;}
 #wp-rev-monthly-actual-table thead th.rev-annual-col:not(.rev-row5){padding-left:0 !important; padding-right:0 !important;}
 #wp-rev-monthly-actual-body td:nth-child(n+3):nth-child(-n+14){width:58px; max-width:58px; white-space:nowrap; padding-left:3px; padding-right:6px; font-size:10px;}
 #wp-rev-monthly-actual-body td:nth-child(15){width:71.25px; max-width:71.25px; white-space:nowrap; padding-left:1px; padding-right:4px;}
+/* ---- Sub item 3: every other table gets the same font sizes as tables 3 and 4
+(header 11.25px, body 13.125px, masthead 13.53515625px). ---- */
+/* Tables 5 and 6 (monthly approved / monthly actual inflow) share a movable
+group with tables 3 and 4, so they follow them everywhere. Their fixed
+Jul-Jun and Total columns are widened by the same ratio as the figures
+(10px -> 13.125px, x1.3125) so the numbers fit exactly as they did before;
+the code/source columns and the group captions are widened to match. */
+html body #wp-rev-monthly-cat-table thead th,
+html body #wp-rev-monthly-actual-table thead th{font-size:11.25px;}
+html body #wp-rev-monthly-cat-table thead th.rev-meta{font-size:13.53515625px;}
+html body #wp-rev-monthly-cat-body td,
+html body #wp-rev-monthly-actual-body td{font-size:13.125px;}
+html body #wp-cat-m-edit-row-header-btn{font-size:13.125px !important;}
+html body #wp-rev-monthly-cat-body td:nth-child(n+4):nth-child(-n+15),
+html body #wp-rev-monthly-actual-body td:nth-child(n+3):nth-child(-n+14){font-size:13.125px; width:76.125px; max-width:76.125px;}
+html body #wp-rev-monthly-cat-table colgroup col:nth-child(n+4):nth-child(-n+15),
+html body #wp-rev-monthly-actual-table colgroup col:nth-child(n+3):nth-child(-n+14){width:76.125px !important;}
+html body #wp-rev-monthly-cat-table thead th.rev-m-col,
+html body #wp-rev-monthly-actual-table thead th.rev-m-col{width:76.125px; max-width:76.125px;}
+html body #wp-rev-monthly-cat-table colgroup col:nth-child(16){width:69.8906px !important;}
+html body #wp-rev-monthly-cat-body td:nth-child(16){width:69.8906px; max-width:69.8906px;}
+html body #wp-rev-monthly-cat-table thead th.rev-band-approved.rev-annual-col{width:69.8906px; max-width:69.8906px;}
+html body #wp-rev-monthly-actual-table colgroup col:nth-child(15){width:93.5156px !important;}
+html body #wp-rev-monthly-actual-body td:nth-child(15){width:93.5156px; max-width:93.5156px;}
+html body #wp-rev-monthly-actual-table thead th.rev-annual-col{width:93.5156px; max-width:93.5156px;}
+html body #wp-rev-monthly-cat-table thead th.rev-approved-mhdr{width:913.5px !important; max-width:913.5px !important;}
+html body #wp-rev-monthly-actual-table thead th.rev-actual-mhdr{width:913.5px !important; max-width:913.5px !important;}
+/* Tables 1, 2, 7, 8 and the Part 2 (PIAP) tables: sub item 3 only —
+#view-workplan carries .wp-sub-annual while sub item 3 is open, so sub item 2,
+which shows the department summary, main table and PIAP too, is untouched. */
+#view-workplan.wp-sub-annual #wp-s3a1-revenue-table thead th,
+#view-workplan.wp-sub-annual #wp-s3cat-source-table thead th{font-size:11.25px;}
+#view-workplan.wp-sub-annual #wp-s3a1-revenue-table thead th.rev-meta,
+#view-workplan.wp-sub-annual #wp-s3cat-source-table thead th.rev-meta{font-size:13.53515625px;}
+#view-workplan.wp-sub-annual #wp-s3a1-revenue-body td,
+#view-workplan.wp-sub-annual #wp-s3cat-source-body td{font-size:13.125px;}
+#view-workplan.wp-sub-annual #wp-dept-summary-table thead th{font-size:11.25px;}
+#view-workplan.wp-sub-annual #wp-dept-summary-body td{font-size:13.125px;}
+#view-workplan.wp-sub-annual #wp-main-table thead th{font-size:11.25px;}
+#view-workplan.wp-sub-annual #wp-main-table tbody td{font-size:13.125px;}
+#view-workplan.wp-sub-annual #wp-piap-wrap td,
+#view-workplan.wp-sub-annual #wp-piap-wrap th,
+#view-workplan.wp-sub-annual #wp-piap-wrap tr.piap-vote-row td,
+#view-workplan.wp-sub-annual #wp-piap-wrap .piap-empty{font-size:13.125px;}
 /* Zoom streak below the table — lets the user scale the whole table up or
 down with + / − controls, for a wide table on a small screen. */
 .table-zoom-bar{display:flex; align-items:center; justify-content:center; gap:10px; margin:0 16px 16px; padding:5px 14px; background:var(--paper); border:1px solid var(--line); border-radius:20px; width:fit-content; margin-left:auto; margin-right:auto;}
@@ -5592,6 +5637,8 @@ const deptSummaryCard = document.getElementById('wp-dept-summary-card');
 const frontmatterEl = document.getElementById('wp-annual-frontmatter');
 const piapCard = document.getElementById('wp-piap-card');
 const isAnnual = STATE.workplanSubtab === 'annual';
+const wpViewEl = document.getElementById('view-workplan');
+if (wpViewEl) wpViewEl.classList.toggle('wp-sub-annual', isAnnual);
 if (summaryCard) summaryCard.style.display = isAnnual ? '' : 'none';
 if (categoryCard) categoryCard.style.display = isAnnual ? '' : 'none';
 if (monthlyCatCard) monthlyCatCard.style.display = isAnnual ? '' : 'none';
