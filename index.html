@@ -1169,95 +1169,105 @@ match the widened month columns beneath it. */
 #wp-rev-monthly-cat-table thead th.rev-source-col,
 #wp-rev-monthly-cat-table thead th.rev-origin-col{text-align:left !important;}
 #wp-rev-monthly-cat-table thead th:not(.rev-meta):not(.rev-code-col):not(.rev-source-col):not(.rev-origin-col){text-align:center !important;}
-/* Sub item 3 (Annual Work Plan) only: tables 3 and 4 (A1 / A2 quarterly) hide the
+/* Sub items 1 and 3 (the A1 / A2 quarterly tables live in one shared DOM group and are moved between them): tables 3 and 4 (A1 / A2 quarterly) hide the
 "Summary of the Quarterly Revenue Performance Gap" Q1-Q4 columns — the caption
 and Q1-Q4 headers, their body cells, and the "Uganda Shillings Thousands" label
 above them — leaving the Annual Revenue Performance Gap total column in place.
 Collapsing the <col> elements (rather than display:none on cells) keeps the
-table grid and every colspan intact, and the same two tables keep showing the
-full Gap columns on sub item 1, where they are scoped out by #view-workplan. */
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(n+13):nth-child(-n+16),
-#view-workplan #wp-rev-category-table colgroup col:nth-child(n+14):nth-child(-n+17){visibility:collapse;}
-#view-workplan #wp-revenue-summary-table thead th.rev-band-gap.rev-band-title,
-#view-workplan #wp-rev-category-table thead th.rev-band-gap.rev-band-title{visibility:hidden;}
-/* Sub item 3 only: the 252px freed by hiding the four Quarterly Revenue
+table grid and every colspan intact, so the same hiding applies wherever the group is shown. */
+html body #wp-revenue-summary-table colgroup col:nth-child(n+13):nth-child(-n+16),
+html body #wp-rev-category-table colgroup col:nth-child(n+14):nth-child(-n+17){visibility:collapse;}
+html body #wp-revenue-summary-table thead th.rev-band-gap.rev-band-title,
+html body #wp-rev-category-table thead th.rev-band-gap.rev-band-title{visibility:hidden;}
+/* Sub items 1 and 3: the 252px freed by hiding the four Quarterly Revenue
 Performance Gap columns (4 x 63px) is shared out equally among every column
-that remains in each table — 14 columns in table 3 (+18px each) and 15 in
-table 4 (+16.8px each) — so each table keeps its overall width. Applied to the
-<col> elements, the header cells and the body cells together, with the two
-group-title headers above the Q1-Q4 columns widened to 4 x the new Q width so
-the spans still line up. */
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(1){width:57px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(1){width:57px !important; max-width:57px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(2){width:310.5px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(2){width:310.5px !important; max-width:310.5px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(3){width:81px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(3){width:81px !important; max-width:81px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(4){width:81px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(4){width:81px !important; max-width:81px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(5){width:81px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(5){width:81px !important; max-width:81px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(6){width:81px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(6){width:81px !important; max-width:81px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(7){width:89.25px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(7){width:89.25px !important; max-width:89.25px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(8){width:81px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(8){width:81px !important; max-width:81px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(9){width:81px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(9){width:81px !important; max-width:81px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(10){width:81px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(10){width:81px !important; max-width:81px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(11){width:81px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(11){width:81px !important; max-width:81px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(12){width:89.25px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(12){width:89.25px !important; max-width:89.25px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(17){width:100.29375px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(17){width:100.29375px !important; max-width:100.29375px !important;}
-#view-workplan #wp-revenue-summary-table colgroup col:nth-child(18){width:88px !important;}
-#view-workplan #wp-revenue-summary-body td:nth-child(18){width:88px !important; max-width:88px !important;}
-#view-workplan #wp-revenue-summary-table thead th.rev-code-col{width:57px !important; max-width:57px !important;}
-#view-workplan #wp-revenue-summary-table thead th.rev-source-col{width:310.5px !important; max-width:310.5px !important;}
-#view-workplan #wp-revenue-summary-table thead th.rev-q-col{width:81px !important; max-width:81px !important;}
-#view-workplan #wp-revenue-summary-table thead th.rev-annual-col{width:89.25px !important; max-width:89.25px !important;}
-#view-workplan #wp-revenue-summary-table thead th.rev-approved-qhdr, #view-workplan #wp-revenue-summary-table thead th.rev-actual-header{width:324px !important; max-width:324px !important;}
-#view-workplan #wp-annual-gap-col{width:100.29375px !important; max-width:100.29375px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(1){width:55.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(1){width:55.8px !important; max-width:55.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(2){width:341.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(2){width:341.8px !important; max-width:341.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(3){width:116.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(3){width:116.8px !important; max-width:116.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(4){width:79.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(4){width:79.8px !important; max-width:79.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(5){width:79.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(5){width:79.8px !important; max-width:79.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(6){width:79.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(6){width:79.8px !important; max-width:79.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(7){width:79.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(7){width:79.8px !important; max-width:79.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(8){width:88.05px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(8){width:88.05px !important; max-width:88.05px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(9){width:79.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(9){width:79.8px !important; max-width:79.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(10){width:79.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(10){width:79.8px !important; max-width:79.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(11){width:79.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(11){width:79.8px !important; max-width:79.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(12){width:79.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(12){width:79.8px !important; max-width:79.8px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(13){width:88.05px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(13){width:88.05px !important; max-width:88.05px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(18){width:99.09375px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(18){width:99.09375px !important; max-width:99.09375px !important;}
-#view-workplan #wp-rev-category-table colgroup col:nth-child(19){width:86.8px !important;}
-#view-workplan #wp-rev-category-body td:nth-child(19){width:86.8px !important; max-width:86.8px !important;}
-#view-workplan #wp-rev-category-table thead th.rev-code-col{width:55.8px !important; max-width:55.8px !important;}
-#view-workplan #wp-rev-category-table thead th.rev-source-col{width:341.8px !important; max-width:341.8px !important;}
-#view-workplan #wp-rev-category-table thead th.rev-q-col{width:79.8px !important; max-width:79.8px !important;}
-#view-workplan #wp-rev-category-table thead th.rev-annual-col{width:88.05px !important; max-width:88.05px !important;}
-#view-workplan #wp-rev-category-table thead th.rev-approved-qhdr, #view-workplan #wp-rev-category-table thead th.rev-actual-header{width:319.2px !important; max-width:319.2px !important;}
-#view-workplan #wp-rev-category-table thead th.rev-origin-col{width:116.8px !important; max-width:116.8px !important;}
-#view-workplan #wp-cat-annual-gap-col{width:99.09375px !important; max-width:99.09375px !important;}
+that remains in each table (14 in table 3, +18px each; 15 in table 4,
++16.8px each), and every column is then widened a further 10%. Applied to the
+<col> elements, header cells and body cells together; the two group-title
+headers above the Q1-Q4 columns are 4 x the new Q width so spans line up. */
+html body #wp-revenue-summary-table colgroup col:nth-child(1){width:62.7px !important;}
+html body #wp-revenue-summary-body td:nth-child(1){width:62.7px !important; max-width:62.7px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(2){width:341.55px !important;}
+html body #wp-revenue-summary-body td:nth-child(2){width:341.55px !important; max-width:341.55px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(3){width:89.1px !important;}
+html body #wp-revenue-summary-body td:nth-child(3){width:89.1px !important; max-width:89.1px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(4){width:89.1px !important;}
+html body #wp-revenue-summary-body td:nth-child(4){width:89.1px !important; max-width:89.1px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(5){width:89.1px !important;}
+html body #wp-revenue-summary-body td:nth-child(5){width:89.1px !important; max-width:89.1px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(6){width:89.1px !important;}
+html body #wp-revenue-summary-body td:nth-child(6){width:89.1px !important; max-width:89.1px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(7){width:98.175px !important;}
+html body #wp-revenue-summary-body td:nth-child(7){width:98.175px !important; max-width:98.175px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(8){width:89.1px !important;}
+html body #wp-revenue-summary-body td:nth-child(8){width:89.1px !important; max-width:89.1px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(9){width:89.1px !important;}
+html body #wp-revenue-summary-body td:nth-child(9){width:89.1px !important; max-width:89.1px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(10){width:89.1px !important;}
+html body #wp-revenue-summary-body td:nth-child(10){width:89.1px !important; max-width:89.1px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(11){width:89.1px !important;}
+html body #wp-revenue-summary-body td:nth-child(11){width:89.1px !important; max-width:89.1px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(12){width:98.175px !important;}
+html body #wp-revenue-summary-body td:nth-child(12){width:98.175px !important; max-width:98.175px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(17){width:110.323125px !important;}
+html body #wp-revenue-summary-body td:nth-child(17){width:110.323125px !important; max-width:110.323125px !important;}
+html body #wp-revenue-summary-table colgroup col:nth-child(18){width:96.8px !important;}
+html body #wp-revenue-summary-body td:nth-child(18){width:96.8px !important; max-width:96.8px !important;}
+html body #wp-revenue-summary-table thead th.rev-code-col{width:62.7px !important; max-width:62.7px !important;}
+html body #wp-revenue-summary-table thead th.rev-source-col{width:341.55px !important; max-width:341.55px !important;}
+html body #wp-revenue-summary-table thead th.rev-q-col{width:89.1px !important; max-width:89.1px !important;}
+html body #wp-revenue-summary-table thead th.rev-annual-col{width:98.175px !important; max-width:98.175px !important;}
+html body #wp-revenue-summary-table thead th.rev-approved-qhdr, html body #wp-revenue-summary-table thead th.rev-actual-header{width:356.4px !important; max-width:356.4px !important;}
+html body #wp-annual-gap-col{width:110.323125px !important; max-width:110.323125px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(1){width:61.38px !important;}
+html body #wp-rev-category-body td:nth-child(1){width:61.38px !important; max-width:61.38px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(2){width:375.98px !important;}
+html body #wp-rev-category-body td:nth-child(2){width:375.98px !important; max-width:375.98px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(3){width:128.48px !important;}
+html body #wp-rev-category-body td:nth-child(3){width:128.48px !important; max-width:128.48px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(4){width:87.78px !important;}
+html body #wp-rev-category-body td:nth-child(4){width:87.78px !important; max-width:87.78px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(5){width:87.78px !important;}
+html body #wp-rev-category-body td:nth-child(5){width:87.78px !important; max-width:87.78px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(6){width:87.78px !important;}
+html body #wp-rev-category-body td:nth-child(6){width:87.78px !important; max-width:87.78px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(7){width:87.78px !important;}
+html body #wp-rev-category-body td:nth-child(7){width:87.78px !important; max-width:87.78px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(8){width:96.855px !important;}
+html body #wp-rev-category-body td:nth-child(8){width:96.855px !important; max-width:96.855px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(9){width:87.78px !important;}
+html body #wp-rev-category-body td:nth-child(9){width:87.78px !important; max-width:87.78px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(10){width:87.78px !important;}
+html body #wp-rev-category-body td:nth-child(10){width:87.78px !important; max-width:87.78px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(11){width:87.78px !important;}
+html body #wp-rev-category-body td:nth-child(11){width:87.78px !important; max-width:87.78px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(12){width:87.78px !important;}
+html body #wp-rev-category-body td:nth-child(12){width:87.78px !important; max-width:87.78px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(13){width:96.855px !important;}
+html body #wp-rev-category-body td:nth-child(13){width:96.855px !important; max-width:96.855px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(18){width:109.003125px !important;}
+html body #wp-rev-category-body td:nth-child(18){width:109.003125px !important; max-width:109.003125px !important;}
+html body #wp-rev-category-table colgroup col:nth-child(19){width:95.48px !important;}
+html body #wp-rev-category-body td:nth-child(19){width:95.48px !important; max-width:95.48px !important;}
+html body #wp-rev-category-table thead th.rev-code-col{width:61.38px !important; max-width:61.38px !important;}
+html body #wp-rev-category-table thead th.rev-source-col{width:375.98px !important; max-width:375.98px !important;}
+html body #wp-rev-category-table thead th.rev-q-col{width:87.78px !important; max-width:87.78px !important;}
+html body #wp-rev-category-table thead th.rev-annual-col{width:96.855px !important; max-width:96.855px !important;}
+html body #wp-rev-category-table thead th.rev-approved-qhdr, html body #wp-rev-category-table thead th.rev-actual-header{width:351.12px !important; max-width:351.12px !important;}
+html body #wp-rev-category-table thead th.rev-origin-col{width:128.48px !important; max-width:128.48px !important;}
+html body #wp-cat-annual-gap-col{width:109.003125px !important; max-width:109.003125px !important;}
+/* Sub items 1 and 3, tables 3 and 4: font size increased by half (x1.5) — header cells
+9px -> 13.5px, body cells 10.5px -> 15.75px, masthead (meta) cells
+10.828125px -> 16.2421875px, plus the Edit row header button. All line-heights
+in these tables are relative, so they scale with the text. */
+html body #wp-revenue-summary-table thead th,
+html body #wp-rev-category-table thead th{font-size:13.5px;}
+html body #wp-revenue-summary-table thead th.rev-meta,
+html body #wp-rev-category-table thead th.rev-meta{font-size:16.2421875px;}
+html body #wp-revenue-summary-body td,
+html body #wp-rev-category-body td{font-size:15.75px;}
+html body #wp-edit-row-header-btn,
+html body #wp-cat-edit-row-header-btn{font-size:15.75px !important;}
 /* Zoom streak below the table — lets the user scale the whole table up or
 down with + / − controls, for a wide table on a small screen. */
 .table-zoom-bar{display:flex; align-items:center; justify-content:center; gap:10px; margin:0 16px 16px; padding:5px 14px; background:var(--paper); border:1px solid var(--line); border-radius:20px; width:fit-content; margin-left:auto; margin-right:auto;}
